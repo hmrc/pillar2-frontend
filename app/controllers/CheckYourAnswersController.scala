@@ -29,7 +29,6 @@ import models.longrunningsubmissions.LongRunningSubmission.Registration
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus.*
 import pages.*
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Futures
@@ -106,8 +105,8 @@ class CheckYourAnswersController @Inject() (
             .semiflatMap { case (userAnswersFromSession, plr) =>
               val answersToSet = userAnswersFromSession
                 .setOrException(PlrReferencePage, plr)
-                .setOrException(PdfRegistrationDatePage, LocalDate.now(clock).toDateFormat)
-                .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now(clock).toTimeGmtFormat)
+                .setOrException(RegistrationConfirmationPageDate, LocalDate.now(clock).toDateFormat)
+                .setOrException(RegistrationConfirmationPageTimestamp, ZonedDateTime.now(clock).toTimeGmtFormat)
               sessionRepository.set(answersToSet).as((answersToSet, plr))
             }
             .semiflatTap(_ => userAnswersConnectors.remove(request.userId))

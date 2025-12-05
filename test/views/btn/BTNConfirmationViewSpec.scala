@@ -21,11 +21,16 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import utils.DateTimeUtils
 import views.html.btn.BTNConfirmationView
+
+import java.time.{LocalDate, ZonedDateTime}
 
 class BTNConfirmationViewSpec extends ViewSpecBase {
 
+  lazy val submissionZonedDateTime:   ZonedDateTime       = ZonedDateTime.of(2024, 11, 10, 0, 0, 0, 0, DateTimeUtils.utcZoneId)
   lazy val submissionDate:            String              = "10 November 2024"
+  lazy val accountingPeriodStart:     LocalDate           = LocalDate.of(2024, 11, 11)
   lazy val accountingPeriodStartDate: String              = "11 November 2024"
   lazy val companyName:               String              = "Test Company"
   lazy val page:                      BTNConfirmationView = inject[BTNConfirmationView]
@@ -33,7 +38,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
   def groupView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false, showUnderEnquiryWarning)(
+      page(Some(companyName), submissionZonedDateTime, accountingPeriodStart, isAgent = false, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages
@@ -41,7 +46,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     )
   def agentView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true, showUnderEnquiryWarning)(
+      page(Some(companyName), submissionZonedDateTime, accountingPeriodStart, isAgent = true, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages

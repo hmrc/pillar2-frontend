@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package pages.pdf
+package pages
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-object PdfRegistrationDatePage extends QuestionPage[String] {
+import java.time.ZonedDateTime
 
-  override def path: JsPath = JsPath \ toString
+class BtnConfirmationPageSpec extends PageBehaviours {
 
-  override def toString: String = "registrationDate"
+  "BtnConfirmationPage must" - {
+
+    beRetrievable[ZonedDateTime](BtnConfirmationPage)
+
+    beSettable[ZonedDateTime](BtnConfirmationPage)
+
+    beRemovable[ZonedDateTime](BtnConfirmationPage)
+
+  }
 }

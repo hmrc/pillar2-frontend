@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages.pdf
+package pages
 
-import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-object PdfRegistrationTimeStampPage extends QuestionPage[String] {
+import java.time.ZonedDateTime
 
-  override def path: JsPath = JsPath \ toString
+case object BtnConfirmationPage extends QuestionPage[ZonedDateTime] {
 
-  override def toString: String = "registrationTimeStamp"
+  override def path: JsPath = JsPath \ "btnSubmittedAt"
+
 }
