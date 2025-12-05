@@ -666,14 +666,14 @@ trait UserAnswersFixture extends TryValues {
   private val refundAmount:               BigDecimal  = 10000.1
   val completeRepaymentDataUkBankAccount: UserAnswers = emptyUserAnswers
     .setOrException(PlrReferencePage, "plrReference")
-    .setOrException(RepaymentsContactNamePage, "name")
-    .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+    .setOrException(BankAccountDetailsPage, ukBankAccount)
+    .setOrException(RepaymentsContactNamePage, "name")
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
     .setOrException(RepaymentsContactByPhonePage, true)
     .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
-    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
-    .setOrException(BankAccountDetailsPage, ukBankAccount)
 
   val completeRepaymentDataNonUkBankAccount: UserAnswers = emptyUserAnswers
     .setOrException(PlrReferencePage, "plrReference")
