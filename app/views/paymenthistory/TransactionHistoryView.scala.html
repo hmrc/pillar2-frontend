@@ -27,11 +27,14 @@
         h2: HeadingH2,
         p: paragraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink,
+        paragraphBodyLink: paragraphBodyLink,
         govukPagination: GovukPagination,
         govukTable: GovukTable
 )
 
 @(transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -57,22 +60,7 @@
 
   @h2(messages("transactionHistory.h2"), size = "m")
 
-  @if(isAgent) {
-    @paragraphMessageWithLink(
-      message1 = Some(messages("transactionHistory.agent.p3")),
-      linkMessage = messages("transactionHistory.link"),
-      message2 = Some(messages("transactionHistory.p4")),
-      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
-      classes = "govuk-body govuk-!-width-two-thirds"
-    )
-  } else {
-    @paragraphMessageWithLink(
-      message1 = Some(messages("transactionHistory.group.p3")),
-      linkMessage = messages("transactionHistory.link"),
-      message2 = Some(messages("transactionHistory.p4")),
-      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
-      classes = "govuk-body govuk-!-width-two-thirds"
-    )
-  }
+  @p(messages("transactionHistory.p3"), classes = "govuk-body govuk-!-width-two-thirds")
+  @paragraphBodyLink(messages("homepage.payments.outstandingPayments.linkText"), linkUrl = outstandingPaymentsUrl)
 
 }
