@@ -30,7 +30,8 @@
         h1: heading,
         h2: HeadingH2,
         paragraphBody: paragraphBody,
-        paragraphMessageWithLink: ParagraphMessageWithLink
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        warningText: GovukWarningText
 )
 @(data: Seq[FinancialSummary], plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
@@ -47,10 +48,15 @@
                 )
             )
             @if(hasOverdueReturnPayment) {
-                @govukInsetText(InsetText(content= Text(userTypeDependentText(
-                        messages("payments.outstanding.insetText"),
-                        messages("payments.outstanding.agent.insetText")
-                ))))
+                @warningText(
+                    WarningText(
+                        iconFallbackText = Some(messages("site.warning")),
+                        content = Text(userTypeDependentText(
+                            messages("payments.outstanding.insetText"),
+                            messages("payments.outstanding.agent.insetText")
+                        ))
+                    )
+                )
             }
             @govukButton(
                 ButtonViewModel(
