@@ -56,7 +56,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
 
       paragraph.text mustBe "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
       paragraph.getElementsByTag("a").text() mustBe "to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
-      paragraph.getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
+      paragraph.getElementsByTag("a").attr("href") mustBe appConfig.rfmGuidanceUrl
     }
 
   }

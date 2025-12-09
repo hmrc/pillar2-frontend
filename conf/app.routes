@@ -319,7 +319,6 @@ GET         /replace-filing-member/business-matching/filing-member/uk-based/erro
 
 GET         /errors/return                                                                           controllers.CannotReturnAfterSubscriptionController.onPageLoad
 
-GET         /replace-filing-member/start                                                             controllers.rfm.StartPageController.onPageLoad
 GET         /replace-filing-member/authenticate                                                      controllers.rfm.AuthenticateController.rfmAuthenticate
 GET         /replace-filing-member/error/duplicate-registration                                      controllers.rfm.AlreadyEnrolledController.onPageLoad
 GET         /replace-filing-member/error/standard-organisation                                       controllers.rfm.StandardOrganisationController.onPageLoad
