@@ -56,7 +56,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmRegistrationDatePage         => _ => controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
     case RfmNameRegistrationPage         => _ => controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode)
     case RfmRegisteredAddressPage        => _ => controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
-    case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case _                               => _ => controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
@@ -77,7 +77,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     case RfmCheckYourAnswersPage         => _ => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
-    case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
+    case _                               => _ => controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad
   }
 
   private def whichCheckYourAnswerPageRfmQuestions(userAnswers: UserAnswers): Call =
