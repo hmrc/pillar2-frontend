@@ -85,6 +85,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
   lazy val pageTitle: String                 = "Transaction history"
   lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
   lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
+  lazy val viewLinks:           Elements = groupView.getElementsByTag("a")
 
   "Transaction History View" should {
 
@@ -174,20 +175,13 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       h2Elements.first.text() mustBe "Outstanding payments"
     }
 
-    "have an 'Outstanding payments' paragraph with a link for a group" in {
-      groupViewParagraphs.get(2).text mustBe "You can find details of what your group currently owes on the " +
-        "Outstanding payments page."
-
-      groupViewParagraphs.get(2).getElementsByTag("a").first().attr("href") mustBe
-        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+    "show the correct transaction history description" in {
+      groupViewParagraphs.get(2).text mustBe "Find full details of any payments due, including penalties and interest."
     }
 
-    "have an 'Outstanding payments' paragraph with a link for an agent" in {
-      agentViewParagraphs.get(2).text mustBe "You can find details of what your client currently owes on the " +
-        "Outstanding payments page."
-
-      agentViewParagraphs.get(2).getElementsByTag("a").first().attr("href") mustBe
-        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+    "show the correct outstanding payments link" in {
+      val outstandingPaymentsLink = viewLinks.select(":matchesOwn(View outstanding payments)").first()
+      outstandingPaymentsLink.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
     }
 
   }
