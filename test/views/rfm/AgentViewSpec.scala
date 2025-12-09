@@ -51,7 +51,7 @@ class AgentViewSpec extends ViewSpecBase {
     "have a link" in {
       val links: Elements = paragraphs.last().getElementsByTag("a")
       links.text mustBe "Find out more about who can use this service"
-      links.attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
+      links.attr("href") mustBe appConfig.rfmGuidanceUrl
     }
 
   }
