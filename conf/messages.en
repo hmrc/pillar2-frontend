@@ -1259,10 +1259,10 @@ repayments.bankAccountDetails.heading = Bank account details
 repayments.bankAccountDetails.hint = The account must be a UK business account.
 repayments.bankAccountDetails.bankName = Name of the bank
 repayments.bankAccountDetails.accountName = Name on the account
-repayments.bankAccountDetails.sortCode = Sort Code
-repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits long
+repayments.bankAccountDetails.sortCode = Sort code
+repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits
 repayments.bankAccountDetails.accountNumber = Account number
-repayments.bankAccountDetails.accountNumber.hintText = Must be between 6 and 8 digits long
+repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits
 
 repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
