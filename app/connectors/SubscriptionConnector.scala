@@ -68,7 +68,11 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionData])
+          val subscriptionData = Json.parse(response.body).as[SubscriptionData]
+          val dataWithDefault  = subscriptionData.copy(
+            accountStatus = subscriptionData.accountStatus.orElse(Some(AccountStatus.ActiveAccount))
+          )
+          Future.successful(dataWithDefault)
         case e =>
           logger.warn(s"Connection issue when calling cache subscription with status: ${e.status}")
           Future.failed(InternalIssueError)
@@ -85,7 +89,11 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == 200 =>
-          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
+          val subscriptionData = Json.parse(response.body).as[SubscriptionSuccess].success
+          val dataWithDefault  = subscriptionData.copy(
+            accountStatus = subscriptionData.accountStatus.orElse(Some(AccountStatus.ActiveAccount))
+          )
+          Future.successful(Some(dataWithDefault))
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)

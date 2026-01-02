@@ -77,6 +77,13 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe subscriptionDataJson
       }
 
+      "return SubscriptionData with default ActiveAccount when accountStatus is missing" in {
+        stubGet(s"$readSubscriptionPath/$id/$plrReference", OK, successfulResponseJsonWithoutAccountStatus)
+        val result: SubscriptionData = connector.cacheSubscription(readSubscriptionParameters).futureValue
+
+        result.accountStatus mustBe Some(AccountStatus.ActiveAccount)
+      }
+
       "return InternalIssueError when the backend has returned other error status codes" in {
         server.stubFor(
           get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
@@ -97,6 +104,16 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe defined
         result mustBe Some(subscriptionDataJson)
 
+      }
+
+      "return SubscriptionData with default ActiveAccount when accountStatus is missing" in {
+        val subscriptionSuccessWithoutAccountStatus =
+          Json.toJson(SubscriptionSuccess(Json.parse(successfulResponseJsonWithoutAccountStatus).as[SubscriptionData]))
+        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessWithoutAccountStatus.toString)
+        val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
+
+        result mustBe defined
+        result.value.accountStatus mustBe Some(AccountStatus.ActiveAccount)
       }
 
       "return NoResult error when the backend has returned a 404 status" in {
@@ -314,6 +331,53 @@ object SubscriptionConnectorSpec {
       |      },
       |      "accountStatus": {
       |          "inactive": true
+      |      }
+      |  }
+      |""".stripMargin
+
+  private val successfulResponseJsonWithoutAccountStatus =
+    """
+      |{
+      |
+      |      "formBundleNumber": "119000004320",
+      |      "upeDetails": {
+      |          "domesticOnly": false,
+      |          "organisationName": "International Organisation Inc.",
+      |          "customerIdentification1": "12345678",
+      |          "customerIdentification2": "12345678",
+      |          "registrationDate": "2022-01-31",
+      |          "filingMember": false
+      |      },
+      |      "upeCorrespAddressDetails": {
+      |          "addressLine1": "1 High Street",
+      |          "addressLine2": "Egham",
+      |
+      |          "addressLine3": "Wycombe",
+      |          "addressLine4": "Surrey",
+      |          "postCode": "HP13 6TT",
+      |          "countryCode": "GB"
+      |      },
+      |      "primaryContactDetails": {
+      |          "name": "Fred Flintstone",
+      |          "phone": "0115 9700 700",
+      |          "emailAddress": "fred.flintstone@aol.com"
+      |      },
+      |      "secondaryContactDetails": {
+      |          "name": "Donald Trump",
+      |          "phone": "0115 9700 701",
+      |          "emailAddress": "donald.trump@potus.com"
+      |
+      |      },
+      |      "filingMemberDetails": {
+      |          "safeId": "XL6967739016188",
+      |          "organisationName": "Domestic Operations Ltd",
+      |          "customerIdentification1": "1234Z678",
+      |          "customerIdentification2": "1234567Y"
+      |      },
+      |      "accountingPeriod": {
+      |          "startDate": "2024-01-06",
+      |          "endDate": "2025-04-06",
+      |          "dueDate": "2024-04-06"
       |      }
       |  }
       |""".stripMargin
