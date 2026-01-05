@@ -103,7 +103,6 @@ class HomepageController @Inject() (
     request: OptionalDataRequest[?],
     hc:      HeaderCarrier
   ): Future[Result] = {
-    // Default is applied upstream in SubscriptionConnector, but keeping getOrElse as defensive programming
     val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount)
     sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.getOrElse(UserAnswers(request.userId))
