@@ -45,8 +45,8 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
     TransactionHistory(
       PlrReference,
       List(
-        FinancialHistory(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
+        Transaction(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
 

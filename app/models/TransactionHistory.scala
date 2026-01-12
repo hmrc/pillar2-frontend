@@ -20,12 +20,12 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-final case class FinancialHistory(date: LocalDate, paymentType: String, amountPaid: BigDecimal, amountRepaid: BigDecimal)
+final case class Transaction(date: LocalDate, paymentType: String, amountPaid: BigDecimal, amountRepaid: BigDecimal)
 
-object FinancialHistory {
-  given format: OFormat[FinancialHistory] = Json.format[FinancialHistory]
+object Transaction {
+  given format: OFormat[Transaction] = Json.format[Transaction]
 }
-final case class TransactionHistory(plrReference: String, financialHistory: Seq[FinancialHistory])
+final case class TransactionHistory(plrReference: String, financialHistory: Seq[Transaction])
 
 object TransactionHistory {
   given format: OFormat[TransactionHistory] = Json.format[TransactionHistory]
