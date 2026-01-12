@@ -93,26 +93,21 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         dueDate = None,
         originalAmount = BigDecimal(100),
         outstandingAmount = None,
-        clearedAmount = None,
+        clearedAmount = Some(BigDecimal(100)),
         standOverAmount = None,
         appealFlag = None,
-        clearingDetails = None
-      ),
-      AccountActivityTransaction(
-        transactionType = TransactionType.Credit,
-        transactionDesc = "Pillar 2 UKTR RPI",
-        startDate = None,
-        endDate = None,
-        accruedInterest = None,
-        chargeRefNo = None,
-        transactionDate = LocalDate.of(2025, 1, 31),
-        dueDate = None,
-        originalAmount = BigDecimal(-100),
-        outstandingAmount = None,
-        clearedAmount = None,
-        standOverAmount = None,
-        appealFlag = None,
-        clearingDetails = None
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
+              transactionDesc = "Repayment to taxpayer",
+              chargeRefNo = None,
+              dueDate = None,
+              amount = BigDecimal(100),
+              clearingDate = LocalDate.of(2025, 1, 31),
+              clearingReason = Some("Outgoing payment - Paid")
+            )
+          )
+        )
       )
     )
   )

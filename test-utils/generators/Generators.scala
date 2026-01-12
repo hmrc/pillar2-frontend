@@ -17,7 +17,7 @@
 package generators
 
 import models.obligationsandsubmissions.AccountingPeriodDetails
-import models.{FinancialHistory, TransactionHistory}
+import models.{Transaction, TransactionHistory}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.*
 import org.scalacheck.{Arbitrary, Gen, Shrink}
@@ -234,22 +234,22 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .chooseNum(Double.MinValue, Double.MaxValue)
       .map(d => BigDecimal(d).setScale(2, RoundingMode.HALF_UP))
 
-  given financialHistoryArbitrary: Arbitrary[FinancialHistory] =
+  given transactionArbitrary: Arbitrary[Transaction] =
     Arbitrary {
       for {
         date         <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         paymentType  <- nonEmptyString
         amountPaid   <- arbitrary[BigDecimal]
         amountRepaid <- arbitrary[BigDecimal]
-      } yield FinancialHistory(date, paymentType, amountPaid, amountRepaid)
+      } yield Transaction(date, paymentType, amountPaid, amountRepaid)
     }
 
   given transactionHistoryArbitrary: Arbitrary[TransactionHistory] =
     Arbitrary {
       for {
-        plrReference     <- nonEmptyString
-        financialHistory <- Gen.listOf(arbitrary[FinancialHistory])
-      } yield TransactionHistory(plrReference, financialHistory)
+        plrReference <- nonEmptyString
+        transactions <- Gen.listOf(arbitrary[Transaction])
+      } yield TransactionHistory(plrReference, transactions)
     }
 
   given accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =

@@ -50,4 +50,3 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
       }
 
 }
-

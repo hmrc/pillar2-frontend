@@ -115,4 +115,3 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     }
   }
 }
-
