@@ -27,13 +27,14 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
-import services.{FinancialDataService, ReferenceNumberService}
+import connectors.AccountActivityConnector
+import services.{FinancialDataService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Constants.SubmissionAccountingPeriods
-import views.html.outstandingpayments.OutstandingPaymentsView
+import views.html.outstandingpayments.{OutstandingPaymentsAccountActivityView, OutstandingPaymentsView}
 
+import java.time.LocalDate
 import java.time.LocalDate.now
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +46,10 @@ class OutstandingPaymentsController @Inject() (
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   financialDataService:                   FinancialDataService,
+  accountActivityConnector:               AccountActivityConnector,
+  subscriptionService:                    SubscriptionService,
   view:                                   OutstandingPaymentsView,
+  accountActivityView:                    OutstandingPaymentsAccountActivityView,
   sessionRepository:                      SessionRepository
 )(using
   appConfig: FrontendAppConfig,
@@ -76,6 +80,20 @@ class OutstandingPaymentsController @Inject() (
       .sortBy(_.accountingPeriod.dueDate)
       .reverse
 
+  private def retrieveOutstandingPayments(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
+    hc: HeaderCarrier
+  ): Future[Either[Seq[OutstandingPaymentSummary], Seq[FinancialSummary]]] =
+    if appConfig.useAccountActivityApi then
+      accountActivityConnector
+        .retrieveAccountActivity(plrReference, dateFrom, dateTo)
+        .map(response => Left(response.toOutstandingPayments))
+        .recover { case NoResultFound => Left(Seq.empty) }
+    else
+      financialDataService
+        .retrieveFinancialData(plrReference, dateFrom, dateTo)
+        .map(financialData => Right(toOutstandingPaymentsSummaries(financialData)))
+        .recover { case NoResultFound => Right(Seq.empty) }
+
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
@@ -87,24 +105,34 @@ class OutstandingPaymentsController @Inject() (
         plrRef <- OptionT
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        financialData <-
-          OptionT
-            .liftF(
-              financialDataService
-                .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
-                .recover { case NoResultFound => FinancialData(Seq.empty) }
-            )
-        outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
-      } yield {
-        val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
-
-        Ok(view(outstandingPaymentSummaries, plrRef, amountDue, hasOverdueReturnPayment))
+        subscriptionData          <- OptionT.liftF(subscriptionService.readSubscription(plrRef))
+        outstandingPaymentsResult <-
+          OptionT.liftF(
+            retrieveOutstandingPayments(plrRef, subscriptionData.upeDetails.registrationDate, now())
+          )
+      } yield outstandingPaymentsResult match {
+        case Left(accountActivitySummaries) =>
+          // Account Activity API path
+          val amountDue = accountActivitySummaries.flatMap(_.items.map(_.outstandingAmount)).sum.max(0)
+          if amountDue <= 0 || accountActivitySummaries.isEmpty then Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
+          else
+            val hasOverdueReturnPayment = accountActivitySummaries.exists { summary =>
+              summary.items.exists(_.dueDate.isBefore(now()))
+            }
+            Ok(accountActivityView(accountActivitySummaries, plrRef, amountDue, hasOverdueReturnPayment))
+        case Right(financialSummaries) =>
+          // Legacy Financial Data API path
+          val amountDue               = financialSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+          val hasOverdueReturnPayment = financialSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
+          Ok(view(financialSummaries, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
-        .recover { case e =>
-          logger.error(s"Error calling FinancialDataService: ${e.getMessage}", e)
-          Redirect(JourneyRecoveryController.onPageLoad())
+        .recover {
+          case NoResultFound =>
+            Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
+          case e =>
+            logger.error(s"Error retrieving outstanding payments: ${e.getMessage}", e)
+            Redirect(JourneyRecoveryController.onPageLoad())
         }
     }
 }
