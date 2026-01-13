@@ -24,9 +24,9 @@ import views.html.outstandingpayments.NoOutstandingPaymentsView
 class NoOutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val page:      NoOutstandingPaymentsView = inject[NoOutstandingPaymentsView]
-  lazy val groupView: Document                   = Jsoup.parse(page()(request, appConfig, messages, isAgent = false).toString())
-  lazy val agentView: Document                   = Jsoup.parse(page()(request, appConfig, messages, isAgent = true).toString())
-  lazy val pageTitle: String                     = "Outstanding payments"
+  lazy val groupView: Document                  = Jsoup.parse(page()(request, appConfig, messages, isAgent = false).toString())
+  lazy val agentView: Document                  = Jsoup.parse(page()(request, appConfig, messages, isAgent = true).toString())
+  lazy val pageTitle: String                    = "Outstanding payments"
 
   "No Outstanding Payments View" should {
     "have a title" in {

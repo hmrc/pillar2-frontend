@@ -48,7 +48,7 @@ class NoOutstandingPaymentsController @Inject() (
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
-      given isAgent: Boolean     = request.isAgent
+      given isAgent: Boolean = request.isAgent
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = maybeUserAnswer.getOrElse(models.UserAnswers(request.userId))
