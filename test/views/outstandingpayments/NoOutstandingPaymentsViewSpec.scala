@@ -48,7 +48,7 @@ class NoOutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "have a link back to homepage" in {
-      val link = groupView.select("a").first()
+      val link = groupView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
       link.text() mustBe "Return to your account homepage"
       link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }

@@ -44,16 +44,30 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
   "OutstandingPaymentsController" should {
     "return OK and display the correct view for a GET with outstanding payments" in {
-      val application = applicationBuilder(enrolments = enrolments)
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
       running(application) {
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(sampleChargeTransaction))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -72,16 +86,30 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery when service call fails" in {
-      val application = applicationBuilder()
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(additionalData = Map("features.useAccountActivityApi" -> false))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
       running(application) {
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Test error")))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -92,31 +120,38 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
       }
     }
 
-    "return OK with empty financial data when NoResultFound exception is thrown" in {
-      val application = applicationBuilder(enrolments = enrolments)
+    "redirect to no outstanding payments page when NoResultFound exception is thrown" in {
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
       running(application) {
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(NoResultFound))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[OutstandingPaymentsView]
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(Seq.empty, pillar2Id, BigDecimal(0), hasOverdueReturnPayment = false)(
-            request,
-            applicationConfig,
-            messages(application),
-            isAgent = false
-          ).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
       }
     }
 
