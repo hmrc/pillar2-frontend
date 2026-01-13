@@ -17,19 +17,19 @@
 package controllers.payments
 
 import base.SpecBase
+import connectors.AccountActivityConnector
 import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
-import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, UpeCorrespAddressDetails, UpeDetails}
+import models.subscription.*
+import models.subscription.{SubscriptionData, UpeDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import connectors.AccountActivityConnector
-import models.subscription.{SubscriptionData, UpeDetails}
 import repositories.SessionRepository
 import services.{FinancialDataService, SubscriptionService}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
@@ -171,7 +171,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[OutstandingPaymentsAccountActivityView]
+        application.injector.instanceOf[OutstandingPaymentsAccountActivityView]
 
         status(result) mustEqual OK
         contentAsString(result) must include("UKTR - DTT")

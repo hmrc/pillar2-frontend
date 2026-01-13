@@ -18,7 +18,6 @@ package controllers.payments
 
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
-import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind

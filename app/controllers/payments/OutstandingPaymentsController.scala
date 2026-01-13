@@ -18,6 +18,7 @@ package controllers.payments
 
 import cats.data.OptionT
 import config.FrontendAppConfig
+import connectors.AccountActivityConnector
 import controllers.actions.*
 import controllers.routes.JourneyRecoveryController
 import models.*
@@ -27,7 +28,6 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
-import connectors.AccountActivityConnector
 import services.{FinancialDataService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
