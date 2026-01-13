@@ -22,19 +22,21 @@ import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
-import models.subscription.AccountingPeriod
+import models.subscription.{AccountStatus, AccountingPeriod, ContactDetailsType, SubscriptionData, UpeCorrespAddressDetails, UpeDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import connectors.AccountActivityConnector
+import models.subscription.{SubscriptionData, UpeDetails}
 import repositories.SessionRepository
-import services.FinancialDataService
+import services.{FinancialDataService, SubscriptionService}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.outstandingpayments.OutstandingPaymentsView
+import views.html.outstandingpayments.{OutstandingPaymentsAccountActivityView, OutstandingPaymentsView}
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 import scala.util.Random
 
@@ -115,6 +117,140 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
             messages(application),
             isAgent = false
           ).toString
+      }
+    }
+
+    "return OK and display Account Activity view when feature flag is enabled and outstanding payments exist" in {
+      val accountActivityResponse = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = Some(BigDecimal(1000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(accountActivityResponse))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[OutstandingPaymentsAccountActivityView]
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("UKTR - DTT")
+        contentAsString(result) must include("£1,000")
+      }
+    }
+
+    "redirect to no outstanding page when feature flag is enabled and no outstanding payments exist" in {
+      val accountActivityResponse = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq.empty
+      )
+
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(accountActivityResponse))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
+      }
+    }
+
+    "redirect to no outstanding page when feature flag is enabled and NoResultFound is returned" in {
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.failed(NoResultFound))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
       }
     }
   }

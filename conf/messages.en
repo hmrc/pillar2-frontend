@@ -1763,6 +1763,12 @@ payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your 
 payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
 payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
 
+payments.noOutstanding.title = Outstanding payments
+payments.noOutstanding.heading = Outstanding payments
+payments.noOutstanding.group.p1 = You have no outstanding payments.
+payments.noOutstanding.agent.p1 = Your client has no outstanding payments.
+payments.noOutstanding.linkText = Return to your account homepage
+
 # ---------------------------------------------
 # Pillar 2 Research
 # ---------------------------------------------
