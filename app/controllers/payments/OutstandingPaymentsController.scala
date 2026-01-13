@@ -92,7 +92,6 @@ class OutstandingPaymentsController @Inject() (
       financialDataService
         .retrieveFinancialData(plrReference, dateFrom, dateTo)
         .map(financialData => Right(toOutstandingPaymentsSummaries(financialData)))
-        .recover { case NoResultFound => Right(Seq.empty) }
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
