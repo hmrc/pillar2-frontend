@@ -53,7 +53,7 @@ class NoOutstandingPaymentsControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[NoOutstandingPaymentsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(pillar2Id)(
           request,
           applicationConfig,
           messages(application),

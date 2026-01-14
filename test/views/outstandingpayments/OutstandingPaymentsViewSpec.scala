@@ -107,8 +107,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
       val howToPayLink = links.get(2)
 
-      howToPayLink.text() mustBe "Find out more about ways to pay"
+      howToPayLink.text() mustBe "Find out more about ways to pay (opens in a new page)"
       howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      howToPayLink.attr("target") mustBe "_blank"
     }
 
     "display a payment section that contains" should {

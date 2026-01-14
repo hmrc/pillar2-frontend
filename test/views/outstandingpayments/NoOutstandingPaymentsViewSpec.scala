@@ -23,10 +23,11 @@ import views.html.outstandingpayments.NoOutstandingPaymentsView
 
 class NoOutstandingPaymentsViewSpec extends ViewSpecBase {
 
-  lazy val page:      NoOutstandingPaymentsView = inject[NoOutstandingPaymentsView]
-  lazy val groupView: Document                  = Jsoup.parse(page()(request, appConfig, messages, isAgent = false).toString())
-  lazy val agentView: Document                  = Jsoup.parse(page()(request, appConfig, messages, isAgent = true).toString())
-  lazy val pageTitle: String                    = "Outstanding payments"
+  lazy val page: NoOutstandingPaymentsView = inject[NoOutstandingPaymentsView]
+  private val plrReference = "XMPLR0123456789"
+  lazy val groupView: Document = Jsoup.parse(page(plrReference)(request, appConfig, messages, isAgent = false).toString())
+  lazy val agentView: Document = Jsoup.parse(page(plrReference)(request, appConfig, messages, isAgent = true).toString())
+  lazy val pageTitle: String   = "Outstanding payments"
 
   "No Outstanding Payments View" should {
     "have a title" in {
@@ -39,18 +40,23 @@ class NoOutstandingPaymentsViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have correct message for a group" in {
-      groupView.text() must include("You have no outstanding payments.")
+    "show 'No payments due' under details of outstanding payments" in {
+      groupView.text() must include("No payments due.")
     }
 
-    "have correct message for an agent" in {
-      agentView.text() must include("Your client has no outstanding payments.")
+    "show the Pillar 2 reference in 'Other ways to pay' section for a group" in {
+      groupView.text() must include(s"Your Pillar 2 reference: $plrReference")
     }
 
-    "have a link back to homepage" in {
-      val link = groupView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
-      link.text() mustBe "Return to your account homepage"
-      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+    "show the Pillar 2 reference in 'Other ways to pay' section for an agent" in {
+      agentView.text() must include(s"Pillar 2 reference: $plrReference")
+    }
+
+    "have all required sections" in {
+      groupView.text() must include("Other ways to pay")
+      groupView.text() must include("Details of outstanding payments")
+      groupView.text() must include("Transaction history")
+      groupView.text() must include("Penalties and interest charges")
     }
   }
 }
