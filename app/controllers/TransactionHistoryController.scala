@@ -58,16 +58,16 @@ class TransactionHistoryController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def retrieveTransactions(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
+  private def retrieveTransactions(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[Seq[Transaction]] =
     if appConfig.useAccountActivityApi then
       accountActivityConnector
-        .retrieveAccountActivity(plrReference, dateFrom, dateTo)
+        .retrieveAccountActivity(plrReference, fromDate, toDate)
         .map(_.toTransactions)
     else
       financialDataConnector
-        .retrieveTransactionHistory(plrReference, dateFrom, dateTo)
+        .retrieveTransactionHistory(plrReference, fromDate, toDate)
         .map(_.financialHistory)
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
