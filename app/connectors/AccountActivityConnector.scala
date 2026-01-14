@@ -32,11 +32,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
   given ExecutionContext = ec
 
-  def retrieveAccountActivity(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
+  def retrieveAccountActivity(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[AccountActivityResponse] =
     http
-      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?dateFrom=${dateFrom.toString}&dateTo=${dateTo.toString}")
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?dateFrom=${fromDate.toString}&dateTo=${toDate.toString}")
       .setHeader("X-Pillar2-Id" -> plrReference)
       .execute[HttpResponse]
       .flatMap {
