@@ -52,10 +52,10 @@ class NoOutstandingPaymentsController @Inject() (
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = maybeUserAnswer.getOrElse(models.UserAnswers(request.userId))
-        _ <- OptionT
-               .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
-               .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-      } yield Ok(view())).value
+        plrRef <- OptionT
+                    .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
+                    .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+      } yield Ok(view(plrRef))).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
     }
 }
