@@ -23,6 +23,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNEntitiesInsideOutsideUKView
 
 class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
@@ -68,5 +69,13 @@ class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
     "have a caption displaying the organisation name for an agent view" in {
       view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe "orgName"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -22,6 +22,7 @@ import forms.GroupAccountingPeriodFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
@@ -30,11 +31,12 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
   lazy val page:         GroupAccountingPeriodView         = inject[GroupAccountingPeriodView]
   lazy val pageTitle:    String                            = "What is the group accounting period?"
 
-  def view(isAgent: Boolean = false): Document =
-    Jsoup.parse(page(formProvider(), isAgent, Some("orgName"))(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false, orgName: Option[String] = None): Document =
+    Jsoup.parse(page(formProvider(), isAgent, orgName)(request, appConfig, messages).toString())
 
   lazy val organisationView: Document = view()
-  lazy val agentView:        Document = view(isAgent = true)
+  lazy val agentView:        Document = view(isAgent = true, orgName = Some("orgName"))
+  lazy val agentViewNoOrg:   Document = view(isAgent = true)
 
   "GroupAccountingPeriodView" when {
     "it's an organisation" must {
@@ -105,6 +107,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have a caption" in {
         agentView.getElementsByClass("govuk-caption-l").text mustBe "orgName"
+        agentViewNoOrg.getElementsByClass("govuk-caption-l").text mustBe "Group details"
       }
 
       "have a unique H1 heading" in {
@@ -151,5 +154,14 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         agentView.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", organisationView),
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentViewNoOrg", agentViewNoOrg)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -23,6 +23,7 @@ import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
+import views.behaviours.ViewScenario
 import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
@@ -59,6 +60,12 @@ class IncompleteDataViewSpec extends ViewSpecBase {
         controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

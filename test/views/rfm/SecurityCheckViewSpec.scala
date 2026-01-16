@@ -25,6 +25,7 @@ import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
+import views.behaviours.ViewScenario
 import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
@@ -67,5 +68,12 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

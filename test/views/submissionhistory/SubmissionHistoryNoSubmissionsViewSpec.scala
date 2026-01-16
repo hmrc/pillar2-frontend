@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.submissionhistory.SubmissionHistoryNoSubmissionsView
 
 class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
@@ -91,5 +92,13 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
       agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
         controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("organisationView", organisationView),
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

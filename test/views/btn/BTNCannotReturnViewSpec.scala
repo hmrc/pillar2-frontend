@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNCannotReturnView
 
 class BTNCannotReturnViewSpec extends ViewSpecBase {
@@ -55,5 +56,12 @@ class BTNCannotReturnViewSpec extends ViewSpecBase {
       link.text mustBe "Return to your group’s homepage"
       link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

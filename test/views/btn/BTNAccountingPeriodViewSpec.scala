@@ -27,6 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
+import views.behaviours.ViewScenario
 import views.html.btn.BTNAccountingPeriodView
 
 import scala.language.implicitConversions
@@ -207,5 +208,17 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         continueButton.attr("type") mustBe "submit"
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("hasMultipleAccountingPeriodsView", view(hasMultipleAccountingPeriods = true)),
+        ViewScenario("previousAccountingPeriodView", view(hasMultipleAccountingPeriods = true, currentAP = false)),
+        ViewScenario("agentView", agentView),
+        ViewScenario("hasMultipleAccountingPeriodsAgentView", view(isAgent = true, hasMultipleAccountingPeriods = true)),
+        ViewScenario("previousAccountingPeriodAgentView", view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

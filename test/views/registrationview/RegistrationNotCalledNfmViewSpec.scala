@@ -21,6 +21,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.registrationview.RegistrationNotCalledUpeView
 
 class RegistrationNotCalledNfmViewSpec extends ViewSpecBase {
@@ -55,5 +56,11 @@ class RegistrationNotCalledNfmViewSpec extends ViewSpecBase {
       paragraph.getElementsByTag("a").attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

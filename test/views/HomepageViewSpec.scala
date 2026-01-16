@@ -24,6 +24,7 @@ import models.{BtnBanner, DynamicNotificationAreaState}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.HomepageView
 
 class HomepageViewSpec extends ViewSpecBase {
@@ -509,6 +510,13 @@ class HomepageViewSpec extends ViewSpecBase {
       paidTag.attr("aria-label") mustBe "Paid payments"
       paidTag.attr("title") mustBe "Paid payments"
     }
+
+    val organisationViewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("organisationView", organisationView)
+      )
+
+    behaveLikeAccessiblePage(organisationViewScenarios)
   }
 
   "HomepageView for an agent" should {
@@ -672,6 +680,13 @@ class HomepageViewSpec extends ViewSpecBase {
       agentViewParagraph.get(2).getElementsByTag("a").attr("href") mustBe
         controllers.routes.AgentController.onPageLoadClientPillarId.url
     }
+
+    val agentViewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(agentViewScenarios)
   }
 
   "HomepageView layout" should {

@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNProblemWithServiceView
 
 class BTNProblemWithServiceViewSpec extends ViewSpecBase {
@@ -58,5 +59,11 @@ class BTNProblemWithServiceViewSpec extends ViewSpecBase {
       link.attr("rel") mustNot be("noopener noreferrer")
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -23,6 +23,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.registrationview.UpeContactNameView
 
 class UpeContactNameViewSpec extends ViewSpecBase with StringGenerators {
@@ -148,4 +149,11 @@ class UpeContactNameViewSpec extends ViewSpecBase with StringGenerators {
       fieldErrors.get(0).text() mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario("view", view)
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

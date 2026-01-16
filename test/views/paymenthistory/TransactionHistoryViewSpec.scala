@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import views.behaviours.ViewScenario
 import views.html.paymenthistory.TransactionHistoryView
 
 class TransactionHistoryViewSpec extends ViewSpecBase {
@@ -184,5 +185,12 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       outstandingPaymentsLink.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("groupView", groupView),
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

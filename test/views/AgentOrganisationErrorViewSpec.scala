@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.AgentOrganisationErrorView
 
 class AgentOrganisationErrorViewSpec extends ViewSpecBase {
@@ -66,5 +67,12 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import utils.DateTimeUtils
+import views.behaviours.ViewScenario
 import views.html.btn.BTNConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -130,5 +131,15 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       groupView(showUnderEnquiryWarning = false).getElementsByClass("govuk-inset-text").size() mustBe 0
       agentView(showUnderEnquiryWarning = false).getElementsByClass("govuk-inset-text").size() mustBe 0
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("groupView", groupView()),
+        ViewScenario("showUnderEnquiryWarningGroupView", groupView(showUnderEnquiryWarning = true)),
+        ViewScenario("agentView", agentView()),
+        ViewScenario("showUnderEnquiryWarningAgentView", agentView(showUnderEnquiryWarning = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

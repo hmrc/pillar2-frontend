@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.MneToDomesticView
 
 class MneToDomesticViewSpec extends ViewSpecBase {
@@ -75,42 +76,50 @@ class MneToDomesticViewSpec extends ViewSpecBase {
         homepageLink.get(0).attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
       }
     }
-  }
 
-  "it's an agent" must {
+    "it's an agent" must {
 
-    "have a title" in {
-      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      "have a title" in {
+        agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = agentView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with a link to the Homepage" in {
+        val className: String = "govuk-header__link govuk-header__service-name"
+        agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      }
+
+      "have the following paragraph content and link" in {
+        agentParagraphs
+          .get(0)
+          .text mustBe "You have requested to change the group entity locations from 'in the UK and outside the UK' (multinational) to 'only in the UK' (domestic)."
+        agentParagraphs
+          .get(1)
+          .text mustBe "You cannot make this change in this service. You can request this change in writing by emailing pillar2mailbox@hmrc.gov.uk."
+
+        val paragraphLink = agentParagraphs.get(1).getElementsByClass("govuk-link")
+        paragraphLink.text() mustBe "pillar2mailbox@hmrc.gov.uk"
+        paragraphLink.attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
+      }
+
+      "have a back to homepage link" in {
+        val homepageLink = agentParagraphs.get(2).getElementsByClass("govuk-link")
+        homepageLink.get(0).text mustBe "Back to homepage"
+        homepageLink.get(0).attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+      }
     }
 
-    "have a unique H1 heading" in {
-      val h1Elements: Elements = agentView.getElementsByTag("h1")
-      h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
-    }
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("groupView", groupView),
+        ViewScenario("agentView", agentView)
+      )
 
-    "have a banner with a link to the Homepage" in {
-      val className: String = "govuk-header__link govuk-header__service-name"
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-    }
-
-    "have the following paragraph content and link" in {
-      agentParagraphs
-        .get(0)
-        .text mustBe "You have requested to change the group entity locations from 'in the UK and outside the UK' (multinational) to 'only in the UK' (domestic)."
-      agentParagraphs
-        .get(1)
-        .text mustBe "You cannot make this change in this service. You can request this change in writing by emailing pillar2mailbox@hmrc.gov.uk."
-
-      val paragraphLink = agentParagraphs.get(1).getElementsByClass("govuk-link")
-      paragraphLink.text() mustBe "pillar2mailbox@hmrc.gov.uk"
-      paragraphLink.attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
-    }
-
-    "have a back to homepage link" in {
-      val homepageLink = agentParagraphs.get(2).getElementsByClass("govuk-link")
-      homepageLink.get(0).text mustBe "Back to homepage"
-      homepageLink.get(0).attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
-    }
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

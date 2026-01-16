@@ -24,6 +24,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.BankAccountDetailsView
 
 class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
@@ -191,5 +192,21 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       fieldErrors.get(1).text() mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario(
+        "view",
+        Jsoup.parse(
+          page(formProvider(), NormalMode)(
+            request,
+            appConfig,
+            messages
+          ).toString()
+        )
+      )
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 
 }
