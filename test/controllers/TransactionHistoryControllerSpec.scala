@@ -82,6 +82,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
   val accountActivityResponse: AccountActivityResponse = AccountActivityResponse(
     processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
     transactionDetails = Seq(
+      // Payment transaction (charge allocation, no repayment)
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
         transactionDesc = "On Account Pillar 2 (Payment on Account)",
@@ -99,10 +100,38 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         clearingDetails = Some(
           Seq(
             AccountActivityClearance(
+              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+              chargeRefNo = Some("X123456789012"),
+              dueDate = None,
+              amount = BigDecimal(100),
+              clearingDate = LocalDate.of(2024, 12, 1),
+              clearingReason = Some("Allocated to Charge")
+            )
+          )
+        )
+      ),
+      // Repayment transaction
+      AccountActivityTransaction(
+        transactionType = TransactionType.Payment,
+        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        startDate = None,
+        endDate = None,
+        accruedInterest = None,
+        chargeRefNo = None,
+        transactionDate = LocalDate.of(2025, 1, 15),
+        dueDate = None,
+        originalAmount = BigDecimal(50),
+        outstandingAmount = None,
+        clearedAmount = Some(BigDecimal(50)),
+        standOverAmount = None,
+        appealFlag = None,
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
               transactionDesc = "Repayment to taxpayer",
               chargeRefNo = None,
               dueDate = None,
-              amount = BigDecimal(100),
+              amount = BigDecimal(50),
               clearingDate = LocalDate.of(2025, 1, 31),
               clearingReason = Some("Outgoing payment - Paid")
             )
@@ -139,7 +168,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
         )(
@@ -175,7 +204,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponsePagination.financialHistory, None),
           isAgent = false
         )(
@@ -360,7 +389,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
         )(

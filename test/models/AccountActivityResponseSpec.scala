@@ -180,7 +180,7 @@ class AccountActivityResponseSpec extends SpecBase {
       response.toTransactions mustBe empty
     }
 
-    "combine multiple Payment transactions into a single entry with summed amount and latest date" in {
+    "keep multiple Payment transactions as separate entries" in {
       val response = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
@@ -237,11 +237,14 @@ class AccountActivityResponseSpec extends SpecBase {
 
       val result = response.toTransactions
 
-      result must have size 1
-      result.head.date mustBe LocalDate.of(2025, 1, 15) // Latest date
-      result.head.paymentType mustBe "Payment"
-      result.head.amountPaid mustBe BigDecimal(1000) // 300 + 500 + 200
-      result.head.amountRepaid mustBe BigDecimal(0)
+      result must have size 3
+      result(0).date mustBe LocalDate.of(2025, 1, 10)
+      result(0).paymentType mustBe "payment"
+      result(0).amountPaid mustBe BigDecimal(300)
+      result(1).date mustBe LocalDate.of(2025, 1, 15)
+      result(1).amountPaid mustBe BigDecimal(500)
+      result(2).date mustBe LocalDate.of(2025, 1, 5)
+      result(2).amountPaid mustBe BigDecimal(200)
     }
 
     "convert Payment transactions to 'Payment' display name" in {
@@ -271,7 +274,7 @@ class AccountActivityResponseSpec extends SpecBase {
 
       result must have size 1
       result.head.date mustBe LocalDate.of(2025, 1, 15)
-      result.head.paymentType mustBe "Payment"
+      result.head.paymentType mustBe "payment"
       result.head.amountPaid mustBe BigDecimal(500)
       result.head.amountRepaid mustBe BigDecimal(0)
     }
@@ -289,9 +292,9 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = Some("X123456789012"),
             transactionDate = LocalDate.of(2025, 2, 1),
             dueDate = None,
-            originalAmount = BigDecimal(1000),
+            originalAmount = BigDecimal(500),
             outstandingAmount = None,
-            clearedAmount = Some(BigDecimal(1000)),
+            clearedAmount = Some(BigDecimal(500)),
             standOverAmount = None,
             appealFlag = None,
             clearingDetails = Some(
@@ -312,13 +315,11 @@ class AccountActivityResponseSpec extends SpecBase {
 
       val result = response.toTransactions
 
-      result must have size 2
-      result.head.paymentType mustBe "Payment"
-      result.head.amountPaid mustBe BigDecimal(1000)
-      result(1).date mustBe LocalDate.of(2025, 2, 20)
-      result(1).paymentType mustBe "Repayment"
-      result(1).amountPaid mustBe BigDecimal(0)
-      result(1).amountRepaid mustBe BigDecimal(500)
+      result must have size 1
+      result.head.date mustBe LocalDate.of(2025, 2, 20)
+      result.head.paymentType mustBe "repayment"
+      result.head.amountPaid mustBe BigDecimal(0)
+      result.head.amountRepaid mustBe BigDecimal(500)
     }
 
     "filter out non-PaymentOnAccount transactions" in {
@@ -349,10 +350,11 @@ class AccountActivityResponseSpec extends SpecBase {
       result mustBe empty
     }
 
-    "convert PaymentOnAccount transactions with repayments in clearingDetails" in {
+    "convert separate PaymentOnAccount transactions for payments and repayments" in {
       val response = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
+          // Payment transaction (no repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
             transactionDesc = "On Account Pillar 2 (Payment on Account)",
@@ -370,6 +372,34 @@ class AccountActivityResponseSpec extends SpecBase {
             clearingDetails = Some(
               Seq(
                 AccountActivityClearance(
+                  transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = None,
+                  amount = BigDecimal(100),
+                  clearingDate = LocalDate.of(2025, 1, 1),
+                  clearingReason = Some("Allocated to Charge")
+                )
+              )
+            )
+          ),
+          // Repayment transaction (has repayment clearingDetails)
+          AccountActivityTransaction(
+            transactionType = TransactionType.Payment,
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 1, 2),
+            dueDate = None,
+            originalAmount = BigDecimal(50),
+            outstandingAmount = None,
+            clearedAmount = Some(BigDecimal(50)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
                   transactionDesc = "Repayment",
                   chargeRefNo = None,
                   dueDate = None,
@@ -380,6 +410,7 @@ class AccountActivityResponseSpec extends SpecBase {
               )
             )
           ),
+          // Debit - should be filtered
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
             transactionDesc = "Charge - should be filtered",
@@ -396,6 +427,7 @@ class AccountActivityResponseSpec extends SpecBase {
             appealFlag = None,
             clearingDetails = None
           ),
+          // Credit (not RPI) - should be ignored
           AccountActivityTransaction(
             transactionType = TransactionType.Credit,
             transactionDesc = "Some Credit - should be ignored",
@@ -418,10 +450,55 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toTransactions
 
       result must have size 2
-      result.head.paymentType mustBe "Payment"
+      result.head.paymentType mustBe "payment"
+      result.head.date mustBe LocalDate.of(2025, 1, 1)
       result.head.amountPaid mustBe BigDecimal(100)
-      result(1).paymentType mustBe "Repayment"
+      result(1).paymentType mustBe "repayment"
+      result(1).date mustBe LocalDate.of(2025, 1, 3)
       result(1).amountRepaid mustBe BigDecimal(50)
+    }
+
+    "extract Repayment Interest from Credit transactions with RPI description" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Credit,
+            transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = Some("XR23456789012"),
+            transactionDate = LocalDate.of(2025, 3, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(-100),
+            outstandingAmount = Some(BigDecimal(-100)),
+            clearedAmount = Some(BigDecimal(-100)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "Repayment",
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = None,
+                  amount = BigDecimal(100),
+                  clearingDate = LocalDate.of(2025, 3, 20),
+                  clearingReason = Some("Outgoing payment - Paid")
+                )
+              )
+            )
+          )
+        )
+      )
+
+      val result = response.toTransactions
+
+      result must have size 1
+      result.head.paymentType mustBe "repaymentInterest"
+      result.head.date mustBe LocalDate.of(2025, 3, 20)
+      result.head.amountPaid mustBe BigDecimal(0)
+      result.head.amountRepaid mustBe BigDecimal(100)
     }
   }
 

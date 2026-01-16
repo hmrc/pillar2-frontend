@@ -28,9 +28,14 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
   private def isTransactionType(desc: String, expected: TransactionDescription): Boolean =
     TransactionDescription.fromString(desc).contains(expected)
 
-  /** Converts account activity to financial history. Only processes PaymentOnAccount transactions:
-    *   - All payment transactions combined → single "Payment" entry (summed amount, latest date)
-    *   - Each clearingDetail with "Outgoing payment - Paid" → separate "Repayment" entries
+  /** Converts account activity to transactions for the Transaction History screen.
+    *
+    *   - Payments: PaymentOnAccount transactions where clearingDetails do NOT contain repayments. Uses originalAmount and transactionDate from the
+    *     parent transaction.
+    *   - Repayments: PaymentOnAccount transactions where clearingDetails contain "Outgoing payment - Paid". Uses amount and clearingDate from the
+    *     clearingDetail.
+    *   - Repayment Interest: Credit transactions with RepaymentInterest description. Uses amount and clearingDate from clearingDetails with "Outgoing
+    *     payment - Paid".
     */
   def toTransactions: Seq[Transaction] = {
     val paymentOnAccountTransactions = transactionDetails.filter { t =>
@@ -38,34 +43,49 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       isTransactionType(t.transactionDesc, TransactionDescription.PaymentOnAccount)
     }
 
-    // Combine all payments into a single entry
-    val payments: Seq[Transaction] =
-      if paymentOnAccountTransactions.nonEmpty then
-        val totalAmount = paymentOnAccountTransactions.map(_.originalAmount.abs).sum
-        val latestDate  = paymentOnAccountTransactions.map(_.transactionDate).max
-        Seq(
-          Transaction(
-            date = latestDate,
-            paymentType = "Payment",
-            amountPaid = totalAmount,
-            amountRepaid = BigDecimal(0)
-          )
+    // Payments: PaymentOnAccount transactions that don't have repayment clearingDetails
+    // Uses originalAmount and transactionDate from the transaction
+    val payments: Seq[Transaction] = paymentOnAccountTransactions
+      .filterNot(_.clearingDetails.exists(_.exists(_.clearingReason.contains(RepaymentReason))))
+      .map { transaction =>
+        Transaction(
+          date = transaction.transactionDate,
+          paymentType = "payment",
+          amountPaid = transaction.originalAmount.abs,
+          amountRepaid = BigDecimal(0)
         )
-      else Seq.empty
+      }
 
-    // Keep each repayment as a separate entry
+    // Repayments: From PaymentOnAccount transactions with "Outgoing payment - Paid" in clearingDetails
+    // Uses clearingDate and amount from the clearingDetail
     val repayments: Seq[Transaction] = for {
       transaction    <- paymentOnAccountTransactions
       clearingDetail <- transaction.clearingDetails.getOrElse(Seq.empty)
       if clearingDetail.clearingReason.contains(RepaymentReason)
     } yield Transaction(
       date = clearingDetail.clearingDate,
-      paymentType = "Repayment",
+      paymentType = "repayment",
       amountPaid = BigDecimal(0),
       amountRepaid = clearingDetail.amount.abs
     )
 
-    payments ++ repayments
+    // Repayment Interest: From Credit transactions with RepaymentInterest description
+    // Uses clearingDate and amount from clearingDetails with "Outgoing payment - Paid"
+    val repaymentInterest: Seq[Transaction] = for {
+      transaction <- transactionDetails.filter { t =>
+                       t.transactionType == TransactionType.Credit &&
+                       isTransactionType(t.transactionDesc, TransactionDescription.RepaymentInterest)
+                     }
+      clearingDetail <- transaction.clearingDetails.getOrElse(Seq.empty)
+      if clearingDetail.clearingReason.contains(RepaymentReason)
+    } yield Transaction(
+      date = clearingDetail.clearingDate,
+      paymentType = "repaymentInterest",
+      amountPaid = BigDecimal(0),
+      amountRepaid = clearingDetail.amount.abs
+    )
+
+    payments ++ repayments ++ repaymentInterest
   }
 }
 

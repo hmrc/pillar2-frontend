@@ -84,7 +84,7 @@ class TransactionHistoryController @Inject() (
           OptionT.liftF(
             retrieveTransactions(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
           )
-        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory))
+        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
         pagination = generatePagination(financialHistory, page)
       } yield Ok(transactionHistoryView(table, pagination, request.isAgent))
 
@@ -181,13 +181,13 @@ object TransactionHistoryController {
       )
     }
 
-  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, transactions: Seq[Transaction])(using
+  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, transactions: Seq[Transaction], useNewApi: Boolean)(using
     messages: Messages
   ): Option[Table] = {
     val currentPage: Option[Seq[Transaction]] = transactions.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
 
     currentPage.map { historyOnPage =>
-      val rows = historyOnPage.map(createTableRows)
+      val rows = historyOnPage.map(createTableRows(_, useNewApi))
       createTable(rows)
     }
   }
@@ -205,16 +205,21 @@ object TransactionHistoryController {
       )
     )
 
-  private def createTableRows(history: Transaction): Seq[TableRow] = {
+  private def createTableRows(history: Transaction, useNewApi: Boolean)(using messages: Messages): Seq[TableRow] = {
     val amountPaid:   String = formatCurrencyAmount(history.amountPaid)
     val amountRepaid: String = formatCurrencyAmount(history.amountRepaid)
+
+    // New API uses message keys (payment, repayment, repaymentInterest); legacy API uses display strings
+    val paymentTypeText =
+      if useNewApi then messages(s"transactionHistory.paymentType.${history.paymentType}")
+      else history.paymentType
 
     Seq(
       TableRow(
         content = Text(history.date.toDateFormat)
       ),
       TableRow(
-        content = Text(history.paymentType)
+        content = Text(paymentTypeText)
       ),
       TableRow(
         content = Text(amountPaid),
