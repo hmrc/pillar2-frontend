@@ -22,12 +22,6 @@ import java.time.{LocalDate, LocalDateTime}
 
 case class AccountActivityResponse(processingDate: LocalDateTime, transactionDetails: Seq[AccountActivityTransaction]) {
 
-  private val RepaymentReason = "Outgoing payment - Paid"
-
-  /** Helper to check if a transaction description matches a known type */
-  private def isTransactionType(desc: String, expected: TransactionDescription): Boolean =
-    TransactionDescription.fromString(desc).contains(expected)
-
   /** Converts account activity to transactions for the Transaction History screen.
     *
     *   - Payments: PaymentOnAccount transactions where clearingDetails do NOT contain repayments. Uses originalAmount and transactionDate from the
@@ -40,13 +34,13 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
   def toTransactions: Seq[Transaction] = {
     val paymentOnAccountTransactions = transactionDetails.filter { t =>
       t.transactionType == TransactionType.Payment &&
-      isTransactionType(t.transactionDesc, TransactionDescription.PaymentOnAccount)
+      TransactionDescription.matches(t.transactionDesc, TransactionDescription.PaymentOnAccount)
     }
 
     // Payments: PaymentOnAccount transactions that don't have repayment clearingDetails
     // Uses originalAmount and transactionDate from the transaction
     val payments: Seq[Transaction] = paymentOnAccountTransactions
-      .filterNot(_.clearingDetails.exists(_.exists(_.clearingReason.contains(RepaymentReason))))
+      .filterNot(_.clearingDetails.exists(_.exists(_.clearingReason.contains(AccountActivityClearance.RepaymentReason))))
       .map { transaction =>
         Transaction(
           date = transaction.transactionDate,
@@ -61,7 +55,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     val repayments: Seq[Transaction] = for {
       transaction    <- paymentOnAccountTransactions
       clearingDetail <- transaction.clearingDetails.getOrElse(Seq.empty)
-      if clearingDetail.clearingReason.contains(RepaymentReason)
+      if clearingDetail.clearingReason.contains(AccountActivityClearance.RepaymentReason)
     } yield Transaction(
       date = clearingDetail.clearingDate,
       paymentType = "repayment",
@@ -74,10 +68,10 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     val repaymentInterest: Seq[Transaction] = for {
       transaction <- transactionDetails.filter { t =>
                        t.transactionType == TransactionType.Credit &&
-                       isTransactionType(t.transactionDesc, TransactionDescription.RepaymentInterest)
+                       TransactionDescription.matches(t.transactionDesc, TransactionDescription.RepaymentInterest)
                      }
       clearingDetail <- transaction.clearingDetails.getOrElse(Seq.empty)
-      if clearingDetail.clearingReason.contains(RepaymentReason)
+      if clearingDetail.clearingReason.contains(AccountActivityClearance.RepaymentReason)
     } yield Transaction(
       date = clearingDetail.clearingDate,
       paymentType = "repaymentInterest",
@@ -85,7 +79,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       amountRepaid = clearingDetail.amount.abs
     )
 
-    payments ++ repayments ++ repaymentInterest
+    (payments ++ repayments ++ repaymentInterest).sortBy(_.date)(Ordering[java.time.LocalDate].reverse)
   }
 }
 
@@ -145,5 +139,6 @@ object AccountActivityTransaction {
 }
 
 object AccountActivityClearance {
+  val RepaymentReason = "Outgoing payment - Paid"
   given format: OFormat[AccountActivityClearance] = Json.format[AccountActivityClearance]
 }

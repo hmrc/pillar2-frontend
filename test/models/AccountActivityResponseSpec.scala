@@ -238,11 +238,12 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toTransactions
 
       result must have size 3
-      result(0).date mustBe LocalDate.of(2025, 1, 10)
+      // Sorted descending (newest first)
+      result(0).date mustBe LocalDate.of(2025, 1, 15)
       result(0).paymentType mustBe "payment"
-      result(0).amountPaid mustBe BigDecimal(300)
-      result(1).date mustBe LocalDate.of(2025, 1, 15)
-      result(1).amountPaid mustBe BigDecimal(500)
+      result(0).amountPaid mustBe BigDecimal(500)
+      result(1).date mustBe LocalDate.of(2025, 1, 10)
+      result(1).amountPaid mustBe BigDecimal(300)
       result(2).date mustBe LocalDate.of(2025, 1, 5)
       result(2).amountPaid mustBe BigDecimal(200)
     }
@@ -450,12 +451,13 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toTransactions
 
       result must have size 2
-      result.head.paymentType mustBe "payment"
-      result.head.date mustBe LocalDate.of(2025, 1, 1)
-      result.head.amountPaid mustBe BigDecimal(100)
-      result(1).paymentType mustBe "repayment"
-      result(1).date mustBe LocalDate.of(2025, 1, 3)
-      result(1).amountRepaid mustBe BigDecimal(50)
+      // Sorted descending: repayment (Jan 3) before payment (Jan 1)
+      result.head.paymentType mustBe "repayment"
+      result.head.date mustBe LocalDate.of(2025, 1, 3)
+      result.head.amountRepaid mustBe BigDecimal(50)
+      result(1).paymentType mustBe "payment"
+      result(1).date mustBe LocalDate.of(2025, 1, 1)
+      result(1).amountPaid mustBe BigDecimal(100)
     }
 
     "extract Repayment Interest from Credit transactions with RPI description" in {

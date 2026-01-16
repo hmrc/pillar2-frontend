@@ -104,6 +104,10 @@ object TransactionDescription {
   def fromString(value: String): Option[TransactionDescription] =
     TransactionDescription.values.find(_.value == value)
 
+  /** Helper to check if a transaction description string matches a known type */
+  def matches(desc: String, expected: TransactionDescription): Boolean =
+    fromString(desc).contains(expected)
+
   given reads: Reads[TransactionDescription] = Reads { json =>
     json.validate[String].flatMap { value =>
       fromString(value) match {
