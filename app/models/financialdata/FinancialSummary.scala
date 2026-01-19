@@ -23,5 +23,7 @@ import java.time.LocalDate
 case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
 
   def overdueReturnPayments(currentDate: LocalDate = LocalDate.now): Seq[TransactionSummary] =
-    transactions.collect { case s @ TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, _, dueDate) if dueDate.isBefore(currentDate) => s }
+    transactions.filter { s =>
+      s.transactionRef == EtmpMainTransactionRef.UkTaxReturnMain && s.dueDate.isBefore(currentDate)
+    }
 }

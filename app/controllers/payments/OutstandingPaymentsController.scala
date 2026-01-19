@@ -64,10 +64,11 @@ class OutstandingPaymentsController @Inject() (
       .map { case (accountingPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =
           transactions
-            .groupBy(_.mainTransactionRef)
-            .map { case (transactionRef, groupedTransactions) =>
+            .groupBy(tx => (tx.mainTransactionRef, tx.subTransactionRef))
+            .map { case ((transactionRef, subTransactionRef), groupedTransactions) =>
               TransactionSummary(
                 transactionRef,
+                subTransactionRef,
                 groupedTransactions.map(_.outstandingAmount).sum,
                 groupedTransactions.map(_.chargeItems.earliestDueDate).min
               )
@@ -123,7 +124,8 @@ class OutstandingPaymentsController @Inject() (
           // Legacy Financial Data API path
           val amountDue               = financialSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
           val hasOverdueReturnPayment = financialSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
-          Ok(view(financialSummaries, plrRef, amountDue, hasOverdueReturnPayment))
+          if amountDue <= 0 || financialSummaries.isEmpty then Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
+          else Ok(view(financialSummaries, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
         .recover {

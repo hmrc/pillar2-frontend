@@ -19,7 +19,7 @@ package views.outstandingpayments
 import base.ViewSpecBase
 import controllers.routes
 import controllers.routes.*
-import models.financialdata.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
+import models.financialdata.{EtmpMainTransactionRef, EtmpSubtransactionRef, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -70,10 +70,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display the leading paragraphs correctly" in {
-      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may include more than one " +
-        "accounting period. It also includes any penalties."
-      paragraphs.get(1).text() mustBe "Any payments made to your account before submitting your tax return have " +
-        "been deducted from your amount due."
+      paragraphs.get(0).text() mustBe "The amount includes all tax liabilities and penalty charges currently due. " +
+        "This may include more than one accounting period."
+      paragraphs.get(1).text() mustBe "Any payments made before today have reduced the amount due and are not " +
+        "included in this total. You must still pay the amount due."
     }
 
     "display interest inset text section" should {
@@ -131,7 +131,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         headers.get(2).text() mustBe "Due date"
 
         val rows: Elements = table.getElementsByTag("td")
-        rows.get(0).text() mustBe "UK tax return"
+        rows.get(0).text() mustBe "UKTR - DTT"
         rows.get(1).text() mustBe "£1,000.00"
         rows.get(2).text() mustBe "31 March 2024"
       }
@@ -172,8 +172,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       "should display agent-specific paragraphs" in {
         val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-        agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
-          "return have been deducted from the amount due."
+        agentViewParagraphs.get(1).text() mustBe "Any payments made before today have reduced the amount due and are not " +
+          "included in this total. The group must still pay the amount due."
         agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
         agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
@@ -203,7 +203,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 object OutstandingPaymentsViewSpec {
   val plrRef: String = "XMPLR0012345678"
 
-  val transaction: TransactionSummary = TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, 1000.00, LocalDate.of(2024, 3, 31))
+  val transaction: TransactionSummary =
+    TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, 1000.00, LocalDate.of(2024, 3, 31))
 
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 

@@ -1737,9 +1737,9 @@ btn.waitingRoom.redirect = You will be redirected automatically when the submiss
 ###############################################
 payments.outstanding.title = Outstanding payments
 payments.outstanding.amountDue = Amount due: £{0}
-payments.outstanding.p1 = The amount includes all liabilities due. This may include more than one accounting period. It also includes any penalties.
-payments.outstanding.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due.
-payments.outstanding.agent.p2 = Any payments made to the group’s account before submitting the tax return have been deducted from the amount due.
+payments.outstanding.p1 = The amount includes all tax liabilities and penalty charges currently due. This may include more than one accounting period.
+payments.outstanding.p2 = Any payments made before today have reduced the amount due and are not included in this total. You must still pay the amount due.
+payments.outstanding.agent.p2 = Any payments made before today have reduced the amount due and are not included in this total. The group must still pay the amount due.
 payments.outstanding.insetText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
 payments.outstanding.agent.insetText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
 
