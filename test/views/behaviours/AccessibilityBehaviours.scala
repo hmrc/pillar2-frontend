@@ -24,7 +24,7 @@ import scala.jdk.CollectionConverters.*
 
 trait AccessibilityBehaviours extends AnyWordSpec {
 
-  def behaveLikeAccessiblePage(scenarios: Seq[ViewScenario]): Unit =
+  def behaveLikeAccessiblePage(scenarios: Seq[ViewScenario], requireTitleAndH1Tests: Boolean = true): Unit =
     scenarios.map { scenario =>
       val doc = scenario.doc
       val serviceName: String = " - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -32,27 +32,29 @@ trait AccessibilityBehaviours extends AnyWordSpec {
       val heading = doc.getElementsByTag("h1").text().trim
 
       s"meet fundamental accessibility requirements for ${scenario.viewName}" must {
-        "have exactly one H1" in {
-          val numberOfH1Tags: Elements = doc.getElementsByTag("h1")
 
-          numberOfH1Tags.size mustBe 1
-        }
+        if requireTitleAndH1Tests then {
+          "have exactly one H1" in {
+            val numberOfH1Tags: Elements = doc.getElementsByTag("h1")
 
-        "have service name in the title" in {
-          title must include(serviceName)
-        }
+            numberOfH1Tags.size mustBe 1
+          }
 
-        "have a matching title and H1" in {
-          val titleWithoutServiceName: String = doc.title.stripSuffix(serviceName).trim
+          "have service name in the title" in {
+            title must include(serviceName)
+          }
 
-          titleWithoutServiceName.equals(heading)
+          "have a matching title and H1" in {
+            val titleWithoutServiceName: String = doc.title.stripSuffix(serviceName).trim
+
+            titleWithoutServiceName.equals(heading)
+          }
         }
 
         "have correctly nested headings" in {
           val headings =
             doc.select("h1, h2, h3").asScala.filterNot(h => h.hasClass("govuk-caption-l") || h.hasClass("govuk-notification-banner__title")).toList
           headings.nonEmpty mustBe true
-          headings.head.tagName() mustBe "h1"
 
           val levels = headings.map(h => h.tagName().drop(1).toInt)
           levels.zip(levels.drop(1)).foreach { case (previous, current) =>

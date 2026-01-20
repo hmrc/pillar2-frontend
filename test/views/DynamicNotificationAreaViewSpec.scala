@@ -25,6 +25,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import views.behaviours.ViewScenario
 import views.html.DynamicNotificationAreaView
 
 class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckPropertyChecks {
@@ -261,6 +262,24 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
           }
         }
       }
+
+      val viewScenarios: Seq[ViewScenario] =
+        Seq(
+          ViewScenario("dueView", organisationNotificationArea(ReturnExpectedNotification.Due)),
+          ViewScenario("overdueView", organisationNotificationArea(ReturnExpectedNotification.Overdue)),
+          ViewScenario("incompleteView", organisationNotificationArea(ReturnExpectedNotification.Incomplete)),
+          ViewScenario("accruingInterestView", organisationNotificationArea(AccruingInterest(100.00))),
+          ViewScenario("outstandingPaymentsWithBtnView", organisationNotificationArea(OutstandingPaymentsWithBtn(100.00))),
+          ViewScenario("outstandingPaymentsView", organisationNotificationArea(OutstandingPayments(100.00))),
+          ViewScenario("dueAgentView", agentNotificationArea(ReturnExpectedNotification.Due)),
+          ViewScenario("overdueAgentView", agentNotificationArea(ReturnExpectedNotification.Overdue)),
+          ViewScenario("incompleteAgentView", agentNotificationArea(ReturnExpectedNotification.Incomplete)),
+          ViewScenario("accruingInterestAgentView", agentNotificationArea(AccruingInterest(100.00))),
+          ViewScenario("outstandingPaymentsWithBtnAgentView", agentNotificationArea(OutstandingPaymentsWithBtn(100.00))),
+          ViewScenario("outstandingPaymentsAgentView", agentNotificationArea(OutstandingPayments(100.00)))
+        )
+
+      behaveLikeAccessiblePage(viewScenarios, requireTitleAndH1Tests = false)
     }
 
     def includesSectionBreaks(page: Document) =
