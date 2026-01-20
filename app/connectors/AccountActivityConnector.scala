@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.*
 import play.api.Logging
-import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.http.Status.{NOT_FOUND, OK, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -32,6 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
   given ExecutionContext = ec
 
+  private val noDataFoundCode = "\"code\":\"014\""
+
   def retrieveAccountActivity(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[AccountActivityResponse] =
@@ -43,6 +45,9 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
         case response if response.status == OK        => Future successful Json.parse(response.body).as[AccountActivityResponse]
         case response if response.status == NOT_FOUND =>
           logger.warn(s"Account activity not found for $plrReference")
+          Future failed NoResultFound
+        case response if response.status == UNPROCESSABLE_ENTITY && response.body.replaceAll("\\s", "").contains(noDataFoundCode) =>
+          logger.warn(s"Account activity no data found (422/014) for $plrReference")
           Future failed NoResultFound
         case e @ _ =>
           logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}")

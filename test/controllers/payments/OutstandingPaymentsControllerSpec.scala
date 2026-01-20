@@ -34,7 +34,7 @@ import repositories.SessionRepository
 import services.{FinancialDataService, SubscriptionService}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.outstandingpayments.{OutstandingPaymentsAccountActivityView, OutstandingPaymentsView}
+import views.html.outstandingpayments.OutstandingPaymentsView
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
@@ -75,7 +75,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(overdueFinancialSummary, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
+          view(overdueTables, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
             request,
             applicationConfig,
             messages(application),
@@ -119,42 +119,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to no outstanding payments page when NoResultFound exception is thrown" in {
-      val subscriptionData = SubscriptionData(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
-
-      running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.failed(NoResultFound))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
-      }
-    }
-
-    "redirect to no outstanding payments page when Financial Data contains no outstanding charges" in {
+    "return OK and show 'No payments due' when Financial Data contains no outstanding charges" in {
       val subscriptionData = SubscriptionData(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
@@ -184,12 +149,12 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
+        status(result) mustEqual OK
+        contentAsString(result) must include("No payments due.")
       }
     }
 
-    "return OK and display Account Activity view when feature flag is enabled and outstanding payments exist" in {
+    "return OK and display Outstanding Payments view when feature flag is enabled and outstanding payments exist" in {
       val accountActivityResponse = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
@@ -240,7 +205,6 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
-        application.injector.instanceOf[OutstandingPaymentsAccountActivityView]
 
         status(result) mustEqual OK
         contentAsString(result) must include("UKTR - DTT")
@@ -248,7 +212,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to no outstanding page when feature flag is enabled and no outstanding payments exist" in {
+    "return OK and show 'No payments due' when feature flag is enabled and no outstanding payments exist" in {
       val accountActivityResponse = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq.empty
@@ -283,12 +247,12 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
+        status(result) mustEqual OK
+        contentAsString(result) must include("No payments due.")
       }
     }
 
-    "redirect to no outstanding page when feature flag is enabled and NoResultFound is returned" in {
+    "return OK and show 'No payments due' when feature flag is enabled and NoResultFound is returned" in {
       val subscriptionData = SubscriptionData(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
@@ -318,8 +282,8 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad.url
+        status(result) mustEqual OK
+        contentAsString(result) must include("No payments due.")
       }
     }
   }
@@ -368,6 +332,15 @@ object OutstandingPaymentsControllerSpec {
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       Seq(
         TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, BigDecimal(1000.00), LocalDate.of(2024, 12, 31))
+      )
+    )
+  )
+
+  val overdueTables: Seq[OutstandingPaymentsTable] = Seq(
+    OutstandingPaymentsTable(
+      accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+      rows = Seq(
+        OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = BigDecimal(1000.00), dueDate = LocalDate.of(2024, 12, 31))
       )
     )
   )

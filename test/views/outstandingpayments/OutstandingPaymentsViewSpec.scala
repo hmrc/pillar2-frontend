@@ -19,8 +19,8 @@ package views.outstandingpayments
 import base.ViewSpecBase
 import controllers.routes
 import controllers.routes.*
-import models.financialdata.*
 import models.subscription.AccountingPeriod
+import models.{OutstandingPaymentsRow, OutstandingPaymentsTable}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -203,16 +203,16 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 object OutstandingPaymentsViewSpec {
   val plrRef: String = "XMPLR0012345678"
 
-  val transaction: TransactionSummary =
-    TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, 1000.00, LocalDate.of(2024, 3, 31))
-
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
-  val financialSummary: FinancialSummary = FinancialSummary(accountingPeriod = accountingPeriod, transactions = Seq(transaction))
+  val row: OutstandingPaymentsRow =
+    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31))
 
-  val data: Seq[FinancialSummary] = Seq(financialSummary)
+  val table: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
 
-  val noPaymentsData: Seq[FinancialSummary] = Seq(financialSummary.copy(transactions = Seq(transaction.copy(outstandingAmount = 0.00))))
+  val data: Seq[OutstandingPaymentsTable] = Seq(table)
 
-  def amountDue(data: Seq[FinancialSummary]): BigDecimal = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
+
+  def amountDue(data: Seq[OutstandingPaymentsTable]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
 }

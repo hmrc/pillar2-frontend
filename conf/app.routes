@@ -535,7 +535,6 @@ GET        /payment/history                                                     
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 GET        /payment/outstanding                                                                     controllers.payments.OutstandingPaymentsController.onPageLoad
-GET        /payment/no-outstanding                                                                  controllers.payments.NoOutstandingPaymentsController.onPageLoad
 
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 

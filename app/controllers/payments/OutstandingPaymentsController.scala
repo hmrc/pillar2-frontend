@@ -32,7 +32,7 @@ import services.{FinancialDataService, ReferenceNumberService, SubscriptionServi
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import views.html.outstandingpayments.{OutstandingPaymentsAccountActivityView, OutstandingPaymentsView}
+import views.html.outstandingpayments.OutstandingPaymentsView
 
 import java.time.LocalDate
 import java.time.LocalDate.now
@@ -49,7 +49,6 @@ class OutstandingPaymentsController @Inject() (
   accountActivityConnector:               AccountActivityConnector,
   subscriptionService:                    SubscriptionService,
   view:                                   OutstandingPaymentsView,
-  accountActivityView:                    OutstandingPaymentsAccountActivityView,
   sessionRepository:                      SessionRepository
 )(using
   appConfig: FrontendAppConfig,
@@ -80,6 +79,22 @@ class OutstandingPaymentsController @Inject() (
       .toSeq
       .sortBy(_.accountingPeriod.dueDate)
       .reverse
+
+  private def toTablesFromFinancial(financialSummaries: Seq[FinancialSummary]): Seq[OutstandingPaymentsTable] =
+    financialSummaries.map { summary =>
+      OutstandingPaymentsTable(
+        accountingPeriod = summary.accountingPeriod,
+        rows = summary.transactions.map(tx => OutstandingPaymentsRow(tx.description, tx.outstandingAmount, tx.dueDate))
+      )
+    }
+
+  private def toTablesFromAccountActivity(accountActivitySummaries: Seq[OutstandingPaymentSummary]): Seq[OutstandingPaymentsTable] =
+    accountActivitySummaries.map { summary =>
+      OutstandingPaymentsTable(
+        accountingPeriod = summary.accountingPeriod,
+        rows = summary.items.map(item => OutstandingPaymentsRow(item.description, item.outstandingAmount, item.dueDate))
+      )
+    }
 
   private def retrieveOutstandingPayments(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier
@@ -113,27 +128,21 @@ class OutstandingPaymentsController @Inject() (
       } yield outstandingPaymentsResult match {
         case Left(accountActivitySummaries) =>
           // Account Activity API path
-          val amountDue = accountActivitySummaries.flatMap(_.items.map(_.outstandingAmount)).sum.max(0)
-          if amountDue <= 0 || accountActivitySummaries.isEmpty then Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
-          else
-            val hasOverdueReturnPayment = accountActivitySummaries.exists { summary =>
-              summary.items.exists(_.dueDate.isBefore(now()))
-            }
-            Ok(accountActivityView(accountActivitySummaries, plrRef, amountDue, hasOverdueReturnPayment))
+          val tables                  = toTablesFromAccountActivity(accountActivitySummaries)
+          val amountDue               = tables.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
+          val hasOverdueReturnPayment = tables.exists(_.rows.exists(_.dueDate.isBefore(now())))
+          Ok(view(tables, plrRef, amountDue, hasOverdueReturnPayment))
         case Right(financialSummaries) =>
           // Legacy Financial Data API path
-          val amountDue               = financialSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+          val tables                  = toTablesFromFinancial(financialSummaries)
+          val amountDue               = tables.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
           val hasOverdueReturnPayment = financialSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
-          if amountDue <= 0 || financialSummaries.isEmpty then Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
-          else Ok(view(financialSummaries, plrRef, amountDue, hasOverdueReturnPayment))
+          Ok(view(tables, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
-        .recover {
-          case NoResultFound =>
-            Redirect(controllers.payments.routes.NoOutstandingPaymentsController.onPageLoad)
-          case e =>
-            logger.error(s"Error retrieving outstanding payments: ${e.getMessage}", e)
-            Redirect(JourneyRecoveryController.onPageLoad())
+        .recover { case e =>
+          logger.error(s"Error retrieving outstanding payments: ${e.getMessage}", e)
+          Redirect(JourneyRecoveryController.onPageLoad())
         }
     }
 }
