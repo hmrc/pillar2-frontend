@@ -34,6 +34,10 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
   lazy val connector: AccountActivityConnector = app.injector.instanceOf[AccountActivityConnector]
 
+  override val fromDate: LocalDate = LocalDate.now()
+
+  override val toDate: LocalDate = LocalDate.now.plusYears(1)
+
   val accountActivityUrl: String = s"/report-pillar2-top-up-taxes/account-activity?fromDate=${fromDate.toString}&toDate=${toDate.toString}"
 
   val accountActivityResponse: AccountActivityResponse =
