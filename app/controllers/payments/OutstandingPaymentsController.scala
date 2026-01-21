@@ -96,17 +96,17 @@ class OutstandingPaymentsController @Inject() (
       )
     }
 
-  private def retrieveOutstandingPayments(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
+  private def retrieveOutstandingPayments(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[Either[Seq[OutstandingPaymentSummary], Seq[FinancialSummary]]] =
     if appConfig.useAccountActivityApi then
       accountActivityConnector
-        .retrieveAccountActivity(plrReference, dateFrom, dateTo)
+        .retrieveAccountActivity(plrReference, fromDate, toDate)
         .map(response => Left(response.toOutstandingPayments))
         .recover { case NoResultFound => Left(Seq.empty) }
     else
       financialDataService
-        .retrieveFinancialData(plrReference, dateFrom, dateTo)
+        .retrieveFinancialData(plrReference, fromDate, toDate)
         .map(financialData => Right(toOutstandingPaymentsSummaries(financialData)))
 
   def onPageLoad: Action[AnyContent] =
