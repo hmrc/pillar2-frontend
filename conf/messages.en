@@ -1511,6 +1511,9 @@ transactionHistory.amountPaid = You paid HMRC
 transactionHistory.amountRepaid = HMRC paid you
 transactionHistory.pagination.next = Next
 transactionHistory.pagination.previous = Previous
+transactionHistory.paymentType.payment = Payment
+transactionHistory.paymentType.repayment = Repayment
+transactionHistory.paymentType.repaymentInterest = Repayment interest
 
 transactionHistory.error.title = Sorry, there is a problem with the service
 transactionHistory.error.heading = Sorry, there is a problem with the service
