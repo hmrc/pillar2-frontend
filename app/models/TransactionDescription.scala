@@ -128,7 +128,7 @@ enum TransactionDescription(val value: String) {
     // ORN/GIR MTT Late Filing Penalties
     case OrnGirMttLfp | OrnGirMttLfp3Mth | OrnGirMttLfp6Mth => "Late ORN/GIR submission penalty - MTT"
     // Other Penalties
-    case PotentialLostRevenuePenalty => "Potential lost revenue penalty"
+    case PotentialLostRevenuePenalty => "Potential lost revenue penalty - DTT"
     case Sch36Penalty                => "Schedule 36 information notice"
     case RecordKeepingPenalty        => "Failure to keep accurate records penalty"
     // Payment on Account and other unmapped types - return original value as fallback

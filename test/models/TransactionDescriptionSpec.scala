@@ -78,7 +78,7 @@ class TransactionDescriptionSpec extends SpecBase {
     }
 
     "return correct UI description for other penalties" in {
-      TransactionDescription.PotentialLostRevenuePenalty.toUiDescription mustBe "Potential lost revenue penalty"
+      TransactionDescription.PotentialLostRevenuePenalty.toUiDescription mustBe "Potential lost revenue penalty - DTT"
       TransactionDescription.Sch36Penalty.toUiDescription mustBe "Schedule 36 information notice"
       TransactionDescription.RecordKeepingPenalty.toUiDescription mustBe "Failure to keep accurate records penalty"
     }
