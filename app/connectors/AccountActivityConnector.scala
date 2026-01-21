@@ -38,7 +38,7 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
     hc: HeaderCarrier
   ): Future[AccountActivityResponse] =
     http
-      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?dateFrom=${fromDate.toString}&dateTo=${toDate.toString}")
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=${fromDate.toString}&toDate=${toDate.toString}")
       .setHeader("X-Pillar2-Id" -> plrReference)
       .execute[HttpResponse]
       .flatMap {

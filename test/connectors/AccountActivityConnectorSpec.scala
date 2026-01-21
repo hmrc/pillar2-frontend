@@ -34,10 +34,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
   lazy val connector: AccountActivityConnector = app.injector.instanceOf[AccountActivityConnector]
 
-  val dateFrom: LocalDate = LocalDate.now()
-  val dateTo:   LocalDate = LocalDate.now.plusYears(1)
-
-  val accountActivityUrl: String = s"/report-pillar2-top-up-taxes/account-activity?dateFrom=${dateFrom.toString}&dateTo=${dateTo.toString}"
+  val accountActivityUrl: String = s"/report-pillar2-top-up-taxes/account-activity?fromDate=${fromDate.toString}&toDate=${toDate.toString}"
 
   val accountActivityResponse: AccountActivityResponse =
     AccountActivityResponse(
@@ -93,7 +90,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     "return account activity response" in {
       stubGet(accountActivityUrl, expectedStatus = 200, Json.toJson(accountActivityResponse).toString(), Map("X-Pillar2-Id" -> PlrReference))
 
-      val value = connector.retrieveAccountActivity(PlrReference, dateFrom, dateTo)
+      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
       value.futureValue mustBe accountActivityResponse
     }
@@ -101,7 +98,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     "return NoResultFound when there is no results found for plr reference" in {
       stubGet(accountActivityUrl, expectedStatus = 404, "", Map("X-Pillar2-Id" -> PlrReference))
 
-      val value = connector.retrieveAccountActivity(PlrReference, dateFrom, dateTo)
+      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
       value.failed.futureValue mustBe NoResultFound
     }
@@ -111,7 +108,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
         """{"errors":{"processingDate":"2025-01-06T10:30:00Z","code":"014","text":"No data found"}}"""
       stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> PlrReference))
 
-      val value = connector.retrieveAccountActivity(PlrReference, dateFrom, dateTo)
+      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
       value.failed.futureValue mustBe NoResultFound
     }
@@ -121,7 +118,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
         """{"errors":{"processingDate":"2025-01-06T10:30:00Z","code":"003","text":"Request could not be processed"}}"""
       stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> PlrReference))
 
-      val value = connector.retrieveAccountActivity(PlrReference, dateFrom, dateTo)
+      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
       value.failed.futureValue mustBe UnexpectedResponse
     }
@@ -129,7 +126,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     "return UnexpectedResponse when an error is returned" in {
       stubGet(accountActivityUrl, expectedStatus = 500, "", Map("X-Pillar2-Id" -> PlrReference))
 
-      val value = connector.retrieveAccountActivity(PlrReference, dateFrom, dateTo)
+      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
       value.failed.futureValue mustBe UnexpectedResponse
     }
