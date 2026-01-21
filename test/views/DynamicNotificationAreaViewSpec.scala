@@ -263,21 +263,24 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
         }
       }
 
-      val viewScenarios: Seq[ViewScenario] =
+      val viewScenarios: Seq[ViewScenario] = {
+        val value: BigDecimal = arbitrary[BigDecimal].sample.get
+
         Seq(
           ViewScenario("dueView", organisationNotificationArea(ReturnExpectedNotification.Due)),
           ViewScenario("overdueView", organisationNotificationArea(ReturnExpectedNotification.Overdue)),
           ViewScenario("incompleteView", organisationNotificationArea(ReturnExpectedNotification.Incomplete)),
-          ViewScenario("accruingInterestView", organisationNotificationArea(AccruingInterest(100.00))),
-          ViewScenario("outstandingPaymentsWithBtnView", organisationNotificationArea(OutstandingPaymentsWithBtn(100.00))),
-          ViewScenario("outstandingPaymentsView", organisationNotificationArea(OutstandingPayments(100.00))),
+          ViewScenario("accruingInterestView", organisationNotificationArea(AccruingInterest(value))),
+          ViewScenario("outstandingPaymentsWithBtnView", organisationNotificationArea(OutstandingPaymentsWithBtn(value))),
+          ViewScenario("outstandingPaymentsView", organisationNotificationArea(OutstandingPayments(value))),
           ViewScenario("dueAgentView", agentNotificationArea(ReturnExpectedNotification.Due)),
           ViewScenario("overdueAgentView", agentNotificationArea(ReturnExpectedNotification.Overdue)),
           ViewScenario("incompleteAgentView", agentNotificationArea(ReturnExpectedNotification.Incomplete)),
-          ViewScenario("accruingInterestAgentView", agentNotificationArea(AccruingInterest(100.00))),
-          ViewScenario("outstandingPaymentsWithBtnAgentView", agentNotificationArea(OutstandingPaymentsWithBtn(100.00))),
-          ViewScenario("outstandingPaymentsAgentView", agentNotificationArea(OutstandingPayments(100.00)))
+          ViewScenario("accruingInterestAgentView", agentNotificationArea(AccruingInterest(value))),
+          ViewScenario("outstandingPaymentsWithBtnAgentView", agentNotificationArea(OutstandingPaymentsWithBtn(value))),
+          ViewScenario("outstandingPaymentsAgentView", agentNotificationArea(OutstandingPayments(value)))
         )
+      }
 
       behaveLikeAccessiblePage(viewScenarios, requireTitleAndH1Tests = false)
     }
