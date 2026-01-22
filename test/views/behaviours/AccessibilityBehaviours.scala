@@ -17,7 +17,7 @@
 package views.behaviours
 
 import org.jsoup.select.Elements
-import org.scalatest.matchers.must.Matchers.{be, contain, include, must, mustBe}
+import org.scalatest.matchers.must.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.jdk.CollectionConverters.*
