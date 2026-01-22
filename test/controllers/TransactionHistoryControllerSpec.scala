@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import connectors.FinancialDataConnector
+import connectors.{AccountActivityConnector, FinancialDataConnector}
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import helpers.ViewInstances
 import models.*
@@ -32,7 +32,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.auth.core.*
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
 class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
@@ -52,32 +52,94 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     TransactionHistory(
       PlrReference,
       List(
-        FinancialHistory(LocalDate.of(2024, 12, 1), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.of(2025, 1, 31), "Repayment", 0.0, 100.0)
+        Transaction(LocalDate.of(2024, 12, 1), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.of(2025, 1, 31), "Repayment", 0.0, 100.0)
       )
     )
   val transactionHistoryResponsePagination: TransactionHistory =
     TransactionHistory(
       PlrReference,
       List(
-        FinancialHistory(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(2), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(3), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(4), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(5), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(6), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(7), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(8), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(9), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(10), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(11), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(12), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(13), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(14), "Repayment", 0.0, 100.0)
+        Transaction(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(2), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(3), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(4), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(5), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(6), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(7), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(8), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(9), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(10), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(11), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(12), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(13), "Payment", 100.0, 0.00),
+        Transaction(LocalDate.now.plusDays(14), "Repayment", 0.0, 100.0)
       )
     )
 
   val dashboardInfo: DashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
+
+  val accountActivityResponse: AccountActivityResponse = AccountActivityResponse(
+    processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
+    transactionDetails = Seq(
+      // Payment transaction (charge allocation, no repayment)
+      AccountActivityTransaction(
+        transactionType = TransactionType.Payment,
+        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        startDate = None,
+        endDate = None,
+        accruedInterest = None,
+        chargeRefNo = None,
+        transactionDate = LocalDate.of(2024, 12, 1),
+        dueDate = None,
+        originalAmount = BigDecimal(100),
+        outstandingAmount = None,
+        clearedAmount = Some(BigDecimal(100)),
+        standOverAmount = None,
+        appealFlag = None,
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
+              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+              chargeRefNo = Some("X123456789012"),
+              dueDate = None,
+              amount = BigDecimal(100),
+              clearingDate = LocalDate.of(2024, 12, 1),
+              clearingReason = Some("Allocated to Charge")
+            )
+          )
+        )
+      ),
+      // Repayment transaction
+      AccountActivityTransaction(
+        transactionType = TransactionType.Payment,
+        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        startDate = None,
+        endDate = None,
+        accruedInterest = None,
+        chargeRefNo = None,
+        transactionDate = LocalDate.of(2025, 1, 15),
+        dueDate = None,
+        originalAmount = BigDecimal(50),
+        outstandingAmount = None,
+        clearedAmount = Some(BigDecimal(50)),
+        standOverAmount = None,
+        appealFlag = None,
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
+              transactionDesc = "Repayment to taxpayer",
+              chargeRefNo = None,
+              dueDate = None,
+              amount = BigDecimal(50),
+              clearingDate = LocalDate.of(2025, 1, 31),
+              clearingReason = Some("Outgoing payment - Paid")
+            )
+          )
+        )
+      )
+    )
+  )
 
   "Transaction History Controller" should {
 
@@ -106,7 +168,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
         )(
@@ -142,7 +204,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponsePagination.financialHistory, None),
           isAgent = false
         )(
@@ -327,7 +389,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
+          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
         )(
@@ -346,9 +408,9 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         TransactionHistory(
           PlrReference,
           List(
-            FinancialHistory(LocalDate.of(2024, 12, 1), "Payment", 1000.0, 0.0),
-            FinancialHistory(LocalDate.of(2024, 12, 2), "Payment", 1000.5, 0.0),
-            FinancialHistory(LocalDate.of(2024, 12, 3), "Repayment", 0.0, 1000.55)
+            Transaction(LocalDate.of(2024, 12, 1), "Payment", 1000.0, 0.0),
+            Transaction(LocalDate.of(2024, 12, 2), "Payment", 1000.5, 0.0),
+            Transaction(LocalDate.of(2024, 12, 3), "Repayment", 0.0, 1000.55)
           )
         )
 
@@ -376,6 +438,88 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) must include("£1,000")
         contentAsString(result) must include("£1,000.50")
         contentAsString(result) must include("£1,000.55")
+      }
+    }
+
+    "return OK and the correct view when using account activity API (feature flag enabled)" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
+          .thenReturn(Future.successful(accountActivityResponse))
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("1 December 2024")
+        contentAsString(result) must include("31 January 2025")
+      }
+    }
+
+    "redirect to no transaction history page when using account activity API and no results found" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
+          .thenReturn(Future.failed(NoResultFound))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/payment/history-empty")
+      }
+    }
+
+    "redirect to error page when using account activity API and an error occurs" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
+          .thenReturn(Future.failed(UnexpectedResponse))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/payment-history")
       }
     }
   }

@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import connectors.FinancialDataConnector
+import connectors.{AccountActivityConnector, FinancialDataConnector}
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.*
@@ -31,16 +31,19 @@ import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils.*
 import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
   val financialDataConnector:                     FinancialDataConnector,
+  val accountActivityConnector:                   AccountActivityConnector,
   @Named("EnrolmentIdentifier") identifierAction: IdentifierAction,
   dataRetrievalAction:                            DataRetrievalAction,
   val controllerComponents:                       MessagesControllerComponents,
@@ -55,6 +58,18 @@ class TransactionHistoryController @Inject() (
     with I18nSupport
     with Logging {
 
+  private def retrieveTransactions(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
+    hc: HeaderCarrier
+  ): Future[Seq[Transaction]] =
+    if appConfig.useAccountActivityApi then
+      accountActivityConnector
+        .retrieveAccountActivity(plrReference, fromDate, toDate)
+        .map(_.toTransactions)
+    else
+      financialDataConnector
+        .retrieveTransactionHistory(plrReference, fromDate, toDate)
+        .map(_.financialHistory)
+
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
     (identifierAction andThen dataRetrievalAction).async { request =>
       given Request[AnyContent] = request
@@ -64,14 +79,13 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        subscriptionData   <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
-        transactionHistory <-
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        financialHistory <-
           OptionT.liftF(
-            financialDataConnector
-              .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+            retrieveTransactions(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
           )
-        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
-        pagination = generatePagination(transactionHistory.financialHistory, page)
+        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
+        pagination = generatePagination(financialHistory, page)
       } yield Ok(transactionHistoryView(table, pagination, request.isAgent))
 
       result
@@ -107,11 +121,11 @@ class TransactionHistoryController @Inject() (
 object TransactionHistoryController {
   private val ROWS_ON_PAGE: Int = 10
 
-  private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(using
+  private[controllers] def generatePagination(transactions: Seq[Transaction], page: Option[Int])(using
     messages: Messages
   ): Option[Pagination] = {
     val paginationIndex = page.getOrElse(1)
-    val numberOfPages   = financialHistory.grouped(ROWS_ON_PAGE).size
+    val numberOfPages   = transactions.grouped(ROWS_ON_PAGE).size
 
     if numberOfPages < 2 then { None }
     else {
@@ -167,13 +181,13 @@ object TransactionHistoryController {
       )
     }
 
-  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, financialHistory: Seq[FinancialHistory])(using
+  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, transactions: Seq[Transaction], useNewApi: Boolean)(using
     messages: Messages
   ): Option[Table] = {
-    val currentPage: Option[Seq[FinancialHistory]] = financialHistory.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
+    val currentPage: Option[Seq[Transaction]] = transactions.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
 
     currentPage.map { historyOnPage =>
-      val rows = historyOnPage.map(createTableRows)
+      val rows = historyOnPage.map(createTableRows(_, useNewApi))
       createTable(rows)
     }
   }
@@ -191,16 +205,21 @@ object TransactionHistoryController {
       )
     )
 
-  private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
+  private def createTableRows(history: Transaction, useNewApi: Boolean)(using messages: Messages): Seq[TableRow] = {
     val amountPaid:   String = formatCurrencyAmount(history.amountPaid)
     val amountRepaid: String = formatCurrencyAmount(history.amountRepaid)
+
+    // New API uses message keys (payment, repayment, repaymentInterest); legacy API uses display strings
+    val paymentTypeText =
+      if useNewApi then messages(s"transactionHistory.paymentType.${history.paymentType}")
+      else history.paymentType
 
     Seq(
       TableRow(
         content = Text(history.date.toDateFormat)
       ),
       TableRow(
-        content = Text(history.paymentType)
+        content = Text(paymentTypeText)
       ),
       TableRow(
         content = Text(amountPaid),
