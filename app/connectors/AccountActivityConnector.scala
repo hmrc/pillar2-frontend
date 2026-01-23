@@ -34,11 +34,11 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
 
   private val noDataFoundCode = "\"code\":\"014\""
 
-  def retrieveAccountActivity(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
+  def retrieveAccountActivity(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier
   ): Future[AccountActivityResponse] =
     http
-      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=${fromDate.toString}&toDate=${toDate.toString}")
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=${dateFrom.toString}&toDate=${dateTo.toString}")
       .setHeader("X-Pillar2-Id" -> plrReference)
       .execute[HttpResponse]
       .flatMap {
