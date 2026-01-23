@@ -16,6 +16,7 @@
 
 package models
 
+import models.subscription.AccountingPeriod
 import play.api.libs.json.*
 
 import java.time.{LocalDate, LocalDateTime}
@@ -80,6 +81,49 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     )
 
     (payments ++ repayments ++ repaymentInterest).sortBy(_.date)(Ordering[java.time.LocalDate].reverse)
+  }
+
+  /** Converts account activity to outstanding payments summaries for display on Outstanding Payments page. Filters for Debit transactions with
+    * outstanding amounts > 0, groups by accounting period, and maps to UI descriptions using Column G names.
+    */
+  def toOutstandingPayments: Seq[OutstandingPaymentSummary] = {
+    val outstandingDebits = transactionDetails.filter { t =>
+      t.transactionType == TransactionType.Debit &&
+      t.outstandingAmount.exists(_ > 0) &&
+      (t.startDate.isDefined || t.endDate.isDefined) // Need at least one date to create accounting period
+    }
+
+    if outstandingDebits.isEmpty then Seq.empty
+    else {
+      val itemsByPeriod = outstandingDebits
+        .groupBy { t =>
+          // Create accounting period from startDate/endDate, using transactionDate as fallback if missing
+          val start = t.startDate.getOrElse(t.transactionDate)
+          val end   = t.endDate.getOrElse(t.transactionDate)
+          AccountingPeriod(start, end)
+        }
+        .map { case (accountingPeriod, transactions) =>
+          val items = transactions
+            .map { t =>
+              val uiDescription = TransactionDescription
+                .fromString(t.transactionDesc)
+                .map(_.toUiDescription)
+                .getOrElse(t.transactionDesc) // Fallback to original description if not mapped
+
+              OutstandingPaymentItem(
+                description = uiDescription,
+                outstandingAmount = t.outstandingAmount.get,
+                dueDate = t.dueDate.getOrElse(t.transactionDate)
+              )
+            }
+            .sortBy(_.dueDate)(Ordering[LocalDate].reverse) // Sort by dueDate descending
+
+          OutstandingPaymentSummary(accountingPeriod, items)
+        }
+        .toSeq
+
+      itemsByPeriod.sortBy(_.accountingPeriod.endDate)(Ordering[LocalDate].reverse) // Sort by endDate descending
+    }
   }
 }
 
