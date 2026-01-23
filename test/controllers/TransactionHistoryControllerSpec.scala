@@ -496,6 +496,56 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
+    "redirect to no transaction history page when using account activity API and no payment/repayment transactions are returned" in {
+      val debitOnlyAccountActivityResponse = AccountActivityResponse(
+        processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
+          .thenReturn(Future.successful(debitOnlyAccountActivityResponse))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/payment/history-empty")
+      }
+    }
+
     "redirect to error page when using account activity API and an error occurs" in {
       val application =
         applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> true))

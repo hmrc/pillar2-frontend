@@ -96,6 +96,44 @@ enum TransactionDescription(val value: String) {
   case OverpaidClaimAssessmentInterestDtt extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 DTT Int")
   case OverpaidClaimAssessmentInterestMttIir extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 MTT IIR Int")
   case OverpaidClaimAssessmentInterestMttUtpr extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 MTT UTPR Int")
+
+  /** Returns the Column G UI description for display in Outstanding Payments page */
+  def toUiDescription: String = this match {
+    // UKTR Charges
+    case UkTaxReturnDtt     => "UKTR - DTT"
+    case UkTaxReturnMttIir  => "UKTR - MTT (IIR)"
+    case UkTaxReturnMttUtpr => "UKTR - MTT (UTPR)"
+    // UKTR Interest
+    case UkTaxReturnInterestDtt     => "Late UKTR payment interest - DTT"
+    case UkTaxReturnInterestMttIir  => "Late UKTR payment interest - MTT (IIR)"
+    case UkTaxReturnInterestMttUtpr => "Late UKTR payment interest - MTT (UTPR)"
+    // Determination
+    case DeterminationDtt     => "Determination - DTT"
+    case DeterminationMttIir  => "Determination - MTT (IIR)"
+    case DeterminationMttUtpr => "Determination - MTT (UTPR)"
+    // Discovery Assessment
+    case DiscoveryAssessmentDtt     => "Discovery Assessment - DTT"
+    case DiscoveryAssessmentMttIir  => "Discovery Assessment - MTT (IIR)"
+    case DiscoveryAssessmentMttUtpr => "Discovery Assessment - MTT (UTPR)"
+    // Overpaid Claim Assessment
+    case OverpaidClaimAssessmentDtt     => "Overpaid Claim Assessment - DTT"
+    case OverpaidClaimAssessmentMttIir  => "Overpaid Claim Assessment - MTT (IIR)"
+    case OverpaidClaimAssessmentMttUtpr => "Overpaid Claim Assessment - MTT (UTPR)"
+    // UKTR DTT Late Filing Penalties
+    case UktrDttLfp | UktrDttLfp3Mth | UktrDttLfp6Mth | UktrDttLfp12Mth => "Late UKTR submission penalty - DTT"
+    // UKTR MTT Late Filing Penalties
+    case UktrMttLfp | UktrMttLfp3Mth | UktrMttLfp6Mth | UktrMttLfp12Mth => "Late UKTR submission penalty - MTT"
+    // ORN/GIR DTT Late Filing Penalties
+    case OrnGirDttLfp | OrnGirDttLfp3Mth | OrnGirDttLfp6Mth => "Late ORN/GIR submission penalty - DTT"
+    // ORN/GIR MTT Late Filing Penalties
+    case OrnGirMttLfp | OrnGirMttLfp3Mth | OrnGirMttLfp6Mth => "Late ORN/GIR submission penalty - MTT"
+    // Other Penalties
+    case PotentialLostRevenuePenalty => "Potential lost revenue penalty"
+    case Sch36Penalty                => "Schedule 36 information notice"
+    case RecordKeepingPenalty        => "Failure to keep accurate records penalty"
+    // Payment on Account and other unmapped types - return original value as fallback
+    case _ => value
+  }
 }
 
 object TransactionDescription {

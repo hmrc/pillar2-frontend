@@ -522,4 +522,273 @@ class AccountActivityResponseSpec extends SpecBase {
       result.get.clearingReason mustBe None
     }
   }
+
+  "AccountActivityResponse.toOutstandingPayments" should {
+    "return empty list when no outstanding debits exist" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Payment,
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 1, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(500),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toOutstandingPayments mustBe empty
+    }
+
+    "return empty list when outstanding amount is 0" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(0)),
+            clearedAmount = Some(BigDecimal(2000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toOutstandingPayments mustBe empty
+    }
+
+    "filter out transactions without startDate and endDate" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toOutstandingPayments mustBe empty
+    }
+
+    "convert outstanding debit transactions to OutstandingPaymentSummary grouped by accounting period" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = Some(BigDecimal(1000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          ),
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789013"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 30)),
+            originalAmount = BigDecimal(1500),
+            outstandingAmount = Some(BigDecimal(1500)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOutstandingPayments
+
+      result must have size 1
+      result.head.accountingPeriod.startDate mustBe LocalDate.of(2025, 1, 1)
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2025, 12, 31)
+      result.head.items must have size 2
+      result.head.items.head.description mustBe "UKTR - DTT"
+      result.head.items.head.outstandingAmount mustBe BigDecimal(1000)
+      result.head.items.head.dueDate mustBe LocalDate.of(2025, 12, 31)
+      result.head.items(1).description mustBe "UKTR - MTT (IIR)"
+      result.head.items(1).outstandingAmount mustBe BigDecimal(1500)
+      result.head.items(1).dueDate mustBe LocalDate.of(2025, 12, 30)
+      // Items should be sorted by dueDate descending
+      result.head.items.map(_.dueDate) mustBe Seq(LocalDate.of(2025, 12, 31), LocalDate.of(2025, 12, 30))
+    }
+
+    "group transactions by different accounting periods" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          ),
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 Determination Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789013"),
+            transactionDate = LocalDate.of(2026, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = BigDecimal(3000),
+            outstandingAmount = Some(BigDecimal(3000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOutstandingPayments
+
+      result must have size 2
+      // Should be sorted by endDate descending (2026 period first)
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2026, 12, 31)
+      result.head.items.head.description mustBe "Determination - DTT"
+      result(1).accountingPeriod.endDate mustBe LocalDate.of(2025, 12, 31)
+      result(1).items.head.description mustBe "UKTR - DTT"
+    }
+
+    "use transactionDate as fallback when dueDate is missing" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOutstandingPayments
+
+      result.head.items.head.dueDate mustBe LocalDate.of(2025, 2, 15)
+    }
+
+    "use transactionDate as fallback when startDate or endDate is missing" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOutstandingPayments
+
+      result.head.accountingPeriod.startDate mustBe LocalDate.of(2025, 1, 1)
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2025, 2, 15) // Uses transactionDate as fallback
+    }
+
+    "map unknown transaction descriptions to original description" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Unknown Transaction Type",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOutstandingPayments
+
+      result.head.items.head.description mustBe "Unknown Transaction Type"
+    }
+  }
 }

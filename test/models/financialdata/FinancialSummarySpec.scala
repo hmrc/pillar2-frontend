@@ -32,6 +32,7 @@ class FinancialSummarySpec extends SpecBase with LoneElement {
       "return the payment when there's an overdue UK tax return payment" in {
         val overdueTransaction = TransactionSummary(
           EtmpMainTransactionRef.UkTaxReturnMain,
+          EtmpSubtransactionRef.Dtt,
           BigDecimal(100),
           dueDate = today.minusDays(1) // Overdue
         )
@@ -47,6 +48,7 @@ class FinancialSummarySpec extends SpecBase with LoneElement {
       "return nothing when there are no overdue UK tax return payments" in {
         val futureTransaction = TransactionSummary(
           EtmpMainTransactionRef.UkTaxReturnMain,
+          EtmpSubtransactionRef.Dtt,
           BigDecimal(100),
           dueDate = today.plusDays(1) // Not overdue
         )
@@ -62,6 +64,7 @@ class FinancialSummarySpec extends SpecBase with LoneElement {
       "return nothing when there are no overdue main UK tax return payments" in {
         val overdueTransaction = TransactionSummary(
           EtmpMainTransactionRef.LatePaymentInterest, // Not UKTR main
+          EtmpSubtransactionRef.DttLatePaymentInterest,
           BigDecimal(100),
           dueDate = today.minusDays(1) // Overdue
         )

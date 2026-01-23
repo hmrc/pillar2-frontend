@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package models.financialdata
+package models
 
 import models.subscription.AccountingPeriod
 
 import java.time.LocalDate
 
-case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
+final case class OutstandingPaymentsTable(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRow])
 
-  def overdueReturnPayments(currentDate: LocalDate = LocalDate.now): Seq[TransactionSummary] =
-    transactions.filter { s =>
-      s.transactionRef == EtmpMainTransactionRef.UkTaxReturnMain && s.dueDate.isBefore(currentDate)
-    }
-}
+final case class OutstandingPaymentsRow(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
