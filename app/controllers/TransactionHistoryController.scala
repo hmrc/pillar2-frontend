@@ -84,9 +84,17 @@ class TransactionHistoryController @Inject() (
           OptionT.liftF(
             retrieveTransactions(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
           )
-        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
-        pagination = generatePagination(financialHistory, page)
-      } yield Ok(transactionHistoryView(table, pagination, request.isAgent))
+        result <-
+          if financialHistory.isEmpty then
+            OptionT.liftF(Future.successful(Redirect(routes.TransactionHistoryController.onPageLoadNoTransactionHistory())))
+          else
+            OptionT
+              .fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
+              .map { table =>
+                val pagination = generatePagination(financialHistory, page)
+                Ok(transactionHistoryView(table, pagination, request.isAgent))
+              }
+      } yield result
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
