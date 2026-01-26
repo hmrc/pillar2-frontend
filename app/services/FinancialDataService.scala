@@ -21,16 +21,18 @@ import cats.syntax.apply.*
 import cats.syntax.functorFilter.*
 import cats.syntax.option.*
 import cats.syntax.validated.*
+import config.FrontendAppConfig
 import connectors.FinancialDataConnector
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.OutstandingPaymentBannerScenario
 import models.subscription.AccountingPeriod
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
 import services.FinancialDataService.parseFinancialDataResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,9 +44,24 @@ class FinancialDataService @Inject() (financialDataConnector: FinancialDataConne
       .retrieveFinancialData(pillar2Id, fromDate, toDate)
       .map(parseFinancialDataResponse)
 
+  def getPaymentBannerScenario(
+    financialData: FinancialData
+  )(using clock: Clock, appConfig: FrontendAppConfig): Option[OutstandingPaymentBannerScenario] =
+    FinancialDataService.getPaymentBannerScenario(financialData)
 }
 
 object FinancialDataService extends Logging {
+  import models.financialdata.PaymentState.*
+
+  def getPaymentBannerScenario(
+    financialData: FinancialData
+  )(using clock: Clock, appConfig: FrontendAppConfig): Option[OutstandingPaymentBannerScenario] =
+    financialData match {
+      case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
+      case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
+      case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
+    }
+
   def parseFinancialDataResponse(response: FinancialDataResponse): FinancialData = FinancialData {
     response.financialTransactions
       .map(parseFinancialTransactionToDomain)

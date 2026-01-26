@@ -20,14 +20,10 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.DueAndOverdueReturnBannerScenario.*
-import models.financialdata.PaymentState.*
-import models.financialdata.{FinancialData, PaymentState}
-import models.obligationsandsubmissions.*
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{DueAndOverdueReturnBannerScenario, *}
+import models.*
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -54,7 +50,8 @@ class HomepageController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
-  financialDataService:                   FinancialDataService
+  financialDataService:                   FinancialDataService,
+  homepageBannerService:                  HomepageBannerService
 )(using
   ec:        ExecutionContext,
   appConfig: FrontendAppConfig,
@@ -112,10 +109,10 @@ class HomepageController @Inject() (
           financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
       } yield {
         val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
-        val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
-        val paymentsStatus         = getPaymentBannerScenario(financialData)
-        val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
-        val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
+        val returnsStatus          = ObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(obligationsResponse)
+        val paymentsStatus         = FinancialDataService.getPaymentBannerScenario(financialData)
+        val notificationArea       = homepageBannerService.determineNotificationArea(returnsStatus, financialData, accountStatus)
+        val btnBanner              = homepageBannerService.determineBtnBanner(accountStatus, notificationArea)
         Ok(
           homepageView(
             subscriptionData.upeDetails.organisationName,
@@ -131,101 +128,5 @@ class HomepageController @Inject() (
         )
       }
     }
-  }
-
-  val getPaymentBannerScenario: FinancialData => Option[OutstandingPaymentBannerScenario] = {
-    case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
-    case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
-    case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
-  }
-
-  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
-
-    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
-      if period.obligations.isEmpty then {
-        None
-      } else {
-        val uktrObligation:       Option[Obligation] = period.uktrObligation
-        val girObligation:        Option[Obligation] = period.girObligation
-        val dueDatePassed:        Boolean            = period.dueDatePassed
-        val hasAnyOpenObligation: Boolean            = period.hasAnyOpenObligation
-        val isInReceivedPeriod:   Boolean            = period.isInReceivedPeriod
-
-        (uktrObligation, girObligation) match {
-          case (Some(uktr), Some(gir)) =>
-            (uktr.status, gir.status, dueDatePassed, isInReceivedPeriod) match {
-              case (ObligationStatus.Open, ObligationStatus.Open, false, _)          => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false, _)     => Some(Due)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false, _)     => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Open, true, _)           => Some(Overdue)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
-              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
-              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
-              case _                                                                 => None
-            }
-          case (Some(uktr), None) =>
-            (uktr.status, dueDatePassed) match {
-              case (ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, true)  => Some(Overdue)
-              case _                              => None
-            }
-          case (None, Some(gir)) =>
-            (gir.status, dueDatePassed) match {
-              case (ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, true)  => Some(Overdue)
-              case _                              => None
-            }
-          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
-          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
-          case _                                           => None
-        }
-      }
-
-    obligationsAndSubmissions.accountingPeriodDetails
-      .flatMap(periodStatus)
-      .maxOption
-
-  }
-
-  def determineNotificationArea(
-    uktr:          Option[DueAndOverdueReturnBannerScenario],
-    financialData: FinancialData,
-    accountStatus: AccountStatus
-  ): DynamicNotificationAreaState = (financialData, uktr, accountStatus) match {
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Due
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
-      DynamicNotificationAreaState.NoNotification
-
-  }
-
-  val determineBtnBanner: (AccountStatus, DynamicNotificationAreaState) => BtnBanner = {
-    case (InactiveAccount, DynamicNotificationAreaState.OutstandingPaymentsWithBtn(_)) => BtnBanner.Hide
-    case (InactiveAccount, _)                                                          => BtnBanner.Show
-    case (_, _)                                                                        => BtnBanner.Hide
   }
 }
