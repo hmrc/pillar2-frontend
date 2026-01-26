@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnService @Inject() (
-  userAnswersConnectors:                         UserAnswersConnectors,
+  userAnswersConnectors:                             UserAnswersConnectors,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   auditService:                                      AuditService
@@ -258,7 +258,7 @@ class GrsReturnService @Inject() (
         auditService.auditGrsReturnNfmForLLP(data)
         if data.registration.registrationStatus == Registered then {
           val companyProfile = data.companyProfile.getOrElse(throw new Exception("no profile found for limited liability partnership company"))
-          val sautr = data.sautr.getOrElse(throw new Exception("no UTR found for limited liability partnership company"))
+          val sautr          = data.sautr.getOrElse(throw new Exception("no UTR found for limited liability partnership company"))
           data.registration.registeredBusinessPartnerId
             .map { safeId =>
               val grsData = GrsRegistrationData(
@@ -352,4 +352,3 @@ class GrsReturnService @Inject() (
         )
     }
 }
-

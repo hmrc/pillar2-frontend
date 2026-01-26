@@ -39,11 +39,11 @@ class BtnSubmissionService @Inject() (
     extends Logging {
 
   def startSubmission(
-    userId:            String,
-    userAnswers:       UserAnswers,
-    pillar2Id:         String,
-    accountingPeriod:  AccountingPeriod,
-    btnPayload:        BTNRequest
+    userId:           String,
+    userAnswers:      UserAnswers,
+    pillar2Id:        String,
+    accountingPeriod: AccountingPeriod,
+    btnPayload:       BTNRequest
   )(using hc: HeaderCarrier, clock: Clock): Future[Unit] = {
     val setProcessingF: Future[Unit] = for {
       updatedAnswers <- Future.fromTry(userAnswers.set(BTNStatus, BTNStatus.processing))
@@ -97,7 +97,7 @@ class BtnSubmissionService @Inject() (
                 for {
                   errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
                   _            <- sessionRepository.set(errorAnswers)
-                  _ <- auditService.auditBTNSubmission(
+                  _            <- auditService.auditBTNSubmission(
                          pillarReference = pillar2Id,
                          accountingPeriod = accountingPeriod,
                          entitiesInsideAndOutsideUK = originalAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
@@ -115,7 +115,7 @@ class BtnSubmissionService @Inject() (
             for {
               errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
               _            <- sessionRepository.set(errorAnswers)
-              _ <- auditService.auditBTNSubmission(
+              _            <- auditService.auditBTNSubmission(
                      pillarReference = pillar2Id,
                      accountingPeriod = accountingPeriod,
                      entitiesInsideAndOutsideUK = originalAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
@@ -135,4 +135,3 @@ class BtnSubmissionService @Inject() (
     ()
   }
 }
-

@@ -83,4 +83,3 @@ class HomepageBannerService @Inject() () {
   def determineBtnBanner(accountStatus: AccountStatus, dynamicNotificationAreaState: DynamicNotificationAreaState): BtnBanner =
     HomepageBannerService.determineBtnBanner(accountStatus, dynamicNotificationAreaState)
 }
-

@@ -100,4 +100,3 @@ class BTNAccountingPeriodService @Inject() () {
       .flatMap(_.submissions.sortBy(_.receivedDate).lastOption)
       .exists(submission => submissionTypes.contains(submission.submissionType))
 }
-

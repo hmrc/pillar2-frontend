@@ -18,7 +18,9 @@ package services
 
 import base.SpecBase
 import connectors.ObligationsAndSubmissionsConnector
+import models.DueAndOverdueReturnBannerScenario
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType, Submission, SubmissionType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
@@ -78,6 +80,59 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
         result.processingDate mustBe a[ZonedDateTime]
         result.accountingPeriodDetails mustBe Seq.empty
       }
+    }
+  }
+
+  "ObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus" must {
+    "return Due when UKTR is open and due date has not passed" in {
+      val period = AccountingPeriodDetails(
+        startDate = fromDate,
+        endDate = toDate,
+        dueDate = java.time.LocalDate.now().plusDays(1),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = false, submissions = Seq.empty)
+        )
+      )
+
+      val data = ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq(period))
+
+      ObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(data) mustBe Some(DueAndOverdueReturnBannerScenario.Due)
+    }
+
+    "return Overdue when UKTR is open and due date has passed" in {
+      val period = AccountingPeriodDetails(
+        startDate = fromDate,
+        endDate = toDate,
+        dueDate = java.time.LocalDate.now().minusDays(1),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = false, submissions = Seq.empty)
+        )
+      )
+
+      val data = ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq(period))
+
+      ObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(data) mustBe Some(DueAndOverdueReturnBannerScenario.Overdue)
+    }
+
+    "return Received when both UKTR and GIR are fulfilled and within the received period" in {
+      val recentSubmission = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now().minusDays(1), None)
+
+      val period = AccountingPeriodDetails(
+        startDate = fromDate,
+        endDate = toDate,
+        dueDate = java.time.LocalDate.now().minusDays(1),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(ObligationType.UKTR, ObligationStatus.Fulfilled, canAmend = false, submissions = Seq(recentSubmission)),
+          Obligation(ObligationType.GIR, ObligationStatus.Fulfilled, canAmend = false, submissions = Seq.empty)
+        )
+      )
+
+      val data = ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq(period))
+
+      ObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(data) mustBe Some(DueAndOverdueReturnBannerScenario.Received)
     }
   }
 }
