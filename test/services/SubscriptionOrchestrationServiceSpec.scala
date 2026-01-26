@@ -28,7 +28,7 @@ class SubscriptionOrchestrationServiceSpec extends SpecBase {
 
   private given FrontendAppConfig = applicationConfig
   private given Clock             = Clock.systemUTC()
-  private val futures: Futures    = app.injector.instanceOf[Futures]
+  private val futures: Futures = app.injector.instanceOf[Futures]
 
   private val service =
     new SubscriptionOrchestrationService(
@@ -50,4 +50,3 @@ class SubscriptionOrchestrationServiceSpec extends SpecBase {
     }
   }
 }
-

@@ -84,7 +84,7 @@ class BTNAccountingPeriodServiceSpec extends SpecBase {
         given Messages = messages(app)
 
         val selected = periodDetails(Seq(Submission(SubmissionType.BTN, ZonedDateTime.now().minusDays(1), None)))
-        val result = service.outcome(
+        val result   = service.outcome(
           userAnswers = emptyUserAnswers,
           selectedPeriod = selected,
           availablePeriod = Seq(selected),
@@ -99,7 +99,7 @@ class BTNAccountingPeriodServiceSpec extends SpecBase {
         given Messages = messages(app)
 
         val selected = periodDetails(Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now().minusDays(1), None)))
-        val result = service.outcome(
+        val result   = service.outcome(
           userAnswers = emptyUserAnswers,
           selectedPeriod = selected,
           availablePeriod = Seq(selected),
@@ -113,15 +113,15 @@ class BTNAccountingPeriodServiceSpec extends SpecBase {
       "there is no relevant previous submission (show the accounting period view)" in running(app) {
         given Messages = messages(app)
 
-        val selected     = periodDetails(submissions = Seq.empty)
-        val available    = Seq(selected, periodDetails().copy(startDate = periodStart.minusYears(1), endDate = periodEnd.minusYears(1)))
-        val userAnswers  = emptyUserAnswers.set(BTNChooseAccountingPeriodPage, selected).success.value
+        val selected    = periodDetails(submissions = Seq.empty)
+        val available   = Seq(selected, periodDetails().copy(startDate = periodStart.minusYears(1), endDate = periodEnd.minusYears(1)))
+        val userAnswers = emptyUserAnswers.set(BTNChooseAccountingPeriodPage, selected).success.value
 
-        val result = service.outcome(userAnswers, selected, available, Set(SubmissionType.BTN), Set(SubmissionType.UKTR_CREATE, SubmissionType.UKTR_AMEND))
+        val result =
+          service.outcome(userAnswers, selected, available, Set(SubmissionType.BTN), Set(SubmissionType.UKTR_CREATE, SubmissionType.UKTR_AMEND))
 
         result mustBe a[BTNAccountingPeriodService.Outcome.ShowAccountingPeriod]
       }
     }
   }
 }
-

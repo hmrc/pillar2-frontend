@@ -29,11 +29,12 @@ import java.time.{Clock, LocalDate}
 
 class HomepageBannerServiceSpec extends SpecBase {
 
-  private given Clock = Clock.systemUTC()
+  private given Clock             = Clock.systemUTC()
   private given FrontendAppConfig = applicationConfig
 
   private val period = AccountingPeriod(LocalDate.now().minusYears(1), LocalDate.now().minusDays(1))
-  private val items  = FinancialTransaction.OutstandingCharge.FinancialItems(earliestDueDate = LocalDate.now().minusDays(10), items = Seq(FinancialItem(None, None)))
+  private val items  =
+    FinancialTransaction.OutstandingCharge.FinancialItems(earliestDueDate = LocalDate.now().minusDays(10), items = Seq(FinancialItem(None, None)))
 
   private def uktrCharge(outstanding: BigDecimal, dueDate: LocalDate): UktrMainOutstandingCharge =
     UktrMainOutstandingCharge(
@@ -90,7 +91,11 @@ class HomepageBannerServiceSpec extends SpecBase {
     "show no notification when nothing is due and uktr is received or absent" in {
       val financialData = FinancialData(Nil)
 
-      HomepageBannerService.determineNotificationArea(uktr = Some(DueAndOverdueReturnBannerScenario.Received), financialData, AccountStatus.ActiveAccount) mustBe
+      HomepageBannerService.determineNotificationArea(
+        uktr = Some(DueAndOverdueReturnBannerScenario.Received),
+        financialData,
+        AccountStatus.ActiveAccount
+      ) mustBe
         DynamicNotificationAreaState.NoNotification
 
       HomepageBannerService.determineNotificationArea(uktr = None, financialData, AccountStatus.ActiveAccount) mustBe
@@ -100,7 +105,10 @@ class HomepageBannerServiceSpec extends SpecBase {
 
   "HomepageBannerService.determineBtnBanner" should {
     "hide the BTN banner when the inactive account is in the outstanding-with-btn state" in {
-      HomepageBannerService.determineBtnBanner(AccountStatus.InactiveAccount, DynamicNotificationAreaState.OutstandingPaymentsWithBtn(123)) mustBe BtnBanner.Hide
+      HomepageBannerService.determineBtnBanner(
+        AccountStatus.InactiveAccount,
+        DynamicNotificationAreaState.OutstandingPaymentsWithBtn(123)
+      ) mustBe BtnBanner.Hide
     }
 
     "show the BTN banner when the inactive account is not in the outstanding-with-btn state" in {
@@ -112,4 +120,3 @@ class HomepageBannerServiceSpec extends SpecBase {
     }
   }
 }
-

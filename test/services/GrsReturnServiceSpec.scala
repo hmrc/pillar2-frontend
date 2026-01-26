@@ -68,4 +68,3 @@ class GrsReturnServiceSpec extends SpecBase {
     }
   }
 }
-

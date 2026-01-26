@@ -72,4 +72,3 @@ class BtnSubmissionServiceSpec extends SpecBase with Eventually {
     }
   }
 }
-
