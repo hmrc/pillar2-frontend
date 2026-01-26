@@ -39,7 +39,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{FinancialDataService, HomepageBannerService, ObligationsAndSubmissionsService, SubscriptionService}
+import services.*
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -252,7 +252,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when UKTR obligation is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller: HomepageController = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -284,7 +284,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Overdue when UKTR obligation is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -316,7 +316,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when both UKTR and GIR obligations are fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -354,7 +354,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when both UKTR and GIR obligations are open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -392,7 +392,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when UKTR is open, GIR is fulfilled and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -430,7 +430,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when UKTR is fulfilled, GIR is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -468,7 +468,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Overdue when both UKTR and GIR obligations are open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -506,7 +506,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Incomplete when UKTR is open, GIR is fulfilled and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -544,7 +544,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Incomplete when UKTR is fulfilled, GIR is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -582,7 +582,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when UKTR is fulfilled and GIR is open but due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -620,7 +620,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when only UKTR obligation is fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -652,7 +652,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Due when only GIR obligation is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations   = Seq(
@@ -684,7 +684,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Overdue when only GIR obligation is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -716,7 +716,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when only GIR obligation is fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -748,7 +748,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when no accounting periods exist" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
           processingDate = java.time.ZonedDateTime.now(),
@@ -764,7 +764,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return the earliest period status when multiple accounting periods exist" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val pastDueDate   = LocalDate.now().minusDays(7)
@@ -817,7 +817,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Received when UKTR and GIR obligations are both fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate          = LocalDate.now().minusDays(7)
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
@@ -868,7 +868,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when UKTR and GIR obligations are both fulfilled and outside 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(70)
         val obligations          = Seq(
@@ -918,7 +918,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when only UKTR is fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
         val obligations          = Seq(
@@ -956,7 +956,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when only GIR is fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
         val obligations          = Seq(
@@ -994,7 +994,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Received when multiple submissions exist and most recent for both obligations is within 60 days" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val pastDueDate          = LocalDate.now().minusDays(7)
         val oldSubmissionDate    = java.time.ZonedDateTime.now().minusDays(70)
@@ -1063,7 +1063,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller         = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
         val pastDueDate        = LocalDate.now.minusDays(7)
         val pastDueTransaction =
           notYetDueFinancialTransaction.copy(chargeItems = notYetDueFinancialTransaction.chargeItems.copy(earliestDueDate = pastDueDate))
@@ -1079,7 +1079,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Outstanding when there is an outstanding payment that has not yet reached its due date" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller    = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
         val financialData = FinancialData(Seq(notYetDueFinancialTransaction))
 
         val result = FinancialDataService.getPaymentBannerScenario(financialData)
@@ -1091,7 +1091,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return None when there are no outstanding charges or recent payments" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val oldPayment = Payment(
           Payment.FinancialItems(Seq(FinancialItem(dueDate = None, clearingDate = Some(LocalDate.now().minusDays(100)))))
@@ -1107,7 +1107,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Paid when there is a payment made in the last 60 days and no outstanding payment on any transaction" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[HomepageController]
+        application.injector.instanceOf[HomepageController]
 
         val paymentFinancialTransaction = Payment(
           Payment.FinancialItems(
@@ -1131,7 +1131,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
   "determineNotificationArea" should {
 
     val application = applicationBuilder().build()
-    val controller  = application.injector.instanceOf[HomepageController]
+    application.injector.instanceOf[HomepageController]
 
     val anyReturnStatus  = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
     val anyAccountStatus = Gen.oneOf(AccountStatus.values)
@@ -1241,8 +1241,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
   }
 
   "determineBtnBanner" should {
-    val application     = applicationBuilder().build()
-    val controller      = application.injector.instanceOf[HomepageController]
+    val application = applicationBuilder().build()
+    application.injector.instanceOf[HomepageController]
     val nonBtnDnaStates = Gen.oneOf(
       Gen.const(DynamicNotificationAreaState.AccruingInterest(100)),
       Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)),

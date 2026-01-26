@@ -19,8 +19,8 @@ package services
 import connectors.ObligationsAndSubmissionsConnector
 import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario.*
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationsAndSubmissionsSuccess}
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

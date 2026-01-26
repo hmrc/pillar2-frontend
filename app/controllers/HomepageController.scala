@@ -20,10 +20,10 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.requests.OptionalDataRequest
-import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
-import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
 import models.*
+import models.requests.OptionalDataRequest
+import models.subscription.AccountStatus.ActiveAccount
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport

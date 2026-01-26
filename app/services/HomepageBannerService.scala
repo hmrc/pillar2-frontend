@@ -21,7 +21,7 @@ import models.DueAndOverdueReturnBannerScenario
 import models.DynamicNotificationAreaState
 import models.financialdata.{FinancialData, PaymentState}
 import models.subscription.AccountStatus
-import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
+import models.subscription.AccountStatus.InactiveAccount
 import models.{BtnBanner, DueAndOverdueReturnBannerScenario as BannerScenario}
 
 import java.time.Clock

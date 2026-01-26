@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType, Submission, SubmissionType}
+import models.obligationsandsubmissions.*
 import pages.BTNChooseAccountingPeriodPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running

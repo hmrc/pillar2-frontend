@@ -19,8 +19,7 @@ package services
 import base.SpecBase
 import connectors.ObligationsAndSubmissionsConnector
 import models.DueAndOverdueReturnBannerScenario
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus, ObligationType, Submission, SubmissionType}
+import models.obligationsandsubmissions.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing

@@ -20,8 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import models.DueAndOverdueReturnBannerScenario
 import models.DynamicNotificationAreaState
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.financialdata.{EtmpSubtransactionRef, FinancialData, FinancialItem, FinancialTransaction}
 import models.subscription.{AccountStatus, AccountingPeriod}
 import models.{BtnBanner, DueAndOverdueReturnBannerScenario as BannerScenario}
 

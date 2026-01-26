@@ -23,9 +23,9 @@ import cats.syntax.option.*
 import cats.syntax.validated.*
 import config.FrontendAppConfig
 import connectors.FinancialDataConnector
+import models.OutstandingPaymentBannerScenario
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
-import models.OutstandingPaymentBannerScenario
 import models.subscription.AccountingPeriod
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}

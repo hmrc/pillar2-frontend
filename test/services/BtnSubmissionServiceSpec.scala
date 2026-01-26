@@ -18,25 +18,21 @@ package services
 
 import base.SpecBase
 import models.UserAnswers
-import models.btn.{BTNRequest, BTNStatus, BtnResponse, BtnSuccess}
+import models.btn.*
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
-import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
-import java.time.{Clock, LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.*
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters.*
 
 class BtnSubmissionServiceSpec extends SpecBase with Eventually {
-
-  override implicit val patienceConfig: PatienceConfig =
-    PatienceConfig(timeout = Span(2, Seconds), interval = Span(25, Millis))
 
   private val service = new BtnSubmissionService(mockBTNService, mockSessionRepository, mockAuditService)
 
@@ -45,6 +41,9 @@ class BtnSubmissionServiceSpec extends SpecBase with Eventually {
 
   "BtnSubmissionService.startSubmission" should {
     "set BTNStatus to processing and then persist the final status after a successful submission" in {
+      given PatienceConfig =
+        PatienceConfig(timeout = Span(2, Seconds), interval = Span(25, Millis))
+
       val userId    = "userId-1"
       val pillar2Id = "XMPLR0123456789"
 
