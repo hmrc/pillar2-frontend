@@ -21,8 +21,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.*
 import models.MneOrDomestic.Uk
-import models.audit.{ApiResponseData, ApiResponseFailure}
-import models.btn.{BTNRequest, BTNStatus}
+import models.btn.BTNRequest
 import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
@@ -31,14 +30,13 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
-import services.BTNService
-import services.audit.AuditService
+import services.BtnSubmissionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
-import java.time.{Clock, ZonedDateTime}
+import java.time.Clock
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,9 +47,8 @@ class CheckYourAnswersController @Inject() (
   sessionRepository:                      SessionRepository,
   view:                                   CheckYourAnswersView,
   cannotReturnView:                       BTNCannotReturnView,
-  btnService:                             BTNService,
+  btnSubmissionService:                   BtnSubmissionService,
   val controllerComponents:               MessagesControllerComponents,
-  auditService:                           AuditService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendBaseController
@@ -110,76 +107,15 @@ class CheckYourAnswersController @Inject() (
           accountingPeriodTo = subAccountingPeriod.endDate
         )
 
-        given pillar2Id: String = request.subscriptionLocalData.plrReference
-
-        val setProcessingF: Future[Unit] = for {
-          updatedAnswers <- Future.fromTry(userAnswers.set(BTNStatus, BTNStatus.processing))
-          _              <- sessionRepository.set(updatedAnswers)
-        } yield ()
-
-        setProcessingF.foreach { _ =>
-          btnService
-            .submitBTN(btnPayload)
-            .flatMap { resp =>
-              sessionRepository.get(request.userId).flatMap {
-                case Some(latest) =>
-                  resp.result match {
-                    case Right(_) =>
-                      for {
-                        submittedAnswers <- Future.fromTry {
-                                              latest
-                                                .set(BTNStatus, BTNStatus.submitted)
-                                                .flatMap(_.set(BtnConfirmationPage, ZonedDateTime.now()))
-                                            }
-                        _ <- sessionRepository.set(submittedAnswers)
-                        _ <- auditService.auditBTNSubmission(
-                               pillarReference = pillar2Id,
-                               accountingPeriod = subAccountingPeriod,
-                               entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                               response = ApiResponseData.fromBtnResponse(resp)
-                             )
-                      } yield ()
-                    case Left(_) =>
-                      for {
-                        errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
-                        _            <- sessionRepository.set(errorAnswers)
-                        _            <- auditService.auditBTNSubmission(
-                               pillarReference = pillar2Id,
-                               accountingPeriod = subAccountingPeriod,
-                               entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                               response = ApiResponseData.fromBtnResponse(resp)
-                             )
-                      } yield ()
-                  }
-                case None =>
-                  Future.successful(())
-              }
-            }
-            .recover { (err: Throwable) =>
-              sessionRepository.get(request.userId).flatMap {
-                case Some(latest) =>
-                  for {
-                    errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
-                    _            <- sessionRepository.set(errorAnswers)
-                    _            <- auditService.auditBTNSubmission(
-                           pillarReference = pillar2Id,
-                           accountingPeriod = subAccountingPeriod,
-                           entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                           response = ApiResponseFailure(
-                             statusCode = INTERNAL_SERVER_ERROR,
-                             processedAt = ZonedDateTime.now(),
-                             errorCode = "InternalIssueError",
-                             responseMessage = err.getMessage
-                           )
-                         )
-                  } yield ()
-                case None =>
-                  Future.successful(())
-              }
-            }
-        }
-
-        setProcessingF.as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
+        btnSubmissionService
+          .startSubmission(
+            userId = request.userId,
+            userAnswers = userAnswers,
+            pillar2Id = request.subscriptionLocalData.plrReference,
+            accountingPeriod = subAccountingPeriod,
+            btnPayload = btnPayload
+          )
+          .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
       case None =>
         logger.error("user answers not found")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
