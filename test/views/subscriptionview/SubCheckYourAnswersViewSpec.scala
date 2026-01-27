@@ -25,6 +25,7 @@ import org.jsoup.select.Elements
 import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.all.SummaryListViewModel
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.SubCheckYourAnswersView
 
 import java.time.LocalDate
@@ -99,6 +100,13 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

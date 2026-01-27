@@ -25,6 +25,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import views.behaviours.ViewScenario
 import views.html.DynamicNotificationAreaView
 
 class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckPropertyChecks {
@@ -261,6 +262,27 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
           }
         }
       }
+
+      val viewScenarios: Seq[ViewScenario] = {
+        val value: BigDecimal = arbitrary[BigDecimal].sample.get
+
+        Seq(
+          ViewScenario("dueView", organisationNotificationArea(ReturnExpectedNotification.Due)),
+          ViewScenario("overdueView", organisationNotificationArea(ReturnExpectedNotification.Overdue)),
+          ViewScenario("incompleteView", organisationNotificationArea(ReturnExpectedNotification.Incomplete)),
+          ViewScenario("accruingInterestView", organisationNotificationArea(AccruingInterest(value))),
+          ViewScenario("outstandingPaymentsWithBtnView", organisationNotificationArea(OutstandingPaymentsWithBtn(value))),
+          ViewScenario("outstandingPaymentsView", organisationNotificationArea(OutstandingPayments(value))),
+          ViewScenario("dueAgentView", agentNotificationArea(ReturnExpectedNotification.Due)),
+          ViewScenario("overdueAgentView", agentNotificationArea(ReturnExpectedNotification.Overdue)),
+          ViewScenario("incompleteAgentView", agentNotificationArea(ReturnExpectedNotification.Incomplete)),
+          ViewScenario("accruingInterestAgentView", agentNotificationArea(AccruingInterest(value))),
+          ViewScenario("outstandingPaymentsWithBtnAgentView", agentNotificationArea(OutstandingPaymentsWithBtn(value))),
+          ViewScenario("outstandingPaymentsAgentView", agentNotificationArea(OutstandingPayments(value)))
+        )
+      }
+
+      behaveLikeAccessiblePage(viewScenarios, requireTitleAndH1Tests = false)
     }
 
     def includesSectionBreaks(page: Document) =

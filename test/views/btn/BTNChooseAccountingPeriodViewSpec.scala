@@ -24,6 +24,7 @@ import models.obligationsandsubmissions.AccountingPeriodDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNChooseAccountingPeriodView
 
 import java.time.LocalDate
@@ -83,5 +84,13 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
       continueButton.text mustBe "Continue"
       continueButton.attr("type") mustBe "submit"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

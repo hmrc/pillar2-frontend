@@ -22,6 +22,7 @@ import forms.CapturePhoneDetailsFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ContactCapturePhoneDetailsView
 
 class ContactCapturePhoneDetailsViewSpec extends ViewSpecBase {
@@ -62,5 +63,20 @@ class ContactCapturePhoneDetailsViewSpec extends ViewSpecBase {
     "have a 'Continue' button" in {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view),
+        ViewScenario(
+          "agentViewNoOrg",
+          Jsoup.parse(page(formProvider(username), username, isAgent = true, None)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "agentViewSomeOrg",
+          Jsoup.parse(page(formProvider(username), username, isAgent = true, Some("OrgName"))(request, appConfig, messages).toString())
+        )
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -57,6 +57,13 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
       link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
 
+//    TODO: Uncomment accessibility behaviours once invalid <a> tag addressed
+//    val viewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("view", view)
+//      )
+//
+//    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

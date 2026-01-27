@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNBeforeStartView
 
 class BTNBeforeStartViewSpec extends ViewSpecBase {
@@ -118,5 +119,13 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("hasMultipleAccountPeriodsView", view(hasMultipleAccountPeriods = true)),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

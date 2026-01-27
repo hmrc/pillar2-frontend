@@ -55,6 +55,14 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
     "not display back link" in {
       view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
+
+//    TODO: Uncomment accessibility behaviours once invalid <a> tag addressed
+//    val viewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("view", view)
+//      )
+//
+//    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

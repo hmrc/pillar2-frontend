@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.DateTimeUtils.*
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -88,6 +89,13 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       "have a button" in {
         view.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
       }
+
+      val groupViewScenarios: Seq[ViewScenario] =
+        Seq(
+          ViewScenario("view", view)
+        )
+
+      behaveLikeAccessiblePage(groupViewScenarios)
     }
 
     "when it's an agent view" must {
@@ -140,6 +148,13 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       "have a button" in {
         agentView.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
       }
+
+      val agentViewScenarios: Seq[ViewScenario] =
+        Seq(
+          ViewScenario("agentView", agentView)
+        )
+
+      behaveLikeAccessiblePage(agentViewScenarios)
     }
   }
 }

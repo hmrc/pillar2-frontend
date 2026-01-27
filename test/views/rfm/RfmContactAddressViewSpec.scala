@@ -19,12 +19,12 @@ package views.rfm
 import base.ViewSpecBase
 import forms.RfmContactAddressFormProvider
 import generators.StringGenerators
-import models.NonUKAddress
-import models.NormalMode
+import models.{NonUKAddress, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmContactAddressView
 
 class RfmContactAddressViewSpec extends ViewSpecBase with StringGenerators {
@@ -201,4 +201,16 @@ class RfmContactAddressViewSpec extends ViewSpecBase with StringGenerators {
       fieldErrors.get(5).text() mustBe "Error: The country you enter must not include the following characters <, >, \" or &"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario(
+        "view",
+        Jsoup.parse(
+          page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
+        )
+      )
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -264,6 +265,25 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view),
+        ViewScenario("agentViewSomeOrg", agentView),
+        ViewScenario(
+          "agentViewNoOrg",
+          Jsoup.parse(
+            page(
+              subscriptionDataPrimaryContactList(),
+              subscriptionDataSecondaryContactList(),
+              subscriptionDataAddress(inject[CountryOptions]),
+              isAgent = true,
+              None
+            )(request, appConfig, messages).toString()
+          )
+        )
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

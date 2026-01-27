@@ -19,12 +19,12 @@ package views.registrationview
 import base.ViewSpecBase
 import forms.UpeRegisteredAddressFormProvider
 import generators.StringGenerators
-import models.NormalMode
-import models.UKAddress
+import models.{NormalMode, UKAddress}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.registrationview.UpeRegisteredAddressView
 
 class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
@@ -218,4 +218,15 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario(
+        "view",
+        Jsoup.parse(
+          page(form, NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
+        )
+      )
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

@@ -21,6 +21,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.registrationview.RegistrationFailedRfmView
 
 class RegistrationFailedRfmViewSpec extends ViewSpecBase {
@@ -75,5 +76,11 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
         controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

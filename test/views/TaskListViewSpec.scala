@@ -23,6 +23,7 @@ import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.TaskListView
 
 class TaskListViewSpec extends ViewSpecBase {
@@ -120,5 +121,12 @@ class TaskListViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-body").get(2).text mustBe
         "At the ‘Review and submit’ section of this registration, you can amend your answers and print or save them for your own records."
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

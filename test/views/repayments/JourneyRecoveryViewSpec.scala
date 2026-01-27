@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
@@ -60,5 +61,12 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
       paragraphs.get(2).getElementsByTag("a").attr("href") mustBe
         controllers.routes.HomepageController.onPageLoad().url
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

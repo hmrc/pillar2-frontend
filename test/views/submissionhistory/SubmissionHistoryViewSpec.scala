@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.toDateFormat
+import views.behaviours.ViewScenario
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -123,5 +124,13 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
         controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("organisationView", organisationView),
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -21,6 +21,7 @@ import forms.GroupTerritoriesFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.GroupTerritoriesView
 
 class GroupTerritoriesViewSpec extends ViewSpecBase {
@@ -70,6 +71,12 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

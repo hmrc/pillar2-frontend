@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.errors.ErrorTemplate
 
 class ErrorTemplateSpec extends ViewSpecBase {
@@ -54,5 +55,11 @@ class ErrorTemplateSpec extends ViewSpecBase {
         controllers.routes.TaskListController.onPageLoad.url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

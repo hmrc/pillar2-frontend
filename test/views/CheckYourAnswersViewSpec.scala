@@ -31,6 +31,7 @@ import utils.DateTimeUtils.toDateFormat
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
+import views.behaviours.ViewScenario
 import views.html.CheckYourAnswersView
 
 import java.time.LocalDate
@@ -286,5 +287,12 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and send"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

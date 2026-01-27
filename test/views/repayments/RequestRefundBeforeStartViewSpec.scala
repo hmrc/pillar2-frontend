@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
@@ -76,5 +77,12 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Request a repayment"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }
