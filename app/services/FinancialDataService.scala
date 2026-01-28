@@ -59,7 +59,7 @@ object FinancialDataService extends Logging {
       tx.transactionType match {
         case TransactionType.Debit   => tx.outstandingAmount.exists(_ > 0)
         case TransactionType.Payment => true
-        case TransactionType.Credit  => false
+        case TransactionType.Credit  => true
       }
     }
   }
