@@ -21,20 +21,23 @@ import cats.syntax.apply.*
 import cats.syntax.functorFilter.*
 import cats.syntax.option.*
 import cats.syntax.validated.*
-import connectors.FinancialDataConnector
+import connectors.{AccountActivityConnector, FinancialDataConnector}
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
+import models.{AccountActivityResponse, TransactionType}
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
-import services.FinancialDataService.parseFinancialDataResponse
+import services.FinancialDataService.{parseAccountActivityResponse, parseFinancialDataResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector)(using ec: ExecutionContext) {
+class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector, accountActivityConnector: AccountActivityConnector)(using
+  ec: ExecutionContext
+) {
 
   /** Parses financial data from the API into something a bit easier to take decisions against */
   def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[FinancialData] =
@@ -42,9 +45,25 @@ class FinancialDataService @Inject() (financialDataConnector: FinancialDataConne
       .retrieveFinancialData(pillar2Id, fromDate, toDate)
       .map(parseFinancialDataResponse)
 
+  /** Parses account activity data from the new API */
+  def retrieveAccountActivityData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[AccountActivityData] =
+    accountActivityConnector
+      .retrieveAccountActivity(pillar2Id, fromDate, toDate)
+      .map(parseAccountActivityResponse)
+
 }
 
 object FinancialDataService extends Logging {
+  def parseAccountActivityResponse(response: AccountActivityResponse): AccountActivityData = AccountActivityData {
+    response.transactionDetails.filter { tx =>
+      tx.transactionType match {
+        case TransactionType.Debit   => tx.outstandingAmount.exists(_ > 0)
+        case TransactionType.Payment => true
+        case TransactionType.Credit  => false
+      }
+    }
+  }
+
   def parseFinancialDataResponse(response: FinancialDataResponse): FinancialData = FinancialData {
     response.financialTransactions
       .map(parseFinancialTransactionToDomain)

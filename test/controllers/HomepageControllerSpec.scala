@@ -103,6 +103,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(FinancialData(Seq.empty)))
+        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[HomepageView]
