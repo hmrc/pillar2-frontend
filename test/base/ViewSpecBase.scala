@@ -26,6 +26,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.{FakeRequest, Injecting}
+import views.behaviours.AccessibilityBehaviours
 
 trait ViewSpecBase
     extends PlaySpec
@@ -34,7 +35,8 @@ trait ViewSpecBase
     with Matchers
     with UserAnswersFixture
     with BeforeAndAfterEach
-    with AllMocks {
+    with AllMocks
+    with AccessibilityBehaviours {
 
   val request:                        Request[AnyContent] = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]

@@ -30,6 +30,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmContactCheckYourAnswersView
 
 class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
@@ -230,5 +231,12 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and submit"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.errors.RegistrationOrSubscriptionFailedView
 
 class RegistrationOrSubscriptionFailedViewSpec extends ViewSpecBase {
@@ -54,5 +55,11 @@ class RegistrationOrSubscriptionFailedViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.routes.TaskListController.onPageLoad.url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -21,6 +21,7 @@ import forms.RegisteringNfmForThisGroupFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.registrationview.RegisteringNfmForThisGroupView
 
 class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
@@ -99,5 +100,12 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
       fieldErrors.get(0).text() mustBe "Error: Select yes if you are registering as the group’s nominated filing member"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario("view", view)
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 
 }

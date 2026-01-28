@@ -24,6 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.{toDateFormat, toTimeGmtFormat}
+import views.behaviours.ViewScenario
 import views.html.registrationview.RegistrationConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -113,5 +114,13 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("viewDomestic", viewDomestic),
+        ViewScenario("viewMne", viewMne)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

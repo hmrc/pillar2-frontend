@@ -24,6 +24,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.NonUKBankView
 
 class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
@@ -198,4 +199,16 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       fieldErrors.get(3).text() mustBe "Error: Enter a valid IBAN like GB29NWBK60161331926819"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario(
+        "view",
+        Jsoup.parse(
+          page(formProvider(), NormalMode)(request, appConfig, messages).toString()
+        )
+      )
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

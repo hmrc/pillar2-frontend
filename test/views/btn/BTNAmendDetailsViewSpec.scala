@@ -22,6 +22,7 @@ import models.MneOrDomestic
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.btn.BTNAmendDetailsView
 
 class BTNAmendDetailsViewSpec extends ViewSpecBase {
@@ -123,5 +124,15 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
         viewUkAndOther(isAgent = true).getElementsByClass("govuk-back-link").text mustBe "Back"
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("viewUkOnly", viewUkOnly()),
+        ViewScenario("viewUkAndOther", viewUkAndOther()),
+        ViewScenario("agentViewUkOnly", viewUkOnly(isAgent = true)),
+        ViewScenario("agentViewUkAndOther", viewUkAndOther(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -24,6 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.SecondaryContactEmailView
 
 class SecondaryContactEmailViewSpec extends ViewSpecBase with StringGenerators {
@@ -137,6 +138,13 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase with StringGenerators {
         fieldErrors.get(0).text() mustBe "Error: Enter an email address in the correct format, like name@example.com"
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

@@ -24,6 +24,7 @@ import models.{OutstandingPaymentsRow, OutstandingPaymentsTable}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.outstandingpayments.OutstandingPaymentsView
 import views.outstandingpayments.OutstandingPaymentsViewSpec.*
 
@@ -197,6 +198,29 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         }
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("organisationView", organisationView),
+        ViewScenario(
+          "noOverdueReturnPaymentView",
+          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
+        ),
+        ViewScenario(
+          "noPaymentsDataView",
+          Jsoup.parse(
+            page(noPaymentsData, plrRef, amountDue(noPaymentsData), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false)
+              .toString()
+          )
+        ),
+        ViewScenario("agentView", agentView),
+        ViewScenario(
+          "noOverdueReturnPaymentAgentView",
+          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
+        )
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }
 

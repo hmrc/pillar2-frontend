@@ -24,6 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.repayments.UkOrAbroadBankAccountView
 
 class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
@@ -94,6 +95,12 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString()))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

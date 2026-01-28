@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.KbUKIneligibleView
 
 class KbUKIneligibleViewSpec extends ViewSpecBase {
@@ -60,6 +61,12 @@ class KbUKIneligibleViewSpec extends ViewSpecBase {
       link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

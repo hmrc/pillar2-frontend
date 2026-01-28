@@ -25,6 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
 class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerators {
@@ -229,6 +230,12 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
       view.getElementById("postalCode").attr("value") mustBe "12345"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

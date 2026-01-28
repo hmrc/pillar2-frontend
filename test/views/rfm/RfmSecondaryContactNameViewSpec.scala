@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmSecondaryContactNameView
 
 class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators {
@@ -165,4 +166,16 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
       fieldErrors.get(0).text() mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario(
+        "view",
+        Jsoup.parse(
+          page(form, NormalMode)(rfmRequest, appConfig, messages).toString()
+        )
+      )
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

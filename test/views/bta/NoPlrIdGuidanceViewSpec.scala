@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.bta.NoPlrIdGuidanceView
 
 class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
@@ -56,5 +57,11 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Return to your Business Tax Account"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

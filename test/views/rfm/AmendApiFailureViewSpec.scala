@@ -23,6 +23,7 @@ import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
+import views.behaviours.ViewScenario
 import views.html.rfm.AmendApiFailureView
 
 class AmendApiFailureViewSpec extends ViewSpecBase {
@@ -57,5 +58,12 @@ class AmendApiFailureViewSpec extends ViewSpecBase {
       paragraphs.get(1).text mustBe
         "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

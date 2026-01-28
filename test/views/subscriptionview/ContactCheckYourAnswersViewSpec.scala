@@ -24,6 +24,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
 class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -142,5 +143,11 @@ class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLoca
       view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }
