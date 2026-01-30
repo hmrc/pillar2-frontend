@@ -77,20 +77,22 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         "included in this total. You must still pay the amount due."
     }
 
-    "display interest inset text section" should {
+    "display interest warning text section" should {
       "group has overdue payment" in {
         organisationView
-          .getElementsByClass("govuk-inset-text")
+          .getElementsByClass("govuk-warning-text__text")
           .first()
-          .text() mustBe "Your UK Tax Return payment is overdue and is subject to late payment interest. " +
-          "We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment."
+          .text() must include(
+          "Your UK Tax Return payment is overdue and is subject to late payment interest. " +
+            "We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment."
+        )
       }
 
       "group has no overdue payment" in {
         val orgViewNoOverduePayments: Document =
           Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
 
-        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustBe 0
+        orgViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size() mustBe 0
       }
     }
 
@@ -181,20 +183,22 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
-      "display interest inset text section" should {
+      "display interest warning text section" should {
         "group has overdue payment" in {
           agentView
-            .getElementsByClass("govuk-inset-text")
+            .getElementsByClass("govuk-warning-text__text")
             .first()
-            .text() mustBe "The group has an overdue UK Tax Return payment and is subject to late payment interest. " +
-            "We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment."
+            .text() must include(
+            "The group has an overdue UK Tax Return payment and is subject to late payment interest. " +
+              "We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment."
+          )
         }
 
         "group has no overdue payment" in {
           val agentViewNoOverduePayments: Document =
             Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
 
-          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustBe 0
+          agentViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size mustBe 0
         }
       }
     }
