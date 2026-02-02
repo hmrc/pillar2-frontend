@@ -21,9 +21,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.SubscriptionConnectorSpec.*
 import models.UnprocessableEntityError
 import models.subscription.*
-import models.{InternalIssueError, UnexpectedResponse}
+import models.{InternalIssueError, RetryableGatewayError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
+import play.api.http.Status.*
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
@@ -77,10 +78,30 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe subscriptionDataJson
       }
 
-      "return InternalIssueError when the backend has returned other error status codes" in {
+      "return RetryableGatewayError when the backend has returned 502" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(502).withBody(unsuccessfulResponseJson))
+        )
+
+        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+
+      "return RetryableGatewayError when the backend has returned 500" in {
         server.stubFor(
           get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
             .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR).withBody(unsuccessfulResponseJson))
+        )
+
+        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+
+      "return InternalIssueError when the backend has returned other error status codes" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(SERVICE_UNAVAILABLE).withBody(unsuccessfulResponseJson))
         )
 
         val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
@@ -111,8 +132,20 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe UnprocessableEntityError
       }
 
-      "return None when the backend has returned a response else than 200 or 404 status" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
+      "return RetryableGatewayError when the backend has returned 502" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", 502, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+
+      "return RetryableGatewayError when the backend has returned 500" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", INTERNAL_SERVER_ERROR, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+
+      "return InternalIssueError when the backend has returned other error status codes" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", SERVICE_UNAVAILABLE, unsuccessfulResponseJson)
         val result = connector.readSubscription(plrReference)
         result.failed.futureValue mustBe InternalIssueError
       }

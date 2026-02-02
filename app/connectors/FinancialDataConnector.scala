@@ -62,7 +62,8 @@ class FinancialDataConnector @Inject() (val config: FrontendAppConfig, val http:
           Future.successful(FinancialDataResponse(Seq.empty))
         case e @ _ =>
           logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
-          Future failed UnexpectedResponse
+          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
+          else Future.failed(UnexpectedResponse)
       }
 
 }

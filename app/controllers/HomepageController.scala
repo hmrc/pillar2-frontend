@@ -31,6 +31,7 @@ import models.{DueAndOverdueReturnBannerScenario, *}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.concurrent.Futures
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.*
@@ -42,6 +43,7 @@ import views.html.HomepageView
 
 import java.time.{Clock, LocalDate}
 import javax.inject.{Inject, Named}
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomepageController @Inject() (
@@ -54,7 +56,8 @@ class HomepageController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
-  financialDataService:                   FinancialDataService
+  financialDataService:                   FinancialDataService,
+  futures:                                Futures
 )(using
   ec:        ExecutionContext,
   appConfig: FrontendAppConfig,
@@ -82,19 +85,30 @@ class HomepageController @Inject() (
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers6))
         result          <-
           OptionT.liftF {
-            subscriptionService
-              .maybeReadSubscription(referenceNumber)
-              .flatMap {
-                case Some(_) =>
-                  subscriptionService
-                    .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                    .flatMap(displayHomepage(_, referenceNumber))
-                case None =>
-                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            def attemptHomepageLoad(attempt: Int): Future[Result] = {
+              val homepageFuture = subscriptionService
+                .maybeReadSubscription(referenceNumber)
+                .flatMap {
+                  case Some(_) =>
+                    subscriptionService
+                      .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                      .flatMap(displayHomepage(_, referenceNumber))
+                  case None =>
+                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                }
+                .recover { case UnprocessableEntityError =>
+                  Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+                }
+              homepageFuture.recoverWith {
+                case RetryableGatewayError if attempt + 1 < appConfig.homepageRetryMaxAttempts =>
+                  futures.delayed(appConfig.homepageRetryDelaySeconds.seconds)(attemptHomepageLoad(attempt + 1))
+                case RetryableGatewayError =>
+                  Future.failed(RetryableGatewayError)
+                case other =>
+                  Future.failed(other)
               }
-              .recover { case UnprocessableEntityError =>
-                Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
-              }
+            }
+            attemptHomepageLoad(0)
           }
       } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
