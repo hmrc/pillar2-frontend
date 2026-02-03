@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.DueAndOverdueReturnBannerScenario.*
 import models.financialdata.PaymentState.*
-import models.financialdata.{FinancialData, PaymentState}
+import models.financialdata.{AccountActivityData, FinancialData, PaymentState}
 import models.obligationsandsubmissions.*
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
@@ -130,12 +130,22 @@ class HomepageController @Inject() (
         obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         financialData       <-
           financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+        accountActivityData <-
+          financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
       } yield {
-        val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
-        val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
-        val paymentsStatus         = getPaymentBannerScenario(financialData)
-        val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
-        val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
+        val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+        val returnsStatus                      = getDueOrOverdueReturnsStatus(obligationsResponse)
+        val (paymentsStatus, notificationArea) =
+          if appConfig.useAccountActivityApi then
+            val paymentsStatus   = getPaymentBannerScenarioFromActivity(accountActivityData)
+            val notificationArea = determineNotificationAreaFromActivity(returnsStatus, accountActivityData, accountStatus)
+            (paymentsStatus, notificationArea)
+          else
+            val paymentsStatus   = getPaymentBannerScenario(financialData)
+            val notificationArea = determineNotificationArea(returnsStatus, financialData, accountStatus)
+            (paymentsStatus, notificationArea)
+
+        val btnBanner = determineBtnBanner(accountStatus, notificationArea)
         Ok(
           homepageView(
             subscriptionData.upeDetails.organisationName,
@@ -154,6 +164,12 @@ class HomepageController @Inject() (
   }
 
   val getPaymentBannerScenario: FinancialData => Option[OutstandingPaymentBannerScenario] = {
+    case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
+    case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
+    case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
+  }
+
+  val getPaymentBannerScenarioFromActivity: AccountActivityData => Option[OutstandingPaymentBannerScenario] = {
     case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
     case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
     case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
@@ -214,6 +230,40 @@ class HomepageController @Inject() (
     financialData: FinancialData,
     accountStatus: AccountStatus
   ): DynamicNotificationAreaState = (financialData, uktr, accountStatus) match {
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
+      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Due
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
+      DynamicNotificationAreaState.NoNotification
+
+  }
+
+  def determineNotificationAreaFromActivity(
+    uktr:                Option[DueAndOverdueReturnBannerScenario],
+    accountActivityData: AccountActivityData,
+    accountStatus:       AccountStatus
+  ): DynamicNotificationAreaState = (accountActivityData, uktr, accountStatus) match {
     case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
       DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
 
