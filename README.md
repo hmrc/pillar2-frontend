@@ -77,35 +77,6 @@ To use testonly route locally:
 sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 ```
 
-## Homepage retries (502/500)
-
-The homepage retries on **502 Bad Gateway** and **500 Internal Server Error** when loading Subscription, Obligations and Submissions, and Financial Data. Retry behaviour is configurable in `conf/application.conf`: `homepage.retryMaxAttempts` and `homepage.retryDelaySeconds`.
-
-To test retries locally, use [pillar2-stubs](https://github.com/hmrc/pillar2-stubs). Run the stub first, then the frontend pointing at it.
-
-**Stub** (port 10052):
-
-```shell
-sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'
-```
-
-**Frontend** (port 10050, pointing at stub on 10052):
-
-```shell
-sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes -Dmicroservice.services.pillar2.port=10052 10050'
-```
-
-**Important:** You must include `-Dmicroservice.services.pillar2.port=10052` when running the frontend. Without it the frontend uses port 10051 and financial-data will return 424 (no retries).
-
-When testing with these IDs, sign in via the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in) and ensure your user has the **Pillar 2 enrolment** (`HMRC-PILLAR2-ORG`) with the **PLRID** (Pillar 2 reference) set to the test ID you want (e.g. `XEPLR5020000000` for financial data 502). If the session has no PLR, the homepage redirects to the restart-error page before any API calls or retries.
-
-For a normal run (no test-only router): `sbt 'run -Dmicroservice.services.pillar2.port=10052 10050'`
-
-Test IDs for 502/500 (see [pillar2-stubs README](https://github.com/hmrc/pillar2-stubs) for full details):
-
-- **Subscription 502:** PLR reference `XEPLR0123456502`
-- **Obligations 502:** Header `X-Pillar2-Id: XEPLR0000000502`
-- **Financial data 502:** PLR reference `XEPLR5020000000`
 
 ## Bank Account Reputation (BARS)
 This service calls the BARS service within MDTP to verify business bank accounts as part of the pillar 2 repayments
