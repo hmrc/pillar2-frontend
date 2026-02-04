@@ -790,6 +790,32 @@ class AccountActivityResponseSpec extends SpecBase {
 
       result.head.items.head.description mustBe "Unknown Transaction Type"
     }
+
+    "append accruing interest to ui description when needed" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = Some(BigDecimal(500)),
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(2000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toOutstandingPayments.head.items.head.description mustBe "UKTR - DTT accruing interest"
+    }
   }
 
   "AccountActivityResponse.totalAccruedInterest" should {
