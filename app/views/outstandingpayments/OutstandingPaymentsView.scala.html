@@ -46,7 +46,8 @@
         h1: heading,
         h2: HeadingH2,
         paragraphBody: paragraphBody,
-        paragraphMessageWithLink: ParagraphMessageWithLink
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        details: GovukDetails
 )
 @(data: Seq[OutstandingPaymentsTable], plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean, accruedInterest: BigDecimal = 0, useAccountActivity: Boolean = false)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
@@ -105,6 +106,21 @@
 
     @h2(messages("payments.outstanding.details.heading"), size = "m")
     @paragraphBody(messages("payments.outstanding.details.p1"))
+    @details(Details(
+        summary = messages("payments.outstanding.abbreviation.heading"),
+        content = HtmlContent(Html(
+            s"""
+            |<ul class="govuk-list">
+            |  <li>${messages("payments.outstanding.abbreviation.uktr")}</li>
+            |  <li>${messages("payments.outstanding.abbreviation.dtt")}</li>
+            |  <li>${messages("payments.outstanding.abbreviation.mtt")}</li>
+            |  <li>${messages("payments.outstanding.abbreviation.iir")}</li>
+            |  <li>${messages("payments.outstanding.abbreviation.utpr")}</li>
+            |  <li>${messages("payments.outstanding.abbreviation.orngir")}</li>
+            |</ul>
+            """.stripMargin
+        ))
+    ))
 
     @{
         if(amountDue <= 0 || data.isEmpty) {

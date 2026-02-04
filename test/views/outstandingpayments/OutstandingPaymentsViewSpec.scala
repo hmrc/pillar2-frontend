@@ -29,6 +29,7 @@ import views.html.outstandingpayments.OutstandingPaymentsView
 import views.outstandingpayments.OutstandingPaymentsViewSpec.*
 
 import java.time.LocalDate
+import scala.jdk.CollectionConverters.*
 
 class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
@@ -206,6 +207,34 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       penaltiesLink.text() mustBe "Pillar 2 Top-up Taxes penalties information (opens in a new page)"
       penaltiesLink.attr("href") mustBe appConfig.penaltiesInformationUrl
       penaltiesLink.attr("target") mustBe "_blank"
+    }
+
+    "display a correct html details section" in {
+      organisationView
+        .getElementsByClass("govuk-details")
+        .first()
+        .getElementsByClass("govuk-details__summary-text")
+        .text() mustBe "Outstanding payments abbreviations"
+
+      val items =
+        organisationView
+          .getElementsByClass("govuk-details__text")
+          .first()
+          .getElementsByClass("govuk-list")
+          .first()
+          .getElementsByTag("li")
+          .eachText()
+          .asScala
+          .toList
+
+      items mustBe List(
+        "UKTR - UK Tax Return",
+        "DTT - Domestic Top-up Tax",
+        "MTT - Multinational Top-up Tax",
+        "IIR - Income Inclusion Rule",
+        "UTPR - Undertaxed Profit Rule",
+        "ORN/GIR - Overseas Return Notification or GloBE Information Return"
+      )
     }
 
     "display agent-specific content" should {

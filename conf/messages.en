@@ -1759,6 +1759,14 @@ payments.outstanding.details.heading = Details of outstanding payments
 payments.outstanding.details.p1 = We have separated any payments due by accounting period.
 payments.outstanding.details.nothingDue = No payments due.
 
+payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
+payments.outstanding.abbreviation.uktr = UKTR - UK Tax Return
+payments.outstanding.abbreviation.dtt = DTT - Domestic Top-up Tax
+payments.outstanding.abbreviation.mtt = MTT - Multinational Top-up Tax
+payments.outstanding.abbreviation.iir = IIR - Income Inclusion Rule
+payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
+payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
+
 payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
 payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
 
