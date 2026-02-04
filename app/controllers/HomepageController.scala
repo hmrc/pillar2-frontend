@@ -20,14 +20,17 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario.*
+import models.UnprocessableEntityError
+import models.UserAnswers
 import models.financialdata.PaymentState.*
 import models.financialdata.{AccountActivityData, FinancialData, PaymentState}
 import models.obligationsandsubmissions.*
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{DueAndOverdueReturnBannerScenario, *}
+import models.{BtnBanner, DynamicNotificationAreaState}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -54,7 +57,8 @@ class HomepageController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
-  financialDataService:                   FinancialDataService
+  financialDataService:                   FinancialDataService,
+  homepageBannerService:                  HomepageBannerService
 )(using
   ec:        ExecutionContext,
   appConfig: FrontendAppConfig,
@@ -109,19 +113,22 @@ class HomepageController @Inject() (
       for {
         obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         financialData       <-
-          financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          if appConfig.useAccountActivityApi then Future.successful(FinancialData(Seq.empty))
+          else financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         accountActivityData <-
-          financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          if appConfig.useAccountActivityApi then
+            financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          else Future.successful(AccountActivityData(Seq.empty))
       } yield {
         val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
         val returnsStatus                      = getDueOrOverdueReturnsStatus(obligationsResponse)
         val (paymentsStatus, notificationArea) =
           if appConfig.useAccountActivityApi then
-            val paymentsStatus   = getPaymentBannerScenarioFromActivity(accountActivityData)
+            val paymentsStatus   = FinancialDataService.getPaymentBannerScenarioFromActivity(accountActivityData)
             val notificationArea = determineNotificationAreaFromActivity(returnsStatus, accountActivityData, accountStatus)
             (paymentsStatus, notificationArea)
           else
-            val paymentsStatus   = getPaymentBannerScenario(financialData)
+            val paymentsStatus   = FinancialDataService.getPaymentBannerScenario(financialData)
             val notificationArea = determineNotificationArea(returnsStatus, financialData, accountStatus)
             (paymentsStatus, notificationArea)
 
@@ -141,18 +148,6 @@ class HomepageController @Inject() (
         )
       }
     }
-  }
-
-  val getPaymentBannerScenario: FinancialData => Option[OutstandingPaymentBannerScenario] = {
-    case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
-    case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
-    case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
-  }
-
-  val getPaymentBannerScenarioFromActivity: AccountActivityData => Option[OutstandingPaymentBannerScenario] = {
-    case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
-    case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
-    case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
   }
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
@@ -201,7 +196,7 @@ class HomepageController @Inject() (
 
     obligationsAndSubmissions.accountingPeriodDetails
       .flatMap(periodStatus)
-      .maxOption
+      .maxOption(using DueAndOverdueReturnBannerScenario.ordering)
 
   }
 
