@@ -22,6 +22,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
@@ -83,5 +84,11 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -22,6 +22,7 @@ import forms.MneOrDomesticFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
 class MneOrDomesticViewSpec extends ViewSpecBase {
@@ -148,5 +149,13 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
         view(isAgent = true).getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

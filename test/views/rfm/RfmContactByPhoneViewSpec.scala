@@ -25,6 +25,7 @@ import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmContactByPhoneView
 
 class RfmContactByPhoneViewSpec extends ViewSpecBase {
@@ -94,4 +95,11 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
       fieldErrors.get(0).text() mustBe s"Error: Select yes if we can contact $username by phone"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario("view", view)
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
 }

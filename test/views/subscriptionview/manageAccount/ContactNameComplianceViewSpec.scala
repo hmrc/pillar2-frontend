@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ContactNameComplianceView
 
 class ContactNameComplianceViewSpec extends ViewSpecBase {
@@ -102,5 +103,14 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
       fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentViewNoOrg", view(isAgent = true)),
+        ViewScenario("agentViewSomeOrg", view(isAgent = true, orgName = Some("orgName")))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

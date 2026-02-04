@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.toDateFormat
+import views.behaviours.ViewScenario
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
@@ -296,5 +297,40 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         }
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("noReturnsView", Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())),
+        ViewScenario(
+          "allReturnsView",
+          Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "dueReturnsView",
+          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "overdueReturnsView",
+          Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "mixedReturnsView",
+          Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "multiplePeriodsReturnsView",
+          Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "noReturnsAgentView",
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+        ),
+        ViewScenario(
+          "dueReturnsAgentView",
+          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+        )
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

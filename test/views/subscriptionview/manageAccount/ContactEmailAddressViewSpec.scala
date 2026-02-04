@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ContactEmailAddressView
 
 class ContactEmailAddressViewSpec extends ViewSpecBase {
@@ -123,5 +124,13 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
       fieldError.text mustBe "Error: Email address must be 132 characters or less"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentViewNoOrg", view(isAgent = true)),
+        ViewScenario("agentViewSomeOrg", view(isAgent = true, orgName = Some("orgName")))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

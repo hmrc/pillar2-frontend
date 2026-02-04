@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.LoneElement
 import viewmodels.WaitingRoom
+import views.behaviours.ViewScenario
 import views.html.WaitingRoomView
 
 import scala.jdk.CollectionConverters.*
@@ -84,6 +85,13 @@ class WaitingRoomViewSpec extends ViewSpecBase with LoneElement {
     "display the spinner" in {
       doc.getElementsByClass("hods-loading-spinner__spinner").size() mustBe 1
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("doc", doc)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

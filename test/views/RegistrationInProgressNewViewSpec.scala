@@ -76,5 +76,12 @@ class RegistrationInProgressNewViewSpec extends ViewSpecBase {
       val twoThirdsColumn: Elements = view.getElementsByClass("govuk-grid-column-two-thirds")
       twoThirdsColumn.size() mustBe 1
     }
+//    TODO: Uncomment accessibility behaviours when second H1 is corrected
+//    val viewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("view", view)
+//      )
+//
+//    behaveLikeAccessiblePage(viewScenarios)
   }
 }

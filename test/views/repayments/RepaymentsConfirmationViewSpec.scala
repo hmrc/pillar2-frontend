@@ -21,6 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.toDateTimeGmtFormat
+import views.behaviours.ViewScenario
 import views.html.repayments.RepaymentsConfirmationView
 
 import java.time.ZonedDateTime
@@ -78,5 +79,11 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

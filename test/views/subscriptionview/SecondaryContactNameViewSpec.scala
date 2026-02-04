@@ -23,6 +23,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.subscriptionview.SecondaryContactNameView
 
 class SecondaryContactNameViewSpec extends ViewSpecBase {
@@ -106,5 +107,12 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       fieldError.text mustBe
         "Error: The name you enter must not include the following characters <, >, \" or &"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

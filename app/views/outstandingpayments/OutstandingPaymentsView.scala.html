@@ -42,7 +42,7 @@
         govukBackLink: GovukBackLink,
         govukTable: GovukTable,
         govukButton: GovukButton,
-        govukInsetText: GovukInsetText,
+        govukWarningText: GovukWarningText,
         h1: heading,
         h2: HeadingH2,
         paragraphBody: paragraphBody,
@@ -63,9 +63,9 @@
                 )
             )
             @if(hasOverdueReturnPayment) {
-                @govukInsetText(InsetText(content= Text(userTypeDependentText(
-                        messages("payments.outstanding.insetText"),
-                        messages("payments.outstanding.agent.insetText")
+                @govukWarningText(WarningText(content= Text(userTypeDependentText(
+                        messages("payments.outstanding.warningText"),
+                        messages("payments.outstanding.agent.warningText")
                 ))))
             }
             @govukButton(

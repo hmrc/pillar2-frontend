@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
@@ -59,5 +60,11 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
       link.text mustBe "Report Pillar 2 Top-up Taxes"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

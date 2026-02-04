@@ -29,6 +29,7 @@ import utils.DateTimeUtils.toDateFormat
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.all.SummaryListViewModel
 import viewmodels.govuk.summarylist.withCssClass
+import views.behaviours.ViewScenario
 import views.html.btn.CheckYourAnswersView
 
 import java.time.LocalDate
@@ -187,5 +188,13 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have a caption displaying the organisation name for an agent view" in {
       view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe "orgName"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

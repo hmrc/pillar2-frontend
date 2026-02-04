@@ -22,6 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import viewmodels.govuk.all.SummaryListViewModel
+import views.behaviours.ViewScenario
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -48,5 +49,12 @@ class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with Subscriptio
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

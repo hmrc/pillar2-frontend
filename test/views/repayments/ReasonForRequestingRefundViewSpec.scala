@@ -24,6 +24,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators with StringGenerators {
@@ -142,6 +143,17 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario(
+          "view",
+          Jsoup.parse(
+            page(formProvider(), NormalMode)(request, appConfig, messages).toString()
+          )
+        )
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.MakeAPaymentDashboardView
 
 import scala.jdk.CollectionConverters.*
@@ -71,5 +72,12 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       guidancePageLink.attr("href") mustBe
         "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("makePaymentDashboardView", makePaymentDashboardView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

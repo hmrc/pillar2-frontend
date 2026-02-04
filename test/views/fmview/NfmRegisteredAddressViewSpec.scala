@@ -19,12 +19,12 @@ package views.fmview
 import base.ViewSpecBase
 import forms.NfmRegisteredAddressFormProvider
 import generators.StringGenerators
-import models.NonUKAddress
-import models.NormalMode
+import models.{NonUKAddress, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
+import views.behaviours.ViewScenario
 import views.html.fmview.NfmRegisteredAddressView
 
 class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
@@ -192,5 +192,11 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", Jsoup.parse(page(form, NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

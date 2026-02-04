@@ -24,6 +24,7 @@ import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.RepaymentsContactNameView
 
 class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
@@ -147,5 +148,11 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
       }
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString()))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -29,6 +29,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.{RfmRegistrationDateSummary, RfmSecurityCheckSummary}
 import viewmodels.govuk.summarylist.*
+import views.behaviours.ViewScenario
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
 class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
@@ -103,6 +104,13 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

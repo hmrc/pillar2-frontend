@@ -509,6 +509,14 @@ class HomepageViewSpec extends ViewSpecBase {
       paidTag.attr("aria-label") mustBe "Paid payments"
       paidTag.attr("title") mustBe "Paid payments"
     }
+
+//    TODO: Uncomment accessibility behaviours once H1 and title are updated with correct naming convention
+//    val organisationViewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("organisationView", organisationView)
+//      )
+//
+//    behaveLikeAccessiblePage(organisationViewScenarios)
   }
 
   "HomepageView for an agent" should {
@@ -672,6 +680,14 @@ class HomepageViewSpec extends ViewSpecBase {
       agentViewParagraph.get(2).getElementsByTag("a").attr("href") mustBe
         controllers.routes.AgentController.onPageLoadClientPillarId.url
     }
+
+//    TODO: Uncomment accessibility behaviours once H1 and title are updated with correct naming convention
+//    val agentViewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("agentView", agentView)
+//      )
+//
+//    behaveLikeAccessiblePage(agentViewScenarios)
   }
 
   "HomepageView layout" should {

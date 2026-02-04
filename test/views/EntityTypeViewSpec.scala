@@ -22,6 +22,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.EntityTypeView
 
 class EntityTypeViewSpec extends ViewSpecBase {
@@ -62,21 +63,19 @@ class EntityTypeViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
-  }
-
-  "when form is submitted with a missing value" should {
-    val errorView: Document = Jsoup.parse(
-      page(
-        formProvider().bind(
-          Map(
-            "value" -> ""
-          )
-        ),
-        NormalMode
-      )(request, appConfig, messages).toString()
-    )
 
     "show missing values error summary" in {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map(
+              "value" -> ""
+            )
+          ),
+          NormalMode
+        )(request, appConfig, messages).toString()
+      )
+
       val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
@@ -89,9 +88,27 @@ class EntityTypeViewSpec extends ViewSpecBase {
     }
 
     "show field-specific errors" in {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map(
+              "value" -> ""
+            )
+          ),
+          NormalMode
+        )(request, appConfig, messages).toString()
+      )
+
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe "Error: Select the entity type of the ultimate parent"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

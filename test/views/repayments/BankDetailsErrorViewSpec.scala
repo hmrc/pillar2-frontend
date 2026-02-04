@@ -21,6 +21,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.repayments.BankDetailsErrorView
 
 class BankDetailsErrorViewSpec extends ViewSpecBase {
@@ -52,5 +53,11 @@ class BankDetailsErrorViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

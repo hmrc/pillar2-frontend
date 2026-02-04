@@ -735,9 +735,7 @@ class SubscriptionServiceSpec extends SpecBase {
         verify(mockUserAnswersConnectors).save(eqTo(userAnswers.id), eqTo(userAnswers.data))(using any())
       }
       "throw an exception if new fm corporate position is chosen but no RfmUkBasedPage value can be found" in {
-
         val userAnswers = emptyUserAnswers
-          .setOrException(RfmUkBasedPage, false)
           .setOrException(RfmNameRegistrationPage, "Company")
           .setOrException(RfmSafeIdPage, "someSafeId")
         val application = applicationBuilder(Some(userAnswers))
@@ -748,14 +746,14 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
-        val result = service.createAmendObjectForReplacingFilingMember(
-          subscriptionData,
-          replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
-          userAnswers
-        )
-        result.map { e =>
-          e mustEqual a[Exception]
+        val exception = intercept[Exception] {
+          service.createAmendObjectForReplacingFilingMember(
+            subscriptionData,
+            replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
+            userAnswers
+          )
         }
+        exception.getMessage must include("RfmUkBased")
       }
 
       "throw failure if registering non-uk based filing member fails" in {

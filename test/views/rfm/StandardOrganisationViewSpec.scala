@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.rfm.StandardOrganisationView
 
 class StandardOrganisationViewSpec extends ViewSpecBase {
@@ -53,6 +54,13 @@ class StandardOrganisationViewSpec extends ViewSpecBase {
     "have a link" in {
       view.getElementsByClass("govuk-link").get(1).text mustBe "Find out more about who can use this service"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

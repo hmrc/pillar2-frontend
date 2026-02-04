@@ -26,6 +26,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.toDateFormat
+import views.behaviours.ViewScenario
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -131,5 +132,13 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         link.attr("rel") mustNot be("noopener noreferrer")
       }
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view()),
+        ViewScenario("agentView", view(isAgent = true))
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.AgentIndividualErrorView
 
 class AgentIndividualErrorViewSpec extends ViewSpecBase {
@@ -69,5 +70,11 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
       link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
 
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

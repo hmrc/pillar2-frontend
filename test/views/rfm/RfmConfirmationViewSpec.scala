@@ -21,6 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.toDateTimeGmtFormat
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmConfirmationView
 
 import java.time.ZonedDateTime
@@ -86,5 +87,12 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
       val printPageElement: Element = view.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

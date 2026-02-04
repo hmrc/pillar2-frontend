@@ -26,6 +26,7 @@ import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.{RfmNameRegistrationSummary, RfmRegisteredAddressSummary}
 import viewmodels.govuk.summarylist.*
+import views.behaviours.ViewScenario
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
@@ -88,5 +89,12 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

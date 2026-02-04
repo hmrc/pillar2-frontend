@@ -21,6 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
@@ -90,5 +91,13 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
     "have paragraph 3" in {
       agentViewParagraphs.get(2).text mustBe "No transactions made."
     }
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("groupView", groupView),
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }

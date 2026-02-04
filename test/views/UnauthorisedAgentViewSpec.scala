@@ -69,7 +69,13 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
       link.text mustBe "Find out more about who can use this service"
       link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
-
+//    TODO: Uncomment accessibility behaviours once invalid <a> tags addressed
+//    val viewScenarios: Seq[ViewScenario] =
+//      Seq(
+//        ViewScenario("view", view)
+//      )
+//
+//    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }
