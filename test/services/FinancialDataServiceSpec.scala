@@ -18,7 +18,9 @@ package services
 
 import base.SpecBase
 import cats.syntax.option.*
+import config.FrontendAppConfig
 import connectors.FinancialDataConnector
+import models.OutstandingPaymentBannerScenario
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
@@ -33,7 +35,7 @@ import play.api.Application
 import play.api.inject.bind
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import scala.concurrent.Future
 
 class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaCheckPropertyChecks with ScalaFutures {
@@ -229,6 +231,42 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
           }
         }
       }
+    }
+  }
+
+  "FinancialDataService.getPaymentBannerScenario" should {
+    given Clock             = Clock.systemUTC()
+    given FrontendAppConfig = applicationConfig
+
+    val ap = AccountingPeriod(LocalDate.now().minusYears(1), LocalDate.now().minusDays(1))
+
+    def outstandingCharge(outstanding: BigDecimal, dueDate: LocalDate): UktrMainOutstandingCharge =
+      UktrMainOutstandingCharge(
+        accountingPeriod = ap,
+        subTransactionRef = EtmpSubtransactionRef.Dtt,
+        outstandingAmount = outstanding,
+        chargeItems = OutstandingCharge.FinancialItems(earliestDueDate = dueDate, items = Seq(FinancialItem(None, None)))
+      )
+
+    def interestCharge(outstanding: BigDecimal, dueDate: LocalDate): LatePaymentInterestOutstandingCharge =
+      LatePaymentInterestOutstandingCharge(
+        accountingPeriod = ap,
+        subTransactionRef = EtmpSubtransactionRef.Dtt,
+        outstandingAmount = outstanding,
+        chargeItems = OutstandingCharge.FinancialItems(earliestDueDate = dueDate, items = Seq(FinancialItem(None, None)))
+      )
+
+    "return Outstanding when there is money due (past due, accruing interest, or not yet due)" in {
+      FinancialDataService.getPaymentBannerScenario(FinancialData(Seq(outstandingCharge(100, LocalDate.now().plusDays(5))))) mustBe
+        Some(OutstandingPaymentBannerScenario.Outstanding)
+
+      FinancialDataService.getPaymentBannerScenario(FinancialData(Seq(outstandingCharge(100, LocalDate.now().minusDays(5))))) mustBe
+        Some(OutstandingPaymentBannerScenario.Outstanding)
+
+      FinancialDataService.getPaymentBannerScenario(
+        FinancialData(Seq(outstandingCharge(100, LocalDate.now().minusDays(5)), interestCharge(5, LocalDate.now().minusDays(5))))
+      ) mustBe
+        Some(OutstandingPaymentBannerScenario.Outstanding)
     }
   }
 }

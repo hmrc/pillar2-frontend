@@ -17,7 +17,10 @@
 package services
 
 import connectors.ObligationsAndSubmissionsConnector
+import models.DueAndOverdueReturnBannerScenario
+import models.DueAndOverdueReturnBannerScenario.*
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -30,4 +33,57 @@ class ObligationsAndSubmissionsService @Inject() (
 
   def handleData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccess] =
     obligationAndSubmissionsConnector.getData(pillar2Id, fromDate, toDate).flatMap(Future.successful)
+}
+
+object ObligationsAndSubmissionsService {
+
+  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
+
+    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
+      if period.obligations.isEmpty then {
+        None
+      } else {
+        val uktrObligation:       Option[Obligation] = period.uktrObligation
+        val girObligation:        Option[Obligation] = period.girObligation
+        val dueDatePassed:        Boolean            = period.dueDatePassed
+        val hasAnyOpenObligation: Boolean            = period.hasAnyOpenObligation
+        val isInReceivedPeriod:   Boolean            = period.isInReceivedPeriod
+
+        (uktrObligation, girObligation) match {
+          case (Some(uktr), Some(gir)) =>
+            (uktr.status, gir.status, dueDatePassed, isInReceivedPeriod) match {
+              case (ObligationStatus.Open, ObligationStatus.Open, false, _)          => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false, _)     => Some(Due)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false, _)     => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Open, true, _)           => Some(Overdue)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
+              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
+              case _                                                                 => None
+            }
+          case (Some(uktr), None) =>
+            (uktr.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case (None, Some(gir)) =>
+            (gir.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
+          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
+          case _                                           => None
+        }
+      }
+
+    obligationsAndSubmissions.accountingPeriodDetails
+      .flatMap(periodStatus)
+      .maxOption
+
+  }
 }

@@ -20,28 +20,21 @@ import cats.syntax.functor.*
 import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
-import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, SubmissionType}
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import models.{MneOrDomestic, Mode}
-import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
+import pages.{EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
 import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.BTNAccountingPeriodService
 import services.audit.AuditService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.*
-import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.given
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
-import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.language.implicitConversions
 
 class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -53,6 +46,7 @@ class BTNAccountingPeriodController @Inject() (
   viewReturnSubmitted:                    BTNReturnSubmittedView,
   btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   sessionRepository:                      SessionRepository,
+  btnAccountingPeriodService:             BTNAccountingPeriodService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   auditService:                           AuditService
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
@@ -60,69 +54,42 @@ class BTNAccountingPeriodController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(using messages: Messages): SummaryList =
-    SummaryListViewModel(
-      rows = Seq(
-        SummaryListRowViewModel(
-          key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(startDate.toDateFormat)
-        ),
-        SummaryListRowViewModel(
-          key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(endDate.toDateFormat)
-        )
-      )
-    )
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { request =>
         given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
-            val accountingPeriodDetails: Future[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage) match {
-              case Some(details) =>
-                Future.successful(details)
-              case None =>
-                filteredAccountingPeriodDetails match {
-                  case singleAccountingPeriod :: Nil =>
-                    Future.successful(singleAccountingPeriod)
-                  case e =>
-                    throw new RuntimeException(s"Expected one single accounting period but received: $e")
-                }
-            }
-
-            accountingPeriodDetails
+            Future
+              .successful(btnAccountingPeriodService.selectAccountingPeriod(userAnswers, filteredAccountingPeriodDetails))
               .flatMap { period =>
-                if lastSubmissionType(period, Set(BTN)) then {
-                  auditService
-                    .auditBtnAlreadySubmitted(
-                      request.subscriptionLocalData.plrReference,
-                      request.subscriptionLocalData.subAccountingPeriod,
-                      entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
-                    )
-                    .as(Ok(btnAlreadyInPlaceView()))
-                } else if lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND)) then {
-                  Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
-                } else {
-                  val currentYear = filteredAccountingPeriodDetails match {
-                    case head :: _ if head == period => true
-                    case _                           => false
-                  }
-
-                  Future.successful(
-                    Ok(
-                      accountingPeriodView(
-                        getSummaryList(period.startDate, period.endDate),
-                        mode,
-                        request.isAgent,
-                        request.subscriptionLocalData.organisationName,
-                        filteredAccountingPeriodDetails.size > 1,
-                        currentYear
+                btnAccountingPeriodService
+                  .outcome(userAnswers, period, filteredAccountingPeriodDetails, btnTypes = Set(BTN), uktrTypes = Set(UKTR_CREATE, UKTR_AMEND))
+                  .match {
+                    case BTNAccountingPeriodService.Outcome.BtnAlreadySubmitted =>
+                      auditService
+                        .auditBtnAlreadySubmitted(
+                          request.subscriptionLocalData.plrReference,
+                          request.subscriptionLocalData.subAccountingPeriod,
+                          entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
+                        )
+                        .as(Ok(btnAlreadyInPlaceView()))
+                    case BTNAccountingPeriodService.Outcome.UktrReturnAlreadySubmitted =>
+                      Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
+                    case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, hasMultipleAccountingPeriods, currentAP) =>
+                      Future.successful(
+                        Ok(
+                          accountingPeriodView(
+                            summaryList,
+                            mode,
+                            request.isAgent,
+                            request.subscriptionLocalData.organisationName,
+                            hasMultipleAccountingPeriods,
+                            currentAP
+                          )
+                        )
                       )
-                    )
-                  )
-                }
+                  }
               }
               .recover { case _ =>
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
@@ -145,10 +112,4 @@ class BTNAccountingPeriodController @Inject() (
       }
       .getOrElse(Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
   }
-
-  private def lastSubmissionType(period: AccountingPeriodDetails, submissionTypes: Set[SubmissionType]): Boolean =
-    period.obligations
-      .find(_.obligationType == UKTR)
-      .flatMap(_.submissions.sortBy(_.receivedDate).lastOption)
-      .exists(submission => submissionTypes.contains(submission.submissionType))
 }
