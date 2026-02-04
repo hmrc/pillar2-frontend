@@ -21,7 +21,9 @@ import cats.syntax.apply.*
 import cats.syntax.functorFilter.*
 import cats.syntax.option.*
 import cats.syntax.validated.*
+import config.FrontendAppConfig
 import connectors.{AccountActivityConnector, FinancialDataConnector}
+import models.OutstandingPaymentBannerScenario
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
@@ -54,6 +56,30 @@ class FinancialDataService @Inject() (financialDataConnector: FinancialDataConne
 }
 
 object FinancialDataService extends Logging {
+  import models.financialdata.PaymentState.*
+
+  def getPaymentBannerScenario(financialData: FinancialData)(using
+    clock:     Clock,
+    appConfig: FrontendAppConfig
+  ): Option[OutstandingPaymentBannerScenario] =
+    financialData match {
+      case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) =>
+        Some(OutstandingPaymentBannerScenario.Outstanding)
+      case PaymentState(Paid)                          => Some(OutstandingPaymentBannerScenario.Paid)
+      case PaymentState(NothingDueNothingRecentlyPaid) => None
+    }
+
+  def getPaymentBannerScenarioFromActivity(accountActivityData: AccountActivityData)(using
+    clock:     Clock,
+    appConfig: FrontendAppConfig
+  ): Option[OutstandingPaymentBannerScenario] =
+    accountActivityData match {
+      case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) =>
+        Some(OutstandingPaymentBannerScenario.Outstanding)
+      case PaymentState(Paid)                          => Some(OutstandingPaymentBannerScenario.Paid)
+      case PaymentState(NothingDueNothingRecentlyPaid) => None
+    }
+
   def parseAccountActivityResponse(response: AccountActivityResponse): AccountActivityData = AccountActivityData {
     response.transactionDetails.filter { tx =>
       tx.transactionType match {
