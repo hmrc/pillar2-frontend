@@ -99,6 +99,14 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           .getElementsByClass("govuk-warning-text__text")
           .first()
           .text() must include("Late payment interest accrued: £")
+        accountActivityOrganisationView
+          .getElementsByClass("govuk-body")
+          .get(5)
+          .text() mustBe "Late payment interest increases daily. The amount shows the interest accrued up until today."
+        accountActivityOrganisationView
+          .getElementsByClass("govuk-body")
+          .get(6)
+          .text mustBe "It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment."
       }
 
       "group has no overdue payment" in {
