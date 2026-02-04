@@ -24,8 +24,8 @@ import models.subscription.*
 import models.{InternalIssueError, RetryableGatewayError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
-import play.api.http.Status.*
 import play.api.Application
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpException
