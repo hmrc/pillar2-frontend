@@ -133,9 +133,12 @@ class HomepageController @Inject() (
       for {
         obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         financialData       <-
-          financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          if appConfig.useAccountActivityApi then Future.successful(FinancialData(Seq.empty))
+          else financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         accountActivityData <-
-          financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          if appConfig.useAccountActivityApi then
+            financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+          else Future.successful(AccountActivityData(Seq.empty))
       } yield {
         val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
         val returnsStatus                      = getDueOrOverdueReturnsStatus(obligationsResponse)
