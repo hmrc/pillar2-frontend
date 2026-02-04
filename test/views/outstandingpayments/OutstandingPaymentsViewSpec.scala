@@ -37,6 +37,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
   lazy val organisationView: Document =
     Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = false).toString())
 
+  lazy val accountActivityOrganisationView: Document =
+    Jsoup.parse(
+      page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true, useAccountActivity = true)(request, appConfig, messages, isAgent = false)
+        .toString()
+    )
+
   lazy val agentView: Document =
     Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = true).toString())
 
@@ -88,11 +94,34 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         )
       }
 
+      "group has overdue payment while account activity is enabled" in {
+        accountActivityOrganisationView
+          .getElementsByClass("govuk-warning-text__text")
+          .first()
+          .text() must include("Late payment interest accrued: £")
+      }
+
       "group has no overdue payment" in {
         val orgViewNoOverduePayments: Document =
-          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
+          Jsoup.parse(
+            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString()
+          )
 
         orgViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size() mustBe 0
+      }
+
+      "group has no overdue payment while account activity is enabled" in {
+        val accountActivityOrgViewNoOverduePayments: Document =
+          Jsoup.parse(
+            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false, useAccountActivity = true)(
+              request,
+              appConfig,
+              messages,
+              isAgent = false
+            ).toString()
+          )
+
+        accountActivityOrgViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size() mustBe 0
       }
     }
 
@@ -196,7 +225,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
         "group has no overdue payment" in {
           val agentViewNoOverduePayments: Document =
-            Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
+            Jsoup.parse(
+              page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString()
+            )
 
           agentViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size mustBe 0
         }
@@ -208,7 +239,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         ViewScenario("organisationView", organisationView),
         ViewScenario(
           "noOverdueReturnPaymentView",
-          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
+          Jsoup.parse(
+            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString()
+          )
         ),
         ViewScenario(
           "noPaymentsDataView",
@@ -220,7 +253,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         ViewScenario("agentView", agentView),
         ViewScenario(
           "noOverdueReturnPaymentAgentView",
-          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
+          Jsoup.parse(
+            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString()
+          )
         )
       )
 

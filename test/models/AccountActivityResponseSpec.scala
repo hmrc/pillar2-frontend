@@ -31,15 +31,14 @@ class AccountActivityResponseSpec extends SpecBase {
       |      "transactionType": "Payment",
       |      "transactionDesc": "On Account Pillar 2 (Payment on Account)",
       |      "transactionDate": "2025-10-15",
-      |      "originalAmount": 10000,
-      |      "outstandingAmount": 1000,
-      |      "clearedAmount": 9000,
+      |      "originalAmount": 1000,
+      |      "clearedAmount": 1000,
       |      "clearingDetails": [
       |        {
       |          "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
       |          "chargeRefNo": "X123456789012",
       |          "dueDate": "2025-12-31",
-      |          "amount": 2000,
+      |          "amount": 1000,
       |          "clearingDate": "2025-10-15",
       |          "clearingReason": "Allocated to Charge"
       |        }
@@ -63,6 +62,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |      "transactionDate": "2025-02-15",
       |      "dueDate": "2025-12-31",
       |      "originalAmount": 2000,
+      |      "outstandingAmount": 1000,
       |      "standOverAmount": 500,
       |      "appealFlag": true
       |    }
@@ -81,9 +81,9 @@ class AccountActivityResponseSpec extends SpecBase {
         chargeRefNo = None,
         transactionDate = LocalDate.of(2025, 10, 15),
         dueDate = None,
-        originalAmount = BigDecimal(10000),
-        outstandingAmount = Some(BigDecimal(1000)),
-        clearedAmount = Some(BigDecimal(9000)),
+        originalAmount = BigDecimal(1000),
+        outstandingAmount = None,
+        clearedAmount = Some(BigDecimal(1000)),
         standOverAmount = None,
         appealFlag = None,
         clearingDetails = Some(
@@ -92,7 +92,7 @@ class AccountActivityResponseSpec extends SpecBase {
               transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
               chargeRefNo = Some("X123456789012"),
               dueDate = Some(LocalDate.of(2025, 12, 31)),
-              amount = BigDecimal(2000),
+              amount = BigDecimal(1000),
               clearingDate = LocalDate.of(2025, 10, 15),
               clearingReason = Some("Allocated to Charge")
             )
@@ -125,7 +125,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDate = LocalDate.of(2025, 2, 15),
         dueDate = Some(LocalDate.of(2025, 12, 31)),
         originalAmount = BigDecimal(2000),
-        outstandingAmount = None,
+        outstandingAmount = Some(BigDecimal(1000)),
         clearedAmount = None,
         standOverAmount = Some(BigDecimal(500)),
         appealFlag = Some(true),
@@ -789,6 +789,13 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toOutstandingPayments
 
       result.head.items.head.description mustBe "Unknown Transaction Type"
+    }
+  }
+
+  "AccountActivityResponse.totalAccruedInterest" should {
+    "calculate total accrued Interest accurately for relevant transactions" in {
+      val accruedInterest = expectedResponse.totalAccruedInterest
+      accruedInterest mustEqual 35
     }
   }
 }

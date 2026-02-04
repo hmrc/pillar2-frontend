@@ -1740,8 +1740,12 @@ payments.outstanding.amountDue = Amount due: £{0}
 payments.outstanding.p1 = The amount includes all tax liabilities and penalty charges currently due. This may include more than one accounting period.
 payments.outstanding.p2 = Any payments made before today have reduced the amount due and are not included in this total. You must still pay the amount due.
 payments.outstanding.agent.p2 = Any payments made before today have reduced the amount due and are not included in this total. The group must still pay the amount due.
+
 payments.outstanding.warningText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
 payments.outstanding.agent.warningText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
+payments.outstanding.accruedInterest.warningText = Late payment interest accrued: £{0}
+payments.outstanding.accruedInterest.description.p1 = Late payment interest increases daily. The amount shows the interest accrued up until today.
+payments.outstanding.accruedInterest.description.p2 = It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment.
 
 payments.outstanding.pay.buttonText = Pay online
 payments.outstanding.otherWaysToPay.heading = Other ways to pay
