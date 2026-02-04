@@ -16,37 +16,25 @@
 
 package controllers.registration
 
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.*
-import models.fm.JourneyType
 import models.grs.*
-import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
-import models.grs.VerificationStatus.Fail
-import models.registration.{GrsResponse, RegistrationInfo}
-import models.requests.DataRequest
 import pages.*
 import play.api.Logging
-import play.api.libs.json.Json
 import play.api.mvc.*
-import services.audit.AuditService
-import uk.gov.hmrc.http.HeaderCarrier
+import services.GrsReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnController @Inject() (
-  val userAnswersConnectors:                         UserAnswersConnectors,
-  identify:                                          IdentifierAction,
-  @Named("RfmIdentifier") rfmIdentify:               IdentifierAction,
-  getData:                                           DataRetrievalAction,
-  requireData:                                       DataRequiredAction,
-  val controllerComponents:                          MessagesControllerComponents,
-  incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
-  partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
-  auditService:                                      AuditService
+  identify:                            IdentifierAction,
+  @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
+  getData:                             DataRetrievalAction,
+  requireData:                         DataRequiredAction,
+  val controllerComponents:            MessagesControllerComponents,
+  grsReturnService:                    GrsReturnService
 )(using ec: ExecutionContext)
     extends FrontendBaseController
     with Logging {
@@ -56,98 +44,14 @@ class GrsReturnController @Inject() (
     request.userAnswers
       .get(UpeEntityTypePage)
       .map {
-        case EntityType.UkLimitedCompany            => upeLimited(request, journeyId)
-        case EntityType.LimitedLiabilityPartnership => upePartnership(request, journeyId)
+        case EntityType.UkLimitedCompany =>
+          grsReturnService.continueUpe(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
+        case EntityType.LimitedLiabilityPartnership =>
+          grsReturnService.continueUpe(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
   }
-
-  private def upeLimited(request: DataRequest[AnyContent], journeyId: String)(using hc: HeaderCarrier): Future[Result] =
-    incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
-      auditService.auditGrsReturnForLimitedCompany(data)
-      if data.registration.registrationStatus == Registered then {
-        data.registration.registeredBusinessPartnerId
-          .map { safeId =>
-            val registeredInfo = RegistrationInfo(
-              crn = data.companyProfile.companyNumber,
-              utr = data.ctutr,
-              safeId = safeId,
-              registrationDate = None,
-              filingMember = None
-            )
-            for {
-              userAnswers <- Future.fromTry(request.userAnswers.set(UpeGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
-              userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
-              userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
-              -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-
-            } yield handleGrsAndBvResult(
-              data.identifiersMatch,
-              data.businessVerification,
-              data.registration,
-              JourneyType.UltimateParent,
-              journeyId,
-              EntityType.UkLimitedCompany
-            )
-          }
-          .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      } else {
-        Future.successful(
-          handleGrsAndBvResult(
-            data.identifiersMatch,
-            data.businessVerification,
-            data.registration,
-            JourneyType.UltimateParent,
-            journeyId,
-            EntityType.UkLimitedCompany
-          )
-        )
-      }
-    }
-
-  private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(using hc: HeaderCarrier): Future[Result] =
-    partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
-      auditService.auditGrsReturnForLLP(data)
-      if data.registration.registrationStatus == Registered then
-        {
-          for {
-            safeId         <- data.registration.registeredBusinessPartnerId
-            companyProfile <- data.companyProfile
-            companyNumber = companyProfile.companyNumber
-            utr <- data.sautr
-          } yield {
-            val registeredInfo = RegistrationInfo(crn = companyNumber, utr, safeId, registrationDate = None, filingMember = None)
-            for {
-              userAnswers <- Future.fromTry(
-                               request.userAnswers.set(UpeGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data)))
-                             )
-              userAnswers2 <- Future.fromTry(userAnswers.set(GrsUpeStatusPage, RowStatus.Completed))
-              userAnswers3 <- Future.fromTry(userAnswers2.set(UpeRegInformationPage, registeredInfo))
-              -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-            } yield handleGrsAndBvResult(
-              data.identifiersMatch,
-              data.businessVerification,
-              data.registration,
-              JourneyType.UltimateParent,
-              journeyId,
-              EntityType.LimitedLiabilityPartnership
-            )
-          }
-        }.getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      else {
-        Future.successful(
-          handleGrsAndBvResult(
-            data.identifiersMatch,
-            data.businessVerification,
-            data.registration,
-            JourneyType.UltimateParent,
-            journeyId,
-            EntityType.LimitedLiabilityPartnership
-          )
-        )
-      }
-    }
 
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
@@ -155,77 +59,9 @@ class GrsReturnController @Inject() (
       .get(FmEntityTypePage)
       .map {
         case EntityType.UkLimitedCompany =>
-          incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
-            auditService.auditGrsReturnNfmForLimitedCompany(data)
-            if data.registration.registrationStatus == Registered then {
-              data.registration.registeredBusinessPartnerId
-                .map { safeId =>
-                  for {
-                    userAnswers <-
-                      Future.fromTry(request.userAnswers.set(FmGRSResponsePage, GrsResponse(incorporatedEntityRegistrationData = Some(data))))
-                    userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, RowStatus.Completed))
-                    userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
-                    -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-
-                  } yield handleGrsAndBvResult(
-                    data.identifiersMatch,
-                    data.businessVerification,
-                    data.registration,
-                    JourneyType.FilingMember,
-                    journeyId,
-                    EntityType.UkLimitedCompany
-                  )
-                }
-                .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-            } else {
-              Future.successful(
-                handleGrsAndBvResult(
-                  data.identifiersMatch,
-                  data.businessVerification,
-                  data.registration,
-                  JourneyType.FilingMember,
-                  journeyId,
-                  EntityType.UkLimitedCompany
-                )
-              )
-            }
-          }
+          grsReturnService.continueFm(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
         case EntityType.LimitedLiabilityPartnership =>
-          partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
-            auditService.auditGrsReturnNfmForLLP(data)
-            if data.registration.registrationStatus == Registered then {
-              data.registration.registeredBusinessPartnerId
-                .map { safeId =>
-                  for {
-                    userAnswers <-
-                      Future.fromTry(request.userAnswers.set(FmGRSResponsePage, GrsResponse(partnershipEntityRegistrationData = Some(data))))
-                    userAnswers2 <- Future.fromTry(userAnswers.set(GrsFilingMemberStatusPage, RowStatus.Completed))
-                    userAnswers3 <- Future.fromTry(userAnswers2.set(FmSafeIDPage, safeId))
-                    -            <- userAnswersConnectors.save(userAnswers3.id, Json.toJson(userAnswers3.data))
-
-                  } yield handleGrsAndBvResult(
-                    data.identifiersMatch,
-                    data.businessVerification,
-                    data.registration,
-                    JourneyType.FilingMember,
-                    journeyId,
-                    EntityType.LimitedLiabilityPartnership
-                  )
-                }
-                .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-            } else {
-              Future.successful(
-                handleGrsAndBvResult(
-                  data.identifiersMatch,
-                  data.businessVerification,
-                  data.registration,
-                  JourneyType.FilingMember,
-                  journeyId,
-                  EntityType.LimitedLiabilityPartnership
-                )
-              )
-            }
-          }
+          grsReturnService.continueFm(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
@@ -238,150 +74,11 @@ class GrsReturnController @Inject() (
         .get(RfmEntityTypePage)
         .map {
           case EntityType.UkLimitedCompany =>
-            incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
-              if data.registration.registrationStatus == Registered then {
-                data.registration.registeredBusinessPartnerId
-                  .map { safeId =>
-                    val grsData = GrsRegistrationData(
-                      companyId = safeId,
-                      companyName = data.companyProfile.companyName,
-                      utr = data.ctutr,
-                      crn = data.companyProfile.companyNumber
-                    )
-                    for {
-                      userAnswers <-
-                        Future.fromTry(request.userAnswers.set(RfmGRSUkLimitedPage, data))
-                      userAnswers1 <- Future.fromTry(userAnswers.set(RfmGrsDataPage, grsData))
-                      -            <- userAnswersConnectors.save(userAnswers1.id, Json.toJson(userAnswers1.data))
-
-                    } yield handleGrsAndBvResult(
-                      data.identifiersMatch,
-                      data.businessVerification,
-                      data.registration,
-                      JourneyType.ReplaceFilingMember,
-                      journeyId,
-                      EntityType.UkLimitedCompany
-                    )
-                  }
-                  .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-              } else {
-                Future.successful(
-                  handleGrsAndBvResult(
-                    data.identifiersMatch,
-                    data.businessVerification,
-                    data.registration,
-                    JourneyType.ReplaceFilingMember,
-                    journeyId,
-                    EntityType.UkLimitedCompany
-                  )
-                )
-              }
-            }
+            grsReturnService.continueRfm(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
           case EntityType.LimitedLiabilityPartnership =>
-            partnershipIdentificationFrontendConnector
-              .getJourneyData(journeyId)
-              .flatMap { data =>
-                auditService.auditGrsReturnNfmForLLP(data)
-                if data.registration.registrationStatus == Registered then {
-                  val companyProfile =
-                    data.companyProfile.getOrElse(throw new Exception("no profile found for limited liability partnership company"))
-                  val sautr = data.sautr.getOrElse(throw new Exception("no UTR found for limited liability partnership company"))
-                  data.registration.registeredBusinessPartnerId
-                    .map { safeId =>
-                      val grsData = GrsRegistrationData(
-                        companyId = safeId,
-                        companyName = companyProfile.companyName,
-                        utr = sautr,
-                        crn = companyProfile.companyNumber
-                      )
-                      for {
-                        userAnswers <-
-                          Future.fromTry(request.userAnswers.set(RfmGRSUkPartnershipPage, data))
-                        userAnswers1 <- Future.fromTry(userAnswers.set(RfmGrsDataPage, grsData))
-                        -            <- userAnswersConnectors.save(userAnswers1.id, Json.toJson(userAnswers1.data))
-
-                      } yield handleGrsAndBvResult(
-                        data.identifiersMatch,
-                        data.businessVerification,
-                        data.registration,
-                        JourneyType.ReplaceFilingMember,
-                        journeyId,
-                        EntityType.LimitedLiabilityPartnership
-                      )
-                    }
-                    .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-                } else {
-                  Future.successful(
-                    handleGrsAndBvResult(
-                      data.identifiersMatch,
-                      data.businessVerification,
-                      data.registration,
-                      JourneyType.ReplaceFilingMember,
-                      journeyId,
-                      EntityType.LimitedLiabilityPartnership
-                    )
-                  )
-                }
-              }
-              .recover { case e: Exception =>
-                logger.error(s"exception thrown due to due absence of UTR or companyProfile with message ${e.getMessage}")
-                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-              }
+            grsReturnService.continueRfm(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-    }
-
-  private def handleGrsAndBvResult(
-    identifiersMatch: Boolean,
-    bvResult:         Option[BusinessVerificationResult],
-    grsResult:        GrsRegistrationResult,
-    journeyType:      JourneyType,
-    journeyId:        String,
-    entityType:       EntityType
-  ): Result =
-    (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
-      case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
-        logger.info(
-          s"Filing Member Business Verification failed for $entityType with journey ID $journeyId"
-        )
-        Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadNfm)
-      case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.UltimateParent =>
-        logger.info(
-          s"Ultimate Parent Business Verification failed for $entityType with journey ID $journeyId"
-        )
-        Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadUpe)
-      case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.ReplaceFilingMember =>
-        logger.info(
-          s"Replace Filing Member Business Verification failed for $entityType with journey ID $journeyId"
-        )
-        Redirect(controllers.routes.GrsRegistrationNotCalledController.onPageLoadRfm)
-      case (true, _, _, Some(_)) if journeyType == JourneyType.ReplaceFilingMember =>
-        logger.info(
-          s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
-        )
-        Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad())
-
-      case (true, _, _, Some(_)) =>
-        logger.info(
-          s"Registration successful for $entityType with journey ID $journeyId --redirecting to task list"
-        )
-        Redirect(controllers.routes.TaskListController.onPageLoad)
-      case (_, _, RegistrationFailed, _) =>
-        logger.info(
-          s"$journeyType registration failed for $entityType with journey ID $journeyId"
-        )
-        (grsResult.failures, journeyType) match {
-          case (_, JourneyType.FilingMember) =>
-            Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadNfm)
-          case (_, JourneyType.UltimateParent) =>
-            Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadUpe)
-          case (_, JourneyType.ReplaceFilingMember) =>
-            Redirect(controllers.routes.GrsRegistrationFailedController.onPageLoadRfm)
-        }
-      case _ =>
-        throw new IllegalStateException(
-          s"Invalid result received from GRS: identifiersMatch: $identifiersMatch, registration: $grsResult, businessVerification: $bvResult"
-        )
     }
 }
