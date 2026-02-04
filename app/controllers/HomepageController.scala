@@ -101,9 +101,15 @@ class HomepageController @Inject() (
                 }
               homepageFuture.recoverWith {
                 case RetryableGatewayError if attempt + 1 < appConfig.homepageRetryMaxAttempts =>
+                  logger.warn(
+                    s"Homepage load attempt ${attempt + 1}/${appConfig.homepageRetryMaxAttempts} failed with retryable error, retrying in ${appConfig.homepageRetryDelaySeconds}s"
+                  )
                   futures.delayed(appConfig.homepageRetryDelaySeconds.seconds)(attemptHomepageLoad(attempt + 1))
                 case RetryableGatewayError =>
-                  Future.failed(RetryableGatewayError)
+                  logger.warn(
+                    s"Homepage load failed after ${appConfig.homepageRetryMaxAttempts} attempts (retryable gateway error), redirecting to service unavailable page"
+                  )
+                  Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
                 case other =>
                   Future.failed(other)
               }
