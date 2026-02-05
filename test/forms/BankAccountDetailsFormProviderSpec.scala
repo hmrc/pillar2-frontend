@@ -96,8 +96,6 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
   ".sortCode" - {
     val fieldName     = "sortCode"
     val requiredKey   = "repayments.bankAccountDetails.sortCodeError"
-    val lengthKey     = "repayments.bankAccountDetails.lengthError"
-    val formatKey     = "repayments.bankAccountDetails.sortCodeFormatError"
     val sortCodeRegex = """^[0-9]{6}$"""
     val maxLength     = 6
 
@@ -111,7 +109,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      lengthError = FormError(fieldName, requiredKey, Seq(maxLength)),
       generator = Some(longStringsConformingToRegex(sortCodeRegex, maxLength))
     )
 
@@ -120,7 +118,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       regex = sortCodeRegex,
       regexViolationGen = invalidSortCodes,
-      regexError = FormError(fieldName, formatKey)
+      regexError = FormError(fieldName, requiredKey)
     )
 
     behave like mandatoryField(
@@ -134,7 +132,6 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName          = "accountNumber"
     val requiredKey        = "repayments.bankAccountDetails.accountNumberError"
-    val lengthKey          = "repayments.bankAccountDetails.accountNumberLengthError"
     val accountNumberRegex = """^[0-9]{8}$"""
     val maxLength          = 8
 
@@ -148,7 +145,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, requiredKey, Seq(maxLength))
     )
 
     behave like mandatoryField(
