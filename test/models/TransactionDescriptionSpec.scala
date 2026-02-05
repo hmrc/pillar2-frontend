@@ -39,16 +39,34 @@ class TransactionDescriptionSpec extends SpecBase {
       TransactionDescription.DeterminationMttUtpr.toUiDescription mustBe "Determination - MTT (UTPR)"
     }
 
+    "return correct UI description for Determination Interest" in {
+      TransactionDescription.DeterminationInterestDtt.toUiDescription mustBe "Determination interest - DTT"
+      TransactionDescription.DeterminationInterestMttIir.toUiDescription mustBe "Determination interest - MTT (IIR)"
+      TransactionDescription.DeterminationInterestMttUtpr.toUiDescription mustBe "Determination interest - MTT (UTPR)"
+    }
+
     "return correct UI description for Discovery Assessment" in {
       TransactionDescription.DiscoveryAssessmentDtt.toUiDescription mustBe "Discovery Assessment - DTT"
       TransactionDescription.DiscoveryAssessmentMttIir.toUiDescription mustBe "Discovery Assessment - MTT (IIR)"
       TransactionDescription.DiscoveryAssessmentMttUtpr.toUiDescription mustBe "Discovery Assessment - MTT (UTPR)"
     }
 
+    "return correct UI description for Discovery Assessment Interest" in {
+      TransactionDescription.DiscoveryAssessmentInterestDtt.toUiDescription mustBe "Discovery Assessment interest - DTT"
+      TransactionDescription.DiscoveryAssessmentInterestMttIir.toUiDescription mustBe "Discovery Assessment interest - MTT (IIR)"
+      TransactionDescription.DiscoveryAssessmentInterestMttUtpr.toUiDescription mustBe "Discovery Assessment interest - MTT (UTPR)"
+    }
+
     "return correct UI description for Overpaid Claim Assessment" in {
       TransactionDescription.OverpaidClaimAssessmentDtt.toUiDescription mustBe "Overpaid Claim Assessment - DTT"
       TransactionDescription.OverpaidClaimAssessmentMttIir.toUiDescription mustBe "Overpaid Claim Assessment - MTT (IIR)"
       TransactionDescription.OverpaidClaimAssessmentMttUtpr.toUiDescription mustBe "Overpaid Claim Assessment - MTT (UTPR)"
+    }
+
+    "return correct UI description for Overpaid Claim Assessment Interest" in {
+      TransactionDescription.OverpaidClaimAssessmentInterestDtt.toUiDescription mustBe "Overpaid Claim Assessment interest - DTT"
+      TransactionDescription.OverpaidClaimAssessmentInterestMttIir.toUiDescription mustBe "Overpaid Claim Assessment interest - MTT (IIR)"
+      TransactionDescription.OverpaidClaimAssessmentInterestMttUtpr.toUiDescription mustBe "Overpaid Claim Assessment interest - MTT (UTPR)"
     }
 
     "return correct UI description for UKTR DTT Late Filing Penalties" in {
@@ -81,11 +99,12 @@ class TransactionDescriptionSpec extends SpecBase {
       TransactionDescription.PotentialLostRevenuePenalty.toUiDescription mustBe "Potential lost revenue penalty"
       TransactionDescription.Sch36Penalty.toUiDescription mustBe "Schedule 36 information notice"
       TransactionDescription.RecordKeepingPenalty.toUiDescription mustBe "Failure to keep accurate records penalty"
+      TransactionDescription.GaarPenalty.toUiDescription mustBe "General Anti Abuse Rule penalty"
     }
 
-    "return original value for unmapped descriptions" in {
-      TransactionDescription.PaymentOnAccount.toUiDescription mustBe "On Account Pillar 2 (Payment on Account)"
-      TransactionDescription.RepaymentInterest.toUiDescription mustBe "Pillar 2 UKTR RPI Pillar 2 OECD RPI"
+    "return correct UI description for payments and repayment interest" in {
+      TransactionDescription.PaymentOnAccount.toUiDescription mustBe "Payment on Account"
+      TransactionDescription.RepaymentInterest.toUiDescription mustBe "Repayment interest"
     }
   }
 }

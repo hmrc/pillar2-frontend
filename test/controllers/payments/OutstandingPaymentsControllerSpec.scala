@@ -160,7 +160,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
