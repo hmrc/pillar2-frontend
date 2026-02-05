@@ -116,8 +116,24 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
       value.futureValue mustBe FinancialDataResponse(Seq.empty)
     }
 
-    "return a unexpected response when an error is returned" in {
+    "return RetryableGatewayError when the backend returns 500" in {
       stubGet(financialDataUrl, expectedStatus = 500, "")
+
+      val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
+
+      value.failed.futureValue mustBe RetryableGatewayError
+    }
+
+    "return RetryableGatewayError when the backend returns 502" in {
+      stubGet(financialDataUrl, expectedStatus = 502, "")
+
+      val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
+
+      value.failed.futureValue mustBe RetryableGatewayError
+    }
+
+    "return UnexpectedResponse when the backend returns other error status" in {
+      stubGet(financialDataUrl, expectedStatus = 503, "")
 
       val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
 

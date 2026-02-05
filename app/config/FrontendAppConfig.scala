@@ -118,6 +118,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
   val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
 
+  val homepageRetryMaxAttempts:  Int = configuration.get[Int]("homepage.retryMaxAttempts")
+  val homepageRetryDelaySeconds: Int = configuration.get[Int]("homepage.retryDelaySeconds")
+
   val longRunningSubmissionConfig: LongRunningSubmission => LongRunningSubmissionConfig =
     LongRunningSubmission.values.map { submission =>
       submission -> LongRunningSubmissionConfig(

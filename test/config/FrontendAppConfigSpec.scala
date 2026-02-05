@@ -86,6 +86,13 @@ class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
       }
     }
 
+    ".homepageRetryMaxAttempts and .homepageRetryDelaySeconds" must {
+      "return correct homepage retry configuration values" in {
+        config.homepageRetryMaxAttempts mustBe 3
+        config.homepageRetryDelaySeconds mustBe 2
+      }
+    }
+
     ".incorporatedEntityBvEnabled and .partnershipBvEnabled" must {
       "return correct BV enabled flags" in {
         config.incorporatedEntityBvEnabled mustBe false
