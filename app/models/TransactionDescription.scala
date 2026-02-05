@@ -18,86 +18,88 @@ package models
 
 import play.api.libs.json.*
 
-/** Type-safe representation of all known transaction descriptions from the Account Activity API. Each value has its exact string value for matching.
+/** Type-safe representation of all known transaction descriptions from the Account Activity API. Each value has its exact string value (condensed to
+  * ≤30 chars per ETMP SAP limit) for matching.
   */
 enum TransactionDescription(val value: String) {
 
   // Payment on Account
-  case PaymentOnAccount extends TransactionDescription("On Account Pillar 2 (Payment on Account)")
+  case PaymentOnAccount extends TransactionDescription("Pillar 2 (Payment on Account)")
 
   // UK Tax Return charges
-  case UkTaxReturnDtt extends TransactionDescription("Pillar 2 UK Tax Return Pillar 2 DTT")
-  case UkTaxReturnMttIir extends TransactionDescription("Pillar 2 UK Tax Return Pillar 2 MTT IIR")
-  case UkTaxReturnMttUtpr extends TransactionDescription("Pillar 2 UK Tax Return Pillar 2 MTT UTPR")
+  case UkTaxReturnDtt extends TransactionDescription("UKTR - DTT")
+  case UkTaxReturnMttIir extends TransactionDescription("UKTR - MTT (IIR)")
+  case UkTaxReturnMttUtpr extends TransactionDescription("UKTR - MTT (UTPR)")
 
   // UK Tax Return interest
-  case UkTaxReturnInterestDtt extends TransactionDescription("Pillar 2 UKTR Interest Pillar 2 DTT Int")
-  case UkTaxReturnInterestMttIir extends TransactionDescription("Pillar 2 UKTR Interest Pillar 2 MTT IIR Int")
-  case UkTaxReturnInterestMttUtpr extends TransactionDescription("Pillar 2 UKTR Interest Pillar 2 MTT UTPR Int")
+  case UkTaxReturnInterestDtt extends TransactionDescription("Late UKTR pay int - DTT")
+  case UkTaxReturnInterestMttIir extends TransactionDescription("Late UKTR pay int - MTT(IIR)")
+  case UkTaxReturnInterestMttUtpr extends TransactionDescription("Late UKTR pay int - MTT(UTPR)")
 
   // Repayment interest
-  case RepaymentInterest extends TransactionDescription("Pillar 2 UKTR RPI Pillar 2 OECD RPI")
+  case RepaymentInterest extends TransactionDescription("Repayment interest - UKTR")
 
   // Schedule 36 Penalty
-  case Sch36Penalty extends TransactionDescription("Sch 36 Penalty TG PEN")
+  case Sch36Penalty extends TransactionDescription("Schedule 36 information notice")
 
   // UKTR DTT Late Filing Penalties
-  case UktrDttLfp extends TransactionDescription("Pillar 2 UKTR DTT LFP AUTO PEN")
-  case UktrDttLfp3Mth extends TransactionDescription("Pillar 2 UKTR DTT 3 Mth LFP AUTO PEN")
-  case UktrDttLfp6Mth extends TransactionDescription("Pillar 2 UKTR DTT 6 Mth LFP AUTO PEN")
-  case UktrDttLfp12Mth extends TransactionDescription("Pillar 2 UKTR DTT 12 Mth LFP AUTO PEN")
+  case UktrDttLfp extends TransactionDescription("Late UKTR sub pen - DTT")
+  case UktrDttLfp3Mth extends TransactionDescription("Late UKTR sub pen - DTT 3mnth")
+  case UktrDttLfp6Mth extends TransactionDescription("Late UKTR sub pen - DTT 6mnth")
+  case UktrDttLfp12Mth extends TransactionDescription("Late UKTR sub pen - DTT 12mnth")
 
   // UKTR MTT Late Filing Penalties
-  case UktrMttLfp extends TransactionDescription("Pillar 2 UKTR MTT LFP AUTO PEN")
-  case UktrMttLfp3Mth extends TransactionDescription("Pillar 2 UKTR MTT 3 Mth LFP AUTO PEN")
-  case UktrMttLfp6Mth extends TransactionDescription("Pillar 2 UKTR MTT 6 Mth LFP AUTO PEN")
-  case UktrMttLfp12Mth extends TransactionDescription("Pillar 2 UKTR MTT 12 Mth LFP AUTO PEN")
+  case UktrMttLfp extends TransactionDescription("Late UKTR sub pen - MTT")
+  case UktrMttLfp3Mth extends TransactionDescription("Late UKTR sub pen - MTT 3mnth")
+  case UktrMttLfp6Mth extends TransactionDescription("Late UKTR sub pen - MTT 6mnth")
+  case UktrMttLfp12Mth extends TransactionDescription("Late UKTR sub pen - MTT 12mnth")
 
   // ORN/GIR DTT Late Filing Penalties
-  case OrnGirDttLfp extends TransactionDescription("Pillar 2 ORN/GIR DTT LFP AUTO PEN")
-  case OrnGirDttLfp3Mth extends TransactionDescription("Pillar 2 ORN/GIR DTT 3 Mth LFP AUTO PEN")
-  case OrnGirDttLfp6Mth extends TransactionDescription("Pillar 2 ORN/GIR DTT 6 Mth LFP AUTO PEN")
+  case OrnGirDttLfp extends TransactionDescription("Late ORN/GIR sub pen - DTT")
+  case OrnGirDttLfp3Mth extends TransactionDescription("Late ORN/GIR sub pen -DTT3mnth")
+  case OrnGirDttLfp6Mth extends TransactionDescription("Late ORN/GIR sub pen -DTT6mnth")
 
   // ORN/GIR MTT Late Filing Penalties
-  case OrnGirMttLfp extends TransactionDescription("Pillar 2 ORN/GIR MTT LFP AUTO PEN")
-  case OrnGirMttLfp3Mth extends TransactionDescription("Pillar 2 ORN/GIR MTT 3 Mth LFP AUTO PEN")
-  case OrnGirMttLfp6Mth extends TransactionDescription("Pillar 2 ORN/GIR MTT 6 Mth LFP AUTO PEN")
+  case OrnGirMttLfp extends TransactionDescription("Late ORN/GIR sub pen - MTT")
+  case OrnGirMttLfp3Mth extends TransactionDescription("Late ORN/GIR sub pen-MTT 3mnth")
+  case OrnGirMttLfp6Mth extends TransactionDescription("Late ORN/GIR sub pen-MTT 6mnth")
 
   // Other Penalties
-  case PotentialLostRevenuePenalty extends TransactionDescription("Pillar 2 Poten Lost Rev Pen TG PEN")
-  case RecordKeepingPenalty extends TransactionDescription("Pillar 2 Record Keeping Pen TG PEN")
+  case PotentialLostRevenuePenalty extends TransactionDescription("Schedule 24 inaccurate return")
+  case RecordKeepingPenalty extends TransactionDescription("Accurate records failure pen")
+  case GaarPenalty extends TransactionDescription("General Anti Abuse Rule pen")
 
   // Determinations
-  case DeterminationDtt extends TransactionDescription("Pillar 2 Determination Pillar 2 DTT")
-  case DeterminationMttIir extends TransactionDescription("Pillar 2 Determination Pillar 2 MTT IIR")
-  case DeterminationMttUtpr extends TransactionDescription("Pillar 2 Determination Pillar 2 MTT UTPR")
+  case DeterminationDtt extends TransactionDescription("Determination - DTT")
+  case DeterminationMttIir extends TransactionDescription("Determination - MTT (IIR)")
+  case DeterminationMttUtpr extends TransactionDescription("Determination - MTT (UTPR)")
 
   // Determination Interest
-  case DeterminationInterestDtt extends TransactionDescription("Pillar 2 Determination Int Pillar 2 DTT Int")
-  case DeterminationInterestMttIir extends TransactionDescription("Pillar 2 Determination Int Pillar 2 MTT IIR Int")
-  case DeterminationInterestMttUtpr extends TransactionDescription("Pillar 2 Determination Int Pillar 2 MTT UTPR Int")
+  case DeterminationInterestDtt extends TransactionDescription("Determination interest - DTT")
+  case DeterminationInterestMttIir extends TransactionDescription("Determination int- MTT (IIR)")
+  case DeterminationInterestMttUtpr extends TransactionDescription("Determination int - MTT (UTPR)")
 
   // Discovery Assessments
-  case DiscoveryAssessmentDtt extends TransactionDescription("Pillar 2 Discovery Assessment Pillar 2 DTT")
-  case DiscoveryAssessmentMttIir extends TransactionDescription("Pillar 2 Discovery Assessment Pillar 2 MTT IIR")
-  case DiscoveryAssessmentMttUtpr extends TransactionDescription("Pillar 2 Discovery Assessment Pillar 2 MTT UTPR")
+  case DiscoveryAssessmentDtt extends TransactionDescription("Discovery Assessment - DTT")
+  case DiscoveryAssessmentMttIir extends TransactionDescription("Discovery Assessment-MTT(IIR)")
+  case DiscoveryAssessmentMttUtpr extends TransactionDescription("Discovery Assessment-MTT(UTPR)")
 
   // Discovery Assessment Interest
-  case DiscoveryAssessmentInterestDtt extends TransactionDescription("Pillar 2 Discovery Assmt Int Pillar 2 DTT Int")
-  case DiscoveryAssessmentInterestMttIir extends TransactionDescription("Pillar 2 Discovery Assmt Int Pillar 2 MTT IIR Int")
-  case DiscoveryAssessmentInterestMttUtpr extends TransactionDescription("Pillar 2 Discovery Assmt Int Pillar 2 MTT UTPR Int")
+  case DiscoveryAssessmentInterestDtt extends TransactionDescription("Discovery Assessment int - DTT")
+  case DiscoveryAssessmentInterestMttIir extends TransactionDescription("Discovery Assmnt int-MTT(IIR)")
+  case DiscoveryAssessmentInterestMttUtpr extends TransactionDescription("Discovery Assmnt int-MTT(UTPR)")
 
   // Overpaid Claim Assessments
-  case OverpaidClaimAssessmentDtt extends TransactionDescription("Pillar 2 Overpaid Claim Assmt Pillar 2 DTT")
-  case OverpaidClaimAssessmentMttIir extends TransactionDescription("Pillar 2 Overpaid Claim Assmt Pillar 2 MTT IIR")
-  case OverpaidClaimAssessmentMttUtpr extends TransactionDescription("Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR")
+  case OverpaidClaimAssessmentDtt extends TransactionDescription("Overpaid claim assmnt - DTT")
+  case OverpaidClaimAssessmentMttIir extends TransactionDescription("O/paid claim assmnt-MTT (IIR)")
+  case OverpaidClaimAssessmentMttUtpr extends TransactionDescription("O/paid claim assmnt-MTT (UTPR)")
 
   // Overpaid Claim Assessment Interest
-  case OverpaidClaimAssessmentInterestDtt extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 DTT Int")
-  case OverpaidClaimAssessmentInterestMttIir extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 MTT IIR Int")
-  case OverpaidClaimAssessmentInterestMttUtpr extends TransactionDescription("Pillar 2 Opaid Claim Assmt Int Pillar 2 MTT UTPR Int")
+  case OverpaidClaimAssessmentInterestDtt extends TransactionDescription("O/paid claim assmnt int - DTT")
+  case OverpaidClaimAssessmentInterestMttIir extends TransactionDescription("O/p claim assmnt int-MTT(IIR)")
+  case OverpaidClaimAssessmentInterestMttUtpr extends TransactionDescription("O/p claim assmnt int-MTT(UTPR)")
 
-  /** Returns the Column G UI description for display in Outstanding Payments page */
+  /** Returns the UI description for display in Outstanding Payments page */
   def toUiDescription: String = this match {
     // UKTR Charges
     case UkTaxReturnDtt     => "UKTR - DTT"
@@ -111,14 +113,26 @@ enum TransactionDescription(val value: String) {
     case DeterminationDtt     => "Determination - DTT"
     case DeterminationMttIir  => "Determination - MTT (IIR)"
     case DeterminationMttUtpr => "Determination - MTT (UTPR)"
+    // Determination Interest
+    case DeterminationInterestDtt     => "Determination interest - DTT"
+    case DeterminationInterestMttIir  => "Determination interest - MTT (IIR)"
+    case DeterminationInterestMttUtpr => "Determination interest - MTT (UTPR)"
     // Discovery Assessment
     case DiscoveryAssessmentDtt     => "Discovery Assessment - DTT"
     case DiscoveryAssessmentMttIir  => "Discovery Assessment - MTT (IIR)"
     case DiscoveryAssessmentMttUtpr => "Discovery Assessment - MTT (UTPR)"
+    // Discovery Assessment Interest
+    case DiscoveryAssessmentInterestDtt     => "Discovery Assessment interest - DTT"
+    case DiscoveryAssessmentInterestMttIir  => "Discovery Assessment interest - MTT (IIR)"
+    case DiscoveryAssessmentInterestMttUtpr => "Discovery Assessment interest - MTT (UTPR)"
     // Overpaid Claim Assessment
     case OverpaidClaimAssessmentDtt     => "Overpaid Claim Assessment - DTT"
     case OverpaidClaimAssessmentMttIir  => "Overpaid Claim Assessment - MTT (IIR)"
     case OverpaidClaimAssessmentMttUtpr => "Overpaid Claim Assessment - MTT (UTPR)"
+    // Overpaid Claim Assessment Interest
+    case OverpaidClaimAssessmentInterestDtt     => "Overpaid Claim Assessment interest - DTT"
+    case OverpaidClaimAssessmentInterestMttIir  => "Overpaid Claim Assessment interest - MTT (IIR)"
+    case OverpaidClaimAssessmentInterestMttUtpr => "Overpaid Claim Assessment interest - MTT (UTPR)"
     // UKTR DTT Late Filing Penalties
     case UktrDttLfp | UktrDttLfp3Mth | UktrDttLfp6Mth | UktrDttLfp12Mth => "Late UKTR submission penalty - DTT"
     // UKTR MTT Late Filing Penalties
@@ -131,8 +145,10 @@ enum TransactionDescription(val value: String) {
     case PotentialLostRevenuePenalty => "Potential lost revenue penalty"
     case Sch36Penalty                => "Schedule 36 information notice"
     case RecordKeepingPenalty        => "Failure to keep accurate records penalty"
-    // Payment on Account and other unmapped types - return original value as fallback
-    case _ => value
+    case GaarPenalty                 => "General Anti Abuse Rule penalty"
+    // Payment on Account and Repayment Interest
+    case PaymentOnAccount  => "Payment on Account"
+    case RepaymentInterest => "Repayment interest"
   }
 }
 

@@ -29,14 +29,14 @@ class AccountActivityResponseSpec extends SpecBase {
       |  "transactionDetails": [
       |    {
       |      "transactionType": "Payment",
-      |      "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+      |      "transactionDesc": "Pillar 2 (Payment on Account)",
       |      "transactionDate": "2025-10-15",
       |      "originalAmount": 10000,
       |      "outstandingAmount": 1000,
       |      "clearedAmount": 9000,
       |      "clearingDetails": [
       |        {
-      |          "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
+      |          "transactionDesc": "UKTR - DTT",
       |          "chargeRefNo": "X123456789012",
       |          "dueDate": "2025-12-31",
       |          "amount": 2000,
@@ -47,7 +47,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |    },
       |    {
       |      "transactionType": "Credit",
-      |      "transactionDesc": "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+      |      "transactionDesc": "Repayment interest - UKTR",
       |      "chargeRefNo": "XR23456789012",
       |      "transactionDate": "2025-03-15",
       |      "originalAmount": -100,
@@ -55,7 +55,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |    },
       |    {
       |      "transactionType": "Debit",
-      |      "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
+      |      "transactionDesc": "UKTR - DTT",
       |      "startDate": "2025-01-01",
       |      "endDate": "2025-12-31",
       |      "accruedInterest": 35,
@@ -74,7 +74,7 @@ class AccountActivityResponseSpec extends SpecBase {
     transactionDetails = Seq(
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionDesc = "Pillar 2 (Payment on Account)",
         startDate = None,
         endDate = None,
         accruedInterest = None,
@@ -89,7 +89,7 @@ class AccountActivityResponseSpec extends SpecBase {
         clearingDetails = Some(
           Seq(
             AccountActivityClearance(
-              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+              transactionDesc = "UKTR - DTT",
               chargeRefNo = Some("X123456789012"),
               dueDate = Some(LocalDate.of(2025, 12, 31)),
               amount = BigDecimal(2000),
@@ -101,7 +101,7 @@ class AccountActivityResponseSpec extends SpecBase {
       ),
       AccountActivityTransaction(
         transactionType = TransactionType.Credit,
-        transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+        transactionDesc = "Repayment interest - UKTR",
         startDate = None,
         endDate = None,
         accruedInterest = None,
@@ -117,7 +117,7 @@ class AccountActivityResponseSpec extends SpecBase {
       ),
       AccountActivityTransaction(
         transactionType = TransactionType.Debit,
-        transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+        transactionDesc = "UKTR - DTT",
         startDate = Some(LocalDate.of(2025, 1, 1)),
         endDate = Some(LocalDate.of(2025, 12, 31)),
         accruedInterest = Some(BigDecimal(35)),
@@ -186,7 +186,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -202,7 +202,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -218,7 +218,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -254,7 +254,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -286,7 +286,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -358,7 +358,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Payment transaction (no repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -373,7 +373,7 @@ class AccountActivityResponseSpec extends SpecBase {
             clearingDetails = Some(
               Seq(
                 AccountActivityClearance(
-                  transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                  transactionDesc = "UKTR - DTT",
                   chargeRefNo = Some("X123456789012"),
                   dueDate = None,
                   amount = BigDecimal(100),
@@ -386,7 +386,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Repayment transaction (has repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -466,7 +466,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Credit,
-            transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+            transactionDesc = "Repayment interest - UKTR",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -530,7 +530,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -556,7 +556,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
@@ -582,7 +582,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -608,7 +608,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
@@ -624,7 +624,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+            transactionDesc = "UKTR - MTT (IIR)",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
@@ -663,7 +663,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
@@ -679,7 +679,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 Determination Pillar 2 DTT",
+            transactionDesc = "Determination - DTT",
             startDate = Some(LocalDate.of(2026, 1, 1)),
             endDate = Some(LocalDate.of(2026, 12, 31)),
             accruedInterest = None,
@@ -712,7 +712,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = Some(LocalDate.of(2025, 12, 31)),
             accruedInterest = None,
@@ -740,7 +740,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+            transactionDesc = "UKTR - DTT",
             startDate = Some(LocalDate.of(2025, 1, 1)),
             endDate = None,
             accruedInterest = None,
