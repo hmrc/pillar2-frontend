@@ -29,7 +29,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |  "transactionDetails": [
       |    {
       |      "transactionType": "Payment",
-      |      "transactionDesc": "Pillar 2 (Payment on Account)",
+      |      "transactionDesc": "On Account Pillar 2 (Payment on Account)",
       |      "transactionDate": "2025-10-15",
       |      "originalAmount": 10000,
       |      "outstandingAmount": 1000,
@@ -74,7 +74,7 @@ class AccountActivityResponseSpec extends SpecBase {
     transactionDetails = Seq(
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
-        transactionDesc = "Pillar 2 (Payment on Account)",
+        transactionDesc = "On Account Pillar 2 (Payment on Account)",
         startDate = None,
         endDate = None,
         accruedInterest = None,
@@ -186,7 +186,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -202,7 +202,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -218,7 +218,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -254,7 +254,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -286,7 +286,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -358,7 +358,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Payment transaction (no repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -386,7 +386,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Repayment transaction (has repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -530,7 +530,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "Pillar 2 (Payment on Account)",
+            transactionDesc = "On Account Pillar 2 (Payment on Account)",
             startDate = None,
             endDate = None,
             accruedInterest = None,

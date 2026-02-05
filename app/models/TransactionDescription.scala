@@ -24,7 +24,7 @@ import play.api.libs.json.*
 enum TransactionDescription(val value: String) {
 
   // Payment on Account
-  case PaymentOnAccount extends TransactionDescription("Pillar 2 (Payment on Account)")
+  case PaymentOnAccount extends TransactionDescription("On Account Pillar 2 (Payment on Account)")
 
   // UK Tax Return charges
   case UkTaxReturnDtt extends TransactionDescription("UKTR - DTT")
