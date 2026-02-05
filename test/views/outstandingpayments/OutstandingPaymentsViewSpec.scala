@@ -293,7 +293,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           Jsoup.parse(
             page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString()
           )
-        )
+        ),
+        ViewScenario("accountActivityOrganisationView", accountActivityOrganisationView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)
