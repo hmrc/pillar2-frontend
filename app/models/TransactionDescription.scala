@@ -18,8 +18,7 @@ package models
 
 import play.api.libs.json.*
 
-/** Type-safe representation of all known transaction descriptions from the Account Activity API. Each value has its exact string value (condensed to
-  * ≤30 chars per ETMP SAP limit) for matching.
+/** Type-safe representation of all known transaction descriptions from the Account Activity API. Each value has its exact string value
   */
 enum TransactionDescription(val value: String) {
 
