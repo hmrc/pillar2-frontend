@@ -39,12 +39,12 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You cannot return, you have replaced the filing member"
+      h1Elements.text() mustBe "You have already replaced the filing member"
     }
 
     "have a paragraph body" in {
       paragraphs.get(0).text mustBe
-        "You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account."
+        "You cannot go backwards in this journey as the filing member has been replaced."
     }
 
     "have a paragraph with a link" in {

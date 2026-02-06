@@ -63,8 +63,8 @@ error.eis.message1 = You must still register, please try again later.
 error.eis.message2 = We have saved your answers and they will be available for 28 days. After that time you will need to enter all of the information again.
 error.eis.link = Return to registration to try again
 ###############################################
-cannotReturnAfterSubscriptionError.heading = You cannot return, your registration is complete
-cannotReturnAfterSubscriptionError.message = You have successfully registered to report Pillar 2 Top-up Taxes.
+cannotReturnAfterSubscriptionError.heading = Your registration is complete
+cannotReturnAfterSubscriptionError.message = You cannot go backwards in this journey as your registration has been completed.
 cannotReturnAfterSubscriptionError.message2 = You can now
 cannotReturnAfterSubscriptionError.link = report and manage your Pillar 2 Top-up Taxes.
 
@@ -1094,8 +1094,8 @@ rfm.incompleteDataView.heading = You have an incomplete task
 rfm.incompleteDataView.paragraphStart = You can go back to
 rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 Top-up Taxes account to try again
 
-rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
-rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account.
+rfm.cannotReturnAfterConfirmation.heading = You have already replaced the filing member
+rfm.cannotReturnAfterConfirmation.p1 = You cannot go backwards in this journey as the filing member has been replaced.
 rfm.cannotReturnAfterConfirmation.p2 = You can now
 rfm.cannotReturnAfterConfirmation.link = report and manage your Pillar 2 Top-up Taxes
 
@@ -1446,9 +1446,9 @@ repayments.confirmation.heading = What happens next
 repayments.confirmation.paragraph = We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided.
 repayments.confirmation.back = Back to group homepage
 
-repayments.repaymentErrorConfirmation.title = You cannot return, your repayment request is complete
-repayments.repaymentErrorConfirmation.heading = You cannot return, your repayment request is complete
-repayments.repaymentErrorConfirmation.paragraphOne = You have successfully submitted your repayment request.
+repayments.repaymentErrorConfirmation.title = You have completed your repayment request
+repayments.repaymentErrorConfirmation.heading = You have completed your repayment request
+repayments.repaymentErrorConfirmation.paragraphOne = You cannot go backwards in this journey as your repayment request has been submitted.
 repayments.repaymentErrorConfirmation.paragraphTwo = You can return to
 repayments.repaymentErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 Top-up Taxes
 

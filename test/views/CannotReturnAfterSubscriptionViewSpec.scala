@@ -35,12 +35,12 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You cannot return, your registration is complete"
+      h1Elements.text() mustBe "Your registration is complete"
     }
 
     "display error message correctly" in {
       val message = view.getElementsByClass("govuk-body").first()
-      message.text() mustBe "You have successfully registered to report Pillar 2 Top-up Taxes."
+      message.text() mustBe "You cannot go backwards in this journey as your registration has been completed."
     }
 
     "display link section correctly" in {
