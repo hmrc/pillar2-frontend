@@ -69,8 +69,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     "have the correct hints" in {
       val hints: Elements = view.getElementsByClass("govuk-hint")
       hints.get(0).text mustBe "The account must be a UK business account."
-      hints.get(1).text mustBe "Must be 6 digits long"
-      hints.get(2).text mustBe "Must be between 6 and 8 digits long"
+      hints.get(1).text mustBe "Must be 6 digits"
+      hints.get(2).text mustBe "Must be 8 digits"
     }
 
     "have a button" in {
@@ -105,8 +105,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       errorsList.get(0).text() mustBe "Enter the name of the bank"
       errorsList.get(1).text() mustBe "Enter the name on the account"
-      errorsList.get(2).text() mustBe "Enter the sort code"
-      errorsList.get(3).text() mustBe "Enter the account number"
+      errorsList.get(2).text() mustBe "Enter a sort code, for example 309430"
+      errorsList.get(3).text() mustBe "Enter an account number, for example 00733445"
     }
 
     "show field-specific errors" in {
@@ -114,8 +114,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
       fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
-      fieldErrors.get(2).text() mustBe "Error: Enter the sort code"
-      fieldErrors.get(3).text() mustBe "Error: Enter the account number"
+      fieldErrors.get(2).text() mustBe "Error: Enter a sort code, for example 309430"
+      fieldErrors.get(3).text() mustBe "Error: Enter an account number, for example 00733445"
     }
   }
 
@@ -146,8 +146,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       errorsList.get(0).text() mustBe "The name of the bank must be 40 characters or less"
       errorsList.get(1).text() mustBe "The name on the account must be 60 characters or less"
-      errorsList.get(2).text() mustBe "Sort code must be 6 digits"
-      errorsList.get(3).text() mustBe "Account number must be 8 digits"
+      errorsList.get(2).text() mustBe "Enter a sort code, for example 309430"
+      errorsList.get(3).text() mustBe "Enter an account number, for example 00733445"
     }
 
     "show field-specific errors" in {
@@ -155,8 +155,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       fieldErrors.get(0).text() mustBe "Error: The name of the bank must be 40 characters or less"
       fieldErrors.get(1).text() mustBe "Error: The name on the account must be 60 characters or less"
-      fieldErrors.get(2).text() mustBe "Error: Sort code must be 6 digits"
-      fieldErrors.get(3).text() mustBe "Error: Account number must be 8 digits"
+      fieldErrors.get(2).text() mustBe "Error: Enter a sort code, for example 309430"
+      fieldErrors.get(3).text() mustBe "Error: Enter an account number, for example 00733445"
     }
   }
 
