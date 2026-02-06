@@ -1740,8 +1740,12 @@ payments.outstanding.amountDue = Amount due: £{0}
 payments.outstanding.p1 = The amount includes all tax liabilities and penalty charges currently due. This may include more than one accounting period.
 payments.outstanding.p2 = Any payments made before today have reduced the amount due and are not included in this total. You must still pay the amount due.
 payments.outstanding.agent.p2 = Any payments made before today have reduced the amount due and are not included in this total. The group must still pay the amount due.
+
 payments.outstanding.warningText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
 payments.outstanding.agent.warningText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
+payments.outstanding.accruedInterest.warningText = Late payment interest accrued: £{0}
+payments.outstanding.accruedInterest.description.p1 = Late payment interest increases daily. The amount shows the interest accrued up until today.
+payments.outstanding.accruedInterest.description.p2 = It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment.
 
 payments.outstanding.pay.buttonText = Pay online
 payments.outstanding.otherWaysToPay.heading = Other ways to pay
@@ -1754,6 +1758,14 @@ payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay (
 payments.outstanding.details.heading = Details of outstanding payments
 payments.outstanding.details.p1 = We have separated any payments due by accounting period.
 payments.outstanding.details.nothingDue = No payments due.
+
+payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
+payments.outstanding.abbreviation.uktr = UKTR - UK Tax Return
+payments.outstanding.abbreviation.dtt = DTT - Domestic Top-up Tax
+payments.outstanding.abbreviation.mtt = MTT - Multinational Top-up Tax
+payments.outstanding.abbreviation.iir = IIR - Income Inclusion Rule
+payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
+payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
 payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.

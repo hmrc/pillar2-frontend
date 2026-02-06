@@ -111,7 +111,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
                 .getOrElse(t.transactionDesc) // Fallback to original description if not mapped
 
               OutstandingPaymentItem(
-                description = uiDescription,
+                description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
                 outstandingAmount = t.outstandingAmount.get,
                 dueDate = t.dueDate.getOrElse(t.transactionDate)
               )
@@ -125,6 +125,15 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       itemsByPeriod.sortBy(_.accountingPeriod.endDate)(Ordering[LocalDate].reverse) // Sort by endDate descending
     }
   }
+
+  def totalAccruedInterest: BigDecimal =
+    transactionDetails
+      .filter(t =>
+        t.transactionType == TransactionType.Debit && t.outstandingAmount.exists(_ > 0) &&
+          (t.startDate.isDefined && t.endDate.isDefined)
+      )
+      .flatMap(_.accruedInterest)
+      .sum
 }
 
 sealed trait TransactionType

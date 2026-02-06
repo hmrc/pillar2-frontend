@@ -34,8 +34,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.outstandingpayments.OutstandingPaymentsView
 
-import java.time.LocalDate
 import java.time.LocalDate.now
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -98,12 +98,12 @@ class OutstandingPaymentsController @Inject() (
 
   private def retrieveOutstandingPayments(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier
-  ): Future[Either[Seq[OutstandingPaymentSummary], Seq[FinancialSummary]]] =
+  ): Future[Either[AccountActivityResponse, Seq[FinancialSummary]]] =
     if appConfig.useAccountActivityApi then
       accountActivityConnector
         .retrieveAccountActivity(plrReference, dateFrom, dateTo)
-        .map(response => Left(response.toOutstandingPayments))
-        .recover { case NoResultFound => Left(Seq.empty) }
+        .map(response => Left(response))
+        .recover { case NoResultFound => Left(AccountActivityResponse(LocalDateTime.now, Seq.empty)) }
     else
       financialDataService
         .retrieveFinancialData(plrReference, dateFrom, dateTo)
@@ -126,12 +126,13 @@ class OutstandingPaymentsController @Inject() (
             retrieveOutstandingPayments(plrRef, subscriptionData.upeDetails.registrationDate, now())
           )
       } yield outstandingPaymentsResult match {
-        case Left(accountActivitySummaries) =>
+        case Left(accountActivityResponse) =>
           // Account Activity API path
-          val tables                  = toTablesFromAccountActivity(accountActivitySummaries)
+          val tables                  = toTablesFromAccountActivity(accountActivityResponse.toOutstandingPayments)
           val amountDue               = tables.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
           val hasOverdueReturnPayment = tables.exists(_.rows.exists(_.dueDate.isBefore(now())))
-          Ok(view(tables, plrRef, amountDue, hasOverdueReturnPayment))
+          val accruedInterest         = accountActivityResponse.totalAccruedInterest
+          Ok(view(tables, plrRef, amountDue, hasOverdueReturnPayment, accruedInterest, true))
         case Right(financialSummaries) =>
           // Legacy Financial Data API path
           val tables                  = toTablesFromFinancial(financialSummaries)
