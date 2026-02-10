@@ -28,10 +28,11 @@ import org.apache.pekko.Done
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
+import org.mockito.invocation.InvocationOnMock
+import org.scalatest.concurrent.Eventually
 import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
-import org.scalatest.concurrent.Eventually
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -42,9 +43,8 @@ import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
-import org.mockito.invocation.InvocationOnMock
-import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration.*
+import scala.concurrent.{Await, Future, Promise}
 import scala.jdk.CollectionConverters.given
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with Eventually {

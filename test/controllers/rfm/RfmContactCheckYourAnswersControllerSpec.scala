@@ -17,44 +17,43 @@
 package controllers.rfm
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
+import controllers.actions.*
 import controllers.routes
-import models.requests.IdentifierRequest
 import models.*
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.longrunningsubmissions.LongRunningSubmission
+import models.requests.IdentifierRequest
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{atLeastOnce, verify, when}
+import org.mockito.invocation.InvocationOnMock
 import org.scalatest.concurrent.Eventually
 import pages.*
+import play.api.Application
+import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import services.audit.AuditService
-import utils.FutureConverter.toFuture
-import viewmodels.govuk.SummaryListFluency
-
-import config.FrontendAppConfig
-import org.mockito.invocation.InvocationOnMock
-import play.api.Application
-import play.api.i18n.MessagesApi
-import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers, Result}
 import uk.gov.hmrc.auth.core.Enrolments
+import utils.FutureConverter.toFuture
 import utils.countryOptions.CountryOptions
+import viewmodels.govuk.SummaryListFluency
 import views.html.rfm.RfmContactCheckYourAnswersView
 
 import java.time.LocalDate
 import java.util.concurrent.atomic.AtomicInteger
-import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration.*
+import scala.concurrent.{Await, Future, Promise}
 
 class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with Eventually {
 
