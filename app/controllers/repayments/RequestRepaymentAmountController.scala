@@ -40,6 +40,7 @@ class RequestRepaymentAmountController @Inject() (
   navigator:                              RepaymentNavigator,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
+  journeyGuard:                           JourneyGuardAction,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
@@ -48,7 +49,7 @@ class RequestRepaymentAmountController @Inject() (
 
   val form:                                Form[BigDecimal]   = formProvider()
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form

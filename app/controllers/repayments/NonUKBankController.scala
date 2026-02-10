@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonUKBankController @Inject() (
   formProvider:                           NonUKBankFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
+  journeyGuard:                           JourneyGuardAction,
   requireSessionData:                     SessionDataRequiredAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   sessionRepository:                      SessionRepository,
@@ -50,7 +51,7 @@ class NonUKBankController @Inject() (
   val form: Form[NonUKBank] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(NonUKBankPage) match {
         case None        => form

@@ -40,6 +40,7 @@ class BankAccountDetailsController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
+  journeyGuard:                           JourneyGuardAction,
   sessionRepository:                      SessionRepository,
   barsService:                            BarsService,
   formProvider:                           BankAccountDetailsFormProvider,
@@ -53,7 +54,7 @@ class BankAccountDetailsController @Inject() (
   val form: Form[BankAccountDetails] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard).async { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(BankAccountDetailsPage) match {
         case None              => form

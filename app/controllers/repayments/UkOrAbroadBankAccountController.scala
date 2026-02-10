@@ -38,6 +38,7 @@ class UkOrAbroadBankAccountController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
   requireData:                            SessionDataRequiredAction,
+  journeyGuard:                           JourneyGuardAction,
   navigator:                              RepaymentNavigator,
   formProvider:                           UkOrAbroadBankAccountFormProvider,
   val controllerComponents:               MessagesControllerComponents,
@@ -49,7 +50,7 @@ class UkOrAbroadBankAccountController @Inject() (
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { request =>
+    (identify andThen getData andThen requireData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))

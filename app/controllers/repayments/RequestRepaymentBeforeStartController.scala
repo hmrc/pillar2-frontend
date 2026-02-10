@@ -18,30 +18,36 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.*
+import pages.RepaymentsStatusPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundBeforeStartView
 
 import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
+
 class RequestRepaymentBeforeStartController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RequestRefundBeforeStartView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
-  requireSessionData:                     SessionDataRequiredAction
-)(using appConfig: FrontendAppConfig)
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
       given Request[AnyContent] = request
-      Ok(
-        view(
-          agentView = request.request.isAgent
-        )
-      )
+      Future
+        .fromTry(request.userAnswers.remove(RepaymentsStatusPage))
+        .flatMap(sessionRepository.set)
+        .map(_ => Ok(view(agentView = request.request.isAgent)))
+        .recover { case _ =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
-
 }
