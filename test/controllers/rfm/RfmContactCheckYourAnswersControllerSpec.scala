@@ -18,7 +18,9 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction, FakeIdentifierAction, IdentifierAction}
 import controllers.routes
+import models.requests.IdentifierRequest
 import models.*
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.longrunningsubmissions.LongRunningSubmission
@@ -28,6 +30,7 @@ import models.subscription.{AmendSubscription, NewFilingMemberDetail, Subscripti
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{atLeastOnce, verify, when}
+import org.scalatest.concurrent.Eventually
 import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -39,10 +42,55 @@ import services.audit.AuditService
 import utils.FutureConverter.toFuture
 import viewmodels.govuk.SummaryListFluency
 
-import java.time.LocalDate
-import scala.concurrent.Future
+import config.FrontendAppConfig
+import org.mockito.invocation.InvocationOnMock
+import play.api.Application
+import play.api.i18n.MessagesApi
+import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers, Result}
+import uk.gov.hmrc.auth.core.Enrolments
+import utils.countryOptions.CountryOptions
+import views.html.rfm.RfmContactCheckYourAnswersView
 
-class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+import java.time.LocalDate
+import java.util.concurrent.atomic.AtomicInteger
+import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.duration.*
+
+class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with Eventually {
+
+  private def buildController(
+    application: Application,
+    userAnswers: UserAnswers,
+    sessionRepo: SessionRepository,
+    groupId:     Option[String] = Some("groupId")
+  ): RfmContactCheckYourAnswersController = {
+    val fakeId =
+      if groupId.isDefined then new FakeIdentifierAction(application.injector.instanceOf[PlayBodyParsers], Enrolments(Set.empty))
+      else {
+        val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+        new IdentifierAction {
+          override def refine[A](request: play.api.mvc.Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+            Future.successful(Right(IdentifierRequest(request, "id", None, Set.empty, userIdForEnrolment = "userId")))
+          override def parser:                     play.api.mvc.BodyParser[play.api.mvc.AnyContent] = bodyParsers.default
+          override protected def executionContext: scala.concurrent.ExecutionContext                =
+            scala.concurrent.ExecutionContext.Implicits.global
+        }
+      }
+    new RfmContactCheckYourAnswersController(
+      application.injector.instanceOf[MessagesApi],
+      new FakeDataRetrievalAction(Some(userAnswers)),
+      fakeId,
+      fakeId,
+      application.injector.instanceOf[DataRequiredActionImpl],
+      application.injector.instanceOf[MessagesControllerComponents],
+      mockUserAnswersConnectors,
+      mockSubscriptionService,
+      mockAuditService,
+      sessionRepo,
+      application.injector.instanceOf[RfmContactCheckYourAnswersView],
+      application.injector.instanceOf[CountryOptions]
+    )(using scala.concurrent.ExecutionContext.Implicits.global, application.injector.instanceOf[FrontendAppConfig])
+  }
 
   "Check Your Answers Controller" must {
 
@@ -266,7 +314,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
 
-      "redirect to waiting page in case of a successful replace filing member for upe and save the api response in the backend" ignore {
+      "redirect to waiting page in case of a successful replace filing member for upe and save the api response in the backend" in {
+        val setCount            = new AtomicInteger(0)
+        val secondSetCalled     = Promise[Unit]()
         val completeUserAnswers =
           defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
@@ -292,19 +342,27 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.successful(Done))
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, completeUserAnswers, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
 
-      "redirect to waiting page in case of a successful replace filing member for NewNfm and save the api response in the backend" ignore {
+      "redirect to waiting page in case of a successful replace filing member for NewNfm and save the api response in the backend" in {
+        val setCount            = new AtomicInteger(0)
+        val secondSetCalled     = Promise[Unit]()
         val completeUserAnswers = defaultRfmData
           .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val sessionData = emptyUserAnswers
@@ -331,14 +389,20 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.successful(Done))
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, completeUserAnswers, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
@@ -353,9 +417,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, when no group ID is found for the new filing member, and save the api response in the backend" ignore {
-        val ua          = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
-        val sessionData = emptyUserAnswers
+      "redirect to waiting page in case of a FailException, when no group ID is found for the new filing member, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val sessionData     = emptyUserAnswers
           .setOrException(RfmStatusPage, FailException)
         val application = applicationBuilder(userAnswers = Some(ua), groupID = None)
           .overrides(
@@ -374,20 +440,29 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository, groupId = None)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" ignore {
-        val ua          = rfmNoID
-        val sessionData = emptyUserAnswers
+      "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
+        val sessionData     = emptyUserAnswers
           .setOrException(RfmStatusPage, FailException)
         val application = applicationBuilder(userAnswers = Some(ua))
           .overrides(
@@ -403,19 +478,27 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
         ).thenReturn(Future.failed(new Exception("no rfm uk based")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" ignore {
-        val ua = rfmNoID
+      "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
@@ -438,19 +521,28 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             any()
           )
         ).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" ignore {
-        val ua = rfmNoID
+      "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
@@ -470,19 +562,28 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         ).thenReturn(Future.successful(amendData))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" ignore {
-        val ua = rfmNoID
+      "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
@@ -506,19 +607,27 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .thenReturn(allocateEnrolmentParameters)
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a FailException, if amend filing details fails with UnexpectedResponse, and save the api response in the backend" ignore {
+      "redirect to waiting page in case of a FailException, if amend filing details fails with UnexpectedResponse, and save the api response in the backend" in {
+        val setCount            = new AtomicInteger(0)
+        val secondSetCalled     = Promise[Unit]()
         val completeUserAnswers = defaultRfmData
           .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
           .setOrException(RfmPillar2ReferencePage, "id")
@@ -539,20 +648,28 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         ).thenReturn(Future.successful(amendData))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, completeUserAnswers, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" ignore {
-        val ua = rfmNoID
+      "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
@@ -565,20 +682,28 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
-      "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" ignore {
-        val ua = rfmNoID
+      "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
@@ -598,14 +723,20 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         ).thenReturn(Future.successful(amendData))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }

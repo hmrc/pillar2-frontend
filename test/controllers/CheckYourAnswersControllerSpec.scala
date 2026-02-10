@@ -31,6 +31,7 @@ import org.mockito.Mockito.{times, verify, when}
 import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
+import org.scalatest.concurrent.Eventually
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -40,10 +41,13 @@ import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import java.util.concurrent.atomic.AtomicInteger
+import org.mockito.invocation.InvocationOnMock
+import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.duration.*
 import scala.jdk.CollectionConverters.given
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with Eventually {
 
   private val plrReference = "XE1111123456789"
 
@@ -272,7 +276,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "on submit method" should {
-      "redirect to waiting room in case of a success response and save the minimal required data in mongo" ignore {
+      "redirect to waiting room in case of a success response and save the minimal required data in mongo" in {
 
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
@@ -298,7 +302,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.successful(plrReference))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(expectedSessionData)))
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
 
@@ -307,8 +316,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          verify(mockSessionRepository, times(2)).set(any())
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          Await.ready(secondSetCalled.future, 15.seconds)
+          verify(mockSessionRepository, times(2)).set(any())
         }
       }
 
@@ -656,7 +666,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
-      "redirect to waiting page and update status when encountering an unexpected Exception" ignore {
+      "redirect to waiting page and update status when encountering an unexpected Exception" in {
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -678,7 +688,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
@@ -686,9 +701,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
+          await(result)
           status(result) mustBe SEE_OTHER
-          verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          Await.ready(secondSetCalled.future, 15.seconds)
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
     }
