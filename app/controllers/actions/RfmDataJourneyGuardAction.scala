@@ -16,21 +16,28 @@
 
 package controllers.actions
 
-import models.repayments.RepaymentsStatus.SuccessfullyCompleted
-import models.requests.SessionDataRequest
-import pages.RepaymentsStatusPage
+import models.requests.DataRequest
+import models.rfm.RfmStatus.SuccessfullyCompleted
+import pages.RfmStatusPage
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
+import repositories.SessionRepository
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class JourneyGuardAction @Inject() (val executionContext: ExecutionContext) extends ActionFilter[SessionDataRequest] {
+class RfmDataJourneyGuardAction @Inject() (
+  val executionContext: ExecutionContext,
+  sessionRepository:    SessionRepository
+)(using ExecutionContext)
+    extends ActionFilter[DataRequest] {
 
-  override protected def filter[A](request: SessionDataRequest[A]): Future[Option[Result]] =
-    Future.successful {
-      val completed = request.userAnswers.get(RepaymentsStatusPage).contains(SuccessfullyCompleted)
-      if completed then Some(Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad()))
-      else None
+  override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] =
+    sessionRepository.get(request.userAnswers.id).map {
+      case Some(mongoUa) =>
+        val completed = mongoUa.get(RfmStatusPage).contains(SuccessfullyCompleted)
+        if completed then Some(Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+        else None
+      case None => None
     }
 }

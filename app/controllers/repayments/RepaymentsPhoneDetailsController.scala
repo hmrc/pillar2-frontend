@@ -37,7 +37,7 @@ class RepaymentsPhoneDetailsController @Inject() (
   formProvider:                           CapturePhoneDetailsFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   sessionRepository:                      SessionRepository,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,

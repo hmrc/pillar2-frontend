@@ -38,7 +38,7 @@ class RepaymentsContactEmailController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactEmailView

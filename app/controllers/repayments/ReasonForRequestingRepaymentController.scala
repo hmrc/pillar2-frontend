@@ -39,7 +39,7 @@ class ReasonForRequestingRepaymentController @Inject() (
   getData:                                SessionDataRetrievalAction,
   navigator:                              RepaymentNavigator,
   requireData:                            SessionDataRequiredAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   formProvider:                           ReasonForRequestingRepaymentFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ReasonForRequestingRefundView

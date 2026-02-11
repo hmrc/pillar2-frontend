@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NonUKBankController @Inject() (
   formProvider:                           NonUKBankFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   requireSessionData:                     SessionDataRequiredAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   sessionRepository:                      SessionRepository,

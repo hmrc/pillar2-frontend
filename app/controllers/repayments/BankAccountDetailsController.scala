@@ -40,7 +40,7 @@ class BankAccountDetailsController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   sessionRepository:                      SessionRepository,
   barsService:                            BarsService,
   formProvider:                           BankAccountDetailsFormProvider,

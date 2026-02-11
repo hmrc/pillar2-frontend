@@ -42,6 +42,7 @@ class CorporatePositionController @Inject() (
   sessionRepository:                SessionRepository,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   formProvider:                     RfmCorporatePositionFormProvider,
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
@@ -52,7 +53,7 @@ class CorporatePositionController @Inject() (
 
   val form: Form[CorporatePosition] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     val preparedForm          = request.userAnswers.get(RfmCorporatePositionPage) match {
       case Some(value) => form.fill(value)

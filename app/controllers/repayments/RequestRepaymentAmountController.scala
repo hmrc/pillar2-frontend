@@ -40,7 +40,7 @@ class RequestRepaymentAmountController @Inject() (
   navigator:                              RepaymentNavigator,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)

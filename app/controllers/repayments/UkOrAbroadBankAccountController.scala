@@ -38,7 +38,7 @@ class UkOrAbroadBankAccountController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
   requireData:                            SessionDataRequiredAction,
-  journeyGuard:                           JourneyGuardAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   navigator:                              RepaymentNavigator,
   formProvider:                           UkOrAbroadBankAccountFormProvider,
   val controllerComponents:               MessagesControllerComponents,
