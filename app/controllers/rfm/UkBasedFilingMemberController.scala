@@ -38,6 +38,7 @@ class UkBasedFilingMemberController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     NFMRegisteredInUKConfirmationFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -48,7 +49,7 @@ class UkBasedFilingMemberController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     val preparedForm          = request.userAnswers.get(RfmUkBasedPage) match {
       case None        => form
