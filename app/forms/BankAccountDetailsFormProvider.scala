@@ -44,16 +44,16 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
         sortCode("repayments.bankAccountDetails.sortCodeError")
           .verifying(
             firstError(
-              equalLength(Constants.MinLength6, "repayments.bankAccountDetails.lengthError"),
-              regexp(Validation.SortCodeRegex, "repayments.bankAccountDetails.sortCodeFormatError")
+              equalLength(Constants.MinLength6, "repayments.bankAccountDetails.sortCodeError"),
+              regexp(Validation.SortCodeRegex, "repayments.bankAccountDetails.sortCodeError")
             )
           ),
       "accountNumber" ->
         text("repayments.bankAccountDetails.accountNumberError")
           .verifying(
             firstError(
-              equalLength(Constants.MinLength8, "repayments.bankAccountDetails.accountNumberLengthError"),
-              regexp(Validation.AccountNumberRegex, "repayments.bankAccountDetails.accountNumberFormatError")
+              equalLength(Constants.MinLength8, "repayments.bankAccountDetails.accountNumberError"),
+              regexp(Validation.AccountNumberRegex, "repayments.bankAccountDetails.accountNumberError")
             )
           )
     )(BankAccountDetails.apply)(bankAccountDetails => Some(Tuple.fromProductTyped(bankAccountDetails)))
