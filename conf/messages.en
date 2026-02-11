@@ -844,7 +844,7 @@ subscriptionAddress.change.hidden = the registered contact address
 # Homepage
 #
 ###############################################
-homepage.title = Pillar 2 Top-up Taxes
+homepage.title = Pillar 2 Top-up Taxes homepage
 homepage.group = Group
 homepage.id = ID
 
@@ -1539,6 +1539,7 @@ manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
 registrationInProgress.title = Registration in progress
+registrationInProgress.h1 = Pillar 2 Top-up Taxes
 registrationInProgress.banner.heading = Your registration is in progress
 registrationInProgress.banner.message = We are processing your registration. You can check this page in one hour to see your full group account homepage.
 

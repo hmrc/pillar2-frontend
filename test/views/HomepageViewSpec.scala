@@ -24,6 +24,7 @@ import models.{BtnBanner, DynamicNotificationAreaState}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.HomepageView
 
 class HomepageViewSpec extends ViewSpecBase {
@@ -32,9 +33,8 @@ class HomepageViewSpec extends ViewSpecBase {
   lazy val plrRef:           String       = "XMPLR0012345678"
   lazy val date:             String       = "1 June 2020"
 
-  // This is only case where the page Title and the H1 heading are inconsistent in the service
-  lazy val pageTitle:   String = "Report Pillar 2 Top-up Taxes - GOV.UK"
-  lazy val pageHeading: String = "Pillar 2 Top-up Taxes"
+  lazy val pageTitle:   String = "Pillar 2 Top-up Taxes homepage - Report Pillar 2 Top-up Taxes - GOV.UK"
+  lazy val pageHeading: String = "Pillar 2 Top-up Taxes homepage"
 
   lazy val organisationView: Document =
     Jsoup.parse(
@@ -510,13 +510,12 @@ class HomepageViewSpec extends ViewSpecBase {
       paidTag.attr("title") mustBe "Paid payments"
     }
 
-//    TODO: Uncomment accessibility behaviours once H1 and title are updated with correct naming convention
-//    val organisationViewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("organisationView", organisationView)
-//      )
-//
-//    behaveLikeAccessiblePage(organisationViewScenarios)
+    val organisationViewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("organisationView", organisationView)
+      )
+
+    behaveLikeAccessiblePage(organisationViewScenarios)
   }
 
   "HomepageView for an agent" should {
@@ -681,13 +680,12 @@ class HomepageViewSpec extends ViewSpecBase {
         controllers.routes.AgentController.onPageLoadClientPillarId.url
     }
 
-//    TODO: Uncomment accessibility behaviours once H1 and title are updated with correct naming convention
-//    val agentViewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("agentView", agentView)
-//      )
-//
-//    behaveLikeAccessiblePage(agentViewScenarios)
+    val agentViewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("agentView", agentView)
+      )
+
+    behaveLikeAccessiblePage(agentViewScenarios)
   }
 
   "HomepageView layout" should {
