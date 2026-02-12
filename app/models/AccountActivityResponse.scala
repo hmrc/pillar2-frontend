@@ -135,16 +135,16 @@ object TransactionType {
   case object Debit extends TransactionType
 
   given reads: Reads[TransactionType] = Reads {
-    case JsString("Payment") => JsSuccess(Payment)
-    case JsString("Credit")  => JsSuccess(Credit)
-    case JsString("Debit")   => JsSuccess(Debit)
+    case JsString("PAYMENT") => JsSuccess(Payment)
+    case JsString("CREDIT")  => JsSuccess(Credit)
+    case JsString("DEBIT")   => JsSuccess(Debit)
     case other               => JsError(s"Unknown transaction type: $other")
   }
 
   given writes: Writes[TransactionType] = Writes {
-    case Payment => JsString("Payment")
-    case Credit  => JsString("Credit")
-    case Debit   => JsString("Debit")
+    case Payment => JsString("PAYMENT")
+    case Credit  => JsString("CREDIT")
+    case Debit   => JsString("DEBIT")
   }
 }
 

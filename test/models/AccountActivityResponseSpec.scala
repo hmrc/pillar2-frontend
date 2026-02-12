@@ -28,8 +28,8 @@ class AccountActivityResponseSpec extends SpecBase {
       |  "processingDate": "2025-01-06T10:30:00",
       |  "transactionDetails": [
       |    {
-      |      "transactionType": "Payment",
-      |      "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+      |      "transactionType": "PAYMENT",
+      |      "transactionDesc": "Pillar 2 Payment on Account",
       |      "transactionDate": "2025-10-15",
       |      "originalAmount": 10000,
       |      "outstandingAmount": 1000,
@@ -46,7 +46,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |      ]
       |    },
       |    {
-      |      "transactionType": "Credit",
+      |      "transactionType": "CREDIT",
       |      "transactionDesc": "Repayment interest - UKTR",
       |      "chargeRefNo": "XR23456789012",
       |      "transactionDate": "2025-03-15",
@@ -54,7 +54,7 @@ class AccountActivityResponseSpec extends SpecBase {
       |      "outstandingAmount": -100
       |    },
       |    {
-      |      "transactionType": "Debit",
+      |      "transactionType": "DEBIT",
       |      "transactionDesc": "UKTR - DTT",
       |      "startDate": "2025-01-01",
       |      "endDate": "2025-12-31",
@@ -74,7 +74,7 @@ class AccountActivityResponseSpec extends SpecBase {
     transactionDetails = Seq(
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionDesc = "Pillar 2 Payment on Account",
         startDate = None,
         endDate = None,
         accruedInterest = None,
@@ -149,15 +149,15 @@ class AccountActivityResponseSpec extends SpecBase {
 
   "TransactionType" should {
     "parse Payment correctly" in {
-      Json.parse("\"Payment\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Payment)
+      Json.parse("\"PAYMENT\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Payment)
     }
 
     "parse Credit correctly" in {
-      Json.parse("\"Credit\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Credit)
+      Json.parse("\"CREDIT\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Credit)
     }
 
     "parse Debit correctly" in {
-      Json.parse("\"Debit\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Debit)
+      Json.parse("\"DEBIT\"").validate[TransactionType] mustBe JsSuccess(TransactionType.Debit)
     }
 
     "fail for unknown transaction type" in {
@@ -165,9 +165,9 @@ class AccountActivityResponseSpec extends SpecBase {
     }
 
     "serialize correctly" in {
-      Json.toJson[TransactionType](TransactionType.Payment) mustBe Json.parse("\"Payment\"")
-      Json.toJson[TransactionType](TransactionType.Credit) mustBe Json.parse("\"Credit\"")
-      Json.toJson[TransactionType](TransactionType.Debit) mustBe Json.parse("\"Debit\"")
+      Json.toJson[TransactionType](TransactionType.Payment) mustBe Json.parse("\"PAYMENT\"")
+      Json.toJson[TransactionType](TransactionType.Credit) mustBe Json.parse("\"CREDIT\"")
+      Json.toJson[TransactionType](TransactionType.Debit) mustBe Json.parse("\"DEBIT\"")
     }
   }
 
@@ -186,7 +186,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -202,7 +202,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -218,7 +218,7 @@ class AccountActivityResponseSpec extends SpecBase {
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -254,7 +254,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -286,7 +286,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -358,7 +358,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Payment transaction (no repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -386,7 +386,7 @@ class AccountActivityResponseSpec extends SpecBase {
           // Repayment transaction (has repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
@@ -530,7 +530,7 @@ class AccountActivityResponseSpec extends SpecBase {
         transactionDetails = Seq(
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
-            transactionDesc = "On Account Pillar 2 (Payment on Account)",
+            transactionDesc = "Pillar 2 Payment on Account",
             startDate = None,
             endDate = None,
             accruedInterest = None,
