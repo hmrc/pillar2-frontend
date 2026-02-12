@@ -21,7 +21,7 @@ import controllers.actions.*
 import forms.RfmSecurityCheckFormProvider
 import models.{Mode, NormalMode, UserAnswers}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmConfirmationPage, RfmPillar2ReferencePage, RfmStatusPage}
+import pages.RfmPillar2ReferencePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -51,22 +51,10 @@ class SecurityCheckController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { request =>
+    (identify andThen getSessionData andThen requireSessionData) { request =>
       given Request[AnyContent] = request
-
-      val resetResult = for {
-        statusResetAnswers <- Future.fromTry(request.userAnswers.remove(RfmStatusPage).flatMap(_.remove(RfmConfirmationPage)))
-        _                  <- sessionRepository.set(statusResetAnswers)
-      } yield statusResetAnswers
-
-      resetResult
-        .map { clearedAnswers =>
-          val preparedForm = clearedAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
-          Ok(view(preparedForm, mode))
-        }
-        .recover { case _ =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-        }
+      val preparedForm          = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
+      Ok(view(preparedForm, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { request =>
