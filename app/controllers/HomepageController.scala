@@ -30,10 +30,11 @@ import models.obligationsandsubmissions.*
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{BtnBanner, DynamicNotificationAreaState}
+import models.{BtnBanner, DynamicNotificationAreaState, RetryableGatewayError}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.concurrent.Futures
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.*
@@ -45,6 +46,7 @@ import views.html.HomepageView
 
 import java.time.{Clock, LocalDate}
 import javax.inject.{Inject, Named}
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 class HomepageController @Inject() (
@@ -58,6 +60,7 @@ class HomepageController @Inject() (
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
   financialDataService:                   FinancialDataService,
+  futures:                                Futures,
   homepageBannerService:                  HomepageBannerService
 )(using
   ec:        ExecutionContext,
@@ -86,19 +89,36 @@ class HomepageController @Inject() (
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers6))
         result          <-
           OptionT.liftF {
-            subscriptionService
-              .maybeReadSubscription(referenceNumber)
-              .flatMap {
-                case Some(_) =>
-                  subscriptionService
-                    .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                    .flatMap(displayHomepage(_, referenceNumber))
-                case None =>
-                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            def attemptHomepageLoad(attempt: Int): Future[Result] = {
+              val homepageFuture = subscriptionService
+                .maybeReadSubscription(referenceNumber)
+                .flatMap {
+                  case Some(_) =>
+                    subscriptionService
+                      .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                      .flatMap(displayHomepage(_, referenceNumber))
+                  case None =>
+                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                }
+                .recover { case UnprocessableEntityError =>
+                  Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+                }
+              homepageFuture.recoverWith {
+                case RetryableGatewayError if attempt + 1 < appConfig.homepageRetryMaxAttempts =>
+                  logger.warn(
+                    s"Homepage load attempt ${attempt + 1}/${appConfig.homepageRetryMaxAttempts} failed with retryable error, retrying in ${appConfig.homepageRetryDelaySeconds}s"
+                  )
+                  futures.delayed(appConfig.homepageRetryDelaySeconds.seconds)(attemptHomepageLoad(attempt + 1))
+                case RetryableGatewayError =>
+                  logger.warn(
+                    s"Homepage load failed after ${appConfig.homepageRetryMaxAttempts} attempts (retryable gateway error), redirecting to service unavailable page"
+                  )
+                  Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
+                case other =>
+                  Future.failed(other)
               }
-              .recover { case UnprocessableEntityError =>
-                Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
-              }
+            }
+            attemptHomepageLoad(0)
           }
       } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
