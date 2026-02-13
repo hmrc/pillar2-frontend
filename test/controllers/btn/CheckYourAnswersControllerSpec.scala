@@ -28,6 +28,7 @@ import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
+import org.mockito.invocation.InvocationOnMock
 import org.scalatestplus.mockito.MockitoSugar
 import pages.*
 import play.api.Application
@@ -340,11 +341,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       "audit" when {
         val processedAt = ZonedDateTime.now()
         "submission is successful" in {
-
+          val auditCalled = Promise[Unit]()
           when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.successful(BtnResponse(BtnSuccess(processedAt).asRight, CREATED)))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
-          when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenReturn(Future.successful(AuditResult.Success))
+          when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>
+            auditCalled.success(())
+            Future.successful(AuditResult.Success)
+          }
 
           val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -356,6 +360,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
             val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
 
             route(application, request).value.futureValue
+            auditCalled.future.futureValue
 
             verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),
@@ -371,12 +376,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val errorMessage     = "something went sideways"
           val fixedClock       = Clock.fixed(processedAt.toInstant, processedAt.getZone)
           val mockAuditService = mock[AuditService]
+          val auditCalled      = Promise[Unit]()
 
           when(mockBTNService.submitBTN(any)(using any, any))
             .thenReturn(Future.successful(BtnResponse(BtnError(errorCode, errorMessage).asLeft, INTERNAL_SERVER_ERROR)))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
-          when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenReturn(Future.successful(AuditResult.Success))
+          when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>
+            auditCalled.success(())
+            Future.successful(AuditResult.Success)
+          }
 
           val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -389,6 +398,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
             val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
 
             route(application, request).value.futureValue
+            auditCalled.future.futureValue
 
             verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),

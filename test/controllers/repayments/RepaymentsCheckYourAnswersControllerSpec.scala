@@ -306,14 +306,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(Repayments).url
 
-            eventually {
-              // Eventually doesn't know how to retry a 'verify(..., times(...))', so we use this instead.
-              // As it's not simple to filter by method, we count all invocations.
-              mockingDetails(sessionRepo).getInvocations.size() mustBe 4
-            }
-
-            verify(sessionRepo, times(2)).set(answersCaptor.capture())
-
             val initialPersist:      UserAnswers = appliedUserAnswers.value.setOrException(RepaymentsStatusPage, InProgress)
             val persistOnCompletion: UserAnswers = emptyUserAnswers
               .setOrException(PlrReferencePage, initialPersist.get(PlrReferencePage).value)
@@ -321,10 +313,16 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
               .setOrException(RepaymentConfirmationPage, ZonedDateTime.ofInstant(fixedNow, utcZoneId).toDateTimeGmtFormat)
               .setOrException(RepaymentCompletionStatus, true)
 
-            answersCaptor.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
-              initialPersist.data,
-              persistOnCompletion.data
-            )
+            eventually {
+              // Eventually doesn't know how to retry a 'verify(..., times(...))', so we use this instead.
+              // As it's not simple to filter by method, we count all invocations.
+              mockingDetails(sessionRepo).getInvocations.size() mustBe 4
+              verify(sessionRepo, times(2)).set(answersCaptor.capture())
+              answersCaptor.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
+                initialPersist.data,
+                persistOnCompletion.data
+              )
+            }
           }
 
         "redirect to waiting room page and save UnexpectedResponseError status in case of an unsuccessful response" in
@@ -345,23 +343,21 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(Repayments).url
 
-            eventually {
-              // Eventually doesn't know how to retry a 'verify(..., times(...))', so we use this instead.
-              // As it's not simple to filter by method, we count all invocations.
-              mockingDetails(sessionRepo).getInvocations.size() mustBe 4
-            }
-
-            verify(sessionRepo, times(2)).set(answersCaptor.capture())
-
             val initialPersist: UserAnswers = appliedUserAnswers.value
               .setOrException(RepaymentsStatusPage, InProgress)
             val persistOnCompletion: UserAnswers = appliedUserAnswers.value
               .setOrException(RepaymentsStatusPage, UnexpectedResponseError)
 
-            answersCaptor.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
-              initialPersist.data,
-              persistOnCompletion.data
-            )
+            eventually {
+              // Eventually doesn't know how to retry a 'verify(..., times(...))', so we use this instead.
+              // As it's not simple to filter by method, we count all invocations.
+              mockingDetails(sessionRepo).getInvocations.size() mustBe 4
+              verify(sessionRepo, times(2)).set(answersCaptor.capture())
+              answersCaptor.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
+                initialPersist.data,
+                persistOnCompletion.data
+              )
+            }
           }
       }
     }
