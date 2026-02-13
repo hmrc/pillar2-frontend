@@ -39,6 +39,7 @@ class RfmPrimaryContactNameController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   formProvider:                     RfmPrimaryContactNameFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmPrimaryContactNameView,
@@ -49,7 +50,7 @@ class RfmPrimaryContactNameController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     val preparedForm          = request.userAnswers.get(RfmPrimaryContactNamePage) match {
       case Some(v) => form.fill(v)

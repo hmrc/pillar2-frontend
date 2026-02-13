@@ -19,25 +19,36 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import models.Mode
+import models.rfm.RfmStatus
+import models.rfm.RfmStatus.SuccessfullyCompleted
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CheckNewFilingMemberView
 
 import javax.inject.{Inject, Named}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckNewFilingMemberController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val controllerComponents:         MessagesControllerComponents,
+  sessionRepository:                SessionRepository,
   view:                             CheckNewFilingMemberView
-)(using appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig, executionContext: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify.async { request =>
     given Request[AnyContent] = request
-    Ok(view(mode))
+    sessionRepository.get(request.userId).map {
+      case Some(mongo) =>
+        val rfmStatus = (mongo.data \ "rfmStatus").validate[RfmStatus].asOpt
+        if rfmStatus.contains(SuccessfullyCompleted) then Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad)
+        else Ok(view(mode))
+      case None => Ok(view(mode))
+    }
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = identify.async {

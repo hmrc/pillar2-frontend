@@ -42,6 +42,7 @@ class RfmEntityTypeController @Inject() (
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
+  journeyGuard:                                      RfmDataJourneyGuardAction,
   formProvider:                                      RfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              RfmEntityTypeView
@@ -51,7 +52,7 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard).async { request =>
     given Request[AnyContent] = request
     request.userAnswers
       .get(RfmUkBasedPage)

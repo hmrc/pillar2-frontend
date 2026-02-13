@@ -30,13 +30,14 @@ class RfmSaveProgressInformController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmSaveProgressInformView
 )(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     Ok(view())
   }
