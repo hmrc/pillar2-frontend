@@ -21,6 +21,7 @@ import cats.syntax.option.*
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredActionImpl, FakeDataRetrievalAction, FakeIdentifierAction}
 import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, RfmConfirmationPage}
 import play.api.mvc.AnyContentAsEmpty
@@ -118,9 +119,13 @@ class RfmConfirmationControllerSpec extends SpecBase {
       contentAsString(result) must include(plrId)
     }
 
-    // FIXME - PIL-2670
-    "redirect to journey recovery if no data found in session repository" ignore new RfmConfirmationTestCase {
-      override val userAnswers: UserAnswers => Option[UserAnswers] = _ => Option.empty[UserAnswers]
+    "redirect to journey recovery if no data found in session repository" in new RfmConfirmationTestCase {
+      override val userAnswers:          UserAnswers => Option[UserAnswers] = _ => Option.empty[UserAnswers]
+      override lazy val mockSessionRepo: SessionRepository                  = {
+        val repo = mock[SessionRepository]
+        when(repo.get(any())).thenReturn(Future.successful(None))
+        repo
+      }
 
       val result: Future[Result] = controller.onPageLoad()(request)
       status(result) mustEqual SEE_OTHER
