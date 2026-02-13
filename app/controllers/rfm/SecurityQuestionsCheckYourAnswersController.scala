@@ -42,6 +42,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   getSessionData:                   SessionDataRetrievalAction,
   requireSessionData:               SessionDataRequiredAction,
+  journeyGuard:                     RfmSessionJourneyGuardAction,
   subscriptionService:              SubscriptionService,
   val controllerComponents:         MessagesControllerComponents,
   view:                             SecurityQuestionsCheckYourAnswersView
@@ -51,7 +52,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val list                  = SummaryListViewModel(
         rows = Seq(

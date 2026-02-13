@@ -39,6 +39,7 @@ class GroupRegistrationDateReportController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getSessionData:                   SessionDataRetrievalAction,
   requireSessionData:               SessionDataRequiredAction,
+  journeyGuard:                     RfmSessionJourneyGuardAction,
   formProvider:                     GroupRegistrationDateReportFormProvider,
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
@@ -50,7 +51,7 @@ class GroupRegistrationDateReportController @Inject() (
   def form: Form[LocalDate] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(RfmRegistrationDatePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
