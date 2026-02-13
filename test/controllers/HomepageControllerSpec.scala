@@ -31,7 +31,7 @@ import models.subscription.*
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{ManageContactDetailsStatusPage, ManageGroupDetailsStatusPage}
@@ -217,6 +217,38 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
 
+    }
+
+    "not call retrieveAccountActivityData when useAccountActivityApi flag is false" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+
+        verify(mockFinancialDataService, never()).retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier])
+      }
     }
 
     "redirect to registration in progress page when subscription is still processing for agent" in {

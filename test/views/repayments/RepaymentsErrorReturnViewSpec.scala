@@ -29,7 +29,7 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
   lazy val page:           RepaymentsErrorReturnView = inject[RepaymentsErrorReturnView]
   lazy val view:           Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
   lazy val testPillar2Ref: String                    = "XMPLR0012345674"
-  lazy val pageTitle:      String                    = "You cannot return, your repayment request is complete"
+  lazy val pageTitle:      String                    = "You have completed your repayment request"
 
   "Repayments error return view" should {
     "have a title" in {
@@ -44,8 +44,8 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
 
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text mustBe
-        "You have successfully submitted your repayment request. You can return to report and manage your " +
-        "Pillar 2 Top-up Taxes ."
+        "You cannot go backwards in this journey as your repayment request has been submitted. You can return to report and manage your " +
+        "Pillar 2 Top-up Taxes."
     }
 
     "have a link" in {

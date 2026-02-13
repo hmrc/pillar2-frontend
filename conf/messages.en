@@ -63,8 +63,8 @@ error.eis.message1 = You must still register, please try again later.
 error.eis.message2 = We have saved your answers and they will be available for 28 days. After that time you will need to enter all of the information again.
 error.eis.link = Return to registration to try again
 ###############################################
-cannotReturnAfterSubscriptionError.heading = You cannot return, your registration is complete
-cannotReturnAfterSubscriptionError.message = You have successfully registered to report Pillar 2 Top-up Taxes.
+cannotReturnAfterSubscriptionError.heading = Your registration is complete
+cannotReturnAfterSubscriptionError.message = You cannot go backwards in this journey as your registration has been completed.
 cannotReturnAfterSubscriptionError.message2 = You can now
 cannotReturnAfterSubscriptionError.link = report and manage your Pillar 2 Top-up Taxes.
 
@@ -1094,8 +1094,8 @@ rfm.incompleteDataView.heading = You have an incomplete task
 rfm.incompleteDataView.paragraphStart = You can go back to
 rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 Top-up Taxes account to try again
 
-rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
-rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account.
+rfm.cannotReturnAfterConfirmation.heading = You have already replaced the filing member
+rfm.cannotReturnAfterConfirmation.p1 = You cannot go backwards in this journey as the filing member has been replaced.
 rfm.cannotReturnAfterConfirmation.p2 = You can now
 rfm.cannotReturnAfterConfirmation.link = report and manage your Pillar 2 Top-up Taxes
 
@@ -1260,26 +1260,21 @@ repayments.bankAccountDetails.hint = The account must be a UK business account.
 repayments.bankAccountDetails.bankName = Name of the bank
 repayments.bankAccountDetails.accountName = Name on the account
 repayments.bankAccountDetails.sortCode = Sort Code
-repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits long
+repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits
 repayments.bankAccountDetails.accountNumber = Account number
-repayments.bankAccountDetails.accountNumber.hintText = Must be between 6 and 8 digits long
+repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits
 
 repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
-repayments.bankAccountDetails.sortCodeError = Enter the sort code
-repayments.bankAccountDetails.accountNumberError = Enter the account number
-repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
-repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
+repayments.bankAccountDetails.sortCodeError = Enter a sort code, for example 309430
+repayments.bankAccountDetails.accountNumberError = Enter an account number, for example 00733445
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
 repayments.bankAccountDetails.bankName.error.xss = Name of the bank you enter must not include the following characters <, > or "
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bankAccountDetails.accountName.error.xss = Name on the account you enter must not include the following characters <, > or "
-repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
-repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
-
-repayments.bankAccountDetails.error.accountNumber = Enter the account number as it appears on your bank statement
+repayments.bankAccountDetails.error.accountNumber = Enter an account number, for example 00733445
 repayments.bankAccountDetails.error.accountName = Enter the name on the account as it appears on your bank statement
-repayments.bankAccountDetails.error.sortCode = Enter the sort code as it appears on your bank statement
+repayments.bankAccountDetails.error.sortCode = Enter a sort code, for example 309430
 
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
@@ -1446,9 +1441,9 @@ repayments.confirmation.heading = What happens next
 repayments.confirmation.paragraph = We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided.
 repayments.confirmation.back = Back to group homepage
 
-repayments.repaymentErrorConfirmation.title = You cannot return, your repayment request is complete
-repayments.repaymentErrorConfirmation.heading = You cannot return, your repayment request is complete
-repayments.repaymentErrorConfirmation.paragraphOne = You have successfully submitted your repayment request.
+repayments.repaymentErrorConfirmation.title = You have completed your repayment request
+repayments.repaymentErrorConfirmation.heading = You have completed your repayment request
+repayments.repaymentErrorConfirmation.paragraphOne = You cannot go backwards in this journey as your repayment request has been submitted.
 repayments.repaymentErrorConfirmation.paragraphTwo = You can return to
 repayments.repaymentErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 Top-up Taxes
 
@@ -1740,8 +1735,12 @@ payments.outstanding.amountDue = Amount due: £{0}
 payments.outstanding.p1 = The amount includes all tax liabilities and penalty charges currently due. This may include more than one accounting period.
 payments.outstanding.p2 = Any payments made before today have reduced the amount due and are not included in this total. You must still pay the amount due.
 payments.outstanding.agent.p2 = Any payments made before today have reduced the amount due and are not included in this total. The group must still pay the amount due.
+
 payments.outstanding.warningText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
 payments.outstanding.agent.warningText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
+payments.outstanding.accruedInterest.warningText = Late payment interest accrued: £{0}
+payments.outstanding.accruedInterest.description.p1 = Late payment interest increases daily. The amount shows the interest accrued up until today.
+payments.outstanding.accruedInterest.description.p2 = It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment.
 
 payments.outstanding.pay.buttonText = Pay online
 payments.outstanding.otherWaysToPay.heading = Other ways to pay
@@ -1754,6 +1753,14 @@ payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay (
 payments.outstanding.details.heading = Details of outstanding payments
 payments.outstanding.details.p1 = We have separated any payments due by accounting period.
 payments.outstanding.details.nothingDue = No payments due.
+
+payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
+payments.outstanding.abbreviation.uktr = UKTR - UK Tax Return
+payments.outstanding.abbreviation.dtt = DTT - Domestic Top-up Tax
+payments.outstanding.abbreviation.mtt = MTT - Multinational Top-up Tax
+payments.outstanding.abbreviation.iir = IIR - Income Inclusion Rule
+payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
+payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
 payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
