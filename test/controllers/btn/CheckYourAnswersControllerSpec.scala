@@ -17,7 +17,6 @@
 package controllers.btn
 
 import base.SpecBase
-import cats.syntax.either.*
 import controllers.btn.routes.*
 import controllers.routes.IndexController
 import models.audit.{ApiResponseFailure, ApiResponseSuccess}
@@ -34,13 +33,14 @@ import pages.*
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.JsObject
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.SummaryListFluency
@@ -200,7 +200,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "immediately redirect to the waiting room when submission starts" in {
 
-        val slowPromise = Promise[BtnResponse]()
+        val slowPromise = Promise[HttpResponse]()
         val slowFuture  = slowPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(slowFuture)
@@ -225,7 +225,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "update the status after a successful API call completes" in {
 
-        val successPromise = Promise[BtnResponse]()
+        val successPromise = Promise[HttpResponse]()
         val successFuture  = successPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(successFuture)
@@ -248,13 +248,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           verify(mockSessionRepository).set(any)
 
-          successPromise.success(BtnResponse(BtnSuccess(ZonedDateTime.now()).asRight, CREATED))
+          successPromise.success(HttpResponse(201, Json.obj("success" -> Json.obj("processingDate" -> "2024-03-14T09:26:17Z")).toString()))
         }
       }
 
       "update the status after a failed API call" in {
 
-        val failPromise = Promise[BtnResponse]()
+        val failPromise = Promise[HttpResponse]()
         val failFuture  = failPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(failFuture)
@@ -342,7 +342,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val processedAt = ZonedDateTime.now()
         "submission is successful" in {
           val auditCalled = Promise[Unit]()
-          when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.successful(BtnResponse(BtnSuccess(processedAt).asRight, CREATED)))
+          val response    = HttpResponse(201, Json.obj("success" -> Json.obj("processingDate" -> processedAt)).toString())
+          when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.successful(response))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
           when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>
@@ -377,9 +378,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val fixedClock       = Clock.fixed(processedAt.toInstant, processedAt.getZone)
           val mockAuditService = mock[AuditService]
           val auditCalled      = Promise[Unit]()
+          val response         = HttpResponse(500, Json.obj("code" -> errorCode, "message" -> errorMessage).toString())
 
           when(mockBTNService.submitBTN(any)(using any, any))
-            .thenReturn(Future.successful(BtnResponse(BtnError(errorCode, errorMessage).asLeft, INTERNAL_SERVER_ERROR)))
+            .thenReturn(Future.successful(response))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
           when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>

@@ -18,13 +18,15 @@ package services
 
 import base.SpecBase
 import models.UserAnswers
-import models.btn.*
+import models.btn.BTNRequest
+import models.btn.BTNStatus
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
@@ -53,7 +55,11 @@ class BtnSubmissionServiceSpec extends SpecBase with Eventually {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(userId)).thenReturn(Future.successful(Some(emptyUserAnswers)))
       when(mockBTNService.submitBTN(any())(using any[HeaderCarrier], any[String]))
-        .thenReturn(Future.successful(BtnResponse(Right(BtnSuccess(ZonedDateTime.now())), 200)))
+        .thenReturn(
+          Future.successful(
+            uk.gov.hmrc.http.HttpResponse(201, Json.obj("success" -> Json.obj("processingDate" -> "2024-03-14T09:26:17Z")).toString())
+          )
+        )
       when(mockAuditService.auditBTNSubmission(any(), any(), any(), any())(using any[HeaderCarrier]))
         .thenReturn(Future.successful(AuditResult.Success))
 
