@@ -17,9 +17,10 @@
 package services
 
 import connectors.*
-import models.btn.BTNRequest
+import models.InternalIssueError
+import models.btn.{BTNRequest, BtnResponse}
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,6 +31,24 @@ class BTNService @Inject() (
 )(using ec: ExecutionContext)
     extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest)(using headerCarrier: HeaderCarrier, pillar2Id: String): Future[HttpResponse] =
-    btnConnector.submitBTN(btnRequest)
+  def submitBTN(btnRequest: BTNRequest)(using headerCarrier: HeaderCarrier, pillar2Id: String): Future[BtnResponse] =
+    btnConnector
+      .submitBTN(btnRequest)
+      .map { btnResponse =>
+        btnResponse.result match {
+          case Left(failure) =>
+            logger.info(
+              s"BTN Request Submission failed with ${failure.errorCode}: ${failure.message}"
+            )
+          case Right(success) =>
+            logger.info(
+              s"BTN Request Submission was successful. Processed ${success.processingDate}"
+            )
+        }
+        btnResponse
+      }
+      .recoverWith { case ex: Throwable =>
+        logger.warn(s"BTNService Request failed with an exception: " + ex)
+        Future.failed(InternalIssueError)
+      }
 }

@@ -77,8 +77,8 @@ class BtnSubmissionService @Inject() (
       .flatMap { resp =>
         sessionRepository.get(userId).flatMap {
           case Some(latest) =>
-            resp.status match {
-              case 201 =>
+            resp.result match {
+              case Right(_) =>
                 for {
                   submittedAnswers <- Future.fromTry {
                                         latest
@@ -90,10 +90,10 @@ class BtnSubmissionService @Inject() (
                          pillarReference = pillar2Id,
                          accountingPeriod = accountingPeriod,
                          entitiesInsideAndOutsideUK = originalAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                         response = ApiResponseData.fromHttpResponse(resp)(using clock)
+                         response = ApiResponseData.fromBtnResponse(resp)(using clock)
                        )
                 } yield ()
-              case _ =>
+              case Left(_) =>
                 for {
                   errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
                   _            <- sessionRepository.set(errorAnswers)
@@ -101,7 +101,7 @@ class BtnSubmissionService @Inject() (
                          pillarReference = pillar2Id,
                          accountingPeriod = accountingPeriod,
                          entitiesInsideAndOutsideUK = originalAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                         response = ApiResponseData.fromHttpResponse(resp)(using clock)
+                         response = ApiResponseData.fromBtnResponse(resp)(using clock)
                        )
                 } yield ()
             }

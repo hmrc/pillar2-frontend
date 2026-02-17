@@ -20,10 +20,8 @@ import models.btn.BtnResponse
 import models.subscription.AccountingPeriod
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
-import uk.gov.hmrc.http.HttpResponse
 
 import java.time.*
-import scala.util.Try
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -74,31 +72,6 @@ object ApiResponseData {
         failure.errorCode,
         failure.message
       )
-  }
-
-  def fromHttpResponse(response: HttpResponse)(using clock: Clock): ApiResponseData = {
-    val json = Try(response.json).getOrElse(JsObject.empty)
-
-    response.status match {
-      case 201 =>
-        val processingDate = (json \ "success" \ "processingDate")
-          .asOpt[ZonedDateTime]
-          .getOrElse(ZonedDateTime.now(clock))
-        ApiResponseSuccess(response.status, processingDate)
-
-      case _ =>
-        val errorCode = (json \ "code")
-          .asOpt[String]
-          .orElse((json \ "failures" \ 0 \ "code").asOpt[String])
-          .getOrElse("UNKNOWN")
-
-        val message = (json \ "message")
-          .asOpt[String]
-          .orElse((json \ "failures" \ 0 \ "reason").asOpt[String])
-          .getOrElse(response.body)
-
-        ApiResponseFailure(response.status, ZonedDateTime.now(clock), errorCode, message)
-    }
   }
 
   given writes: Writes[ApiResponseData] = {
