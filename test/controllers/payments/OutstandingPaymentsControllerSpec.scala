@@ -84,6 +84,49 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
       }
     }
 
+    "return Ok and display correct view for a GET with outstanding payments that existed before company registration date" in {
+      val subscriptionData = SubscriptionData(
+        formBundleNumber = "form bundle",
+        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+        accountStatus = Some(AccountStatus.ActiveAccount)
+      )
+
+      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[FinancialDataService].toInstance(mockFinancialDataService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(samplePreRegistrationChargeTransaction))
+        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(subscriptionData))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[OutstandingPaymentsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual
+          view(preRegistrationOverdueTables, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
+            request,
+            applicationConfig,
+            messages(application),
+            isAgent = false
+          ).toString
+      }
+    }
+
     "redirect to Journey Recovery when service call fails" in {
       val subscriptionData = SubscriptionData(
         formBundleNumber = "form bundle",
@@ -327,6 +370,21 @@ object OutstandingPaymentsControllerSpec {
       )
     )
 
+  val samplePreRegistrationChargeTransaction: FinancialData =
+    FinancialData(
+      Seq(
+        FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
+          accountingPeriod = AccountingPeriod(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31)),
+          subTransactionRef = EtmpSubtransactionRef.Dtt,
+          outstandingAmount = BigDecimal(1000.00),
+          chargeItems = OutstandingCharge.FinancialItems(
+            earliestDueDate = LocalDate.of(2020, 12, 31),
+            Seq(FinancialItem(dueDate = Some(LocalDate.of(2020, 12, 31)), clearingDate = None))
+          )
+        )
+      )
+    )
+
   val overdueFinancialSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
@@ -341,6 +399,15 @@ object OutstandingPaymentsControllerSpec {
       accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       rows = Seq(
         OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = BigDecimal(1000.00), dueDate = LocalDate.of(2024, 12, 31))
+      )
+    )
+  )
+
+  val preRegistrationOverdueTables: Seq[OutstandingPaymentsTable] = Seq(
+    OutstandingPaymentsTable(
+      accountingPeriod = AccountingPeriod(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31)),
+      rows = Seq(
+        OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = BigDecimal(1000.00), dueDate = LocalDate.of(2020, 12, 31))
       )
     )
   )
