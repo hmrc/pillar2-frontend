@@ -138,7 +138,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
     }
 
     "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
 
@@ -249,7 +249,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
           .setOrException(FmEntityTypePage, EntityType.Other)
       )
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

@@ -78,7 +78,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
 
     "must redirect to RFM Registered Address page with valid data" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
@@ -99,7 +99,7 @@ class RfmNameRegistrationControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
       running(application) {

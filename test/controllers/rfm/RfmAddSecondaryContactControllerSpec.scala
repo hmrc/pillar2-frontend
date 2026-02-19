@@ -135,7 +135,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
     "must redirect to book mark page for a GET if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(GET, controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(NormalMode).url)
 
       running(application) {
@@ -149,7 +149,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(POST, controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody(
           "value" -> "true"

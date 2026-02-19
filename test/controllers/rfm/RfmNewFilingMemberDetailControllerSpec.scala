@@ -76,7 +76,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
 
     "must redirect to the under construction page when valid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
         )
@@ -97,7 +97,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
       running(application) {

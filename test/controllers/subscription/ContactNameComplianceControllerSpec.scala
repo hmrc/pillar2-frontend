@@ -82,7 +82,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     }
 
     "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
 
@@ -115,7 +115,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     }
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val stringInput = randomStringGenerator(161)

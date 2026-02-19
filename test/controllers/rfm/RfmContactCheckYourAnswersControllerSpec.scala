@@ -284,7 +284,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     "redirect to 'cannot return after confirmation' page once nfm submitted successfully and user attempts to go back" in {
       val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
-      val application                  = applicationBuilder(None)
+      val application                  = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
@@ -741,7 +741,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
 
       "redirect to incomplete data page if they have only partially completed their application" in {
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value

@@ -39,7 +39,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
 
   "SubmissionHistoryController" should {
     "return OK and display the correct view for a GET with no submissions" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -65,7 +65,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
     }
 
     "return OK and display the correct view for a GET with submissions" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)

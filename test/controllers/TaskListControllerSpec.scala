@@ -68,7 +68,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
@@ -123,7 +123,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
       val userAnswer  = UserAnswers("id").setOrException(PlrReferencePage, "id")
-      val application = applicationBuilder(None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           api.inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
