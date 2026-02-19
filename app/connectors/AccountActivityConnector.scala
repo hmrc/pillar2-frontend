@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,7 +49,7 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
           Future failed NoResultFound
         case response if response.status == UNPROCESSABLE_ENTITY && response.body.replaceAll("\\s", "").contains(noDataFoundCode) =>
           logger.warn(s"Account activity no data found (422/014) for $plrReference")
-          Future failed NoResultFound
+          Future successful AccountActivityResponse(LocalDateTime.now(), Seq.empty)
         case e @ _ =>
           logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse
