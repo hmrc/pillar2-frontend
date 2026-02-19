@@ -100,7 +100,11 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         accountStatus = Some(AccountStatus.ActiveAccount)
       )
 
-      val application = applicationBuilder(enrolments = enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
+      val application = applicationBuilder(
+        userAnswers = Some(emptyUserAnswers),
+        enrolments = enrolments,
+        additionalData = Map("features.useAccountActivityApi" -> false)
+      )
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[FinancialDataService].toInstance(mockFinancialDataService),
