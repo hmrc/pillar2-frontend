@@ -130,7 +130,7 @@ class RfmSecondaryPhonePreferenceControllerSpec extends SpecBase {
 
     "redirect to bookmark page if previous page not answered" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onPageLoad(NormalMode).url)
 
       running(application) {
@@ -144,7 +144,7 @@ class RfmSecondaryPhonePreferenceControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "true")
 

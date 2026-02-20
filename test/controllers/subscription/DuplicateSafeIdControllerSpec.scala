@@ -60,7 +60,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
     }
 
     "redirect to journey recovery if upe details not provided" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.DuplicateSafeIdController.onPageLoad().url)
@@ -72,7 +72,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
     }
 
     "Bad request if no option is selected" in {
-      val application = applicationBuilder().build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit().url).withFormUrlEncodedBody(

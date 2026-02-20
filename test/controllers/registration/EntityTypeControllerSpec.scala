@@ -237,7 +237,7 @@ class EntityTypeControllerSpec extends SpecBase {
           .setOrException(UpeEntityTypePage, EntityType.Other)
       )
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

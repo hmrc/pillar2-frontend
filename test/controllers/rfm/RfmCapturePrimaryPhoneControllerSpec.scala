@@ -168,7 +168,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
     }
 
     "redirect to recovery page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
       running(application) {
@@ -180,7 +180,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
     }
 
     "redirect to journey recovery if no contact name is found for POST" in {
-      val application = applicationBuilder(None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryPhoneController.onSubmit(NormalMode).url)
         val result  = route(application, request).value

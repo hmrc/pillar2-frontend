@@ -130,7 +130,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
@@ -144,7 +144,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
 
     "redirect to bookmark page if no data is found for primary contact name page" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       val request     = FakeRequest(GET, controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode).url)
 
       running(application) {

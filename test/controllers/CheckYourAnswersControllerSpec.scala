@@ -258,7 +258,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
 
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
-        val application                  = applicationBuilder(None)
+        val application                  = applicationBuilder(Some(emptyUserAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
@@ -359,7 +359,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "redirect to inProgress error page if no user data is found" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value

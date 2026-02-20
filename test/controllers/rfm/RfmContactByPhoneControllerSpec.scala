@@ -168,7 +168,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
 
     }
     "redirect to journey recovery when no contact name is found for POST" in {
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
