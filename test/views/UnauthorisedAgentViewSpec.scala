@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.UnauthorisedAgentView
 
 class UnauthorisedAgentViewSpec extends ViewSpecBase {
@@ -50,17 +51,21 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
         "You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service."
     }
 
-    "have list items with links" in {
+    "have list items with paragraph text and links" in {
       val listItem1 = view.getElementsByTag("li").get(0)
 
-      listItem1.select("a").text mustBe "if you are an agent that has been given authorisation to report Pillar 2 " +
-        "Top-up Taxes on behalf of a group, you must sign in via agent services"
+      listItem1
+        .select("p")
+        .text mustBe "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must sign in via agent services"
+      listItem1.select("a").text mustBe "sign in via agent services"
       listItem1.select("a").attr("href") mustBe signInToAgentUrl
 
       val listItem2 = view.getElementsByTag("li").get(1)
 
-      listItem2.select("a").text mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you " +
-        "must request authorisation via agent services"
+      listItem2
+        .select("p")
+        .text mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must request authorisation via agent services"
+      listItem2.select("a").text mustBe "request authorisation via agent services"
       listItem2.select("a").attr("href") mustBe signInToAgentUrl
     }
 
@@ -69,13 +74,13 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
       link.text mustBe "Find out more about who can use this service"
       link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
-//    TODO: Uncomment accessibility behaviours once invalid <a> tags addressed
-//    val viewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("view", view)
-//      )
-//
-//    behaveLikeAccessiblePage(viewScenarios)
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }
