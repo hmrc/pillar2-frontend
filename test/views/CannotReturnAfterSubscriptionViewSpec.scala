@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.CannotReturnAfterSubscriptionView
 
 class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
@@ -56,13 +57,12 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
 
-//    TODO: Uncomment accessibility behaviours once invalid <a> tag addressed
-//    val viewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("view", view)
-//      )
-//
-//    behaveLikeAccessiblePage(viewScenarios)
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }

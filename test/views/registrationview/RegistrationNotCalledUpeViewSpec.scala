@@ -21,6 +21,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.registrationview.RegistrationNotCalledUpeView
 
 class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
@@ -48,16 +49,19 @@ class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with a link" in {
-      paragraphs.get(2).getElementsByTag("a").text mustBe "Go back to select the entity type to try again."
-      paragraphs.get(2).getElementsByTag("a").attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
+      val paragraphWithLink = paragraphs.get(2)
+      paragraphWithLink.text mustBe "Go back to select the entity type to try again."
+
+      val link = paragraphWithLink.getElementsByTag("a")
+      link.text mustBe "Go back to select the entity type"
+      link.attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
     }
 
-//    TODO: Uncomment accessibility behaviours once invalid <a> tag addressed
-//    val viewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("view", view)
-//      )
-//
-//    behaveLikeAccessiblePage(viewScenarios)
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 }
