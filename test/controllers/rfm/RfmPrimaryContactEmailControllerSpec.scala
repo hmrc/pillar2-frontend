@@ -166,7 +166,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
 
     "redirect to Recovery page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
       running(application) {
@@ -178,7 +178,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
     "Journey Recovery when no data found for contact name in POST" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
       val request = FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "alll@gmail.com"

@@ -91,7 +91,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
       }
 
       "redirect to under construction page in case of valid data submission" in {
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )

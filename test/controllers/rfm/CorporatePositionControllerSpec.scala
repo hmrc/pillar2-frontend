@@ -83,7 +83,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
@@ -109,7 +109,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
@@ -133,7 +133,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
@@ -155,7 +155,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
@@ -174,7 +174,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
     "redirect to journey recovery if no data is found in sessionRepository or the BE database" in {
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )

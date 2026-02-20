@@ -94,7 +94,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       }
 
       "redirect to JourneyRecoveryController if previous page not answered" in {
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .build()
 
         running(application) {
@@ -149,7 +149,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       }
 
       "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .build()
 
         running(application) {
