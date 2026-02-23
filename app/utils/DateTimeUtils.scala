@@ -18,6 +18,7 @@ package utils
 
 import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object DateTimeUtils {
 
@@ -36,8 +37,8 @@ object DateTimeUtils {
   // 3 December 2011, 10:15am (GMT)
   private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern)
 
-  // 3 December 2011 at 10:15pm
-  private val dateAtTimeFormatter = DateTimeFormatter.ofPattern(dateAtTimePattern)
+  // 3 December 2011 at 10:15am
+  private val dateAtTimeFormatter = DateTimeFormatter.ofPattern(dateAtTimePattern, Locale.UK)
 
   // 10:15am (GMT)
   private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(timePattern)
