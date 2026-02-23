@@ -1437,7 +1437,8 @@ repaymentsPhoneDetails.change.hidden = the phone number
 
 repayments.confirmation.title = Repayment request submitted
 repayments.confirmation.bannerText = Repayment request submitted
-repayments.confirmation.message = You have successfully submitted your repayment request on
+repayments.confirmation.message = You have successfully submitted your repayment request on:
+repayments.confirmation.message.time = {0}
 repayments.confirmation.p1 = This is for group:
 repayments.confirmation.p2 = Pillar 2 ID:
 repayments.confirmation.heading = What happens next
@@ -1713,8 +1714,8 @@ btn.confirmation.p2 = Effective from the start of the accounting period you sele
 btn.confirmation.p2.dates = {0} - {1}
 btn.confirmation.underEnquiry.insetText = This submission will not apply to any accounting period under enquiry.
 btn.confirmation.subheading = What happens next
-btn.confirmation.group.p3 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
-btn.confirmation.group.p4 = The group must submit a UK Tax Return if your group meets the threshold conditions in the future.
+btn.confirmation.group.p3 = HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period, and future accounting periods.
+btn.confirmation.group.p4 = If the group becomes liable for a UK Tax Return in the future, you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from the group’s account.
 btn.confirmation.p5.group.link = Back to group’s homepage
 
 btn.error.title = Sorry, there is a problem with the service

@@ -90,11 +90,11 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         s"You have submitted a Below-Threshold Notification on $submissionDateTime."
       paragraphs.get(1).text() mustBe
         s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
-      paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
-        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
-        "information return while the group remains below-threshold."
+      paragraphs.get(2).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
+        " and future accounting periods."
       paragraphs.get(3).text() mustBe
-        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+        "If the group becomes liable for a UK Tax Return in the future, " +
+        "you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from the group’s account."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -113,11 +113,11 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         s"This is for group: $companyName Pillar 2 ID: $plrRef"
       paragraphs.get(4).text() mustBe
         s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
-      paragraphs.get(5).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
-        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
-        "information return while the group remains below-threshold."
+      paragraphs.get(5).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
+        " and future accounting periods."
       paragraphs.get(6).text() mustBe
-        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+        "If the group becomes liable for a UK Tax Return in the future, " +
+        "you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from the group’s account."
 
       paragraphs.get(7).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(7).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url

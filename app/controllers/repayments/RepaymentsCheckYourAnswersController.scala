@@ -110,7 +110,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
-                                      .flatMap(_.set(RepaymentConfirmationPage, ZonedDateTime.now(clock).toDateTimeGmtFormat))
+                                      .flatMap(_.set(RepaymentConfirmationPage, ZonedDateTime.now(clock).toDateAtTimeFormat))
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-

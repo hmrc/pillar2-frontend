@@ -51,7 +51,8 @@
   ))
 
   <p class="govuk-body">
-    @messages("repayments.confirmation.message") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span>.
+    <span>@messages("repayments.confirmation.message")</span><br>
+    <span>@messages("repayments.confirmation.message.time", currentDate)</span>
   </p>
 
   @if(isAgent) {
