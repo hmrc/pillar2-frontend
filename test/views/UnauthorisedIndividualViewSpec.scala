@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import views.behaviours.ViewScenario
 import views.html.UnauthorisedIndividualView
 
 class UnauthorisedIndividualViewSpec extends ViewSpecBase {
@@ -46,8 +47,13 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with link" in {
-      val paragraphLink = view.getElementsByClass("govuk-body").get(1).select("a")
-      paragraphLink.text mustBe "If the group still needs to register, sign in to Government Gateway with an organisation account."
+      val paragraph = view.getElementsByClass("govuk-body").get(1)
+
+      val paragraphText = paragraph.select("p")
+      paragraphText.text mustBe "If the group still needs to register, sign in to Government Gateway with an organisation account."
+
+      val paragraphLink = paragraph.select("a")
+      paragraphLink.text mustBe "sign in to Government Gateway with an organisation account."
       paragraphLink.attr("href") mustBe appConfig.loginUrl
     }
 
@@ -57,13 +63,12 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
       link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
 
-//    TODO: Uncomment accessibility behaviours once invalid <a> tag addressed
-//    val viewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("view", view)
-//      )
-//
-//    behaveLikeAccessiblePage(viewScenarios)
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios)
   }
 
 }
