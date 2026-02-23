@@ -87,7 +87,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       val paragraphs: Elements = groupView().getElementsByClass("govuk-body")
 
       paragraphs.get(0).text() mustBe
-        s"You have submitted a Below-Threshold Notification on: $submissionDateTime."
+        s"You have submitted a Below-Threshold Notification on $submissionDateTime."
       paragraphs.get(1).text() mustBe
         s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
       paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
