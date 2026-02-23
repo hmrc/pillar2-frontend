@@ -39,6 +39,7 @@ class RfmNameRegistrationController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmNameRegistrationFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -50,7 +51,7 @@ class RfmNameRegistrationController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData andThen journeyGuard).async { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(RfmNameRegistrationPage) match {
         case Some(value) => form.fill(value)

@@ -37,6 +37,7 @@ class RepaymentsPhoneDetailsController @Inject() (
   formProvider:                           CapturePhoneDetailsFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   sessionRepository:                      SessionRepository,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
@@ -46,7 +47,7 @@ class RepaymentsPhoneDetailsController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       (for {
         _           <- request.userAnswers.get(RepaymentsContactByPhonePage)

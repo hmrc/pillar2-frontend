@@ -39,6 +39,7 @@ class ReasonForRequestingRepaymentController @Inject() (
   getData:                                SessionDataRetrievalAction,
   navigator:                              RepaymentNavigator,
   requireData:                            SessionDataRequiredAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   formProvider:                           ReasonForRequestingRepaymentFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ReasonForRequestingRefundView
@@ -49,7 +50,7 @@ class ReasonForRequestingRepaymentController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { request =>
+    (identify andThen getData andThen requireData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))

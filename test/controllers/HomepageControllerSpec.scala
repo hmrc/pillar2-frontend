@@ -177,6 +177,68 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       }
     }
 
+    "retry and eventually succeed when maybeReadSubscription returns RetryableGatewayError then succeeds" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
+          .thenReturn(Future.failed(RetryableGatewayError))
+          .thenReturn(Future.failed(RetryableGatewayError))
+          .thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).maybeReadSubscription(any())(using any())
+      }
+    }
+
+    "redirect to ViewAmendSubscriptionFailed when retries are exhausted after RetryableGatewayError" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
+          .thenReturn(Future.failed(RetryableGatewayError))
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
+        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).maybeReadSubscription(any())(using any())
+      }
+    }
+
     "redirect to registration in progress page when subscription is still processing" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)

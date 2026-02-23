@@ -38,6 +38,7 @@ class RepaymentsContactNameController @Inject() (
   formProvider:                           RepaymentsContactNameFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   sessionRepository:                      SessionRepository,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
@@ -49,7 +50,7 @@ class RepaymentsContactNameController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form

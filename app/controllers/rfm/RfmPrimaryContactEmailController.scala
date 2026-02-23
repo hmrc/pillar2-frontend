@@ -38,6 +38,7 @@ class RfmPrimaryContactEmailController @Inject() (
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmPrimaryContactEmailFormProvider,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmPrimaryContactEmailView,
   navigator:                        ReplaceFilingMemberNavigator
@@ -45,7 +46,7 @@ class RfmPrimaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     request.userAnswers
       .get(RfmPrimaryContactNamePage)

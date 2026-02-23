@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.RetryableGatewayError
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import play.api.Logging
 import play.api.http.Status.*
@@ -49,7 +50,8 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
             Future.successful(Json.parse(response.body).as[ObligationsAndSubmissionsSuccess])
           case _ =>
             logger.error(s"Unexpected response status ${response.status} from obligations and submissions endpoint for pillar2Id: $pillar2Id")
-            Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
+            if RetryableGatewayError.retryableStatuses(response.status) then Future.failed(RetryableGatewayError)
+            else Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
         }
       }
   }

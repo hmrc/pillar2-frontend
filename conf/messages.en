@@ -74,6 +74,7 @@ viewAmendSubscriptionFailed.heading = Sorry, there is a problem with the service
 viewAmendSubscriptionFailed.message1 = Please try again later.
 viewAmendSubscriptionFailed.link = Return to your account homepage to try again
 ###############################################
+inactiveStatusBanner.p1 = Important
 
 ###############################################
 #

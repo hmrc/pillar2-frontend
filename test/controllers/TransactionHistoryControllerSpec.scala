@@ -85,7 +85,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
       // Payment transaction (charge allocation, no repayment)
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionDesc = "Pillar 2 Payment on Account",
         startDate = None,
         endDate = None,
         accruedInterest = None,
@@ -113,7 +113,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
       // Repayment transaction
       AccountActivityTransaction(
         transactionType = TransactionType.Payment,
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionDesc = "Pillar 2 Payment on Account",
         startDate = None,
         endDate = None,
         accruedInterest = None,

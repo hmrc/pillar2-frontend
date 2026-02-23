@@ -17,7 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import models.RetryableGatewayError
 import play.api.Application
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.guice.GuiceApplicationBuilder
 
 class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServerHandler {
@@ -44,14 +46,34 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       result mustBe obligationsAndSubmissionsSuccessResponse().success
     }
 
-    "fail when the backend returns a non-200 status" in {
+    "return RetryableGatewayError when the backend returns 500" in {
       stubGet(
         url,
         INTERNAL_SERVER_ERROR,
         headers = Map("X-Pillar2-Id" -> PlrReference)
       )
 
-      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
+      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe RetryableGatewayError)
+    }
+
+    "return RetryableGatewayError when the backend returns 502" in {
+      stubGet(
+        url,
+        502,
+        headers = Map("X-Pillar2-Id" -> PlrReference)
+      )
+
+      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe RetryableGatewayError)
+    }
+
+    "fail with RuntimeException when the backend returns other non-200 status" in {
+      stubGet(
+        url,
+        503,
+        headers = Map("X-Pillar2-Id" -> PlrReference)
+      )
+
+      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[RuntimeException])
     }
 
     "fail when the response cannot be parsed" in {

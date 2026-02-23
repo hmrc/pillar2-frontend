@@ -32,6 +32,7 @@ import services.{FinancialDataService, ReferenceNumberService, SubscriptionServi
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.outstandingpayments.OutstandingPaymentsView
 
 import java.time.LocalDate.now
@@ -123,7 +124,7 @@ class OutstandingPaymentsController @Inject() (
         subscriptionData          <- OptionT.liftF(subscriptionService.readSubscription(plrRef))
         outstandingPaymentsResult <-
           OptionT.liftF(
-            retrieveOutstandingPayments(plrRef, subscriptionData.upeDetails.registrationDate, now())
+            retrieveOutstandingPayments(plrRef, LocalDate.now.minusYears(SubmissionAccountingPeriods), now())
           )
       } yield outstandingPaymentsResult match {
         case Left(accountActivityResponse) =>

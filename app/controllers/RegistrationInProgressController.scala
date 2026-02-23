@@ -25,7 +25,7 @@ import play.api.mvc.*
 import play.twirl.api.Html
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationInProgressNewView
+import views.html.RegistrationInProgressView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  viewHomepage:             RegistrationInProgressNewView,
+  viewHomepage:             RegistrationInProgressView,
   subscriptionService:      SubscriptionService
 )(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController

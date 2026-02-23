@@ -25,6 +25,7 @@ import models.subscription.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.mockito.invocation.InvocationOnMock
 import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -39,7 +40,7 @@ import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 
 class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   val subDataWithAddress: SubscriptionLocalData = emptySubscriptionLocalData
@@ -285,14 +286,21 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
-      "update status to SuccessfullyCompleted when background subscription update succeeds" ignore {
+      "update status to SuccessfullyCompleted when background subscription update succeeds" in {
         val mockSessionRepository  = mock[SessionRepository]
         val userAnswers            = UserAnswers("id")
         val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
         val expectedFinalAnswers   = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
+        val finalSetCalled         = Promise[Unit]()
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenAnswer { (invocation: InvocationOnMock) =>
+          val answers = invocation.getArgument[models.UserAnswers](0)
+          if answers.get(ManageContactDetailsStatusPage).contains(ManageContactDetailsStatus.SuccessfullyCompleted) then {
+            finalSetCalled.success(())
+          }
+          Future.successful(true)
+        }
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.successful(Done))
 
@@ -317,6 +325,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
+          finalSetCalled.future.futureValue
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
         }
       }

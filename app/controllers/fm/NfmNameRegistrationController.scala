@@ -39,6 +39,7 @@ class NfmNameRegistrationController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
+  journeyGuard:              RfmDataJourneyGuardAction,
   navigator:                 NominatedFilingMemberNavigator,
   formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -49,7 +50,7 @@ class NfmNameRegistrationController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     val preparedForm          = request.userAnswers.get(FmNameRegistrationPage).map(nominated => form.fill(nominated)).getOrElse(form)
     if request.userAnswers.get(FmRegisteredInUKPage).contains(false) then {

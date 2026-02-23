@@ -56,6 +56,7 @@ class RequestRepaymentBeforeStartControllerSpec extends SpecBase {
           )
         )
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url)

@@ -42,7 +42,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
   )
 
   lazy val application: Application =
-    applicationBuilder(userAnswers = None, enrolments)
+    applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
       .overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),

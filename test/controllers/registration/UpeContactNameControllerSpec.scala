@@ -98,7 +98,7 @@ class UpeContactNameControllerSpec extends SpecBase {
     }
 
     "redirect to bookmark page if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url)
 
@@ -111,7 +111,7 @@ class UpeContactNameControllerSpec extends SpecBase {
 
     "return bad request when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {

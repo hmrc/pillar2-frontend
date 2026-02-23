@@ -21,17 +21,18 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import views.html.RegistrationInProgressNewView
+import views.behaviours.ViewScenario
+import views.html.RegistrationInProgressView
 
-class RegistrationInProgressNewViewSpec extends ViewSpecBase {
-  lazy val page:   RegistrationInProgressNewView = inject[RegistrationInProgressNewView]
-  lazy val plrRef: String                        = "XMPLR0012345678"
+class RegistrationInProgressViewSpec extends ViewSpecBase {
+  lazy val page:   RegistrationInProgressView = inject[RegistrationInProgressView]
+  lazy val plrRef: String                     = "XMPLR0012345678"
 
   lazy val view: Document = Jsoup.parse(
     page(plrRef)(request, appConfig, messages).toString()
   )
 
-  "RegistrationInProgressNewView" should {
+  "RegistrationInProgressView" should {
     "have a title" in {
       view.title() mustBe "Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -76,12 +77,12 @@ class RegistrationInProgressNewViewSpec extends ViewSpecBase {
       val twoThirdsColumn: Elements = view.getElementsByClass("govuk-grid-column-two-thirds")
       twoThirdsColumn.size() mustBe 1
     }
-//    TODO: Uncomment accessibility behaviours when second H1 is corrected
-//    val viewScenarios: Seq[ViewScenario] =
-//      Seq(
-//        ViewScenario("view", view)
-//      )
-//
-//    behaveLikeAccessiblePage(viewScenarios)
+
+    val viewScenarios: Seq[ViewScenario] =
+      Seq(
+        ViewScenario("view", view)
+      )
+
+    behaveLikeAccessiblePage(viewScenarios, false)
   }
 }

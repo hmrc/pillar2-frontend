@@ -155,7 +155,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
       }
     }
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val application = applicationBuilder()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
           Seq(
@@ -176,7 +176,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
     }
 
     "must return Bad Request and show specific error message when no option is selected" in {
-      val application = applicationBuilder()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
           Seq(

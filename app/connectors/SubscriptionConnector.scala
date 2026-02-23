@@ -71,7 +71,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           Future.successful(Json.parse(response.body).as[SubscriptionData])
         case e =>
           logger.warn(s"Connection issue when calling cache subscription with status: ${e.status}")
-          Future.failed(InternalIssueError)
+          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
+          else Future.failed(InternalIssueError)
       }
   }
 
@@ -91,7 +92,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
         case e                                                  =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          Future.failed(InternalIssueError)
+          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
+          else Future.failed(InternalIssueError)
       }
   }
 

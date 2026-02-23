@@ -39,6 +39,7 @@ class RfmContactAddressController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  journeyGuard:                     RfmDataJourneyGuardAction,
   formProvider:                     RfmContactAddressFormProvider,
   val countryOptions:               CountryOptions,
   navigator:                        ReplaceFilingMemberNavigator,
@@ -48,7 +49,7 @@ class RfmContactAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form:                   Form[NonUKAddress] = formProvider()
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
     val preparedForm          = request.userAnswers.get(RfmContactAddressPage) match {
       case Some(value) => form.fill(value)

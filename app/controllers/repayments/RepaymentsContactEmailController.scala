@@ -38,6 +38,7 @@ class RepaymentsContactEmailController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
+  journeyGuard:                           RepaymentJourneyGuardAction,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactEmailView
@@ -46,7 +47,7 @@ class RepaymentsContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       request.userAnswers
         .get(RepaymentsContactNamePage)
