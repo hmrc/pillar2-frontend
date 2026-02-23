@@ -72,7 +72,7 @@
  </div>
 }
 
-@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+@layout(pageTitle = s"${messages("homepage.title")} - ${messages("service.name")} - ${messages("site.govuk")}", showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
   @btnBanner match {
     case BtnBanner.Show => {@govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))}
