@@ -22,29 +22,40 @@ import models.UserAnswers
 import pages.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsConfirmationView
 
 import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  val subscriptionService:                SubscriptionService,
   view:                                   RepaymentsConfirmationView,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction
-)(using appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig, executionContext: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
       given Request[AnyContent] = request
       given userAnswers: UserAnswers = request.userAnswers
       (for {
         confirmationTimestamp <- userAnswers.get(RepaymentConfirmationPage)
         completionStatus      <- userAnswers.get(RepaymentCompletionStatus) if completionStatus
-      } yield Ok(view(confirmationTimestamp)))
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        plrRef                <- userAnswers.get(PlrReferencePage)
+      } yield subscriptionService.maybeReadSubscription(plrRef).map {
+        case Some(subscription) =>
+          val orgName = subscription.upeDetails.organisationName
+          Ok(view(confirmationTimestamp, plrRef, orgName, request.request.isAgent))
+        case None =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }).getOrElse(
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      )
     }
 }

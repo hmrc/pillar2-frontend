@@ -25,15 +25,19 @@ object DateTimeUtils {
   val utcZoneId:         ZoneId = ZoneId.of("UTC")
 
   // Patterns
-  private val datePattern:     String = "d MMMM yyyy"
-  private val dateTimePattern: String = "d MMMM yyyy, h:mma (zzz)"
-  private val timePattern:     String = "hh:mma (zzz)"
+  private val datePattern:       String = "d MMMM yyyy"
+  private val dateTimePattern:   String = "d MMMM yyyy, h:mma (zzz)"
+  private val timePattern:       String = "hh:mma (zzz)"
+  private val dateAtTimePattern: String = "d MMMM yyyy 'at' h:mma"
 
   // 3 December 2011
   private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
 
   // 3 December 2011, 10:15am (GMT)
   private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern)
+
+  // 3 December 2011 at 10:15pm
+  private val dateAtTimeFormatter = DateTimeFormatter.ofPattern(dateAtTimePattern)
 
   // 10:15am (GMT)
   private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(timePattern)
@@ -55,6 +59,7 @@ object DateTimeUtils {
     def toDateFormat:        String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateFormatter)
     def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)
     def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
+    def toDateAtTimeFormat:  String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateAtTimeFormatter)
   }
 
   private val fixedNow: Instant   = Instant.now()

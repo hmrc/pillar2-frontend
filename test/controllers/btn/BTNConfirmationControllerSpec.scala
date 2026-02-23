@@ -29,6 +29,7 @@ import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import utils.DateTimeUtils
 import views.html.btn.BTNConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -36,8 +37,10 @@ import scala.concurrent.Future
 
 class BTNConfirmationControllerSpec extends SpecBase {
 
-  val submittedAt: ZonedDateTime = ZonedDateTime.now()
-  val accountingPeriodStart = someSubscriptionLocalData.subAccountingPeriod.startDate
+  val submittedAtZonedDateTime: ZonedDateTime = ZonedDateTime.of(2024, 11, 10, 10, 0, 0, 0, DateTimeUtils.utcZoneId)
+  val submittedAt:              String        = "10 November 2024 at 10:00am"
+  private val accountingPeriodStart = someSubscriptionLocalData.subAccountingPeriod.startDate
+  private val accountingPeriodEnd   = someSubscriptionLocalData.subAccountingPeriod.endDate
 
   val btnConfirmationView: BTNConfirmationView = app.injector.instanceOf[BTNConfirmationView]
 
@@ -78,7 +81,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
       "return OK and the correct view for a GET" in new BTNConfirmationControllerTestCase {
 
-        override def userAnswers: UserAnswers => Option[UserAnswers] = _.setOrException(BtnConfirmationPage, submittedAt).some
+        override def userAnswers: UserAnswers => Option[UserAnswers] = _.setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         val result: Future[Result] = controller.onPageLoad(request)
 
@@ -86,8 +89,10 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual btnConfirmationView(
           Some("OrgName"),
+          Some("somePillar2Id"),
           submittedAt,
           accountingPeriodStart,
+          accountingPeriodEnd,
           isAgent = false,
           showUnderEnquiryWarning = false
         )(
@@ -108,7 +113,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         override def userAnswers: UserAnswers => Option[UserAnswers] =
-          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAt).some
+          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         override def obligationsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
           processingDate = ZonedDateTime.now(),
@@ -121,8 +126,10 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual btnConfirmationView(
           Some("OrgName"),
+          Some("somePillar2Id"),
           submittedAt,
           accountingPeriodStart,
+          accountingPeriodEnd,
           isAgent = false,
           showUnderEnquiryWarning = true
         )(
@@ -150,7 +157,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         override def userAnswers: UserAnswers => Option[UserAnswers] =
-          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAt).some
+          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         override def obligationsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
           processingDate = ZonedDateTime.now(),
@@ -163,8 +170,10 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual btnConfirmationView(
           Some("OrgName"),
+          Some("somePillar2Id"),
           submittedAt,
           accountingPeriodStart,
+          accountingPeriodEnd,
           isAgent = false,
           showUnderEnquiryWarning = true
         )(
@@ -192,7 +201,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         override def userAnswers: UserAnswers => Option[UserAnswers] =
-          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAt).some
+          _.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod).setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         override def obligationsData: ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
           processingDate = ZonedDateTime.now(),
@@ -205,8 +214,10 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual btnConfirmationView(
           Some("OrgName"),
+          Some("somePillar2Id"),
           submittedAt,
           accountingPeriodStart,
+          accountingPeriodEnd,
           isAgent = false,
           showUnderEnquiryWarning = false
         )(

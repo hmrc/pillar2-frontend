@@ -30,10 +30,13 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   lazy val page:               RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   lazy val testPillar2Ref:     String                     = "XMPLR0012345674"
+  lazy val testOrgName:        String                     = "Test Org"
   lazy val pageTitle:          String                     = "Repayment request submitted"
   lazy val currentDateTimeGMT: String                     = ZonedDateTime.now().toDateTimeGmtFormat
-  lazy val view:               Document                   = Jsoup.parse(page(currentDateTimeGMT)(request, appConfig, messages).toString())
-  lazy val paragraphs:         Elements                   = view.getElementsByClass("govuk-body")
+  lazy val view:       Document = Jsoup.parse(page(currentDateTimeGMT, testPillar2Ref, testOrgName, false)(request, appConfig, messages).toString())
+  lazy val agentView:  Document = Jsoup.parse(page(currentDateTimeGMT, testPillar2Ref, testOrgName, true)(request, appConfig, messages).toString())
+  lazy val paragraphs: Elements = view.getElementsByClass("govuk-body")
+  lazy val agentParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
     "have a page title" in {
@@ -85,5 +88,15 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       )
 
     behaveLikeAccessiblePage(viewScenarios)
+  }
+
+  "Agent view" should {
+    "show the correct hint text above the confirmation panel" in {
+      agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: $testOrgName ID: $testPillar2Ref"
+    }
+
+    "show the extended confirmation message below the existing text" in {
+      agentParagraphs.get(2).text mustBe s"This is for group: $testOrgName Pillar 2 ID: $testPillar2Ref"
+    }
   }
 }

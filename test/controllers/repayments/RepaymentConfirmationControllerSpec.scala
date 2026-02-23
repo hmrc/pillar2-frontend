@@ -17,14 +17,20 @@
 package controllers.repayments
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import models.UserAnswers
-import pages.{RepaymentCompletionStatus, RepaymentConfirmationPage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{PlrReferencePage, RepaymentCompletionStatus, RepaymentConfirmationPage}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.DateTimeUtils.*
 import views.html.repayments.RepaymentsConfirmationView
 
 import java.time.ZonedDateTime
+import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
@@ -35,23 +41,40 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
       val testUserAnswers:    UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
         .setOrException(RepaymentConfirmationPage, currentDateTimeGMT)
-      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+        .setOrException(PlrReferencePage, PlrReference)
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
 
       running(application) {
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(currentDateTimeGMT)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(currentDateTimeGMT, PlrReference, "Test Org", false)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
     "must redirect to recovery page when the user attempts to access the page before completing journey" in {
       val testUserAnswers = emptyUserAnswers.setOrException(RepaymentCompletionStatus, false)
-      val application     = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+      val application     = applicationBuilder(userAnswers = Some(testUserAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
 
       running(application) {
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
 

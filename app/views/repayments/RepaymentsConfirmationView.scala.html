@@ -30,7 +30,7 @@
         heading: heading
 )
 
-@(currentDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(currentDate: String, plrRef: String, orgName: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
   pageTitle = titleNoForm(messages("repayments.confirmation.title")),
@@ -40,7 +40,12 @@
   authorised = false,
   bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
-
+  @if(isAgent) {
+      <div class="govuk-hint govuk-!-margin-top-0">
+          <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
+          <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+      </div>
+  }
   @govukPanel(Panel(
     title = Text(messages("repayments.confirmation.bannerText"))
   ))
@@ -48,6 +53,13 @@
   <p class="govuk-body">
     @messages("repayments.confirmation.message") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span>.
   </p>
+
+  @if(isAgent) {
+      <p class="govuk-body">
+          @messages("repayments.confirmation.p1") <span class="govuk-body">@orgName</span><br>
+          @messages("repayments.confirmation.p2") <span class="govuk-body">@plrRef</span>
+      </p>
+  }
 
   @printLink(messages("site.print"))
 
