@@ -81,13 +81,6 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val printPageElement: Element = view.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
-
-    val viewScenarios: Seq[ViewScenario] =
-      Seq(
-        ViewScenario("view", view)
-      )
-
-    behaveLikeAccessiblePage(viewScenarios)
   }
 
   "Agent view" should {
@@ -99,4 +92,13 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       agentParagraphs.get(2).text mustBe s"This is for group: $testOrgName Pillar 2 ID: $testPillar2Ref"
     }
   }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario("view", view),
+      ViewScenario("agentView", agentView)
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
+
 }
