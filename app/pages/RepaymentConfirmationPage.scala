@@ -20,7 +20,6 @@ import play.api.libs.json.JsPath
 
 case object RepaymentConfirmationPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ "repaymentConfirmationTimeStamp"
 
-  override def toString: String = "repaymentConfirmationTimeStamp"
 }

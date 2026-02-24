@@ -21,25 +21,26 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import utils.DateTimeUtils
 import views.behaviours.ViewScenario
 import views.html.btn.BTNConfirmationView
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 
 class BTNConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val submissionZonedDateTime:   ZonedDateTime       = ZonedDateTime.of(2024, 11, 10, 0, 0, 0, 0, DateTimeUtils.utcZoneId)
-  lazy val submissionDate:            String              = "10 November 2024"
+  lazy val submissionDateTime:        String              = "10 November 2024 at 10:00am"
   lazy val accountingPeriodStart:     LocalDate           = LocalDate.of(2024, 11, 11)
   lazy val accountingPeriodStartDate: String              = "11 November 2024"
+  lazy val accountingPeriodEnd:       LocalDate           = LocalDate.of(2025, 11, 11)
+  lazy val accountingPeriodEndDate:   String              = "11 November 2025"
   lazy val companyName:               String              = "Test Company"
+  lazy val plrRef:                    String              = "somePillar2Id"
   lazy val page:                      BTNConfirmationView = inject[BTNConfirmationView]
   lazy val pageTitle:                 String              = "Below-Threshold Notification successful"
 
   def groupView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionZonedDateTime, accountingPeriodStart, isAgent = false, showUnderEnquiryWarning)(
+      page(Some(companyName), Some(plrRef), submissionDateTime, accountingPeriodStart, accountingPeriodEnd, isAgent = false, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages
@@ -47,7 +48,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     )
   def agentView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionZonedDateTime, accountingPeriodStart, isAgent = true, showUnderEnquiryWarning)(
+      page(Some(companyName), Some(plrRef), submissionDateTime, accountingPeriodStart, accountingPeriodEnd, isAgent = true, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages
@@ -85,14 +86,15 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     "have paragraph content and a link when in a group flow" in {
       val paragraphs: Elements = groupView().getElementsByClass("govuk-body")
 
-      paragraphs.get(0).text() mustBe s"You have submitted a Below-Threshold Notification on $submissionDate."
+      paragraphs.get(0).text() mustBe
+        s"You have submitted a Below-Threshold Notification on $submissionDateTime."
       paragraphs.get(1).text() mustBe
-        s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
-      paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
-        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
-        "information return while the group remains below-threshold."
+        s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
+      paragraphs.get(2).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
+        " and future accounting periods."
       paragraphs.get(3).text() mustBe
-        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+        "If the group becomes liable for a UK Tax Return in the future, " +
+        "you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from the group’s account."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -100,19 +102,25 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
     "have paragraph content (containing company name) and a link when in an agent flow" in {
       val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
+      val hints:      Elements = agentView().getElementsByClass("govuk-hint")
+
+      hints.get(0).text() mustBe
+        s"Group: $companyName ID: $plrRef"
 
       paragraphs.get(0).text() mustBe
-        s"You have submitted a Below-Threshold Notification for $companyName on $submissionDate."
+        s"You have submitted a Below-Threshold Notification on: $submissionDateTime."
       paragraphs.get(1).text() mustBe
-        s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
-      paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
-        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
-        "information return while the group remains below-threshold."
-      paragraphs.get(3).text() mustBe
-        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+        s"This is for group: $companyName Pillar 2 ID: $plrRef"
+      paragraphs.get(4).text() mustBe
+        s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
+      paragraphs.get(5).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
+        " and future accounting periods."
+      paragraphs.get(6).text() mustBe
+        "If the group becomes liable for a UK Tax Return in the future, " +
+        "you must let HMRC know by submitting a UK Tax Return to remove the Below-Threshold Notification from the group’s account."
 
-      paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
-      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+      paragraphs.get(7).getElementsByTag("a").text() mustBe "Back to group’s homepage"
+      paragraphs.get(7).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }
 
     "show inset text warning when showUnderEnquiryWarning is true for group view" in {

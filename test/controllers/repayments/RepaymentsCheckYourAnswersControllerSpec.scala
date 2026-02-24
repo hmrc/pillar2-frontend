@@ -310,7 +310,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             val persistOnCompletion: UserAnswers = emptyUserAnswers
               .setOrException(PlrReferencePage, initialPersist.get(PlrReferencePage).value)
               .setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
-              .setOrException(RepaymentConfirmationPage, ZonedDateTime.ofInstant(fixedNow, utcZoneId).toDateTimeGmtFormat)
+              .setOrException(RepaymentConfirmationPage, ZonedDateTime.ofInstant(fixedNow, utcZoneId).toDateAtTimeFormat)
               .setOrException(RepaymentCompletionStatus, true)
 
             eventually {

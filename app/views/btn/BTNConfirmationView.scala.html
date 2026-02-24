@@ -33,10 +33,15 @@
         formHelper: FormWithCSRF
 )
 
-@(companyName: Option[String], submissionDate: ZonedDateTime, accountingPeriodStartDate: LocalDate, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(companyName: Option[String], plrRef: Option[String], submissionDate: String, accountingPeriodStartDate: LocalDate, accountingPeriodEndDate: LocalDate, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
-
+    @if(isAgent) {
+        <div class="govuk-hint govuk-!-margin-top-0">
+            <span><strong>@{messages("homepage.group")}:</strong> @companyName</span>
+            <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+        </div>
+    }
     @govukPanel(Panel(
       title = Text(messages("btn.confirmation.heading")),
       content = HtmlContent(""),
@@ -44,12 +49,25 @@
     ))
 
     @if(isAgent && companyName.isDefined) {
-        @p(messages("btn.confirmation.agent.p1", companyName.get, submissionDate.toDateFormat))
+        <p class="govuk-body">
+            @messages("btn.confirmation.agent.p1")<br>
+            @messages("btn.confirmation.agent.p1.dateTime", submissionDate)
+        </p>
     } else {
-        @p(messages("btn.confirmation.group.p1", submissionDate.toDateFormat))
+        @p(messages("btn.confirmation.group.p1", submissionDate))
     }
 
-    @p(messages("btn.confirmation.p2", accountingPeriodStartDate.toDateFormat))
+    @if(isAgent) {
+        <p class="govuk-body">
+            @messages("repayments.confirmation.p1") <span class="govuk-body">@companyName</span><br>
+            @messages("repayments.confirmation.p2") <span class="govuk-body">@plrRef</span>
+        </p>
+    }
+
+    <p class="govuk-body">
+        @messages("btn.confirmation.p2")<br>
+        @messages("btn.confirmation.p2.dates", accountingPeriodStartDate.toDateFormat, accountingPeriodEndDate.toDateFormat)
+    </p>
 
     @if(showUnderEnquiryWarning) {
         @govukInsetText(InsetText(content = Text(messages("btn.confirmation.underEnquiry.insetText"))))

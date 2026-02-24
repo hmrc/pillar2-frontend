@@ -20,11 +20,12 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
-import pages.{BTNChooseAccountingPeriodPage, BtnConfirmationPage}
+import pages.{BTNChooseAccountingPeriodPage, BtnConfirmationPage, PlrReferencePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateTimeUtils.toDateAtTimeFormat
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -47,7 +48,9 @@ class BTNConfirmationController @Inject() (
     given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
     sessionRepository.get(request.userId).map {
       case Some(userAnswers) =>
-        val accountingPeriodStartDate: LocalDate = request.subscriptionLocalData.subAccountingPeriod.startDate
+        val accountingPeriodStartDate: LocalDate      = request.subscriptionLocalData.subAccountingPeriod.startDate
+        val accountingPeriodEndDate:   LocalDate      = request.subscriptionLocalData.subAccountingPeriod.endDate
+        val plrRef:                    Option[String] = userAnswers.get(PlrReferencePage)
 
         userAnswers.get(BtnConfirmationPage).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) { submittedAt =>
           val showUnderEnquiryWarning = userAnswers
@@ -63,8 +66,10 @@ class BTNConfirmationController @Inject() (
           Ok(
             view(
               request.subscriptionLocalData.organisationName,
-              submittedAt,
+              plrRef,
+              submittedAt.toDateAtTimeFormat,
               accountingPeriodStartDate,
+              accountingPeriodEndDate,
               request.isAgent,
               showUnderEnquiryWarning
             )

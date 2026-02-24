@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.toDateTimeGmtFormat
+import utils.DateTimeUtils.toDateAtTimeFormat
 import views.behaviours.ViewScenario
 import views.html.repayments.RepaymentsConfirmationView
 
@@ -30,10 +30,13 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   lazy val page:               RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   lazy val testPillar2Ref:     String                     = "XMPLR0012345674"
+  lazy val testOrgName:        String                     = "Test Org"
   lazy val pageTitle:          String                     = "Repayment request submitted"
-  lazy val currentDateTimeGMT: String                     = ZonedDateTime.now().toDateTimeGmtFormat
-  lazy val view:               Document                   = Jsoup.parse(page(currentDateTimeGMT)(request, appConfig, messages).toString())
-  lazy val paragraphs:         Elements                   = view.getElementsByClass("govuk-body")
+  lazy val currentDateTimeGMT: String                     = ZonedDateTime.now().toDateAtTimeFormat
+  lazy val view:       Document = Jsoup.parse(page(currentDateTimeGMT, testPillar2Ref, testOrgName, false)(request, appConfig, messages).toString())
+  lazy val agentView:  Document = Jsoup.parse(page(currentDateTimeGMT, testPillar2Ref, testOrgName, true)(request, appConfig, messages).toString())
+  lazy val paragraphs: Elements = view.getElementsByClass("govuk-body")
+  lazy val agentParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
     "have a page title" in {
@@ -55,7 +58,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a confirmation message" in {
-      paragraphs.get(0).text mustBe s"You have successfully submitted your repayment request on $currentDateTimeGMT."
+      paragraphs.get(0).text mustBe s"You have submitted a repayment request on: $currentDateTimeGMT"
     }
 
     "have a 'What happens next' heading" in {
@@ -63,7 +66,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph" in {
-      paragraphs.get(2).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
+      paragraphs.get(1).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
         "contact the relevant person or team from the information you provided."
     }
 
@@ -78,12 +81,24 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val printPageElement: Element = view.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
-
-    val viewScenarios: Seq[ViewScenario] =
-      Seq(
-        ViewScenario("view", view)
-      )
-
-    behaveLikeAccessiblePage(viewScenarios)
   }
+
+  "Agent view" should {
+    "show the correct hint text above the confirmation panel" in {
+      agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: $testOrgName ID: $testPillar2Ref"
+    }
+
+    "show the extended confirmation message below the existing text" in {
+      agentParagraphs.get(1).text mustBe s"This is for group: $testOrgName Pillar 2 ID: $testPillar2Ref"
+    }
+  }
+
+  val viewScenarios: Seq[ViewScenario] =
+    Seq(
+      ViewScenario("view", view),
+      ViewScenario("agentView", agentView)
+    )
+
+  behaveLikeAccessiblePage(viewScenarios)
+
 }
