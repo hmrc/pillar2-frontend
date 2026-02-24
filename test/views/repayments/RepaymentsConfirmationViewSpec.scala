@@ -58,7 +58,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a confirmation message" in {
-      paragraphs.get(0).text mustBe s"You have successfully submitted your repayment request on: $currentDateTimeGMT"
+      paragraphs.get(0).text mustBe s"You have submitted a repayment request on: $currentDateTimeGMT"
     }
 
     "have a 'What happens next' heading" in {

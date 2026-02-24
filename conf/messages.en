@@ -1437,7 +1437,7 @@ repaymentsPhoneDetails.change.hidden = the phone number
 
 repayments.confirmation.title = Repayment request submitted
 repayments.confirmation.bannerText = Repayment request submitted
-repayments.confirmation.message = You have successfully submitted your repayment request on:
+repayments.confirmation.message = You have submitted a repayment request on:
 repayments.confirmation.message.time = {0}
 repayments.confirmation.p1 = This is for group:
 repayments.confirmation.p2 = Pillar 2 ID:
