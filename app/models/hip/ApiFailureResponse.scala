@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package services
+package models.hip
 
-import connectors.*
-import models.btn.BTNRequest
-import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import java.time.ZonedDateTime
 
-@Singleton
-class BTNService @Inject() (
-  btnConnector: BTNConnector
-)(using ec: ExecutionContext)
-    extends Logging {
+case class ApiFailure(processingDate: ZonedDateTime, code: String, text: String)
+object ApiFailure {
+  given format: OFormat[ApiFailure] = Json.format[ApiFailure]
+}
 
-  def submitBTN(btnRequest: BTNRequest)(using headerCarrier: HeaderCarrier, pillar2Id: String): Future[HttpResponse] =
-    btnConnector.submitBTN(btnRequest)
+case class ApiFailureResponse(errors: ApiFailure)
+object ApiFailureResponse {
+  given format: OFormat[ApiFailureResponse] = Json.format[ApiFailureResponse]
 }

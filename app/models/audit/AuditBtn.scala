@@ -16,12 +16,16 @@
 
 package models.audit
 
+import models.btn.BTNSuccessResponse
 import models.btn.BtnResponse
+import models.hip.ApiFailureResponse
 import models.subscription.AccountingPeriod
 import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.*
+import scala.util.Try
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -72,6 +76,47 @@ object ApiResponseData {
         failure.errorCode,
         failure.message
       )
+  }
+
+  def fromHttpResponse(response: HttpResponse)(using clock: Clock): ApiResponseData = {
+
+    val jsonOpt = Try(response.json).toOption
+
+    response.status match {
+      case 201 =>
+        val processingDate = jsonOpt
+          .flatMap(_.validate[BTNSuccessResponse].asOpt)
+          .map(_.success.processingDate)
+          .getOrElse(ZonedDateTime.now(clock))
+        ApiResponseSuccess(response.status, processingDate)
+
+      case _ =>
+        val (errorCode, message) = jsonOpt.flatMap(_.validate[ApiFailureResponse].asOpt) match {
+          case Some(etmpError) =>
+            (etmpError.errors.code, etmpError.errors.text)
+          case None =>
+            // Fallback for non-422 errors (like 400/500 from API platform/ETMP)
+            val jsonFallbackCode = jsonOpt
+              .flatMap(j =>
+                (j \ "code")
+                  .asOpt[String]
+                  .orElse((j \ "failures" \ 0 \ "code").asOpt[String])
+              )
+              .getOrElse("UNKNOWN")
+
+            val jsonFallbackMessage = jsonOpt
+              .flatMap(j =>
+                (j \ "message")
+                  .asOpt[String]
+                  .orElse((j \ "failures" \ 0 \ "reason").asOpt[String])
+              )
+              .getOrElse(response.body)
+
+            (jsonFallbackCode, jsonFallbackMessage)
+        }
+
+        ApiResponseFailure(response.status, ZonedDateTime.now(clock), errorCode, message)
+    }
   }
 
   given writes: Writes[ApiResponseData] = {
