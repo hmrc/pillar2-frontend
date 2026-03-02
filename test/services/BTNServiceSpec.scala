@@ -17,19 +17,19 @@
 package services
 
 import base.SpecBase
-import cats.syntax.either.*
 import connectors.BTNConnector
-import models.InternalIssueError
 import models.btn.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.Helpers.*
 import services.BTNServiceSpec.*
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.HttpResponse
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNServiceSpec extends SpecBase {
@@ -42,57 +42,24 @@ class BTNServiceSpec extends SpecBase {
     .build()
 
   "BTNService" must {
-    "return a BtnSuccess when connector returns a success" in
+    "return the response when connector returns a success" in
       running(application) {
+        val response = HttpResponse(201, Json.obj("processingDate" -> "2024-03-14T09:26:17Z").toString())
         when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.successful(successResponse))
+          .thenReturn(Future.successful(response))
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
-        result mustBe successResponse
+        result mustBe response
       }
 
-    "return a BtnError when connector returns a modelled failure" in
+    "return the response when connector returns a failure" in
       running(application) {
+        val response = HttpResponse(400, "Bad Request")
         when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.successful(errorResponse))
+          .thenReturn(Future.successful(response))
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
-        result mustBe errorResponse
-      }
-
-    "return InternalIssueError when BTN connector returns InternalIssueError" in
-      running(application) {
-        when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.failed(InternalIssueError))
-        val service: BTNService = application.injector.instanceOf[BTNService]
-        val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        failure mustBe InternalIssueError
-      }
-
-    "throw an Exception when BTN connector throws a RuntimeException" in
-      running(application) {
-        when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.failed(new RuntimeException("runtime error")))
-        val service: BTNService = application.injector.instanceOf[BTNService]
-        val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        failure mustBe InternalIssueError
-      }
-
-    "handle exceptions other than InternalIssueError" in
-      running(application) {
-        when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.failed(new IllegalArgumentException("Test exception")))
-        val service: BTNService = application.injector.instanceOf[BTNService]
-        val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        failure mustBe InternalIssueError
-      }
-    "handle any other unexpected error" in
-      running(application) {
-        when(mockBTNConnector.submitBTN(any())(using any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.failed(new Error("Unexpected error")))
-        val service: BTNService = application.injector.instanceOf[BTNService]
-        val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
-        failure mustBe InternalIssueError
+        result mustBe response
       }
   }
 }
@@ -103,12 +70,4 @@ object BTNServiceSpec {
     accountingPeriodTo = LocalDate.now
   )
   val pillar2IdForValidResponse = "XEPLR0000000000"
-  val testZonedDateTime: String        = "2025-01-10T16:54:26Z"
-  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime)
-
-  val btnSuccess: BtnSuccess = BtnSuccess(zonedTestDateTime)
-  val btnError:   BtnError   = BtnError("400", "Invalid Message")
-
-  val successResponse: BtnResponse = BtnResponse(btnSuccess.asRight, CREATED)
-  val errorResponse:   BtnResponse = BtnResponse(btnError.asLeft, BAD_REQUEST)
 }

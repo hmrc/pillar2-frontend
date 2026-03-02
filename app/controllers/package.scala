@@ -22,8 +22,8 @@ import java.time.LocalDate
 package object controllers {
   private val now = LocalDate.now
 
-  /** @param accountingDetails
-    *   is a sequence of AccountingPeriodDetails
+  /** @param request
+    *   is of type ObligationsAndSubmissionsSuccessDataRequest[?] and contains a sequence of AccountingPeriodDetails
     * @return
     *   a filtered sequence of AccountingPeriodDetails, sorted in reverse chronological order, ensuring that we remove any periods where the start
     *   date is after today

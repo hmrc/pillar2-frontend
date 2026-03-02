@@ -120,7 +120,6 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "redirect to BTN error page when no obligation data is found" in {
       val testApplication: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)

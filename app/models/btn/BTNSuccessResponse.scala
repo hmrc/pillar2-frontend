@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,12 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime
 
-case class ApiSuccess(processingDate: ZonedDateTime, formBundleNumber: String, chargeReference: String)
+case class BTNSuccess(processingDate: ZonedDateTime)
+object BTNSuccess {
+  given format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
+}
 
-object ApiSuccess {
-  given format: OFormat[ApiSuccess] = Json.format[ApiSuccess]
+case class BTNSuccessResponse(success: BTNSuccess)
+object BTNSuccessResponse {
+  given format: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
 }

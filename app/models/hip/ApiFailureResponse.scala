@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package models.btn
+package models.hip
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ApiSuccessResponse(success: ApiSuccess)
+import java.time.ZonedDateTime
 
-object ApiSuccessResponse {
-  given format: OFormat[ApiSuccessResponse] = Json.format[ApiSuccessResponse]
+case class ApiFailure(processingDate: ZonedDateTime, code: String, text: String)
+object ApiFailure {
+  given format: OFormat[ApiFailure] = Json.format[ApiFailure]
+}
+
+case class ApiFailureResponse(errors: ApiFailure)
+object ApiFailureResponse {
+  given format: OFormat[ApiFailureResponse] = Json.format[ApiFailureResponse]
 }
