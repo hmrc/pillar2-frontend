@@ -158,7 +158,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsContactEmailController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("contactEmail" -> "alll@gmail.com")
+        .withFormUrlEncodedBody("contactEmail" -> "alll@example.com")
 
       running(application) {
         val result = route(application, request).value
