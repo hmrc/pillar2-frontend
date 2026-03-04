@@ -16,9 +16,12 @@
 
 package models.btn
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
 import java.time.ZonedDateTime
+
+case class BTNResponse(result: Either[BTNError, BTNSuccess], httpStatusCode: Int)
 
 case class BTNSuccess(processingDate: ZonedDateTime)
 object BTNSuccess {
@@ -28,4 +31,12 @@ object BTNSuccess {
 case class BTNSuccessResponse(success: BTNSuccess)
 object BTNSuccessResponse {
   given format: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
+}
+
+case class BTNError(errorCode: String, message: String)
+object BTNError {
+  given reads: Reads[BTNError] = (
+    (__ \ "code").read[String] and
+      (__ \ "message").read[String]
+  )((code, message) => BTNError(errorCode = code, message = message))
 }

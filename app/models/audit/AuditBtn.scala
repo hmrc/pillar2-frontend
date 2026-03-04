@@ -16,8 +16,7 @@
 
 package models.audit
 
-import models.btn.BTNSuccessResponse
-import models.btn.BtnResponse
+import models.btn.{BTNResponse, BTNSuccessResponse}
 import models.hip.ApiFailureResponse
 import models.subscription.AccountingPeriod
 import play.api.libs.functional.syntax.*
@@ -63,7 +62,7 @@ final case class ApiResponseFailure(
 ) extends ApiResponseData
 
 object ApiResponseData {
-  def fromBtnResponse(btnResponse: BtnResponse)(using clock: Clock): ApiResponseData = btnResponse.result match {
+  def fromBTNResponse(btnResponse: BTNResponse)(using clock: Clock): ApiResponseData = btnResponse.result match {
     case Right(success) =>
       ApiResponseSuccess(
         btnResponse.httpStatusCode,
