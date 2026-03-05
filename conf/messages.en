@@ -1768,6 +1768,7 @@ payments.outstanding.abbreviation.mtt = MTT - Multinational Top-up Tax
 payments.outstanding.abbreviation.iir = IIR - Income Inclusion Rule
 payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
 payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
+payments.outstanding.abbreviation.gaar = GAAR - General Anti Abuse Rule penalty
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
 payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.

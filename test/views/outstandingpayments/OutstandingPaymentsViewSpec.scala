@@ -233,7 +233,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         "MTT - Multinational Top-up Tax",
         "IIR - Income Inclusion Rule",
         "UTPR - Undertaxed Profit Rule",
-        "ORN/GIR - Overseas Return Notification or GloBE Information Return"
+        "ORN/GIR - Overseas Return Notification or GloBE Information Return",
+        "GAAR - General Anti Abuse Rule penalty"
       )
     }
 
