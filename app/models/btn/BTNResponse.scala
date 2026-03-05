@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,20 +21,22 @@ import play.api.libs.json.*
 
 import java.time.ZonedDateTime
 
-case class BtnResponse(result: Either[BtnError, BtnSuccess], httpStatusCode: Int)
+case class BTNResponse(result: Either[BTNError, BTNSuccess], httpStatusCode: Int)
 
-case class BtnSuccess(processingDate: ZonedDateTime)
-
-case class BtnError(errorCode: String, message: String)
-
-object BtnSuccess {
-  given reads: Reads[BtnSuccess] =
-    (__ \ "processingDate").read[ZonedDateTime].map(BtnSuccess.apply)
+case class BTNSuccess(processingDate: ZonedDateTime)
+object BTNSuccess {
+  given format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
 }
 
-object BtnError {
-  given reads: Reads[BtnError] = (
+case class BTNSuccessResponse(success: BTNSuccess)
+object BTNSuccessResponse {
+  given format: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
+}
+
+case class BTNError(errorCode: String, message: String)
+object BTNError {
+  given reads: Reads[BTNError] = (
     (__ \ "code").read[String] and
       (__ \ "message").read[String]
-  )((code, message) => BtnError(errorCode = code, message = message))
+  )((code, message) => BTNError(errorCode = code, message = message))
 }
