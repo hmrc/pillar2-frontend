@@ -947,6 +947,8 @@ unauthorised.individual.hyper2 = Find out more about who can use this service
 
 manageFurtherGroupDetails.checkYourAnswers.heading = Group details
 manageFurtherGroupDetails.checkYourAnswers.title = Group details
+manageFurtherGroupDetails.multiPeriod.emptyState = There are no accounting periods available to amend
+manageFurtherGroupDetails.groupId = Group ID
 
 rfm.heading.caption = Replace filing member
 

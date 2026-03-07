@@ -21,12 +21,18 @@ import com.typesafe.config.{Config, ConfigException}
 import models.longrunningsubmissions.LongRunningSubmission.*
 import org.mockito.Mockito.when
 import org.scalatest.prop.TableDrivenPropertyChecks
+import play.api.Application
 import play.api.Configuration
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.Injector
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
+
+  override lazy val app: Application = new GuiceApplicationBuilder()
+    .configure("features.amendMultipleAccountingPeriods" -> false)
+    .build()
 
   def injector:            Injector          = app.injector
   val config:              FrontendAppConfig = injector.instanceOf[FrontendAppConfig]

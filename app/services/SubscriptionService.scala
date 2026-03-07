@@ -87,6 +87,9 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
+  def readDisplaySubscriptionV2(plrReference: String)(using hc: HeaderCarrier): Future[Option[DisplaySubscriptionV2Response]] =
+    subscriptionConnector.readDisplaySubscriptionV2(plrReference)
+
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[Boolean] =

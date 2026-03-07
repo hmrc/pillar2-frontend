@@ -221,6 +221,7 @@ GET         /further-details/check-answers                                      
 
 GET         /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
 POST        /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit()
+GET         /manage-account/account-details/change-accounting-period/:index                          controllers.subscription.manageAccount.ChangeAccountingPeriodController.onPageLoad(index: Int)
 
 
 

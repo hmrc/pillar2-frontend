@@ -58,12 +58,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
-          )
-          .build()
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        ).overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
+        ).build()
 
         running(application) {
           val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
@@ -78,7 +80,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = None, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
@@ -104,7 +106,8 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         val application = applicationBuilder(
           userAnswers = Some(userAnswers),
-          subscriptionLocalData = Some(emptySubscriptionLocalData)
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
         ).overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
@@ -128,12 +131,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .thenReturn(Future.successful(Some(userAnswers)))
         when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
-          )
-          .build()
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        ).overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
+        ).build()
 
         running(application) {
           val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
@@ -149,7 +154,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
-        val application = applicationBuilder(userAnswers = None)
+        val application = applicationBuilder(userAnswers = None, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -171,12 +176,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        ).overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        ).build()
 
         running(application) {
           val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url).withCSRFToken
@@ -195,11 +202,13 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        ).overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        ).build()
 
         running(application) {
           val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url).withCSRFToken

@@ -1,0 +1,60 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds.{heading, sectionHeader}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+
+@this(
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        heading: heading,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader
+)
+
+@(locationList: SummaryList, periodCardLists: Seq[SummaryList], isAgent: Boolean, organisationName: Option[String], plrReference: String, emptyState: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit()) {
+        @if(isAgent && organisationName.isDefined) {
+            @sectionHeader(organisationName.get)
+            <p class="govuk-body govuk-!-margin-bottom-4"><strong>@messages("manageFurtherGroupDetails.groupId")</strong> @plrReference</p>
+        }
+
+        @heading(messages("manageFurtherGroupDetails.checkYourAnswers.heading"), classes = "govuk-heading-l")
+
+        @govukSummaryList(locationList)
+
+        @if(emptyState) {
+            <p class="govuk-body">@messages("manageFurtherGroupDetails.multiPeriod.emptyState")</p>
+        } else {
+            @for(cardList <- periodCardLists) {
+                <div class="govuk-!-margin-top-6">
+                    @govukSummaryList(cardList)
+                </div>
+            }
+        }
+
+        @govukButton(Button(
+            element = Some("button"),
+            content = messages("site.manage.save-and-continue"),
+            attributes = Map("id" -> "submit"),
+            classes = "govuk-!-margin-top-6"))
+    }
+
+}

@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package models.btn
+package controllers.subscription.manageAccount
 
-import play.api.libs.json.{Json, OFormat}
-
-import java.time.ZonedDateTime
-
-/** Success payload for BTN audit/ETMP response. Named to avoid case clash with BtnSuccess in BtnResponse.scala on case-insensitive filesystems. */
-case class BtnAuditSuccess(processingDate: ZonedDateTime)
-object BtnAuditSuccess {
-  given format: OFormat[BtnAuditSuccess] = Json.format[BtnAuditSuccess]
-}
-
-case class BTNSuccessResponse(success: BtnAuditSuccess)
-object BTNSuccessResponse {
-  given format: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
+/** Session keys for Display Subscription V2 multi-period flow (PIL-2855). */
+object ManageAccountV2SessionKeys {
+  val DisplaySubscriptionV2Periods    = "manageAccount.displaySubscriptionV2.periods"
+  val DisplaySubscriptionV2Selected = "manageAccount.displaySubscriptionV2.selectedPeriod"
 }

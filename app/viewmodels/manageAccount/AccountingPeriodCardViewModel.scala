@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package models.btn
+package viewmodels.manageAccount
 
-import play.api.libs.json.{Json, OFormat}
-
-import java.time.ZonedDateTime
-
-/** Success payload for BTN audit/ETMP response. Named to avoid case clash with BtnSuccess in BtnResponse.scala on case-insensitive filesystems. */
-case class BtnAuditSuccess(processingDate: ZonedDateTime)
-object BtnAuditSuccess {
-  given format: OFormat[BtnAuditSuccess] = Json.format[BtnAuditSuccess]
-}
-
-case class BTNSuccessResponse(success: BtnAuditSuccess)
-object BTNSuccessResponse {
-  given format: OFormat[BTNSuccessResponse] = Json.format[BTNSuccessResponse]
-}
+/** View model for one accounting period card on the multi-period Manage Group details page. */
+final case class AccountingPeriodCardViewModel(
+  startDateFormatted: String,
+  endDateFormatted:   String,
+  changeUrl:         String
+)
