@@ -20,5 +20,5 @@ package viewmodels.manageAccount
 final case class AccountingPeriodCardViewModel(
   startDateFormatted: String,
   endDateFormatted:   String,
-  changeUrl:         String
+  changeUrl:          String
 )

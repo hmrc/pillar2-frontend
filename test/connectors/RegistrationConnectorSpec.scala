@@ -20,6 +20,10 @@ import base.{SpecBase, WireMockServerHandler}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.http.Status.OK
+
+import scala.concurrent.Await
+import scala.concurrent.duration.*
 
 class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
 
@@ -75,7 +79,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
 
         stubResponse(s"$apiUrl/upe/registration/id", OK, businessWithoutIdJsonResponse)
         val result = connector.registerUltimateParent("id")
-        result.futureValue mustBe safeID
+        Await.result(result, 30.seconds) mustBe safeID
       }
 
       "return InternalServerError for EIS returns Error status" in {
@@ -83,7 +87,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         stubResponse(s"$apiUrl/upe/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
         val result = connector.registerUltimateParent("id")
-        result.failed.futureValue mustBe models.InternalIssueError
+        Await.result(result.failed, 30.seconds) mustBe models.InternalIssueError
       }
     }
     "registerFilingMember" should {
@@ -91,7 +95,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
 
         stubResponse(s"$apiUrl/fm/registration/id", OK, businessWithoutIdJsonResponse)
         val result = connector.registerFilingMember("id")
-        result.futureValue mustBe safeID
+        Await.result(result, 30.seconds) mustBe safeID
       }
 
       "return InternalServerError for EIS returns Error status for FM register withoutId" in {
@@ -99,7 +103,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         stubResponse(s"$apiUrl/fm/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
         val result = connector.registerFilingMember("id")
-        result.failed.futureValue mustBe models.InternalIssueError
+        Await.result(result.failed, 30.seconds) mustBe models.InternalIssueError
 
       }
     }
@@ -109,7 +113,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
 
         stubResponse(s"$apiUrl/rfm/registration/id", OK, businessWithoutIdJsonResponse)
         val result = connector.registerNewFilingMember("id")
-        result.futureValue mustBe safeID
+        Await.result(result, 30.seconds) mustBe safeID
       }
 
       "return InternalServerError for EIS returns Error status for FM register withoutId" in {
@@ -117,7 +121,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         stubResponse(s"$apiUrl/rfm/registration/id", errorStatus, businessWithoutIdJsonResponse)
 
         val result = connector.registerNewFilingMember("id")
-        result.failed.futureValue mustBe models.InternalIssueError
+        Await.result(result.failed, 30.seconds) mustBe models.InternalIssueError
 
       }
     }

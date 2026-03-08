@@ -48,10 +48,10 @@ object LongRunningSubmission extends StringEnum[LongRunningSubmission] {
   }
 
   case object ManageGroupDetails extends LongRunningSubmission {
-    override val value:              String           = "manage-group"
-    override val configKey:          String           = "group"
-    override lazy val submittedPage: Call             = controllers.routes.HomepageController.onPageLoad()
-    override val errorPage:          AnyError => Call = _ => controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()
+    override val value:     String = "manage-group"
+    override val configKey: String = "group"
+    override lazy val submittedPage: Call = controllers.subscription.manageAccount.routes.ManageGroupDetailsSubmissionCompleteController.onPageLoad()
+    override val errorPage: AnyError => Call = _ => controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()
   }
 
   case object Registration extends LongRunningSubmission {

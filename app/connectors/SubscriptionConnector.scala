@@ -101,16 +101,22 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[DisplaySubscriptionV2Response]] = {
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
+    logger.info(s"[SubscriptionConnector] Calling Display Subscription V2: $url")
     http
       .get(url"$url")
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == 200 =>
+          logger.info(s"[SubscriptionConnector] Display Subscription V2 200 OK for $plrReference")
           Future.successful(Some(Json.parse(response.body).as[DisplaySubscriptionV2Response]))
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
-        case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
-        case e                                                  =>
+        case notFoundResponse if notFoundResponse.status == 404 =>
+          logger.warn(
+            s"[SubscriptionConnector] Display Subscription V2 404 for $plrReference (ensure pillar2-stubs is running on the pillar2 port with v2/read-subscription route)"
+          )
+          Future.successful(None)
+        case e =>
           logger.warn(s"Connection issue when calling display subscription v2 with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)

@@ -16,50 +16,41 @@
 
 package controllers.subscription.manageAccount
 
+import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import controllers.routes
-import models.requests.SubscriptionDataRequest
 import models.subscription.AccountingPeriodDisplay
+import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateTimeUtils.*
+import views.html.subscriptionview.manageAccount.ViewAccountingPeriodView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChangeAccountingPeriodController @Inject() (
+class ViewAccountingPeriodController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  val controllerComponents:               MessagesControllerComponents
-)(using ec: ExecutionContext)
-    extends FrontendBaseController {
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ViewAccountingPeriodView
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(index: Int): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { request =>
-      given SubscriptionDataRequest[AnyContent] = request
+    (identify andThen getData andThen requireData).async { implicit request =>
+      implicit val messages: play.api.i18n.Messages = controllerComponents.messagesApi.preferred(request)
       request.session.get(ManageAccountV2SessionKeys.DisplaySubscriptionV2Periods) match {
         case None =>
           Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()))
         case Some(jsonStr) =>
           Json.parse(jsonStr).asOpt[Seq[AccountingPeriodDisplay]] match {
-            case None =>
-              Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
             case Some(periods) if index >= 0 && index < periods.size =>
-              val period       = periods(index)
-              val selectedJson = Json.obj(
-                "startDate"         -> period.startDate.toString,
-                "endDate"           -> period.endDate.toString,
-                "canAmendStartDate" -> period.canAmendStartDate
-              )
-              val previousForSuccess = selectedJson.toString
+              val period = periods(index)
               Future.successful(
-                Redirect(controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad())
-                  .withSession(
-                    request.session
-                      + (ManageAccountV2SessionKeys.DisplaySubscriptionV2Selected      -> selectedJson.toString)
-                      + (ManageAccountV2SessionKeys.PreviousAccountingPeriodForSuccess -> previousForSuccess)
-                  )
+                Ok(view(period.startDate.toDateFormat, period.endDate.toDateFormat))
               )
             case _ =>
               Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()))

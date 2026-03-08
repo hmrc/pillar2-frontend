@@ -18,7 +18,6 @@
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds._
 
-
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
@@ -27,16 +26,19 @@
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
         govukButton: GovukButton,
-        paragraphBody: paragraphBody
+        paragraphBody: paragraphBody,
+        accountingPeriodInfoBanner: AccountingPeriodInfoBanner
 )
 
-@(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], isAgent: Boolean, organisationName: Option[String], startDateReadOnly: Boolean = false)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
-
     @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit(), Symbol("autoComplete") -> "off") {
 
+        @if(isAgent) {
+            @accountingPeriodInfoBanner()
+        }
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))
         }
@@ -49,16 +51,30 @@
 
         @heading(messages("groupAccountingPeriod.amend.heading"), "govuk-heading-l")
 
+        @paragraphBody(messages("groupAccountingPeriod.amend.changingIntro"))
         @paragraphBody(messages("groupAccountingPeriod.amend.p1"))
         @paragraphBody(messages("groupAccountingPeriod.amend.p2"))
 
-        @govukDateInput(
-            DateViewModel(
-                field = form("startDate"),
-                legend = LegendViewModel(messages("groupAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
+        @if(startDateReadOnly) {
+            <p class="govuk-body">@messages("groupAccountingPeriod.microPeriod.startDateReadOnly")</p>
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s">@messages("groupAccountingPeriod.startDate.heading")</label>
+                @defining(Seq(form("startDate.day").value, form("startDate.month").value, form("startDate.year").value)) { parts =>
+                    <p class="govuk-body">@if(parts.forall(_.nonEmpty)) { @parts.mkString("/") } else { - }</p>
+                }
+            </div>
+            @form("startDate.day").value.map { d => <input type="hidden" name="startDate.day" value="@d"> }
+            @form("startDate.month").value.map { m => <input type="hidden" name="startDate.month" value="@m"> }
+            @form("startDate.year").value.map { y => <input type="hidden" name="startDate.year" value="@y"> }
+        } else {
+            @govukDateInput(
+                DateViewModel(
+                    field = form("startDate"),
+                    legend = LegendViewModel(messages("groupAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
+                )
+                .withHint(HintViewModel(messages("groupAccountingPeriod.startDate.hint")))
             )
-            .withHint(HintViewModel(messages("groupAccountingPeriod.startDate.hint")))
-        )
+        }
 
         @govukDateInput(
             DateViewModel(

@@ -28,7 +28,7 @@ import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{AccountingPeriodDisplay, DisplaySubscriptionV2Response, ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
+import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage, SubAddSecondaryContactPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
@@ -80,7 +80,11 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             case Some(InProgress) =>
               Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
             case _ =>
-              if appConfig.amendMultipleAccountingPeriods then loadMultiPeriodView(request)
+              if appConfig.amendMultipleAccountingPeriods then
+                logger.info(
+                  s"[ManageGroupDetailsCheckYourAnswers] amendMultipleAccountingPeriods=true, loading multi-period view for plrReference=${request.subscriptionLocalData.plrReference}"
+                )
+                loadMultiPeriodView(request)
               else
                 val list = SummaryListViewModel(
                   rows = Seq(
@@ -99,21 +103,37 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     given SubscriptionDataRequest[AnyContent] = request
     val plrReference                          = request.subscriptionLocalData.plrReference
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    def singlePeriodResult: Result = {
+      val list = SummaryListViewModel(
+        rows = Seq(
+          MneOrDomesticSummary.row(),
+          GroupAccountingPeriodSummary.row(),
+          GroupAccountingPeriodStartDateSummary.row(),
+          GroupAccountingPeriodEndDateSummary.row()
+        ).flatten
+      )
+      Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName))
+    }
+
     subscriptionService
       .readDisplaySubscriptionV2(plrReference)
       .flatMap {
         case None =>
           logger.warn(
-            s"[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 returned None for plrReference=$plrReference (e.g. 404 from backend/stub)"
+            s"[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 returned None for plrReference=$plrReference (e.g. 404 from backend/stub), falling back to single-period view"
           )
-          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+          Future.successful(singlePeriodResult)
         case Some(v2Response) =>
-          val fullPeriods   = v2Response.success.accountingPeriod
-          val amendable     = fullPeriods.filter(_.canAmend)
-          val sortedPeriods = amendable.sortBy(_.endDate)(Ordering[LocalDate].reverse)
-          val locationLabel = if request.isAgent then "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
-          val locationValue = if v2Response.success.upeDetails.domesticOnly then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
-          val locationRow   = SummaryListRowViewModel(
+          logger.info(
+            s"[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 success for plrReference=$plrReference, rendering multi-period view (${v2Response.success.accountingPeriod.size} periods)"
+          )
+          val fullPeriods            = v2Response.success.accountingPeriod
+          val amendableWithFullIndex = fullPeriods.zipWithIndex.filter(_._1.canAmend).sortBy(_._1.endDate)(Ordering[LocalDate].reverse)
+          val completedWithFullIndex = fullPeriods.zipWithIndex.filter(!_._1.canAmend).sortBy(_._1.endDate)(Ordering[LocalDate].reverse)
+          val locationLabel          = if request.isAgent then "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
+          val locationValue          = if v2Response.success.upeDetails.domesticOnly then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
+          val locationRow            = SummaryListRowViewModel(
             key = locationLabel,
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(messages(locationValue)))),
             actions = Seq(
@@ -121,9 +141,18 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                 .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
             )
           )
-          val locationList    = SummaryListViewModel(rows = Seq(locationRow))
-          val periodCardLists = sortedPeriods.zipWithIndex.map { case (period, idx) =>
-            val changeUrl = controllers.subscription.manageAccount.routes.ChangeAccountingPeriodController.onPageLoad(idx).url
+          val locationList                                           = SummaryListViewModel(rows = Seq(locationRow))
+          def periodContentOnlyList(period: AccountingPeriodDisplay) = SummaryListViewModel(
+            rows = Seq(
+              SummaryListRowViewModel(
+                key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
+                value = ValueViewModel(period.startDate.toDateFormat)
+              ).withCssClass("no-border-bottom"),
+              SummaryListRowViewModel(key = "groupAccountingEndDatePeriod.checkYourAnswersLabel", value = ValueViewModel(period.endDate.toDateFormat))
+            )
+          )
+          def amendableCardList(period: AccountingPeriodDisplay, fullIdx: Int) = {
+            val changeUrl = controllers.subscription.manageAccount.routes.ChangeAccountingPeriodController.onPageLoad(fullIdx).url
             val rows      = Seq(
               SummaryListRowViewModel(
                 key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
@@ -140,6 +169,112 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             )
             SummaryListViewModel(rows = rows)
           }
+          def completedCardList(period: AccountingPeriodDisplay, fullIdx: Int) = {
+            val viewUrl = controllers.subscription.manageAccount.routes.ViewAccountingPeriodController.onPageLoad(fullIdx).url
+            val rows    = Seq(
+              SummaryListRowViewModel(
+                key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
+                value = ValueViewModel(HtmlContent(HtmlFormat.escape(""))),
+                actions = Seq(
+                  ActionItemViewModel("site.view", viewUrl).withVisuallyHiddenText(messages("groupAccountingPeriod.view.hidden"))
+                )
+              ).withCssClass("no-border-bottom"),
+              SummaryListRowViewModel(
+                key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
+                value = ValueViewModel(period.startDate.toDateFormat)
+              ).withCssClass("no-border-bottom"),
+              SummaryListRowViewModel(key = "groupAccountingEndDatePeriod.checkYourAnswersLabel", value = ValueViewModel(period.endDate.toDateFormat))
+            )
+            SummaryListViewModel(rows = rows)
+          }
+          val (previousWithIndex, microWithIndex) = completedWithFullIndex.partition(_._1.canAmendStartDate)
+          val currentPeriodChangeUrl              = amendableWithFullIndex.headOption.map { case (_, idx) =>
+            controllers.subscription.manageAccount.routes.ChangeAccountingPeriodController.onPageLoad(idx).url
+          }
+          val periodCardLists             = amendableWithFullIndex.headOption.toSeq.map { case (period, _) => periodContentOnlyList(period) }
+          val previousPeriodCardListsFull = amendableWithFullIndex.drop(1).map { case (period, fullIdx) => amendableCardList(period, fullIdx) } ++
+            previousWithIndex.map { case (period, idx) => completedCardList(period, idx) }
+          val (previousPeriodTitleChangeUrl, previousPeriodTitleIsView) =
+            if previousPeriodCardListsFull.size == 1 then
+              if amendableWithFullIndex.drop(1).nonEmpty then
+                (
+                  Some(
+                    controllers.subscription.manageAccount.routes.ChangeAccountingPeriodController
+                      .onPageLoad(amendableWithFullIndex.drop(1).head._2)
+                      .url
+                  ),
+                  false
+                )
+              else
+                (
+                  Some(controllers.subscription.manageAccount.routes.ViewAccountingPeriodController.onPageLoad(previousWithIndex.head._2).url),
+                  true
+                )
+            else (None, false)
+          val previousPeriodCardLists =
+            if previousPeriodCardListsFull.size == 1 then
+              val period = if amendableWithFullIndex.drop(1).nonEmpty then amendableWithFullIndex.drop(1).head._1 else previousWithIndex.head._1
+              Seq(periodContentOnlyList(period))
+            else previousPeriodCardListsFull
+          val microPeriodCardLists     = microWithIndex.map { case (period, idx) => completedCardList(period, idx) }
+          val completedPeriodCardLists = completedWithFullIndex.map { case (period, fullIdx) => completedCardList(period, fullIdx) }
+          val authorisedOfficialList   = SummaryListViewModel(
+            rows = Seq(
+              ContactNameComplianceSummary.row(),
+              ContactEmailAddressSummary.row(),
+              ContactByPhoneSummary.row(),
+              ContactCapturePhoneDetailsSummary.row()
+            ).flatten
+          )
+          val noSecondaryContact = SummaryListViewModel(
+            rows = Seq(AddSecondaryContactSummary.row()).flatten
+          )
+          val secondaryContactList = SummaryListViewModel(
+            rows = Seq(
+              AddSecondaryContactSummary.row(),
+              SecondaryContactNameSummary.row(),
+              SecondaryContactEmailSummary.row(),
+              SecondaryPhonePreferenceSummary.row(),
+              SecondaryPhoneSummary.row()
+            ).flatten
+          )
+          val contactDetailsList = request.subscriptionLocalData.get(SubAddSecondaryContactPage) match {
+            case Some(true) => secondaryContactList
+            case _          => noSecondaryContact
+          }
+          val agentGroupDetailsList = if request.isAgent then {
+            val upe  = v2Response.success.upeDetails
+            val addr = if upe.domesticOnly then messages("mneOrDomestic.uk") else messages("mneOrDomestic.ukAndOther")
+            Some(
+              SummaryListViewModel(
+                rows = Seq(
+                  SummaryListRowViewModel(
+                    key = "manageFurtherGroupDetails.reportingCompany",
+                    value = ValueViewModel(upe.organisationName),
+                    actions = Seq(
+                      ActionItemViewModel("site.change", controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
+                        .withVisuallyHiddenText(messages("manageFurtherGroupDetails.reportingCompany"))
+                    )
+                  ),
+                  SummaryListRowViewModel(
+                    key = "manageFurtherGroupDetails.groupRegistrationDate",
+                    value = ValueViewModel(upe.registrationDate.toDateFormat)
+                  ),
+                  SummaryListRowViewModel(
+                    key = "manageFurtherGroupDetails.ukBasedBusinessAddresses",
+                    value = ValueViewModel(HtmlContent(HtmlFormat.escape(addr)))
+                  )
+                )
+              )
+            )
+          } else None
+          val changeNextPeriodUrl =
+            if request.isAgent && amendableWithFullIndex.nonEmpty then
+              Some(controllers.subscription.manageAccount.routes.ChangeAccountingPeriodController.onPageLoad(amendableWithFullIndex.head._2).url)
+            else None
+          val changeGroupDetailsUrl =
+            if request.isAgent then Some(controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url) else None
+          val showViewAllPeriodsLink = completedPeriodCardLists.nonEmpty
           val sessionWithPeriods = request.session + (ManageAccountV2SessionKeys.DisplaySubscriptionV2Periods -> Json.toJson(fullPeriods).toString)
           Future.successful(
             Ok(
@@ -149,14 +284,29 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
                 plrReference,
-                emptyState = sortedPeriods.isEmpty
+                emptyState = amendableWithFullIndex.isEmpty,
+                authorisedOfficialList,
+                contactDetailsList,
+                completedPeriodCardLists,
+                previousPeriodCardLists,
+                microPeriodCardLists,
+                agentGroupDetailsList,
+                changeNextPeriodUrl,
+                showViewAllPeriodsLink,
+                changeGroupDetailsUrl,
+                currentPeriodChangeUrl = currentPeriodChangeUrl,
+                previousPeriodTitleChangeUrl = previousPeriodTitleChangeUrl,
+                previousPeriodTitleIsView = previousPeriodTitleIsView
               )
             ).withSession(sessionWithPeriods)
           )
       }
       .recoverWith { case ex =>
-        logger.warn(s"[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 failed for plrReference=$plrReference", ex)
-        Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        logger.warn(
+          s"[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 failed for plrReference=$plrReference, falling back to single-period view",
+          ex
+        )
+        Future.successful(singlePeriodResult)
       }
   }
 

@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.~
 import forms.GroupAccountingPeriodFormProvider
 import models.MneOrDomestic
-import models.subscription.AccountingPeriod
+import models.subscription.{AccountingPeriod, AccountingPeriodDisplay}
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -177,6 +177,71 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubAccountingPeriodPage, expectedUserAnswers)
+      }
+    }
+
+    "must pre-fill form from DisplaySubscriptionV2Selected session and pass startDateReadOnly when canAmendStartDate is false" in {
+      val selectedJson = Json
+        .obj(
+          "startDate"         -> "2021-09-28",
+          "endDate"           -> "2022-09-27",
+          "canAmendStartDate" -> false
+        )
+        .toString
+      val sessionData = Map(
+        controllers.subscription.manageAccount.ManageAccountV2SessionKeys.DisplaySubscriptionV2Selected -> selectedJson
+      )
+      val ua          = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
+          .withSession(sessionData.toSeq*)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("The start date of the first accounting period cannot be changed")
+      }
+    }
+
+    "must redirect to ConfirmNewAccountingPeriodController when from multi-period flow and valid form" in {
+      val periodsJson = Json
+        .toJson(
+          Seq(
+            AccountingPeriodDisplay(
+              startDate = LocalDate.of(2022, 9, 28),
+              endDate = LocalDate.of(2023, 9, 27),
+              dueDate = LocalDate.of(2023, 10, 27),
+              canAmendStartDate = true,
+              canAmendEndDate = true
+            )
+          )
+        )
+        .toString
+      val sessionData = Map(
+        controllers.subscription.manageAccount.ManageAccountV2SessionKeys.DisplaySubscriptionV2Periods -> periodsJson
+      )
+      val userAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
+          .withSession(sessionData.toSeq*)
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "1",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "1",
+            "endDate.month"   -> "12",
+            "endDate.year"    -> "2024"
+          )
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ConfirmNewAccountingPeriodController.onPageLoad().url
       }
     }
 

@@ -453,6 +453,54 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
+    "readDisplaySubscriptionV2" when {
+      "return Some(DisplaySubscriptionV2Response) when the connector returns valid data" in {
+        val v2Response = models.subscription.DisplaySubscriptionV2Response(
+          models.subscription.DisplaySubscriptionV2Success(
+            accountingPeriod = Seq(
+              models.subscription.AccountingPeriodDisplay(
+                startDate = LocalDate.of(2022, 9, 28),
+                endDate = LocalDate.of(2023, 9, 27),
+                dueDate = LocalDate.of(2023, 10, 27),
+                canAmendStartDate = true,
+                canAmendEndDate = true
+              )
+            ),
+            upeDetails = subscriptionData.upeDetails
+          )
+        )
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readDisplaySubscriptionV2(any())(using any(), any()))
+            .thenReturn(Future.successful(Some(v2Response)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readDisplaySubscriptionV2(plrReference).futureValue
+
+          result mustBe Some(v2Response)
+        }
+      }
+
+      "return None when the connector returns None" in {
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readDisplaySubscriptionV2(any())(using any(), any()))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.readDisplaySubscriptionV2(plrReference).futureValue
+
+          result mustBe None
+        }
+      }
+    }
+
     "amendSubscription" when {
       "call read subscription and create the required amend object to submit when no secondary contact" in {
 

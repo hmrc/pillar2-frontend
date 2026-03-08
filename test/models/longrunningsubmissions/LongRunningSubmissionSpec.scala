@@ -64,8 +64,9 @@ class LongRunningSubmissionSpec extends AnyWordSpec with must.Matchers with Scal
   }
 
   "ManageGroupDetails" must {
-    "redirect to the homepage on success" in {
-      LongRunningSubmission.ManageGroupDetails.submittedPage mustBe controllers.routes.HomepageController.onPageLoad()
+    "redirect to the submission complete page on success" in {
+      LongRunningSubmission.ManageGroupDetails.submittedPage mustBe controllers.subscription.manageAccount.routes.ManageGroupDetailsSubmissionCompleteController
+        .onPageLoad()
     }
 
     "redirect to the amend subscription failed page on any error" in forAll(anyError) { error =>

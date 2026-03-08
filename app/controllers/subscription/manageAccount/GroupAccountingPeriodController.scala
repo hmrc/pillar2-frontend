@@ -53,9 +53,18 @@ class GroupAccountingPeriodController @Inject() (
       given Request[AnyContent] = request
       val preparedForm          = request.maybeSubscriptionLocalData.flatMap(_.get(SubAccountingPeriodPage)) match {
         case Some(v) => form.fill(v)
-        case None    => form
+        case None    =>
+          request.session.get(ManageAccountV2SessionKeys.DisplaySubscriptionV2Selected) match {
+            case Some(jsonStr) =>
+              (for {
+                js    <- Option(Json.parse(jsonStr))
+                start <- (js \ "startDate").asOpt[String].flatMap(x => scala.util.Try(java.time.LocalDate.parse(x)).toOption)
+                end   <- (js \ "endDate").asOpt[String].flatMap(x => scala.util.Try(java.time.LocalDate.parse(x)).toOption)
+              } yield AccountingPeriod(start, end, None)).fold(form)(form.fill)
+            case None => form
+          }
       }
-      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
+      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName), startDateReadOnly(request.session)))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -66,14 +75,30 @@ class GroupAccountingPeriodController @Inject() (
           .bindFromRequest()
       )
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName, startDateReadOnly(request.session)))
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAccountingPeriodPage, value))
               _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, updatedAnswers))
+            } yield {
+              val fromMultiPeriodFlow = request.session.get(ManageAccountV2SessionKeys.DisplaySubscriptionV2Periods).isDefined
+              if fromMultiPeriodFlow then {
+                val newPeriodJson = Json.obj("startDate" -> value.startDate.toString, "endDate" -> value.endDate.toString).toString
+                Redirect(controllers.subscription.manageAccount.routes.ConfirmNewAccountingPeriodController.onPageLoad())
+                  .withSession(request.session + (ManageAccountV2SessionKeys.NewAccountingPeriodForSuccess -> newPeriodJson))
+              } else Redirect(navigator.nextPage(SubAccountingPeriodPage, updatedAnswers))
+            }
         )
     }
+
+  private def startDateReadOnly(session: play.api.mvc.Session): Boolean =
+    session
+      .get(ManageAccountV2SessionKeys.DisplaySubscriptionV2Selected)
+      .flatMap(s => (Json.parse(s) \ "canAmendStartDate").asOpt[Boolean])
+      .contains(false)
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =
     form.copy(errors = form.errors.map {

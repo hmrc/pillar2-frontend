@@ -209,6 +209,35 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result.failed.futureValue mustEqual UnexpectedResponse
       }
     }
+
+    "readDisplaySubscriptionV2" should {
+
+      "return Some(DisplaySubscriptionV2Response) when the backend has returned 200 OK" in {
+        stubGet(s"$readDisplaySubscriptionV2Path/$plrReference", OK, displaySubscriptionV2SuccessJson)
+        val result = connector.readDisplaySubscriptionV2(plrReference).futureValue
+        result mustBe defined
+        result.get.success.accountingPeriod.size mustBe 2
+        result.get.success.upeDetails.domesticOnly mustBe true
+      }
+
+      "return None when the backend has returned 404" in {
+        stubGet(s"$readDisplaySubscriptionV2Path/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        val result = connector.readDisplaySubscriptionV2(plrReference).futureValue
+        result mustBe None
+      }
+
+      "return RetryableGatewayError when the backend has returned 502" in {
+        stubGet(s"$readDisplaySubscriptionV2Path/$plrReference", 502, unsuccessfulResponseJson)
+        val result = connector.readDisplaySubscriptionV2(plrReference).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+
+      "return RetryableGatewayError when the backend has returned 500" in {
+        stubGet(s"$readDisplaySubscriptionV2Path/$plrReference", INTERNAL_SERVER_ERROR, unsuccessfulResponseJson)
+        val result = connector.readDisplaySubscriptionV2(plrReference).failed.futureValue
+        result mustBe RetryableGatewayError
+      }
+    }
   }
 
 }
@@ -244,13 +273,14 @@ object SubscriptionConnectorSpec {
       |}
       |}""".stripMargin
 
-  private val readSubscriptionPath       = "/report-pillar2-top-up-taxes/subscription/read-subscription"
-  private val getSubscription            = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
-  private val amendSubscription          = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
-  private val id                         = "testId"
-  private val plrReference               = "testPlrRef"
-  private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
-  private val successfulResponseJson     =
+  private val readSubscriptionPath          = "/report-pillar2-top-up-taxes/subscription/read-subscription"
+  private val readDisplaySubscriptionV2Path = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+  private val getSubscription               = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
+  private val amendSubscription             = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
+  private val id                            = "testId"
+  private val plrReference                  = "testPlrRef"
+  private val readSubscriptionParameters    = ReadSubscriptionRequestParameters(id, plrReference)
+  private val successfulResponseJson        =
     """
       |{
       |
@@ -355,4 +385,35 @@ object SubscriptionConnectorSpec {
   private val unsuccessfulNotFoundJson =
     """{ "status": "404",
       | "error": "there is nothing here" }""".stripMargin
+
+  private val displaySubscriptionV2SuccessJson: String =
+    """{
+      |  "success": {
+      |    "accountingPeriod": [
+      |      {
+      |        "startDate": "2022-09-28",
+      |        "endDate": "2023-09-27",
+      |        "dueDate": "2023-10-27",
+      |        "canAmendStartDate": true,
+      |        "canAmendEndDate": true
+      |      },
+      |      {
+      |        "startDate": "2021-09-28",
+      |        "endDate": "2022-09-27",
+      |        "dueDate": "2022-10-27",
+      |        "canAmendStartDate": true,
+      |        "canAmendEndDate": true
+      |      }
+      |    ],
+      |    "upeDetails": {
+      |      "safeId": null,
+      |      "customerIdentification1": null,
+      |      "customerIdentification2": null,
+      |      "organisationName": "Test Org",
+      |      "registrationDate": "2022-01-31",
+      |      "domesticOnly": true,
+      |      "filingMember": false
+      |    }
+      |  }
+      |}""".stripMargin
 }

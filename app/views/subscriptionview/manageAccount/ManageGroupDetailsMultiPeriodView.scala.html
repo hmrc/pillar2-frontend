@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.{heading, sectionHeader}
+@import views.html.components.gds.{heading, sectionHeader, AccountingPeriodInfoBanner}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 @this(
@@ -24,13 +24,17 @@
         govukButton: GovukButton,
         heading: heading,
         formHelper: FormWithCSRF,
-        sectionHeader: sectionHeader
+        sectionHeader: sectionHeader,
+        accountingPeriodInfoBanner: AccountingPeriodInfoBanner
 )
 
-@(locationList: SummaryList, periodCardLists: Seq[SummaryList], isAgent: Boolean, organisationName: Option[String], plrReference: String, emptyState: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(locationList: SummaryList, periodCardLists: Seq[SummaryList], isAgent: Boolean, organisationName: Option[String], plrReference: String, emptyState: Boolean, authorisedOfficialList: SummaryList, contactDetailsList: SummaryList, completedPeriodCardLists: Seq[SummaryList], previousPeriodCardLists: Seq[SummaryList], microPeriodCardLists: Seq[SummaryList], agentGroupDetailsList: Option[SummaryList] = None, changeNextPeriodUrl: Option[String] = None, showViewAllPeriodsLink: Boolean = false, changeGroupDetailsUrl: Option[String] = None, currentPeriodChangeUrl: Option[String] = None, previousPeriodTitleChangeUrl: Option[String] = None, previousPeriodTitleIsView: Boolean = false)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit()) {
+        @if(isAgent) {
+            @accountingPeriodInfoBanner()
+        }
         @if(isAgent && organisationName.isDefined) {
             @sectionHeader(organisationName.get)
             <p class="govuk-body govuk-!-margin-bottom-4"><strong>@messages("manageFurtherGroupDetails.groupId")</strong> @plrReference</p>
@@ -38,16 +42,89 @@
 
         @heading(messages("manageFurtherGroupDetails.checkYourAnswers.heading"), classes = "govuk-heading-l")
 
+        @if(agentGroupDetailsList.nonEmpty) {
+            @govukSummaryList(agentGroupDetailsList.get)
+        }
+
         @govukSummaryList(locationList)
 
+        <h2 class="govuk-heading-m govuk-!-margin-top-6">@messages("manageFurtherGroupDetails.accountingPeriodsHeading")</h2>
+        <p class="govuk-body govuk-!-margin-bottom-4">@messages("manageFurtherGroupDetails.accountingPeriodsIntro")</p>
+
         @if(emptyState) {
-            <p class="govuk-body">@messages("manageFurtherGroupDetails.multiPeriod.emptyState")</p>
+            <p class="govuk-body govuk-!-margin-top-6">@messages("manageFurtherGroupDetails.multiPeriod.emptyState")</p>
         } else {
-            @for(cardList <- periodCardLists) {
-                <div class="govuk-!-margin-top-6">
-                    @govukSummaryList(cardList)
+            @if(completedPeriodCardLists.nonEmpty) {
+                <p class="govuk-body govuk-!-margin-top-6">@messages("groupAccountingPeriod.microPeriod.startDateReadOnly")</p>
+            } else {
+                <p class="govuk-body govuk-!-margin-top-4">@messages("manageFurtherGroupDetails.multiPeriod.noMicroPeriods")</p>
+            }
+            @if(periodCardLists.nonEmpty) {
+                <div class="govuk-summary-card govuk-!-margin-top-6">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">@messages("manageFurtherGroupDetails.currentPeriodHeading")</h2>
+                        @currentPeriodChangeUrl.map { url =>
+                            <div class="govuk-summary-card__actions">
+                                <a class="govuk-link" href="@url">@messages("site.change")<span class="govuk-visually-hidden"> @messages("groupAccountingPeriod.change.hidden")</span></a>
+                            </div>
+                        }
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        @for(cardList <- periodCardLists) {
+                            <div class="govuk-!-margin-top-4">
+                                @govukSummaryList(cardList)
+                            </div>
+                        }
+                    </div>
                 </div>
             }
+        }
+
+        @if(previousPeriodCardLists.nonEmpty) {
+            <div class="govuk-summary-card govuk-!-margin-top-6" id="previous-period">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">@messages("manageFurtherGroupDetails.previousPeriodHeading")</h2>
+                    @previousPeriodTitleChangeUrl.map { url =>
+                        <div class="govuk-summary-card__actions">
+                            <a class="govuk-link" href="@url">@messages(if (previousPeriodTitleIsView) "site.view" else "site.change")<span class="govuk-visually-hidden"> @messages(if (previousPeriodTitleIsView) "groupAccountingPeriod.view.hidden" else "groupAccountingPeriod.change.hidden")</span></a>
+                        </div>
+                    }
+                </div>
+                <div class="govuk-summary-card__content">
+                    @for(cardList <- previousPeriodCardLists) {
+                        <div class="govuk-!-margin-top-4">
+                            @govukSummaryList(cardList)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if(microPeriodCardLists.nonEmpty) {
+            <div class="govuk-summary-card govuk-!-margin-top-6">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">@messages("manageFurtherGroupDetails.microPeriodsHeading")</h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    @for(cardList <- microPeriodCardLists) {
+                        <div class="govuk-!-margin-top-4">
+                            @govukSummaryList(cardList)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if(changeNextPeriodUrl.nonEmpty && isAgent) {
+            <p class="govuk-body govuk-!-margin-top-6">
+                <a href="@changeNextPeriodUrl.get" class="govuk-button govuk-button--primary">@messages("manageFurtherGroupDetails.changeNextAccountingPeriod")</a>
+            </p>
+        }
+
+        @if(completedPeriodCardLists.nonEmpty && showViewAllPeriodsLink && isAgent) {
+            <p class="govuk-body govuk-!-margin-top-4">
+                <a href="#previous-period" class="govuk-link">@messages("manageFurtherGroupDetails.viewAllPeriods")</a>
+            </p>
         }
 
         @govukButton(Button(
@@ -55,6 +132,11 @@
             content = messages("site.manage.save-and-continue"),
             attributes = Map("id" -> "submit"),
             classes = "govuk-!-margin-top-6"))
+        @if(changeGroupDetailsUrl.nonEmpty && isAgent) {
+            <p class="govuk-body govuk-!-margin-top-4">
+                <a href="@changeGroupDetailsUrl.get" class="govuk-link">@messages("manageFurtherGroupDetails.changeGroupDetails")</a>
+            </p>
+        }
     }
 
 }

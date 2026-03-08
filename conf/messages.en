@@ -584,6 +584,7 @@ groupAccountingPeriod.amend.heading = What is the group accounting period?
 groupAccountingPeriod.p1 = This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in the UK, on or after 31 December 2023.
 groupAccountingPeriod.amend.p1 = The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity.
 groupAccountingPeriod.amend.p2 = Accounting periods are usually 12 months, but can be longer or shorter.
+groupAccountingPeriod.amend.changingIntro = You are changing accounting period.
 groupAccountingPeriod.startDate.heading = Start date
 groupAccountingPeriod.startDate.hint = For example 27 3 2024
 groupAccountingPeriod.endDate.heading = End date
@@ -945,10 +946,53 @@ unauthorised.individual.hyper1 = sign in to Government Gateway with an organisat
 unauthorised.individual.hyper2 = Find out more about who can use this service
 
 
-manageFurtherGroupDetails.checkYourAnswers.heading = Group details
-manageFurtherGroupDetails.checkYourAnswers.title = Group details
+manageFurtherGroupDetails.checkYourAnswers.heading = Manage group details
+manageFurtherGroupDetails.checkYourAnswers.title = Manage group details
 manageFurtherGroupDetails.multiPeriod.emptyState = There are no accounting periods available to amend
 manageFurtherGroupDetails.groupId = Group ID
+manageFurtherGroupDetails.authorisedOfficial = Authorised official
+manageFurtherGroupDetails.contactDetails = Contact details
+manageFurtherGroupDetails.completedAccountingPeriods = Completed accounting periods
+manageFurtherGroupDetails.reportingCompany = Reporting company
+manageFurtherGroupDetails.groupRegistrationDate = Group registration date
+manageFurtherGroupDetails.ukBasedBusinessAddresses = UK based business addresses
+manageFurtherGroupDetails.changeNextAccountingPeriod = Change next accounting period
+manageFurtherGroupDetails.viewAllPeriods = View all periods
+manageFurtherGroupDetails.changeGroupDetails = Change group details
+manageFurtherGroupDetails.accountingPeriodsHeading = Accounting periods
+manageFurtherGroupDetails.currentPeriodHeading = Current period
+manageFurtherGroupDetails.accountingPeriodsIntro = You can only make changes to the accounting periods we have listed. They are the periods that do not have submissions received against them. You can only make one change at a time. Any changes made may affect the periods before or after. You can return to this page to make further adjustments as needed.
+manageFurtherGroupDetails.previousPeriodHeading = Previous period
+manageFurtherGroupDetails.microPeriodsHeading = Micro periods
+manageFurtherGroupDetails.accountingPeriodInfoBanner = Important: We have changed the way accounting periods are managed. We now show a full accounting period. If you need to make changes to your accounting period, you must make a change to the full accounting period, not individual accounting periods.
+site.view = View
+groupAccountingPeriod.view.hidden = view accounting period details
+groupAccountingPeriod.microPeriod.startDateReadOnly = The start date of the first accounting period cannot be changed if micro-periods have been created.
+manageFurtherGroupDetails.multiPeriod.noMicroPeriods = You can only change the accounting period if no micro-periods have been created.
+
+confirmNewAccountingPeriod.title = Confirm new accounting period
+confirmNewAccountingPeriod.heading = Confirm new accounting period
+confirmNewAccountingPeriod.checkbox = I confirm the accounting period is correct and wish to continue
+confirmNewAccountingPeriod.agent.sure = Are you sure you want to change the accounting period for this group to {0}?
+confirmNewAccountingPeriod.agent.correct = Is the accounting period {0} to {1} correct?
+confirmNewAccountingPeriod.previousPeriod = Previous accounting period
+confirmNewAccountingPeriod.newPeriod = New accounting period
+confirmNewAccountingPeriod.changeLink = Change the new accounting period
+confirmNewAccountingPeriod.confirmButton = Confirm
+confirmNewAccountingPeriod.error.required = You must confirm the accounting period is correct to continue
+confirmNewAccountingPeriod.durationWarning = This change will create an accounting period of {0}.
+
+accountingPeriodChangeSuccess.title = Accounting period change successful
+accountingPeriodChangeSuccess.heading = Accounting period change successful
+accountingPeriodChangeSuccess.submitted = Your request to change the accounting period has been submitted.
+accountingPeriodChangeSuccess.whatHasChanged = What has changed
+accountingPeriodChangeSuccess.previousPeriod = Previous accounting period
+accountingPeriodChangeSuccess.twoWorkingDays = This has been recorded on the system. You will be able to view these details on your account in 2 working days.
+accountingPeriodChangeSuccess.returnToAccount = Return to your account
+accountingPeriodChangeSuccess.returnToManageGroupDetails = Return to manage group details
+accountingPeriodChangeSuccess.within24Hours = Any changes made now should be reflected within 24 hours. For anyone else who needs to know your new accounting period, tell them what you have submitted.
+accountingPeriodChangeSuccess.thisIsWhatYouToldUs = This is what you told us
+accountingPeriodChangeSuccess.goToHome = Go to home
 
 rfm.heading.caption = Replace filing member
 

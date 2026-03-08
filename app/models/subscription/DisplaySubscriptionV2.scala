@@ -38,7 +38,7 @@ object AccountingPeriodDisplay {
 /** Success payload of Display Subscription V2 (array of periods + upeDetails for location). */
 final case class DisplaySubscriptionV2Success(
   accountingPeriod: Seq[AccountingPeriodDisplay],
-  upeDetails:      UpeDetails
+  upeDetails:       UpeDetails
 )
 
 object DisplaySubscriptionV2Success {

@@ -16,8 +16,23 @@
 
 package controllers.subscription.manageAccount
 
+import play.api.libs.json.Json
+
+import java.time.LocalDate
+
 /** Session keys for Display Subscription V2 multi-period flow (PIL-2855). */
 object ManageAccountV2SessionKeys {
-  val DisplaySubscriptionV2Periods    = "manageAccount.displaySubscriptionV2.periods"
-  val DisplaySubscriptionV2Selected = "manageAccount.displaySubscriptionV2.selectedPeriod"
+  val DisplaySubscriptionV2Periods       = "manageAccount.displaySubscriptionV2.periods"
+  val DisplaySubscriptionV2Selected      = "manageAccount.displaySubscriptionV2.selectedPeriod"
+  val PreviousAccountingPeriodForSuccess = "manageAccount.previousAccountingPeriodForSuccess"
+  val NewAccountingPeriodForSuccess      = "manageAccount.newAccountingPeriodForSuccess"
+  val IsAgentForSuccess                  = "manageAccount.displaySubscriptionV2.isAgent"
+
+  /** Parse session JSON with startDate/endDate to (LocalDate, LocalDate). Shared by confirm and success controllers. */
+  def parsePeriodJson(str: String): Option[(LocalDate, LocalDate)] =
+    for {
+      js    <- Option(Json.parse(str))
+      start <- (js \ "startDate").asOpt[String].flatMap(s => scala.util.Try(LocalDate.parse(s)).toOption)
+      end   <- (js \ "endDate").asOpt[String].flatMap(s => scala.util.Try(LocalDate.parse(s)).toOption)
+    } yield (start, end)
 }
