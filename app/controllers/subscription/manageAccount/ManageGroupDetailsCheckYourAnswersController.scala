@@ -94,21 +94,28 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
               dataFuture
                 .map { local =>
                   implicit val msgs: play.api.i18n.Messages = request.messages
-                  val amendablePeriods = local.accountingPeriods
+                  val allPeriods = local.accountingPeriods
                     .getOrElse(Seq.empty)
-                    .filter(_.canAmend)
                     .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
-                  val periodCards = amendablePeriods.zipWithIndex.map { case (p, i) =>
+                  val (periodCards, _) = allPeriods.zipWithIndex.foldLeft(
+                    (Seq.empty[(String, String, String, Option[String])], 0)
+                  ) { case ((cards, amendIdx), (p, displayIdx)) =>
                     val title =
-                      if i == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
-                      else if i == 1 then msgs("manageGroupDetails.multiPeriod.previousPeriod")
-                      else msgs("manageGroupDetails.multiPeriod.periodLabel", i + 1)
-                    (
-                      title,
-                      p.startDate.toDateFormat,
-                      p.endDate.toDateFormat,
-                      controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(i).url
-                    )
+                      if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
+                      else if displayIdx == 1 then msgs("manageGroupDetails.multiPeriod.previousPeriod")
+                      else msgs("manageGroupDetails.multiPeriod.periodLabel", displayIdx + 1)
+                    val (changeUrlOpt, nextAmendIdx) =
+                      if p.canAmend then
+                        (
+                          Some(
+                            controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
+                              .selectPeriod(amendIdx)
+                              .url
+                          ),
+                          amendIdx + 1
+                        )
+                      else (None, amendIdx)
+                    (cards :+ (title, p.startDate.toDateFormat, p.endDate.toDateFormat, changeUrlOpt), nextAmendIdx)
                   }
                   val locationKey =
                     if local.subMneOrDomestic == MneOrDomestic.Uk then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
@@ -116,7 +123,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                     multiPeriodView(
                       locationMessageKey = locationKey,
                       periodCards = periodCards,
-                      isEmpty = amendablePeriods.isEmpty,
+                      isEmpty = allPeriods.isEmpty,
                       isAgent = request.isAgent,
                       organisationName = local.organisationName,
                       plrReference = local.plrReference

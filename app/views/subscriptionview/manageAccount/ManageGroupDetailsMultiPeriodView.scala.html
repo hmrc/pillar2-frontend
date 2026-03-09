@@ -25,7 +25,7 @@
     h2: HeadingH2
 )
 
-@(locationMessageKey: String, periodCards: Seq[(String, String, String, String)], isEmpty: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(locationMessageKey: String, periodCards: Seq[(String, String, String, Option[String])], isEmpty: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageGroupDetails.multiPeriod.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -61,14 +61,16 @@
         <p class="govuk-body">@messages("manageGroupDetails.multiPeriod.emptyState")</p>
     } else {
         @for(card <- periodCards) {
-            @defining(card) { case (title, startDate, endDate, changeUrl) =>
+            @defining(card) { case (title, startDate, endDate, changeUrlOpt) =>
                 <div class="govuk-summary-card govuk-!-margin-bottom-6">
                     <div class="govuk-summary-card__title-wrapper">
                         <h3 class="govuk-summary-card__title">@title</h3>
-                        <a class="govuk-link govuk-summary-card__action" href="@changeUrl">
-                            @messages("site.change")
-                            <span class="govuk-visually-hidden"> @messages("manageGroupDetails.multiPeriod.changeHidden", title)</span>
-                        </a>
+                        @changeUrlOpt.map { changeUrl =>
+                            <a class="govuk-link govuk-summary-card__action" href="@changeUrl">
+                                @messages("site.change")
+                                <span class="govuk-visually-hidden"> @messages("manageGroupDetails.multiPeriod.changeHidden", title)</span>
+                            </a>
+                        }
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list govuk-summary-list--no-border">

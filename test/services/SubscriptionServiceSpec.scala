@@ -903,5 +903,76 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
     }
+
+    "fetchDisplaySubscriptionV2AndSave" when {
+
+      val plrRef = "XEPLR0000000001"
+
+      val v2Period = models.subscription.DisplayAccountingPeriod(
+        startDate         = LocalDate.of(2024, 1, 6),
+        endDate           = LocalDate.of(2025, 4, 6),
+        dueDate           = LocalDate.of(2024, 4, 6),
+        canAmendStartDate = true,
+        canAmendEndDate   = true
+      )
+
+      val v2Data = models.subscription.SubscriptionDataV2(
+        formBundleNumber         = "119000004323",
+        upeDetails               = models.subscription.UpeDetails(
+          safeId                  = None,
+          customerIdentification1 = None,
+          customerIdentification2 = None,
+          organisationName        = "Org Ltd",
+          registrationDate        = LocalDate.of(2024, 1, 31),
+          domesticOnly            = true,
+          filingMember            = false
+        ),
+        upeCorrespAddressDetails = models.subscription.UpeCorrespAddressDetails(
+          addressLine1 = "1 High St",
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          postCode     = None,
+          countryCode  = "GB"
+        ),
+        primaryContactDetails    = models.subscription.ContactDetailsType("Contact", None, "c@example.com"),
+        secondaryContactDetails  = None,
+        filingMemberDetails      = None,
+        accountingPeriod         = Seq(v2Period),
+        accountStatus            = None
+      )
+
+      "fetch V2 data from connector, convert to SubscriptionLocalData, save and return it" in {
+        val application = applicationBuilder()
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.displaySubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+            .thenReturn(Future.successful(v2Data))
+          when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
+            .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
+
+          val result = service.fetchDisplaySubscriptionV2AndSave("id", plrRef).futureValue
+          result.plrReference        mustBe plrRef
+          result.accountingPeriods   mustBe Some(Seq(v2Period))
+          result.subAccountingPeriod mustBe v2Period.toAccountingPeriod
+          result.organisationName    mustBe Some("Org Ltd")
+        }
+      }
+
+      "propagate failure when displaySubscriptionV2 fails" in {
+        val application = applicationBuilder()
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.displaySubscriptionV2(any(), any())(using any(), any()))
+            .thenReturn(Future.failed(InternalIssueError))
+
+          service.fetchDisplaySubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
+        }
+      }
+    }
   }
 }

@@ -17,8 +17,11 @@
 package models
 
 import base.SpecBase
+import models.subscription.{DisplayAccountingPeriod, SubscriptionLocalData}
 import pages.{SubAddSecondaryContactPage, SubPrimaryCapturePhonePage, UpeRegisteredInUKPage}
-import play.api.libs.json.JsResultException
+import play.api.libs.json.{JsArray, JsObject, JsResultException, Json}
+
+import java.time.LocalDate
 
 class SubscriptionLocalDataSpec extends SpecBase {
 
@@ -51,6 +54,54 @@ class SubscriptionLocalDataSpec extends SpecBase {
       objectBefore.remove(SubAddSecondaryContactPage).map { value =>
         value mustEqual objectAfter
       }
+    }
+  }
+
+  "cacheReads" must {
+
+    "parse a V1-format JSON (subAccountingPeriod as object)" in {
+      val json   = Json.toJson(emptySubscriptionLocalData)
+      val result = json.validate[SubscriptionLocalData](SubscriptionLocalData.cacheReads)
+      result.isSuccess mustBe true
+      result.get mustBe emptySubscriptionLocalData
+    }
+
+    "parse a V2-format JSON (subAccountingPeriod as array) and populate accountingPeriods" in {
+      val period1 = DisplayAccountingPeriod(
+        startDate = LocalDate.of(2025, 1, 1),
+        endDate = LocalDate.of(2025, 12, 31),
+        dueDate = LocalDate.of(2026, 3, 31),
+        canAmendStartDate = true,
+        canAmendEndDate = true
+      )
+      val period2 = DisplayAccountingPeriod(
+        startDate = LocalDate.of(2024, 4, 1),
+        endDate = LocalDate.of(2024, 9, 30),
+        dueDate = LocalDate.of(2024, 12, 31),
+        canAmendStartDate = false,
+        canAmendEndDate = false
+      )
+      val baseJson: JsObject = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "subAccountingPeriod"
+      val v2Json = baseJson ++ Json.obj("subAccountingPeriod" -> Json.toJson(Seq(period1, period2)))
+
+      val result = v2Json.validate[SubscriptionLocalData](SubscriptionLocalData.cacheReads)
+      result.isSuccess mustBe true
+      val parsed = result.get
+      parsed.subAccountingPeriod mustBe period1.toAccountingPeriod
+      parsed.accountingPeriods mustBe Some(Seq(period1, period2))
+    }
+
+    "return JsError when V2 array is empty" in {
+      val baseJson: JsObject = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "subAccountingPeriod"
+      val v2Json = baseJson ++ Json.obj("subAccountingPeriod" -> JsArray.empty)
+      val result = v2Json.validate[SubscriptionLocalData](SubscriptionLocalData.cacheReads)
+      result.isError mustBe true
+    }
+
+    "return JsError when subAccountingPeriod key is absent" in {
+      val json   = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "subAccountingPeriod"
+      val result = json.validate[SubscriptionLocalData](SubscriptionLocalData.cacheReads)
+      result.isError mustBe true
     }
   }
 

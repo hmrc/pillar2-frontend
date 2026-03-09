@@ -321,5 +321,88 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must update the matching entry in accountingPeriods when subAccountingPeriod dates match" in {
+      import models.subscription.DisplayAccountingPeriod
+      import play.api.inject.bind
+
+      val originalStart = LocalDate.of(2024, 1, 1)
+      val originalEnd   = LocalDate.of(2024, 12, 31)
+      val newStart      = LocalDate.of(2024, 2, 1)
+      val newEnd        = LocalDate.of(2024, 11, 30)
+
+      val period1 = DisplayAccountingPeriod(originalStart, originalEnd, LocalDate.of(2025, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
+      val period2 = DisplayAccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), LocalDate.of(2024, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
+
+      val localDataWithOldPeriod = emptySubscriptionLocalData
+        .copy(accountingPeriods = Some(Seq(period1, period2)))
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(originalStart, originalEnd))
+
+      val expectedUpdated = localDataWithOldPeriod
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(newStart, newEnd))
+        .copy(accountingPeriods = Some(Seq(period1.copy(startDate = newStart, endDate = newEnd), period2)))
+
+      val expectedNextPage = Call(GET, "/next")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithOldPeriod))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "2",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "30",
+            "endDate.month"   -> "11",
+            "endDate.year"    -> "2024"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUpdated)))(using any[HeaderCarrier])
+      }
+    }
+
+    "must not modify accountingPeriods when no subAccountingPeriod is set" in {
+      import play.api.inject.bind
+
+      val newStart      = LocalDate.of(2024, 2, 1)
+      val newEnd        = LocalDate.of(2024, 11, 30)
+      val expectedNext  = Call(GET, "/next")
+      val mockNavigator = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNext)
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+
+      val expectedSaved = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, AccountingPeriod(newStart, newEnd))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "2",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "30",
+            "endDate.month"   -> "11",
+            "endDate.year"    -> "2024"
+          )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedSaved)))(using any[HeaderCarrier])
+      }
+    }
+
   }
 }
