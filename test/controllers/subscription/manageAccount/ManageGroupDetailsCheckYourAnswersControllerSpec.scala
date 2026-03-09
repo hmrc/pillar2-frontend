@@ -18,21 +18,27 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import controllers.actions.*
+import models.requests.IdentifierRequest
 import models.subscription.{DisplayAccountingPeriod, SubscriptionLocalData}
 import models.{InternalIssueError, MneOrDomestic}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.SubAccountingPeriodPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.api.Configuration
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
@@ -72,20 +78,65 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
   private val localDataWithoutPeriods: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(accountingPeriods = None)
 
+  private val localDataAgentNoMicro: SubscriptionLocalData =
+    emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(amendablePeriod)), organisationName = Some("ABC Intl"))
+
+  private val localDataWithAgentInfo: SubscriptionLocalData =
+    localDataWithPeriods.copy(organisationName = Some("ABC Intl"))
+
   private def buildApp(
     subscriptionLocalData: Option[SubscriptionLocalData],
-    multiPeriodFlag:       Boolean = false
+    multiPeriodFlag:       Boolean = false,
+    isAgent:               Boolean = false
   ) =
-    applicationBuilder(
-      subscriptionLocalData = subscriptionLocalData,
-      additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag)
-    )
+    if isAgent then buildAgentApp(subscriptionLocalData, multiPeriodFlag)
+    else
+      applicationBuilder(
+        subscriptionLocalData = subscriptionLocalData,
+        additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag)
+      ).overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[SubscriptionService].toInstance(mockSubscriptionService),
+        bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+      ).build()
+
+  private def buildAgentApp(
+    subscriptionLocalData: Option[SubscriptionLocalData],
+    multiPeriodFlag:       Boolean
+  ) = {
+    val agentAction = new IdentifierAction {
+      override def refine[A](r: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+        Future.successful(Right(IdentifierRequest(r, "id", Some("groupId"), Set.empty, isAgent = true, userIdForEnrolment = "userId")))
+      override def parser:                     BodyParser[AnyContent] = injectedParsers.default
+      override protected def executionContext: ExecutionContext       = ExecutionContext.Implicits.global
+    }
+    new GuiceApplicationBuilder()
+      .configure(
+        Configuration.from(
+          Map(
+            "metrics.enabled"                         -> "false",
+            "auditing.enabled"                        -> false,
+            "features.grsStubEnabled"                 -> true,
+            "features.amendMultipleAccountingPeriods" -> multiPeriodFlag
+          )
+        )
+      )
       .overrides(
+        bind[Enrolments].toInstance(Enrolments(Set.empty)),
+        bind[DataRequiredAction].to[DataRequiredActionImpl],
+        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("RfmIdentifier").to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").toInstance(agentAction),
+        bind[IdentifierAction].qualifiedWith("ASAEnrolmentIdentifier").to[FakeIdentifierAction],
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(None)),
+        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
+        bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(None)),
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
         bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
       )
       .build()
+  }
 
   "onPageLoad" when {
 
@@ -199,6 +250,59 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
     }
 
+    "agent user" when {
+
+      "feature flag is true and no micro periods" must {
+        "render multi-period view with agent section header" in {
+          val application = buildApp(subscriptionLocalData = Some(localDataAgentNoMicro), multiPeriodFlag = true, isAgent = true)
+          running(application) {
+            when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+            val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+            val result  = route(application, request).value
+            val body    = contentAsString(result)
+            status(result) mustEqual OK
+            body must include("Accounting periods")
+            body must include("Current period")
+            body must not include "Previous period"
+            body must include("ABC Intl")
+          }
+        }
+      }
+
+      "feature flag is true and micro period present" must {
+        "render multi-period view with both period cards and agent section header" in {
+          val application = buildApp(subscriptionLocalData = Some(localDataWithAgentInfo), multiPeriodFlag = true, isAgent = true)
+          running(application) {
+            when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+            val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+            val result  = route(application, request).value
+            val body    = contentAsString(result)
+            status(result) mustEqual OK
+            body must include("Accounting periods")
+            body must include("Current period")
+            body must include("Previous period")
+            body must include("ABC Intl")
+          }
+        }
+      }
+
+      "feature flag is false" must {
+        "render single-period CYA view" in {
+          val application =
+            buildApp(subscriptionLocalData = Some(localDataWithAgentInfo.copy(accountingPeriods = None)), multiPeriodFlag = false, isAgent = true)
+          running(application) {
+            when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+            val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+            val result  = route(application, request).value
+            val body    = contentAsString(result)
+            status(result) mustEqual OK
+            body must include("Group details")
+            body must not include "Accounting periods"
+          }
+        }
+      }
+    }
+
     "location rendering" must {
       "show UK and non-UK location text when feature flag is on" in {
         val ukAndOtherData = localDataWithPeriods.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
@@ -221,6 +325,28 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("In the UK and outside the UK")
+        }
+      }
+
+      "show UK only location text when feature flag is on" in {
+        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Only in the UK")
+        }
+      }
+
+      "show UK only location text when feature flag is off" in {
+        val application = buildApp(subscriptionLocalData = Some(emptySubscriptionLocalData), multiPeriodFlag = false)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Only in the UK")
         }
       }
     }
