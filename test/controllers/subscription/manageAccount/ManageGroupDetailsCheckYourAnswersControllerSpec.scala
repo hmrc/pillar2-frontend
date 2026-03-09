@@ -48,12 +48,26 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     startDate = LocalDate.of(2024, 4, 1),
     endDate = LocalDate.of(2024, 9, 30),
     dueDate = LocalDate.of(2024, 12, 31),
+    canAmendStartDate = true,
+    canAmendEndDate = true
+  )
+
+  private val nonAmendablePeriod = DisplayAccountingPeriod(
+    startDate = LocalDate.of(2023, 1, 1),
+    endDate = LocalDate.of(2023, 12, 31),
+    dueDate = LocalDate.of(2024, 3, 31),
     canAmendStartDate = false,
     canAmendEndDate = false
   )
 
   private val localDataWithPeriods: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(amendablePeriod, microPeriod)))
+
+  private val localDataWithMixedPeriods: SubscriptionLocalData =
+    emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(amendablePeriod, nonAmendablePeriod)))
+
+  private val localDataWithNoAmendablePeriods: SubscriptionLocalData =
+    emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(nonAmendablePeriod)))
 
   private val localDataWithoutPeriods: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(accountingPeriods = None)
@@ -128,14 +142,15 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "show Change link only for amendable periods (not micro periods)" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+      "show cards and Change links only for amendable periods" in {
+        val application = buildApp(subscriptionLocalData = Some(localDataWithMixedPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           val body    = contentAsString(result)
           body must include("select-period/0")
+          body must not include "31 December 2023"
           body must not include "select-period/1"
         }
       }
@@ -169,6 +184,47 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
     }
+
+    "feature flag is true and there are no amendable periods" must {
+      "render empty state message" in {
+        val application = buildApp(subscriptionLocalData = Some(localDataWithNoAmendablePeriods), multiPeriodFlag = true)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("There are no accounting periods available to amend")
+          contentAsString(result) must not include "select-period/"
+        }
+      }
+    }
+
+    "location rendering" must {
+      "show UK and non-UK location text when feature flag is on" in {
+        val ukAndOtherData = localDataWithPeriods.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
+        val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = true)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("In the UK and outside the UK")
+        }
+      }
+
+      "show UK and non-UK location text when feature flag is off" in {
+        val ukAndOtherData = emptySubscriptionLocalData.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
+        val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = false)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("In the UK and outside the UK")
+        }
+      }
+    }
+
   }
 
   "selectPeriod" when {

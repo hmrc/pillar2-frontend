@@ -94,28 +94,25 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
               dataFuture
                 .map { local =>
                   implicit val msgs: play.api.i18n.Messages = request.messages
-                  val allPeriods = local.accountingPeriods
+                  val amendablePeriods = local.accountingPeriods
                     .getOrElse(Seq.empty)
+                    .filter(_.canAmend)
                     .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
-                  val (periodCards, _) = allPeriods.zipWithIndex.foldLeft(
-                    (Seq.empty[(String, String, String, Option[String])], 0)
-                  ) { case ((cards, amendIdx), (p, displayIdx)) =>
+                  val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
                     val title =
                       if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
                       else if displayIdx == 1 then msgs("manageGroupDetails.multiPeriod.previousPeriod")
                       else msgs("manageGroupDetails.multiPeriod.periodLabel", displayIdx + 1)
-                    val (changeUrlOpt, nextAmendIdx) =
-                      if p.canAmend then
-                        (
-                          Some(
-                            controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
-                              .selectPeriod(amendIdx)
-                              .url
-                          ),
-                          amendIdx + 1
-                        )
-                      else (None, amendIdx)
-                    (cards :+ (title, p.startDate.toDateFormat, p.endDate.toDateFormat, changeUrlOpt), nextAmendIdx)
+                    (
+                      title,
+                      p.startDate.toDateFormat,
+                      p.endDate.toDateFormat,
+                      Some(
+                        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
+                          .selectPeriod(displayIdx)
+                          .url
+                      )
+                    )
                   }
                   val locationKey =
                     if local.subMneOrDomestic == MneOrDomestic.Uk then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
@@ -123,7 +120,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                     multiPeriodView(
                       locationMessageKey = locationKey,
                       periodCards = periodCards,
-                      isEmpty = allPeriods.isEmpty,
+                      isEmpty = amendablePeriods.isEmpty,
                       isAgent = request.isAgent,
                       organisationName = local.organisationName,
                       plrReference = local.plrReference
