@@ -23,9 +23,9 @@ import java.time.LocalDate
 
 class DisplayAccountingPeriodSpec extends SpecBase {
 
-  private val start   = LocalDate.of(2024, 1, 1)
-  private val end     = LocalDate.of(2024, 12, 31)
-  private val due     = LocalDate.of(2025, 3, 31)
+  private val start = LocalDate.of(2024, 1, 1)
+  private val end   = LocalDate.of(2024, 12, 31)
+  private val due   = LocalDate.of(2025, 3, 31)
 
   "DisplayAccountingPeriod" when {
 
@@ -53,11 +53,11 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
     "toAccountingPeriod" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
-        val period   = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
-        val result   = period.toAccountingPeriod
+        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
+        val result = period.toAccountingPeriod
         result.startDate mustBe start
-        result.endDate   mustBe end
-        result.dueDate   mustBe Some(due)
+        result.endDate mustBe end
+        result.dueDate mustBe Some(due)
       }
     }
 
@@ -79,11 +79,11 @@ class DisplayAccountingPeriodSpec extends SpecBase {
           }
         """)
         val result = json.as[DisplayAccountingPeriod]
-        result.startDate         mustBe start
-        result.endDate           mustBe end
-        result.dueDate           mustBe due
+        result.startDate mustBe start
+        result.endDate mustBe end
+        result.dueDate mustBe due
         result.canAmendStartDate mustBe true
-        result.canAmendEndDate   mustBe false
+        result.canAmendEndDate mustBe false
       }
     }
   }

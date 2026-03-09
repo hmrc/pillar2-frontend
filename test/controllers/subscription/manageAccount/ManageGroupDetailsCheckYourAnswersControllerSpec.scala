@@ -37,19 +37,19 @@ import scala.concurrent.Future
 class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
   private val amendablePeriod = DisplayAccountingPeriod(
-    startDate         = LocalDate.of(2025, 1, 1),
-    endDate           = LocalDate.of(2025, 12, 31),
-    dueDate           = LocalDate.of(2026, 3, 31),
+    startDate = LocalDate.of(2025, 1, 1),
+    endDate = LocalDate.of(2025, 12, 31),
+    dueDate = LocalDate.of(2026, 3, 31),
     canAmendStartDate = true,
-    canAmendEndDate   = true
+    canAmendEndDate = true
   )
 
   private val microPeriod = DisplayAccountingPeriod(
-    startDate         = LocalDate.of(2024, 4, 1),
-    endDate           = LocalDate.of(2024, 9, 30),
-    dueDate           = LocalDate.of(2024, 12, 31),
+    startDate = LocalDate.of(2024, 4, 1),
+    endDate = LocalDate.of(2024, 9, 30),
+    dueDate = LocalDate.of(2024, 12, 31),
     canAmendStartDate = false,
-    canAmendEndDate   = false
+    canAmendEndDate = false
   )
 
   private val localDataWithPeriods: SubscriptionLocalData =
@@ -64,7 +64,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
   ) =
     applicationBuilder(
       subscriptionLocalData = subscriptionLocalData,
-      additionalData        = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag)
+      additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag)
     )
       .overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
@@ -81,7 +81,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         running(application) {
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)           mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
         }
       }
@@ -94,7 +94,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)           mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
         }
       }
@@ -107,9 +107,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)        mustEqual OK
-          contentAsString(result) must include("Manage group details")
-          contentAsString(result) must include("Group&#x27;s accounting period")
+          status(result) mustEqual OK
+          contentAsString(result) must include("Group details")
+          contentAsString(result) must not include "Accounting periods"
         }
       }
     }
@@ -121,7 +121,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)          mustEqual OK
+          status(result) mustEqual OK
           contentAsString(result) must include("Accounting periods")
           contentAsString(result) must include("Current period")
           contentAsString(result) must include("Previous period")
@@ -150,7 +150,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
             .thenReturn(Future.successful(localDataWithPeriods))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)          mustEqual OK
+          status(result) mustEqual OK
           contentAsString(result) must include("Accounting periods")
         }
       }
@@ -163,8 +163,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
             .thenReturn(Future.failed(InternalIssueError))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
-          status(result)          mustEqual OK
-          contentAsString(result) must include("Manage group details")
+          status(result) mustEqual OK
+          contentAsString(result) must include("Group details")
+          contentAsString(result) must not include "Accounting periods"
         }
       }
     }
@@ -183,7 +184,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(0).url)
           val result  = route(application, request).value
-          status(result)           mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(
             controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
           )
@@ -198,7 +199,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         running(application) {
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(99).url)
           val result  = route(application, request).value
-          status(result)           mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
         }
       }
@@ -210,7 +211,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         running(application) {
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(0).url)
           val result  = route(application, request).value
-          status(result)           mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
         }
       }

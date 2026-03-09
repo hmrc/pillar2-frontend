@@ -264,7 +264,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
 object SubscriptionConnectorSpec {
   val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes: Gen[Int]        = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  private val errorCodes:        Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
   val displaySubscriptionV2Path: String   = "/report-pillar2-top-up-taxes/subscription/read-subscription/v2"
 
   val v2SuccessJson: String =

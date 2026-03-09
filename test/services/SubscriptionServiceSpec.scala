@@ -909,37 +909,37 @@ class SubscriptionServiceSpec extends SpecBase {
       val plrRef = "XEPLR0000000001"
 
       val v2Period = models.subscription.DisplayAccountingPeriod(
-        startDate         = LocalDate.of(2024, 1, 6),
-        endDate           = LocalDate.of(2025, 4, 6),
-        dueDate           = LocalDate.of(2024, 4, 6),
+        startDate = LocalDate.of(2024, 1, 6),
+        endDate = LocalDate.of(2025, 4, 6),
+        dueDate = LocalDate.of(2024, 4, 6),
         canAmendStartDate = true,
-        canAmendEndDate   = true
+        canAmendEndDate = true
       )
 
       val v2Data = models.subscription.SubscriptionDataV2(
-        formBundleNumber         = "119000004323",
-        upeDetails               = models.subscription.UpeDetails(
-          safeId                  = None,
+        formBundleNumber = "119000004323",
+        upeDetails = models.subscription.UpeDetails(
+          safeId = None,
           customerIdentification1 = None,
           customerIdentification2 = None,
-          organisationName        = "Org Ltd",
-          registrationDate        = LocalDate.of(2024, 1, 31),
-          domesticOnly            = true,
-          filingMember            = false
+          organisationName = "Org Ltd",
+          registrationDate = LocalDate.of(2024, 1, 31),
+          domesticOnly = true,
+          filingMember = false
         ),
         upeCorrespAddressDetails = models.subscription.UpeCorrespAddressDetails(
           addressLine1 = "1 High St",
           addressLine2 = None,
           addressLine3 = None,
           addressLine4 = None,
-          postCode     = None,
-          countryCode  = "GB"
+          postCode = None,
+          countryCode = "GB"
         ),
-        primaryContactDetails    = models.subscription.ContactDetailsType("Contact", None, "c@example.com"),
-        secondaryContactDetails  = None,
-        filingMemberDetails      = None,
-        accountingPeriod         = Seq(v2Period),
-        accountStatus            = None
+        primaryContactDetails = models.subscription.ContactDetailsType("Contact", None, "c@example.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = Seq(v2Period),
+        accountStatus = None
       )
 
       "fetch V2 data from connector, convert to SubscriptionLocalData, save and return it" in {
@@ -954,10 +954,10 @@ class SubscriptionServiceSpec extends SpecBase {
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
 
           val result = service.fetchDisplaySubscriptionV2AndSave("id", plrRef).futureValue
-          result.plrReference        mustBe plrRef
-          result.accountingPeriods   mustBe Some(Seq(v2Period))
+          result.plrReference mustBe plrRef
+          result.accountingPeriods mustBe Some(Seq(v2Period))
           result.subAccountingPeriod mustBe v2Period.toAccountingPeriod
-          result.organisationName    mustBe Some("Org Ltd")
+          result.organisationName mustBe Some("Org Ltd")
         }
       }
 

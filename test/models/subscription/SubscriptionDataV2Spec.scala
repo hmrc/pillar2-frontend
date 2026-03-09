@@ -66,10 +66,10 @@ class SubscriptionDataV2Spec extends SpecBase {
   "SubscriptionDataV2" must {
     "deserialise from a valid V2 JSON payload" in {
       val result = v2Json.as[SubscriptionDataV2]
-      result.formBundleNumber           mustBe "119000004323"
+      result.formBundleNumber mustBe "119000004323"
       result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
-      result.upeDetails.domesticOnly    mustBe true
-      result.accountingPeriod           must have size 1
+      result.upeDetails.domesticOnly mustBe true
+      result.accountingPeriod must have size 1
       result.accountingPeriod.head.startDate mustBe LocalDate.of(2024, 1, 6)
       result.accountingPeriod.head.canAmendStartDate mustBe true
     }
@@ -86,8 +86,8 @@ class SubscriptionDataV2Spec extends SpecBase {
     }
 
     "SubscriptionSuccessV2 wraps SubscriptionDataV2" in {
-      val wrapped     = Json.obj("success" -> v2Json)
-      val result      = wrapped.as[SubscriptionSuccessV2]
+      val wrapped = Json.obj("success" -> v2Json)
+      val result  = wrapped.as[SubscriptionSuccessV2]
       result.success.formBundleNumber mustBe "119000004323"
     }
   }

@@ -331,7 +331,13 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val newEnd        = LocalDate.of(2024, 11, 30)
 
       val period1 = DisplayAccountingPeriod(originalStart, originalEnd, LocalDate.of(2025, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
-      val period2 = DisplayAccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31), LocalDate.of(2024, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
+      val period2 = DisplayAccountingPeriod(
+        LocalDate.of(2023, 1, 1),
+        LocalDate.of(2023, 12, 31),
+        LocalDate.of(2024, 3, 31),
+        canAmendStartDate = true,
+        canAmendEndDate = true
+      )
 
       val localDataWithOldPeriod = emptySubscriptionLocalData
         .copy(accountingPeriods = Some(Seq(period1, period2)))
