@@ -97,6 +97,25 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
+  /** Display Subscription V2: returns multiple accounting periods with canAmend flags. */
+  def displaySubscriptionV2(
+    userId:        String,
+    plrReference:  String
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV2] = {
+    val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/v2/$userId/$plrReference"
+    http
+      .get(url"$url")
+      .execute[HttpResponse]
+      .flatMap {
+        case response if response.status == OK =>
+          Future.successful(Json.parse(response.body).as[SubscriptionSuccessV2].success)
+        case e =>
+          logger.warn(s"Connection issue when calling display subscription v2 with status: ${e.status}")
+          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
+          else Future.failed(InternalIssueError)
+      }
+  }
+
   def getSubscriptionCache(
     userId: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =

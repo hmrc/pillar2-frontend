@@ -1,0 +1,41 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models.subscription
+
+import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
+
+/** Single accounting period from Display Subscription V2 (array item with canAmend flags). */
+final case class DisplayAccountingPeriod(
+  startDate:         LocalDate,
+  endDate:           LocalDate,
+  dueDate:           LocalDate,
+  canAmendStartDate: Boolean,
+  canAmendEndDate:   Boolean
+) {
+
+  /** True if this period can be amended (both start and end). */
+  def canAmend: Boolean = canAmendStartDate && canAmendEndDate
+
+  def toAccountingPeriod: AccountingPeriod =
+    AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = Some(dueDate))
+}
+
+object DisplayAccountingPeriod {
+  given format: OFormat[DisplayAccountingPeriod] = Json.format[DisplayAccountingPeriod]
+}
