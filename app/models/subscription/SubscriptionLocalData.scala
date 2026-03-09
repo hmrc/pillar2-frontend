@@ -81,5 +81,30 @@ case class SubscriptionLocalData(
 }
 
 object SubscriptionLocalData {
+
   given format: OFormat[SubscriptionLocalData] = Json.format[SubscriptionLocalData]
+
+  /** Reads that accepts both V1 cache (subAccountingPeriod = object) and V2 cache (subAccountingPeriod = array from backend). */
+  given cacheReads: Reads[SubscriptionLocalData] = (json: JsValue) =>
+    // `json \ "key"` returns JsLookupResult, not JsValue — use .toOption to unwrap the actual JsValue
+    (json \ "subAccountingPeriod").toOption match {
+      case Some(_: JsObject) =>
+        format.reads(json)
+      case Some(arr: JsArray) =>
+        arr.validate[Seq[DisplayAccountingPeriod]] match {
+          case JsSuccess(periods, _) if periods.nonEmpty =>
+            val first = periods.head
+            val base  = (json.as[JsObject] - "subAccountingPeriod") ++ Json.obj(
+              "subAccountingPeriod" -> Json.toJson(first.toAccountingPeriod),
+              "accountingPeriods"   -> JsArray(periods.map(Json.toJson(_)))
+            )
+            format.reads(base)
+          case JsSuccess(_, _) =>
+            JsError("V2 cache has empty subAccountingPeriod array")
+          case err: JsError =>
+            err
+        }
+      case _ =>
+        JsError("subAccountingPeriod must be an object or array")
+    }
 }
