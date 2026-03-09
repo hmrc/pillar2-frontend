@@ -948,6 +948,22 @@ unauthorised.individual.hyper2 = Find out more about who can use this service
 manageFurtherGroupDetails.checkYourAnswers.heading = Group details
 manageFurtherGroupDetails.checkYourAnswers.title = Group details
 
+manageGroupDetails.multiPeriod.title = Manage group details
+manageGroupDetails.multiPeriod.heading = Manage group details
+manageGroupDetails.multiPeriod.agentHeader = Group: {0} ID: {1}
+manageGroupDetails.multiPeriod.locationLabel = Where are the group entities located?
+manageGroupDetails.multiPeriod.accountingPeriodsTitle = Accounting periods
+manageGroupDetails.multiPeriod.intro1 = You can only make changes to the accounting periods we have listed. They are the periods that do not have submissions received against them. You can only make one change at a time.
+manageGroupDetails.multiPeriod.intro2 = Any changes made may affect the periods before or after. You can return to this page to make further adjustments as needed.
+manageGroupDetails.multiPeriod.currentPeriod = Current period
+manageGroupDetails.multiPeriod.previousPeriod = Previous period
+manageGroupDetails.multiPeriod.periodLabel = Period {0}
+manageGroupDetails.multiPeriod.startDate = Start date
+manageGroupDetails.multiPeriod.endDate = End date
+manageGroupDetails.multiPeriod.emptyState = There are no accounting periods available to amend
+manageGroupDetails.multiPeriod.changeHidden = Change {0}
+manageGroupDetails.multiPeriod.backToHomepage = Back to group''s homepage
+
 rfm.heading.caption = Replace filing member
 
 rfm.alreadyEnrolled.title = You cannot replace the current filing member for this group

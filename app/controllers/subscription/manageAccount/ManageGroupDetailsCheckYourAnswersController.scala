@@ -20,26 +20,30 @@ import cats.data.OptionT
 import cats.implicits.*
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
+import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
+import models.MneOrDomestic
 import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
+import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage, SubAccountingPeriodPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.manageAccount.*
 import viewmodels.govuk.summarylist.*
-import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
+import views.html.subscriptionview.manageAccount.{ManageGroupDetailsCheckYourAnswersView, ManageGroupDetailsMultiPeriodView}
+import utils.DateTimeUtils.*
 
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,8 +54,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   requireData:                            SubscriptionDataRequiredAction,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageGroupDetailsCheckYourAnswersView,
+  multiPeriodView:                        ManageGroupDetailsMultiPeriodView,
   sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
+  subscriptionConnector:                  SubscriptionConnector,
   referenceNumberService:                 ReferenceNumberService,
   val userAnswersConnectors:              UserAnswersConnectors
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
@@ -62,6 +68,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
       given SubscriptionDataRequest[AnyContent] = request
+      given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       sessionRepository.get(request.userId).flatMap {
         case None          => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         case Some(answers) =>
@@ -69,16 +76,72 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             case Some(InProgress) =>
               Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
             case _ =>
-              val list = SummaryListViewModel(
-                rows = Seq(
-                  MneOrDomesticSummary.row(),
-                  GroupAccountingPeriodSummary.row(),
-                  GroupAccountingPeriodStartDateSummary.row(),
-                  GroupAccountingPeriodEndDateSummary.row()
-                ).flatten
-              )
-              Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
+              if appConfig.amendMultipleAccountingPeriods then
+                subscriptionService
+                  .fetchDisplaySubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+                  .map { local =>
+                    implicit val msgs: play.api.i18n.Messages = request.messages
+                    val amendablePeriods = local.accountingPeriods
+                      .getOrElse(Seq.empty)
+                      .filter(_.canAmend)
+                      .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
+                    val periodCards = amendablePeriods.zipWithIndex.map { case (p, i) =>
+                      val title =
+                        if i == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
+                        else if i == 1 then msgs("manageGroupDetails.multiPeriod.previousPeriod")
+                        else msgs("manageGroupDetails.multiPeriod.periodLabel", i + 1)
+                      (
+                        title,
+                        p.startDate.toDateFormat,
+                        p.endDate.toDateFormat,
+                        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(i).url
+                      )
+                    }
+                    val locationKey =
+                      if local.subMneOrDomestic == MneOrDomestic.Uk then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
+                    Ok(
+                      multiPeriodView(
+                        locationMessageKey = locationKey,
+                        periodCards = periodCards,
+                        isEmpty = amendablePeriods.isEmpty,
+                        isAgent = request.isAgent,
+                        organisationName = local.organisationName,
+                        plrReference = local.plrReference
+                      )
+                    )
+                  }
+                  .recover { case _ => Redirect(routes.JourneyRecoveryController.onPageLoad()) }
+              else
+                val list = SummaryListViewModel(
+                  rows = Seq(
+                    MneOrDomesticSummary.row(),
+                    GroupAccountingPeriodSummary.row(),
+                    GroupAccountingPeriodStartDateSummary.row(),
+                    GroupAccountingPeriodEndDateSummary.row()
+                  ).flatten
+                )
+                Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
           }
+      }
+    }
+
+  /** Multi-period: cache selected period and redirect to Data Entry (PIL-2856). */
+  def selectPeriod(index: Int): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { request =>
+      given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      val periods = request.subscriptionLocalData.accountingPeriods.getOrElse(Seq.empty).filter(_.canAmend)
+      val sorted  = periods.sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
+      sorted.lift(index) match {
+        case Some(period) =>
+          val updated = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match {
+            case scala.util.Success(ua) => ua
+            case scala.util.Failure(_)  => request.subscriptionLocalData
+          }
+          subscriptionConnector
+            .save(request.userId, Json.toJson(updated))
+            .map(_ => Redirect(controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad()))
+        case None =>
+          Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
