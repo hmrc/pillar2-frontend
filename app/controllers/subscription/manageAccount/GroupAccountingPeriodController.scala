@@ -68,10 +68,21 @@ class GroupAccountingPeriodController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
           value =>
+            val oldPeriod = request.subscriptionLocalData.get(SubAccountingPeriodPage)
             for {
               updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAccountingPeriodPage, value))
-              _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, updatedAnswers))
+              withUpdatedPeriods = oldPeriod.fold(updatedAnswers) { old =>
+                                     val updatedPeriods = updatedAnswers.accountingPeriods.map { periods =>
+                                       periods.map { p =>
+                                         if p.startDate == old.startDate && p.endDate == old.endDate then
+                                           p.copy(startDate = value.startDate, endDate = value.endDate)
+                                         else p
+                                       }
+                                     }
+                                     updatedAnswers.copy(accountingPeriods = updatedPeriods)
+                                   }
+              _ <- subscriptionConnector.save(request.userId, Json.toJson(withUpdatedPeriods))
+            } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, withUpdatedPeriods))
         )
     }
 

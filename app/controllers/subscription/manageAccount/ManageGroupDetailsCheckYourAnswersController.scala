@@ -88,8 +88,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
           case _ =>
             if appConfig.amendMultipleAccountingPeriods then
-              subscriptionService
-                .fetchDisplaySubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+              val dataFuture: Future[SubscriptionLocalData] =
+                if request.subscriptionLocalData.accountingPeriods.isDefined then Future.successful(request.subscriptionLocalData)
+                else subscriptionService.fetchDisplaySubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+              dataFuture
                 .map { local =>
                   implicit val msgs: play.api.i18n.Messages = request.messages
                   val amendablePeriods = local.accountingPeriods
