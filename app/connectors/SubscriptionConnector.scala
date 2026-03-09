@@ -23,7 +23,7 @@ import models.subscription.*
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.*
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
@@ -108,7 +108,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionSuccessV2].success)
+          Future.successful(Json.parse(response.body).as[SubscriptionDataV2])
         case e =>
           logger.warn(s"Connection issue when calling display subscription v2 with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
@@ -124,7 +124,12 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .map {
         case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionLocalData])
+          Json.parse(response.body).validate[SubscriptionLocalData](SubscriptionLocalData.cacheReads) match {
+            case JsSuccess(data, _) => Some(data)
+            case JsError(errors)    =>
+              logger.warn(s"Read subscription cache parse error for user $userId: $errors")
+              None
+          }
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
           None
