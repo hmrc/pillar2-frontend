@@ -98,9 +98,11 @@ class SubscriptionService @Inject() (
     }
 
   private def subscriptionDataV2ToLocalData(plrReference: String, v2: SubscriptionDataV2): SubscriptionLocalData = {
-    val firstPeriod = v2.accountingPeriod.headOption.map(_.toAccountingPeriod).getOrElse(
-      AccountingPeriod(LocalDate.now(), LocalDate.now().plusYears(1))
-    )
+    val firstPeriod = v2.accountingPeriod.headOption
+      .map(_.toAccountingPeriod)
+      .getOrElse(
+        AccountingPeriod(LocalDate.now(), LocalDate.now().plusYears(1))
+      )
     val address = v2.upeCorrespAddressDetails
     SubscriptionLocalData(
       plrReference = plrReference,

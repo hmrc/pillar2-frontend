@@ -99,8 +99,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   /** Display Subscription V2: returns multiple accounting periods with canAmend flags. */
   def displaySubscriptionV2(
-    userId:        String,
-    plrReference:  String
+    userId:       String,
+    plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV2] = {
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/v2/$userId/$plrReference"
     http
