@@ -29,28 +29,6 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
   "DisplayAccountingPeriod" when {
 
-    "canAmend" must {
-      "return true when both canAmendStartDate and canAmendEndDate are true" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
-        period.canAmend mustBe true
-      }
-
-      "return false when canAmendStartDate is false" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = false, canAmendEndDate = true)
-        period.canAmend mustBe false
-      }
-
-      "return false when canAmendEndDate is false" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = false)
-        period.canAmend mustBe false
-      }
-
-      "return false when both canAmendStartDate and canAmendEndDate are false (micro period)" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = false, canAmendEndDate = false)
-        period.canAmend mustBe false
-      }
-    }
-
     "toAccountingPeriod" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
         val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = true)

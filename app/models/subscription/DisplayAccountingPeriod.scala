@@ -20,7 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-/** Single accounting period from Display Subscription V2 (array item with canAmend flags). */
 final case class DisplayAccountingPeriod(
   startDate:         LocalDate,
   endDate:           LocalDate,
@@ -28,9 +27,6 @@ final case class DisplayAccountingPeriod(
   canAmendStartDate: Boolean,
   canAmendEndDate:   Boolean
 ) {
-
-  /** True if this period can be amended (both start and end). */
-  def canAmend: Boolean = canAmendStartDate && canAmendEndDate
 
   def toAccountingPeriod: AccountingPeriod =
     AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = Some(dueDate))

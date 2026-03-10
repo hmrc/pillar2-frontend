@@ -94,7 +94,6 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                   given msgs: play.api.i18n.Messages = request.messages
                   val amendablePeriods = local.accountingPeriods
                     .getOrElse(Seq.empty)
-                    .filter(_.canAmend)
                     .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
                   val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
                     val title =
@@ -157,7 +156,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def selectPeriod(index: Int): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
       given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      val periods = request.subscriptionLocalData.accountingPeriods.getOrElse(Seq.empty).filter(_.canAmend)
+      val periods = request.subscriptionLocalData.accountingPeriods.getOrElse(Seq.empty)
       val sorted  = periods.sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
       sorted.lift(index) match {
         case Some(period) =>

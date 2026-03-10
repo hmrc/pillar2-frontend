@@ -18,7 +18,6 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-/** Display Subscription V2 response: accountingPeriod is an array with canAmend flags. */
 final case class SubscriptionDataV2(
   formBundleNumber:         String,
   upeDetails:               UpeDetails,
