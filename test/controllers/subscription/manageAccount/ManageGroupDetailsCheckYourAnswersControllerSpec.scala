@@ -25,13 +25,13 @@ import models.{InternalIssueError, MneOrDomestic}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.SubAccountingPeriodPage
+import play.api.Configuration
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import play.api.Configuration
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.Enrolments
@@ -77,6 +77,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
   private val localDataWithoutPeriods: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(accountingPeriods = None)
+
+  private val localDataGroupNoMicro: SubscriptionLocalData =
+    emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(amendablePeriod)))
 
   private val localDataAgentNoMicro: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(amendablePeriod)), organisationName = Some("ABC Intl"))
@@ -175,6 +178,26 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
           contentAsString(result) must not include "Accounting periods"
+        }
+      }
+    }
+
+    "feature flag is true, group user, no micro periods" must {
+      "call V2, render multi-period view with a single period card and a Change link" in {
+        val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro), multiPeriodFlag = true)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.fetchDisplaySubscriptionV2AndSave(any(), any())(using any()))
+            .thenReturn(Future.successful(localDataGroupNoMicro))
+          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+          val body    = contentAsString(result)
+          status(result) mustEqual OK
+          body must include("Accounting periods")
+          body must include("Current period")
+          body must not include "Previous period"
+          body must include("select-period/0")
+          verify(mockSubscriptionService).fetchDisplaySubscriptionV2AndSave(any(), any())(using any())
         }
       }
     }

@@ -19,7 +19,7 @@ package models
 import base.SpecBase
 import models.subscription.{DisplayAccountingPeriod, SubscriptionLocalData}
 import pages.{SubAddSecondaryContactPage, SubPrimaryCapturePhonePage, UpeRegisteredInUKPage}
-import play.api.libs.json.{JsArray, JsObject, JsResultException, Json}
+import play.api.libs.json.*
 
 import java.time.LocalDate
 

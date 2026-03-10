@@ -38,12 +38,12 @@ import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.manageAccount.*
 import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.manageAccount.{ManageGroupDetailsCheckYourAnswersView, ManageGroupDetailsMultiPeriodView}
-import utils.DateTimeUtils.*
 
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
@@ -91,7 +91,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
               subscriptionService
                 .fetchDisplaySubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
                 .map { local =>
-                  implicit val msgs: play.api.i18n.Messages = request.messages
+                  given msgs: play.api.i18n.Messages = request.messages
                   val amendablePeriods = local.accountingPeriods
                     .getOrElse(Seq.empty)
                     .filter(_.canAmend)
