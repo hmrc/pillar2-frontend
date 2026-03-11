@@ -16,10 +16,12 @@
 
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
+import models.subscription.{ChosenAccountingPeriod, DisplayAccountingPeriod}
 
 import java.time.LocalDate
 
 package object controllers {
+
   private val now = LocalDate.now
 
   /** @param request
@@ -33,4 +35,41 @@ package object controllers {
       .filterNot(_.startDate.isAfter(now))
       .sortBy(_.startDate)
       .reverse
+
+  /** @param selectedAccountingPeriod
+    *   contains the user selected period
+    * @param accountingPeriods
+    *   contains a sequence of DisplayAccountingPeriod
+    * @return
+    *   a ChosenAccountingPeriod, containing the user selected period along with optional start and end boundary dates
+    */
+
+  def deriveNewAccountingPeriodDateBoundaries(
+    selectedAccountingPeriod: DisplayAccountingPeriod,
+    accountingPeriods:        Seq[DisplayAccountingPeriod]
+  ): ChosenAccountingPeriod =
+    val sorted: Seq[DisplayAccountingPeriod] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
+    val selectedIndex: Int = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
+
+    val startBoundaryDate =
+      if selectedIndex >= 0 then {
+        sorted
+          .drop(selectedIndex)
+          .find(period => !period.canAmendStartDate)
+          .map(_.startDate)
+      } else {
+        None
+      }
+
+    val endBoundaryDate =
+      if selectedIndex >= 0 then {
+        sorted
+          .take(selectedIndex + 1)
+          .findLast(period => !period.canAmendEndDate)
+          .map(_.endDate)
+      } else {
+        None
+      }
+
+    ChosenAccountingPeriod(selectedAccountingPeriod, startBoundaryDate, endBoundaryDate)
 }

@@ -222,7 +222,10 @@ GET         /further-details/check-answers                                      
 GET         /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
 POST        /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit()
 
-
+GET         /manage-account/account-details/new-accounting-period                                    controllers.subscription.manageAccount.NewAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST        /manage-account/account-details/new-accounting-period                                    controllers.subscription.manageAccount.NewAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET        /manage-account/account-details/change-new-accounting-period                              controllers.subscription.manageAccount.NewAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST        /manage-account/account-details/change-new-accounting-period                             controllers.subscription.manageAccount.NewAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 
 GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad()
 POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit()

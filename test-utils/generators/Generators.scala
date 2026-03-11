@@ -17,6 +17,7 @@
 package generators
 
 import models.obligationsandsubmissions.AccountingPeriodDetails
+import models.subscription.AccountingPeriod
 import models.{Transaction, TransactionHistory}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen.*
@@ -259,6 +260,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
         endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
       } yield new AccountingPeriodDetails(startDate, endDate, dueDate, false, Seq.empty)
+    }
+
+  given accountingPeriodArbitrary: Arbitrary[AccountingPeriod] =
+    Arbitrary {
+      for {
+        startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+      } yield new AccountingPeriod(startDate, endDate, Some(dueDate))
     }
 
 }
