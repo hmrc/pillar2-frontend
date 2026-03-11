@@ -149,7 +149,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
       "show underEnquiry warning when a subsequent accounting period has underEnquiry flag set to true" in new BTNConfirmationControllerTestCase {
         val chosenStart: LocalDate = LocalDate.of(2024, 1, 1)
-        val chosenEnd: LocalDate   = LocalDate.of(2024, 12, 31)
+        val chosenEnd:   LocalDate = LocalDate.of(2024, 12, 31)
 
         val subsequentPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
           startDate = LocalDate.of(2025, 1, 1),
@@ -249,6 +249,16 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
       "redirect to journey recovery when submittedAt is missing" in new BTNConfirmationControllerTestCase {
         override def userAnswers: UserAnswers => Option[UserAnswers] = _ => emptyUserAnswers.some
+
+        val result: Future[Result] = controller.onPageLoad(request)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+
+      "redirect to journey recovery when BTNChooseAccountingPeriodPage is missing but BtnConfirmationPage is present" in new BTNConfirmationControllerTestCase {
+        override def userAnswers: UserAnswers => Option[UserAnswers] =
+          _.setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         val result: Future[Result] = controller.onPageLoad(request)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ final case class SubscriptionDataV2(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         Seq[DisplayAccountingPeriod],
+  accountingPeriod:         Seq[AccountingPeriodV2] = Seq.empty,
   accountStatus:            Option[AccountStatus]
 )
 

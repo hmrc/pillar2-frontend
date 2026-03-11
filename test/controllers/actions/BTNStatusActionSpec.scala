@@ -156,6 +156,25 @@ class BTNStatusActionSpec
           )(using any[HeaderCarrier])
         }
 
+        "BTNChooseAccountingPeriodPage is missing, redirect without audit" in new BTNStatusActionTestCase {
+          when(mockSessionRepository.get(userId)).thenReturn(Future.successful {
+            emptyUserAnswers
+              .set(BTNStatus, BTNStatus.submitted)
+              .success
+              .value
+              .set(EntitiesInsideOutsideUKPage, true)
+              .success
+              .value
+              .some
+          })
+
+          val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+
+          result mustBe Results.Redirect(routes.CheckYourAnswersController.cannotReturnKnockback)
+
+          verify(mockAuditService, never()).auditBtnAlreadySubmitted(any(), any(), any())(using any[HeaderCarrier])
+        }
+
         "entitiesInsideOutsideUk is empty or false" in forAll(Gen.option(false)) { entitiesInsideOutsideUk =>
           new BTNStatusActionTestCase {
             when(mockSessionRepository.get(userId)).thenReturn(Future.successful {

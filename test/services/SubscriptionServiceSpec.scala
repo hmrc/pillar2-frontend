@@ -908,7 +908,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       val plrRef = "XEPLR0000000001"
 
-      val v2Period = models.subscription.DisplayAccountingPeriod(
+      val v2Period = models.subscription.AccountingPeriodV2(
         startDate = LocalDate.of(2024, 1, 6),
         endDate = LocalDate.of(2025, 4, 6),
         dueDate = LocalDate.of(2024, 4, 6),
@@ -959,6 +959,21 @@ class SubscriptionServiceSpec extends SpecBase {
           result.subAccountingPeriod mustBe None
           result.organisationName mustBe Some("Org Ltd")
           result.registrationDate mustBe Some(LocalDate.of(2024, 1, 31))
+        }
+      }
+
+      "propagate failure when save fails" in {
+        val application = applicationBuilder()
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+            .thenReturn(Future.successful(v2Data))
+          when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
+            .thenReturn(Future.failed(InternalIssueError))
+
+          service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
       }
 

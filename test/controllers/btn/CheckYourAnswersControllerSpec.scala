@@ -197,6 +197,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
+
+      "redirect to JourneyRecoveryController when BTNChooseAccountingPeriodPage and subAccountingPeriod are both absent" in {
+        val uaWithEntitiesOnly                 = emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)
+        val subscriptionDataNoAccountingPeriod = someSubscriptionLocalData.copy(subAccountingPeriod = None)
+
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(uaWithEntitiesOnly))
+
+        val application = applicationBuilder(userAnswers = Some(uaWithEntitiesOnly), subscriptionLocalData = Some(subscriptionDataNoAccountingPeriod))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, CheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
     }
 
     ".onSubmit" should {
@@ -338,6 +357,23 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
+        }
+      }
+
+      "redirect to JourneyRecoveryController when BTNChooseAccountingPeriodPage is missing" in {
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 

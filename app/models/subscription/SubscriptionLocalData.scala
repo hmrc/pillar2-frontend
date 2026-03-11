@@ -40,7 +40,7 @@ case class SubscriptionLocalData(
   subRegisteredAddress:        NonUKAddress,
   accountStatus:               Option[AccountStatus],
   organisationName:            Option[String],
-  accountingPeriods:           Option[Seq[DisplayAccountingPeriod]] = None,
+  accountingPeriods:           Option[Seq[AccountingPeriodV2]] = None,
   registrationDate:            Option[LocalDate] = None
 ) {
 

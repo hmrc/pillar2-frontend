@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.*
 import models.requests.IdentifierRequest
-import models.subscription.{DisplayAccountingPeriod, SubscriptionLocalData}
+import models.subscription.{AccountingPeriodV2, SubscriptionLocalData}
 import models.{InternalIssueError, MneOrDomestic}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
-  private val amendablePeriod = DisplayAccountingPeriod(
+  private val amendablePeriod = AccountingPeriodV2(
     startDate = LocalDate.of(2025, 1, 1),
     endDate = LocalDate.of(2025, 12, 31),
     dueDate = LocalDate.of(2026, 3, 31),
@@ -50,7 +50,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     canAmendEndDate = true
   )
 
-  private val microPeriod = DisplayAccountingPeriod(
+  private val microPeriod = AccountingPeriodV2(
     startDate = LocalDate.of(2024, 4, 1),
     endDate = LocalDate.of(2024, 9, 30),
     dueDate = LocalDate.of(2024, 12, 31),

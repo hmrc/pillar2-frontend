@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,11 @@ class DisplayAccountingPeriodSpec extends SpecBase {
   private val end   = LocalDate.of(2024, 12, 31)
   private val due   = LocalDate.of(2025, 3, 31)
 
-  "DisplayAccountingPeriod" when {
+  "AccountingPeriodV2" when {
 
     "toAccountingPeriod" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
+        val period = AccountingPeriodV2(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
         val result = period.toAccountingPeriod
         result.startDate mustBe start
         result.endDate mustBe end
@@ -41,9 +41,9 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
     "JSON format" must {
       "serialise and deserialise correctly" in {
-        val period = DisplayAccountingPeriod(start, end, due, canAmendStartDate = true, canAmendEndDate = false)
+        val period = AccountingPeriodV2(start, end, due, canAmendStartDate = true, canAmendEndDate = false)
         val json   = Json.toJson(period)
-        json.as[DisplayAccountingPeriod] mustBe period
+        json.as[AccountingPeriodV2] mustBe period
       }
 
       "deserialise from expected JSON shape" in {
@@ -56,7 +56,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
             "canAmendEndDate": false
           }
         """)
-        val result = json.as[DisplayAccountingPeriod]
+        val result = json.as[AccountingPeriodV2]
         result.startDate mustBe start
         result.endDate mustBe end
         result.dueDate mustBe due

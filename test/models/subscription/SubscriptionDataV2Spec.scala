@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,6 +83,13 @@ class SubscriptionDataV2Spec extends SpecBase {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
       val result        = noPeriodsJson.as[SubscriptionDataV2]
       result.accountingPeriod mustBe empty
+    }
+
+    "deserialise with accountingPeriod absent from JSON and default to Seq.empty" in {
+      val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
+      val result        = noPeriodsJson.as[SubscriptionDataV2]
+      result.accountingPeriod mustBe Seq.empty
+      result.formBundleNumber mustBe "119000004323"
     }
 
     "SubscriptionSuccessV2 wraps SubscriptionDataV2" in {
