@@ -19,11 +19,12 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions.*
+import controllers.deriveNewAccountingPeriodDateBoundaries
 import forms.NewAccountingPeriodFormProvider
 import models.Mode
-import models.subscription.AccountingPeriod
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
 import navigation.AmendSubscriptionNavigator
-import pages.NewAccountingPeriodPage
+import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -48,46 +49,75 @@ class NewAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form: Form[AccountingPeriod] =
-    formProvider(None, None)
+  def form(chosenAccountingPeriod: ChosenAccountingPeriod): Form[AccountingPeriod] =
+    formProvider(chosenAccountingPeriod)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) { request =>
       given Request[AnyContent] = request
 
-      val preparedForm = request.subscriptionLocalData.get(NewAccountingPeriodPage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
+      val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
+      val selectedAccountingPeriod: Option[AccountingPeriod]        = request.subscriptionLocalData.get(SubAccountingPeriodPage)
+
+      (accountingPeriods, selectedAccountingPeriod) match {
+        case (Some(periods), Some(selectedPeriod)) =>
+          val chosenAccountingPeriod: ChosenAccountingPeriod = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+
+          val preparedForm = request.subscriptionLocalData.get(NewAccountingPeriodPage) match {
+            case Some(v) => form(chosenAccountingPeriod).fill(v)
+            case None    => form(chosenAccountingPeriod)
+          }
+          Ok(
+            view(
+              preparedForm,
+              chosenAccountingPeriod,
+              request.isAgent,
+              request.subscriptionLocalData.organisationName,
+              request.subscriptionLocalData.plrReference,
+              mode
+            )
+          )
+        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
-      Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, request.subscriptionLocalData.plrReference, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
-      remapFormErrors(
-        form
-          .bindFromRequest()
-      )
-        .fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(
-                view(
-                  formWithErrors,
-                  request.isAgent,
-                  request.subscriptionLocalData.organisationName,
-                  request.subscriptionLocalData.plrReference,
-                  mode
-                )
-              )
-            ),
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(NewAccountingPeriodPage, value))
-              _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(NewAccountingPeriodPage, updatedAnswers))
-        )
+
+      val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
+      val selectedAccountingPeriod: Option[AccountingPeriod]        = request.subscriptionLocalData.get(SubAccountingPeriodPage)
+
+      (accountingPeriods, selectedAccountingPeriod) match {
+        case (Some(periods), Some(selectedPeriod)) =>
+          val chosenAccountingPeriod: ChosenAccountingPeriod = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+
+          remapFormErrors(
+            form(chosenAccountingPeriod)
+              .bindFromRequest()
+          )
+            .fold(
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      chosenAccountingPeriod,
+                      request.isAgent,
+                      request.subscriptionLocalData.organisationName,
+                      request.subscriptionLocalData.plrReference,
+                      mode
+                    )
+                  )
+                ),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(NewAccountingPeriodPage, value))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(NewAccountingPeriodPage, updatedAnswers))
+            )
+        case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
     }
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =

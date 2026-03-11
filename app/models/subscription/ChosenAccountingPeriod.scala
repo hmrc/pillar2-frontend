@@ -16,19 +16,24 @@
 
 package models.subscription
 
+import utils.DateTimeUtils.toDateFormat
+
 import java.time.LocalDate
 
-// TODO: Swap out for real DisplayAccountingPeriod model
-case class DisplayAccountingPeriod(
-  startDate:         LocalDate,
-  endDate:           LocalDate,
-  dueDate:           LocalDate,
-  canAmendStartDate: Boolean,
-  canAmendEndDate:   Boolean
-)
-
 case class ChosenAccountingPeriod(
-  selectedAccountingPeriod: DisplayAccountingPeriod,
+  selectedAccountingPeriod: AccountingPeriod,
   startDateBoundary:        Option[LocalDate],
   endDateBoundary:          Option[LocalDate]
-)
+) {
+  override def toString: String = s"${selectedAccountingPeriod.startDate.toDateFormat} to ${selectedAccountingPeriod.endDate.toDateFormat}"
+
+  def startDateBoundaryMinusOneDay: String = startDateBoundary match {
+    case Some(date) => date.minusDays(1).toDateFormat
+    case _          => LocalDate.of(2023, 12, 30).toDateFormat
+  }
+
+  def endDateBoundaryPlusOneDay: String = endDateBoundary match {
+    case Some(date) => date.plusDays(1).toDateFormat
+    case _          => LocalDate.now().toDateFormat // TODO: Check what to show when there's no boundary for an end date
+  }
+}

@@ -18,6 +18,7 @@ package forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
+import utils.DateTimeUtils.toDateFormat
 import utils.countryOptions.CountryOptions
 
 import java.time.LocalDate
@@ -146,7 +147,7 @@ trait Constraints {
     Constraint { date =>
       minStartDate match {
         case Some(minDate) if date.isBefore(minDate) =>
-          Invalid(errorKey, minDate)
+          Invalid(errorKey, minDate.minusDays(1).toDateFormat)
         case _ =>
           Valid
       }
@@ -156,7 +157,7 @@ trait Constraints {
     Constraint { date =>
       maxEndDate match {
         case Some(maxDate) if date.isAfter(maxDate) =>
-          Invalid(errorKey, maxDate)
+          Invalid(errorKey, maxDate.plusDays(1).toDateFormat)
         case _ =>
           Valid
       }

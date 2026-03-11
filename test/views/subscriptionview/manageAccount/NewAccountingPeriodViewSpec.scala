@@ -20,11 +20,14 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.NewAccountingPeriodFormProvider
 import models.NormalMode
+import models.subscription.{AccountingPeriod, ChosenAccountingPeriod}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.NewAccountingPeriodView
+
+import java.time.LocalDate
 
 class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
@@ -33,8 +36,17 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                          = "What is the group’s new accounting period?"
   lazy val plrReference: String                          = "XMPLR0123456789"
 
+  val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
+    AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1), None),
+    None,
+    None
+  )
+
   def view(isAgent: Boolean = false, orgName: Option[String] = None): Document =
-    Jsoup.parse(page(formProvider(None, None), isAgent, orgName, plrReference, NormalMode)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent, orgName, plrReference, NormalMode)(request, appConfig, messages)
+        .toString()
+    )
 
   lazy val organisationView: Document = view()
   lazy val agentView:        Document = view(isAgent = true, orgName = Some("orgName"))
@@ -59,7 +71,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have inset text" in {
         organisationView.getElementsByClass("govuk-inset-text").text mustBe
-          "You are changing accounting period: STATIC 28 September 2021 to 27 September 2022"
+          s"You are changing accounting period: ${chosenAccountingPeriod.toString}"
         organisationView.getElementsByClass("govuk-inset-text").html must include("<br>")
       }
 
@@ -78,7 +90,9 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         val endDateFieldset:   Element  = datesFieldsets.get(1)
 
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
-        startDateFieldset.getElementById("startDate-hint").text mustBe "Enter a date after STATIC 28 September 2021, for example 29 05 25"
+        startDateFieldset
+          .getElementById("startDate-hint")
+          .text mustBe s"Enter a date after ${chosenAccountingPeriod.startDateBoundaryMinusOneDay}, for example 29 05 25"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -88,7 +102,9 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         Option(startDateFieldset.getElementById("startDate.year")) mustBe defined
 
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
-        endDateFieldset.getElementById("endDate-hint").text mustBe "Enter a date before STATIC 27 September 2022, for example 26 03 26"
+        endDateFieldset
+          .getElementById("endDate-hint")
+          .text mustBe s"Enter a date before ${chosenAccountingPeriod.endDateBoundaryPlusOneDay}, for example 26 03 26"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -138,7 +154,9 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         val endDateFieldset:   Element  = datesFieldsets.get(1)
 
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
-        startDateFieldset.getElementById("startDate-hint").text mustBe "Enter a date after STATIC 28 September 2021, for example 29 05 25"
+        startDateFieldset
+          .getElementById("startDate-hint")
+          .text mustBe s"Enter a date after ${chosenAccountingPeriod.startDateBoundaryMinusOneDay}, for example 29 05 25"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -148,7 +166,9 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         Option(startDateFieldset.getElementById("startDate.year")) mustBe defined
 
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
-        endDateFieldset.getElementById("endDate-hint").text mustBe "Enter a date before STATIC 27 September 2022, for example 26 03 26"
+        endDateFieldset
+          .getElementById("endDate-hint")
+          .text mustBe s"Enter a date before ${chosenAccountingPeriod.endDateBoundaryPlusOneDay}, for example 26 03 26"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined

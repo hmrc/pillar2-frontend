@@ -17,16 +17,23 @@
 package forms
 
 import forms.behaviours.DateBehaviours
-import models.subscription.AccountingPeriod
+import models.subscription.{AccountingPeriod, ChosenAccountingPeriod}
 import org.scalatest.matchers.should.Matchers.*
 import play.api.data.{Form, FormError}
+import utils.DateTimeUtils.toDateFormat
 
 import java.time.LocalDate
 
 class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
+  val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
+    AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1), None),
+    None,
+    None
+  )
+
   val formProvider = new NewAccountingPeriodFormProvider()
-  val form: Form[AccountingPeriod] = formProvider(None, None)
+  val form: Form[AccountingPeriod] = formProvider(chosenAccountingPeriod)
 
   "throw a form error for a start date before 31/12/2023" in {
 
@@ -49,8 +56,9 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
   "throw a form error for a start date that is before a start date boundary" in {
 
-    val startDateBoundary = Some(LocalDate.of(2024, 1, 1))
-    val form: Form[AccountingPeriod] = formProvider(startDateBoundary, None)
+    val startDateBoundary      = LocalDate.of(2024, 1, 1)
+    val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary))
+    val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
 
     val startDate = LocalDate.of(2023, 12, 31)
     val endDate   = LocalDate.of(2024, 9, 29)
@@ -65,14 +73,15 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.getOrElse(None)))
+      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.minusDays(1).toDateFormat))
     )
   }
 
   "throw a form error for an end date that is after an end date boundary" in {
 
-    val endDateBoundary = Some(LocalDate.of(2024, 9, 28))
-    val form: Form[AccountingPeriod] = formProvider(None, endDateBoundary)
+    val endDateBoundary        = LocalDate.of(2024, 9, 28)
+    val accountingPeriodChosen = chosenAccountingPeriod.copy(endDateBoundary = Some(endDateBoundary))
+    val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
 
     val startDate = LocalDate.of(2023, 12, 31)
     val endDate   = LocalDate.of(2024, 9, 29)
@@ -87,15 +96,16 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.getOrElse(None)))
+      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
     )
   }
 
   "throw a form error where both start and end dates breach boundaries" in {
 
-    val startDateBoundary = Some(LocalDate.of(2024, 1, 1))
-    val endDateBoundary   = Some(LocalDate.of(2024, 9, 28))
-    val form: Form[AccountingPeriod] = formProvider(startDateBoundary, endDateBoundary)
+    val startDateBoundary      = LocalDate.of(2024, 1, 1)
+    val endDateBoundary        = LocalDate.of(2024, 9, 28)
+    val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary), endDateBoundary = Some(endDateBoundary))
+    val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
 
     val startDate = LocalDate.of(2023, 12, 31)
     val endDate   = LocalDate.of(2024, 9, 29)
@@ -110,8 +120,12 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.getOrElse(None))),
-      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.getOrElse(None)))
+      FormError(
+        "startDate",
+        "newAccountingPeriod.error.startDate.boundary",
+        List(startDateBoundary.minusDays(1).toDateFormat)
+      ),
+      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
     )
   }
 

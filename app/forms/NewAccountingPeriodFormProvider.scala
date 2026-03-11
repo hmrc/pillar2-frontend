@@ -17,6 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
+import models.subscription.ChosenAccountingPeriod
 
 import javax.inject.Inject
 
@@ -28,7 +29,7 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
 
   import java.time.LocalDate
 
-  def apply(startDateBoundary: Option[LocalDate], endDateBoundary: Option[LocalDate]): Form[AccountingPeriod] =
+  def apply(chosenAccountingPeriod: ChosenAccountingPeriod): Form[AccountingPeriod] =
     Form(
       mapping(
         "startDate" -> localDate(
@@ -46,7 +47,7 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
           validateMonthInStringFormat = Some(true)
         )
           .verifying(minDate(LocalDate.of(2023, 12, 31), "newAccountingPeriod.error.startDate.dayMonthYear.minimum"))
-          .verifying(optionalStartDateBoundary(startDateBoundary, "newAccountingPeriod.error.startDate.boundary")),
+          .verifying(optionalStartDateBoundary(chosenAccountingPeriod.startDateBoundary, "newAccountingPeriod.error.startDate.boundary")),
         "endDate" -> localDate(
           invalidKey = "newAccountingPeriod.error.endDate.format",
           allRequiredKey = "newAccountingPeriod.error.endDate.required.all",
@@ -60,7 +61,7 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
           invalidYearLength = "newAccountingPeriod.error.endDate.year.length",
           messageKeyPart = "newAccountingPeriod",
           validateMonthInStringFormat = Some(true)
-        ).verifying(optionalEndDateBoundary(endDateBoundary, "newAccountingPeriod.error.endDate.boundary"))
+        ).verifying(optionalEndDateBoundary(chosenAccountingPeriod.endDateBoundary, "newAccountingPeriod.error.endDate.boundary"))
       )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
         Some((accountingPeriod.startDate, accountingPeriod.endDate))
       )

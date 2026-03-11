@@ -19,8 +19,8 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import forms.NewAccountingPeriodFormProvider
 import generators.Generators
-import models.NormalMode
-import models.subscription.AccountingPeriod
+import models.subscription.*
+import models.{NormalMode, UserAnswers}
 import pages.NewAccountingPeriodPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -31,24 +31,68 @@ import java.time.LocalDate
 class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
 
   val formProvider = new NewAccountingPeriodFormProvider()
-  val startDate:    LocalDate = LocalDate.of(2023, 12, 31)
-  val endDate:      LocalDate = LocalDate.of(2025, 12, 31)
+  val startDate:    LocalDate = LocalDate.now
+  val endDate:      LocalDate = LocalDate.now.plusYears(1)
   val plrReference: String    = "XMPLR0123456789"
+
+  private val amendablePeriod = AccountingPeriodV2(
+    startDate = LocalDate.of(2025, 7, 18),
+    endDate = LocalDate.of(2025, 12, 31),
+    dueDate = LocalDate.of(2026, 3, 31),
+    canAmendStartDate = true,
+    canAmendEndDate = true
+  )
+
+  val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
+    amendablePeriod.toAccountingPeriod,
+    None,
+    None
+  )
+
+  private val localDataWithAmendablePeriods: SubscriptionLocalData =
+    emptySubscriptionLocalData.copy(subAccountingPeriod = Some(amendablePeriod.toAccountingPeriod), accountingPeriods = Some(Seq(amendablePeriod)))
 
   "NewAccountingPeriod Controller for an organisation" must {
 
+    "redirect to Journey Recovery" when {
+      "no subscription cache is present" in {
+        val application = applicationBuilder(subscriptionLocalData = None).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        }
+      }
+
+      "no user selected accounting period present" in {
+        val x = someSubscriptionLocalData.copy(subAccountingPeriod = None)
+
+        val application = applicationBuilder(subscriptionLocalData = Some(x)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        }
+      }
+    }
+
     "return OK and the correct view for a GET if no previous filled data is found" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[NewAccountingPeriodView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          formProvider(None, None),
+          formProvider(chosenAccountingPeriod),
+          chosenAccountingPeriod,
           isAgent = false,
           organisationName = None,
           plrReference = plrReference,
@@ -68,17 +112,18 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
         .success
         .value
 
-      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(ua)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods), userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[NewAccountingPeriodView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          formProvider(None, None),
+          formProvider(chosenAccountingPeriod),
+          chosenAccountingPeriod,
           isAgent = false,
           organisationName = None,
           plrReference = plrReference,
@@ -92,21 +137,28 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods)).build()
 
       val request =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onSubmit(NormalMode).url)
+        FakeRequest(POST, routes.NewAccountingPeriodController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
-        val boundForm = formProvider(None, None).bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider(chosenAccountingPeriod).bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[NewAccountingPeriodView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, isAgent = false, organisationName = None, plrReference = plrReference, mode = NormalMode)(
+        contentAsString(result) mustEqual view(
+          boundForm,
+          chosenAccountingPeriod = chosenAccountingPeriod,
+          isAgent = false,
+          organisationName = None,
+          plrReference = plrReference,
+          mode = NormalMode
+        )(
           request,
           applicationConfig,
           messages(application)

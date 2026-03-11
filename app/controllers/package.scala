@@ -16,7 +16,7 @@
 
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
-import models.subscription.{ChosenAccountingPeriod, DisplayAccountingPeriod}
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
 
 import java.time.LocalDate
 
@@ -45,11 +45,11 @@ package object controllers {
     */
 
   def deriveNewAccountingPeriodDateBoundaries(
-    selectedAccountingPeriod: DisplayAccountingPeriod,
-    accountingPeriods:        Seq[DisplayAccountingPeriod]
+    accountingPeriods:        Seq[AccountingPeriodV2],
+    selectedAccountingPeriod: AccountingPeriod
   ): ChosenAccountingPeriod =
-    val sorted:        Seq[DisplayAccountingPeriod] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
-    val selectedIndex: Int                          = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
+    val sorted:        Seq[AccountingPeriodV2] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
+    val selectedIndex: Int                     = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
 
     val startBoundaryDate =
       if selectedIndex >= 0 then {

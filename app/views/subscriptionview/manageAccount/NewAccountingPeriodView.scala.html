@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.subscription.ChosenAccountingPeriod
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds._
 
@@ -31,7 +32,7 @@
         paragraphBody: paragraphBody
 )
 
-@(form: Form[_], isAgent: Boolean, organisationName: Option[String], plrReference: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], chosenAccountingPeriod: ChosenAccountingPeriod, isAgent: Boolean, organisationName: Option[String], plrReference: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("newAccountingPeriod.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -48,7 +49,7 @@
 
         @heading(messages("newAccountingPeriod.heading"), "govuk-heading-l")
 
-        @govukInsetText(InsetText(content = HtmlContent(s"${messages("newAccountingPeriod.insetText")} <br> STATIC 28 September 2021 to 27 September 2022")))
+        @govukInsetText(InsetText(content = HtmlContent(s"${messages("newAccountingPeriod.insetText")} <br> ${chosenAccountingPeriod.toString}")))
 
         @paragraphBody(messages("newAccountingPeriod.p1"))
         @paragraphBody(messages("newAccountingPeriod.p2"))
@@ -58,7 +59,7 @@
                 field = form("startDate"),
                 legend = LegendViewModel(messages("newAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
             )
-            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.startDate.hint", "STATIC 28 September 2021"))
+            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.startDate.hint", chosenAccountingPeriod.startDateBoundaryMinusOneDay))
             ))
         )
 
@@ -67,7 +68,7 @@
                 field = form("endDate"),
                 legend = LegendViewModel(messages("newAccountingPeriod.endDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
             )
-            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.endDate.hint", "STATIC 27 September 2022"))
+            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.endDate.hint", chosenAccountingPeriod.endDateBoundaryPlusOneDay))
             ))
         )
 
