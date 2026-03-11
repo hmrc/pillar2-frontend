@@ -48,7 +48,7 @@ trait SubscriptionLocalDataFixture {
   val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2025, 7, 18).plusYears(1)),
+    subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2025, 7, 18).plusYears(1))),
     subPrimaryContactName = "",
     subPrimaryEmail = "",
     subPrimaryPhonePreference = false,
@@ -66,7 +66,7 @@ trait SubscriptionLocalDataFixture {
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
     plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
-    subAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2025, 7, 18).plusYears(1)),
+    subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2025, 7, 18).plusYears(1))),
     subPrimaryContactName = "John",
     subPrimaryEmail = "john@email.com",
     subPrimaryPhonePreference = true,
@@ -161,7 +161,7 @@ trait SubscriptionLocalDataFixture {
   val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
     plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.UkAndOther,
-    subAccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)),
+    subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23))),
     subPrimaryContactName = "John",
     subPrimaryEmail = "john@email.com",
     subPrimaryPhonePreference = true,

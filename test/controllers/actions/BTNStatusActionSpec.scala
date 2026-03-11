@@ -21,7 +21,9 @@ import controllers.btn.routes
 import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.btn.BTNStatus
 import models.longrunningsubmissions.LongRunningSubmission.BTN
+import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.requests.SubscriptionDataRequest
+import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
@@ -33,6 +35,7 @@ import org.scalatest.matchers.must
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import pages.BTNChooseAccountingPeriodPage
 import pages.EntitiesInsideOutsideUKPage
 import play.api.mvc.{Result, Results}
 import play.api.test.FakeRequest
@@ -42,6 +45,7 @@ import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
+import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -65,6 +69,11 @@ class BTNStatusActionSpec
   )
   private val successResult = Results.Ok("")
   private val successBlock: SubscriptionDataRequest[?] => Future[Result] = _ => Future.successful(successResult)
+
+  private val startDate                = LocalDate.of(2025, 7, 18)
+  private val endDate                  = startDate.plusYears(1)
+  private val chosenPeriod             = AccountingPeriodDetails(startDate, endDate, endDate.plusMonths(3), underEnquiry = false, Seq.empty)
+  private val expectedAccountingPeriod = AccountingPeriod(startDate, endDate)
 
   trait BTNStatusActionTestCase {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
@@ -122,13 +131,16 @@ class BTNStatusActionSpec
               .set(EntitiesInsideOutsideUKPage, true)
               .success
               .value
+              .set(BTNChooseAccountingPeriodPage, chosenPeriod)
+              .success
+              .value
               .some
           })
 
           when(
             mockAuditService.auditBtnAlreadySubmitted(
               eqTo(emptySubscriptionLocalData.plrReference),
-              eqTo(emptySubscriptionLocalData.subAccountingPeriod),
+              eqTo(expectedAccountingPeriod),
               entitiesInsideOutsideUk = eqTo(true)
             )(using any[HeaderCarrier])
           ).thenReturn(Future.successful(AuditResult.Success))
@@ -139,7 +151,7 @@ class BTNStatusActionSpec
 
           verify(mockAuditService).auditBtnAlreadySubmitted(
             eqTo(emptySubscriptionLocalData.plrReference),
-            eqTo(emptySubscriptionLocalData.subAccountingPeriod),
+            eqTo(expectedAccountingPeriod),
             entitiesInsideOutsideUk = eqTo(true)
           )(using any[HeaderCarrier])
         }
@@ -151,6 +163,9 @@ class BTNStatusActionSpec
                 .foldLeft(
                   emptyUserAnswers
                     .set(BTNStatus, BTNStatus.submitted)
+                    .success
+                    .value
+                    .set(BTNChooseAccountingPeriodPage, chosenPeriod)
                     .success
                     .value
                 ) { (answers, insideOutsideUk) =>
@@ -166,7 +181,7 @@ class BTNStatusActionSpec
             when(
               mockAuditService.auditBtnAlreadySubmitted(
                 eqTo(emptySubscriptionLocalData.plrReference),
-                eqTo(emptySubscriptionLocalData.subAccountingPeriod),
+                eqTo(expectedAccountingPeriod),
                 entitiesInsideOutsideUk = eqTo(false)
               )(using any[HeaderCarrier])
             ).thenReturn(Future.successful(AuditResult.Success))
@@ -177,7 +192,7 @@ class BTNStatusActionSpec
 
             verify(mockAuditService).auditBtnAlreadySubmitted(
               eqTo(emptySubscriptionLocalData.plrReference),
-              eqTo(emptySubscriptionLocalData.subAccountingPeriod),
+              eqTo(expectedAccountingPeriod),
               entitiesInsideOutsideUk = eqTo(false)
             )(using any[HeaderCarrier])
           }

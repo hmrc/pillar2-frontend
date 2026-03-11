@@ -27,7 +27,7 @@ import org.scalacheck.Gen
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpException
 
 import java.time.LocalDate
@@ -161,24 +161,6 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe Some(emptySubscriptionLocalData)
       }
 
-      "return Some with accountingPeriods when backend returns V2 cached format (subAccountingPeriod as array)" in {
-        val period = DisplayAccountingPeriod(
-          startDate = LocalDate.of(2025, 1, 1),
-          endDate = LocalDate.of(2025, 12, 31),
-          dueDate = LocalDate.of(2026, 3, 31),
-          canAmendStartDate = true,
-          canAmendEndDate = true
-        )
-        val baseJson: JsObject = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "subAccountingPeriod"
-        val v2CacheJson = baseJson ++ Json.obj("subAccountingPeriod" -> Json.toJson(Seq(period)))
-        stubGet(s"$getSubscription/$id", OK, v2CacheJson.toString)
-
-        val result = connector.getSubscriptionCache(id).futureValue
-        result mustBe defined
-        result.get.accountingPeriods mustBe Some(Seq(period))
-        result.get.subAccountingPeriod mustBe period.toAccountingPeriod
-      }
-
       "return None when the backend returns 200 but JSON is unparseable" in {
         stubGet(s"$getSubscription/$id", OK, """{"invalid": "json"}""")
         val result = connector.getSubscriptionCache(id).futureValue
@@ -196,29 +178,39 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       }
     }
 
-    "displaySubscriptionV2" should {
+    "readSubscriptionV2" should {
 
       "return SubscriptionDataV2 when backend returns 200 OK" in {
-        stubGet(s"$displaySubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
-        val result = connector.displaySubscriptionV2(id, plrReference).futureValue
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
+        val result = connector.readSubscriptionV2(id, plrReference).futureValue
         result.formBundleNumber mustBe "119000004323"
         result.accountingPeriod must have size 1
         result.accountingPeriod.head.canAmendStartDate mustBe true
       }
 
+      "fail with NoResultFound when backend returns 404" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe models.NoResultFound
+      }
+
+      "fail with UnprocessableEntityError when backend returns 422" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe UnprocessableEntityError
+      }
+
       "fail with RetryableGatewayError when backend returns 500" in {
-        stubGet(s"$displaySubscriptionV2Path/$id/$plrReference", INTERNAL_SERVER_ERROR, "")
-        connector.displaySubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", INTERNAL_SERVER_ERROR, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with RetryableGatewayError when backend returns 502" in {
-        stubGet(s"$displaySubscriptionV2Path/$id/$plrReference", BAD_GATEWAY, "")
-        connector.displaySubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", BAD_GATEWAY, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with InternalIssueError when backend returns 503" in {
-        stubGet(s"$displaySubscriptionV2Path/$id/$plrReference", SERVICE_UNAVAILABLE, "")
-        connector.displaySubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", SERVICE_UNAVAILABLE, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
       }
     }
 
@@ -264,8 +256,8 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
 object SubscriptionConnectorSpec {
   val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes:        Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-  val displaySubscriptionV2Path: String   = "/report-pillar2-top-up-taxes/subscription/read-subscription/v2"
+  private val errorCodes:     Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  val readSubscriptionV2Path: String   = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
 
   val v2SuccessJson: String =
     """

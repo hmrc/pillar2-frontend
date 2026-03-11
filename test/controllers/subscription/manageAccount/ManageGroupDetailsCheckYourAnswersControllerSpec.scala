@@ -23,7 +23,7 @@ import models.requests.IdentifierRequest
 import models.subscription.{DisplayAccountingPeriod, SubscriptionLocalData}
 import models.{InternalIssueError, MneOrDomestic}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{never, verify, when}
+import org.mockito.Mockito.{verify, when}
 import pages.SubAccountingPeriodPage
 import play.api.Configuration
 import play.api.inject.bind
@@ -169,10 +169,12 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     }
 
     "feature flag is true, group user, no micro periods" must {
-      "use cached periods without calling V2, render multi-period view with a single period card and a Change link" in {
+      "render multi-period view with a single period card and a Change link" in {
         val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+            .thenReturn(Future.successful(localDataGroupNoMicro))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           val body    = contentAsString(result)
@@ -181,34 +183,34 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           body must include("Current period")
           body must not include "Previous period"
           body must include("select-period/0")
-          verify(mockSubscriptionService, never()).fetchDisplaySubscriptionV2AndSave(any(), any())(using any())
         }
       }
     }
 
     "feature flag is true and accountingPeriods already cached" must {
-      "use cached periods without calling V2 and render the multi-period view" in {
+      "render the multi-period view" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+            .thenReturn(Future.successful(localDataWithPeriods))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Accounting periods")
           contentAsString(result) must include("Current period")
           contentAsString(result) must include("Previous period")
-          verify(mockSubscriptionService, never()).fetchDisplaySubscriptionV2AndSave(any(), any())(using any())
         }
       }
 
     }
 
     "feature flag is true and accountingPeriods not yet cached" must {
-      "call fetchDisplaySubscriptionV2AndSave and render multi-period view" in {
+      "call readSubscriptionV2AndSave and render multi-period view" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockSubscriptionService.fetchDisplaySubscriptionV2AndSave(any(), any())(using any()))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
             .thenReturn(Future.successful(localDataWithPeriods))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
@@ -221,7 +223,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockSubscriptionService.fetchDisplaySubscriptionV2AndSave(any(), any())(using any()))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
             .thenReturn(Future.failed(InternalIssueError))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
@@ -237,7 +239,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockSubscriptionService.fetchDisplaySubscriptionV2AndSave(any(), any())(using any()))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
             .thenReturn(Future.successful(localDataWithoutPeriods))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
@@ -251,10 +253,12 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     "agent user" when {
 
       "feature flag is true and no micro periods" must {
-        "render multi-period view with agent section header using cached periods" in {
+        "render multi-period view with agent section header" in {
           val application = buildApp(subscriptionLocalData = Some(localDataAgentNoMicro), multiPeriodFlag = true, isAgent = true)
           running(application) {
             when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+            when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+              .thenReturn(Future.successful(localDataAgentNoMicro))
             val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
             val result  = route(application, request).value
             val body    = contentAsString(result)
@@ -268,10 +272,12 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
 
       "feature flag is true and micro period present" must {
-        "render multi-period view with both period cards and agent section header using cached periods" in {
+        "render multi-period view with both period cards and agent section header" in {
           val application = buildApp(subscriptionLocalData = Some(localDataWithAgentInfo), multiPeriodFlag = true, isAgent = true)
           running(application) {
             when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+            when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+              .thenReturn(Future.successful(localDataWithAgentInfo))
             val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
             val result  = route(application, request).value
             val body    = contentAsString(result)
@@ -307,6 +313,8 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+            .thenReturn(Future.successful(ukAndOtherData))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -330,6 +338,8 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+            .thenReturn(Future.successful(localDataWithPeriods))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK

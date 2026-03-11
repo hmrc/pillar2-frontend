@@ -87,27 +87,21 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  /** Call Display Subscription V2, convert to SubscriptionLocalData, and save to user-cache. */
-  def fetchDisplaySubscriptionV2AndSave(
+  /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache. */
+  def readSubscriptionV2AndSave(
     userId:       String,
     plrReference: String
   )(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
-    subscriptionConnector.displaySubscriptionV2(userId, plrReference).flatMap { v2 =>
+    subscriptionConnector.readSubscriptionV2(userId, plrReference).flatMap { v2 =>
       val local = subscriptionDataV2ToLocalData(plrReference, v2)
-      subscriptionConnector.save(userId, play.api.libs.json.Json.toJson(local)).map(_ => local)
+      subscriptionConnector.save(userId, Json.toJson(local)).map(_ => local)
     }
 
   private def subscriptionDataV2ToLocalData(plrReference: String, v2: SubscriptionDataV2): SubscriptionLocalData = {
-    val firstPeriod = v2.accountingPeriod.headOption
-      .map(_.toAccountingPeriod)
-      .getOrElse(
-        AccountingPeriod(LocalDate.now(), LocalDate.now().plusYears(1))
-      )
     val address = v2.upeCorrespAddressDetails
     SubscriptionLocalData(
       plrReference = plrReference,
       subMneOrDomestic = if v2.upeDetails.domesticOnly then MneOrDomestic.Uk else MneOrDomestic.UkAndOther,
-      subAccountingPeriod = firstPeriod,
       subPrimaryContactName = v2.primaryContactDetails.name,
       subPrimaryEmail = v2.primaryContactDetails.emailAddress,
       subPrimaryPhonePreference = v2.primaryContactDetails.phone.isDefined,
@@ -127,7 +121,8 @@ class SubscriptionService @Inject() (
       ),
       accountStatus = v2.accountStatus,
       organisationName = Some(v2.upeDetails.organisationName),
-      accountingPeriods = Some(v2.accountingPeriod)
+      accountingPeriods = Some(v2.accountingPeriod),
+      registrationDate = Some(v2.upeDetails.registrationDate)
     )
   }
 
@@ -199,7 +194,10 @@ class SubscriptionService @Inject() (
         domesticOnly = if userData.subMneOrDomestic == MneOrDomestic.Uk then true else false,
         filingMember = currentData.upeDetails.filingMember
       ),
-      accountingPeriod = AccountingPeriodAmend(startDate = userData.subAccountingPeriod.startDate, endDate = userData.subAccountingPeriod.endDate),
+      accountingPeriod = {
+        val period = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
+        AccountingPeriodAmend(startDate = period.startDate, endDate = period.endDate)
+      },
       upeCorrespAddressDetails = address,
       primaryContactDetails = ContactDetailsType(
         name = userData.subPrimaryContactName,

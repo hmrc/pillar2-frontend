@@ -904,7 +904,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "fetchDisplaySubscriptionV2AndSave" when {
+    "readSubscriptionV2AndSave" when {
 
       val plrRef = "XEPLR0000000001"
 
@@ -948,29 +948,30 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
-          when(mockSubscriptionConnector.displaySubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
 
-          val result = service.fetchDisplaySubscriptionV2AndSave("id", plrRef).futureValue
+          val result = service.readSubscriptionV2AndSave("id", plrRef).futureValue
           result.plrReference mustBe plrRef
           result.accountingPeriods mustBe Some(Seq(v2Period))
-          result.subAccountingPeriod mustBe v2Period.toAccountingPeriod
+          result.subAccountingPeriod mustBe None
           result.organisationName mustBe Some("Org Ltd")
+          result.registrationDate mustBe Some(LocalDate.of(2024, 1, 31))
         }
       }
 
-      "propagate failure when displaySubscriptionV2 fails" in {
+      "propagate failure when readSubscriptionV2 fails" in {
         val application = applicationBuilder()
           .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
         val service = application.injector.instanceOf[SubscriptionService]
         running(application) {
-          when(mockSubscriptionConnector.displaySubscriptionV2(any(), any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscriptionV2(any(), any())(using any(), any()))
             .thenReturn(Future.failed(InternalIssueError))
 
-          service.fetchDisplaySubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
+          service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
       }
     }

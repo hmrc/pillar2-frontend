@@ -85,7 +85,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod),
+          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod.get),
           isAgent = false,
           organisationName = None
         )(
@@ -205,7 +205,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[GroupAccountingPeriodView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod),
+          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod.get),
           isAgent = false,
           organisationName = None
         )(

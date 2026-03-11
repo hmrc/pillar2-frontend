@@ -89,10 +89,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
           case _ =>
             if appConfig.amendMultipleAccountingPeriods then
               val localDataF: Future[SubscriptionLocalData] =
-                request.subscriptionLocalData.accountingPeriods match {
-                  case Some(_) => Future.successful(request.subscriptionLocalData)
-                  case None    => subscriptionService.fetchDisplaySubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
-                }
+                subscriptionService.readSubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
               localDataF
                 .map { local =>
                   given msgs: play.api.i18n.Messages = request.messages

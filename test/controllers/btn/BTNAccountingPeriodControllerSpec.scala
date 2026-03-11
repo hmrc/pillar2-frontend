@@ -230,7 +230,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
       verify(mockAuditService).auditBtnAlreadySubmitted(
         eqTo(plrReference),
-        eqTo(dates),
+        eqTo(AccountingPeriod(fromDate, toDate)),
         entitiesInsideOutsideUk = eqTo(false)
       )(using any[HeaderCarrier])
     }

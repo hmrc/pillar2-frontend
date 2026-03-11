@@ -39,8 +39,15 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
   val submittedAtZonedDateTime: ZonedDateTime = ZonedDateTime.of(2024, 11, 10, 10, 0, 0, 0, DateTimeUtils.utcZoneId)
   val submittedAt:              String        = "10 November 2024 at 10:00am"
-  private val accountingPeriodStart = someSubscriptionLocalData.subAccountingPeriod.startDate
-  private val accountingPeriodEnd   = someSubscriptionLocalData.subAccountingPeriod.endDate
+  private val accountingPeriodStart   = someSubscriptionLocalData.subAccountingPeriod.get.startDate
+  private val accountingPeriodEnd     = someSubscriptionLocalData.subAccountingPeriod.get.endDate
+  private val accountingPeriodDetails = AccountingPeriodDetails(
+    startDate = accountingPeriodStart,
+    endDate = accountingPeriodEnd,
+    dueDate = accountingPeriodEnd.plusMonths(6),
+    underEnquiry = false,
+    obligations = Seq.empty
+  )
 
   val btnConfirmationView: BTNConfirmationView = app.injector.instanceOf[BTNConfirmationView]
 
@@ -81,7 +88,8 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
       "return OK and the correct view for a GET" in new BTNConfirmationControllerTestCase {
 
-        override def userAnswers: UserAnswers => Option[UserAnswers] = _.setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
+        override def userAnswers: UserAnswers => Option[UserAnswers] =
+          _.setOrException(BTNChooseAccountingPeriodPage, accountingPeriodDetails).setOrException(BtnConfirmationPage, submittedAtZonedDateTime).some
 
         val result: Future[Result] = controller.onPageLoad(request)
 
@@ -105,9 +113,9 @@ class BTNConfirmationControllerSpec extends SpecBase {
       "show underEnquiry warning when chosen accounting period has underEnquiry flag set to true" in new BTNConfirmationControllerTestCase {
 
         val chosenPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
-          startDate = LocalDate.now().minusYears(1),
-          endDate = LocalDate.now(),
-          dueDate = LocalDate.now().plusMonths(6),
+          startDate = accountingPeriodStart,
+          endDate = accountingPeriodEnd,
+          dueDate = accountingPeriodEnd.plusMonths(6),
           underEnquiry = true,
           obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
         )
@@ -140,18 +148,21 @@ class BTNConfirmationControllerSpec extends SpecBase {
       }
 
       "show underEnquiry warning when a subsequent accounting period has underEnquiry flag set to true" in new BTNConfirmationControllerTestCase {
+        val chosenStart: LocalDate = LocalDate.of(2024, 1, 1)
+        val chosenEnd: LocalDate   = LocalDate.of(2024, 12, 31)
+
         val subsequentPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
-          startDate = LocalDate.now().minusMonths(6),
-          endDate = LocalDate.now().plusMonths(6),
-          dueDate = LocalDate.now().plusMonths(12),
+          startDate = LocalDate.of(2025, 1, 1),
+          endDate = LocalDate.of(2025, 12, 31),
+          dueDate = LocalDate.of(2026, 6, 30),
           underEnquiry = true,
           obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
         )
 
         val chosenPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
-          startDate = LocalDate.now().minusYears(1),
-          endDate = LocalDate.now().minusMonths(6),
-          dueDate = LocalDate.now(),
+          startDate = chosenStart,
+          endDate = chosenEnd,
+          dueDate = LocalDate.of(2025, 6, 30),
           underEnquiry = false,
           obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
         )
@@ -172,8 +183,8 @@ class BTNConfirmationControllerSpec extends SpecBase {
           Some("OrgName"),
           Some("somePillar2Id"),
           submittedAt,
-          accountingPeriodStart,
-          accountingPeriodEnd,
+          chosenStart,
+          chosenEnd,
           isAgent = false,
           showUnderEnquiryWarning = true
         )(
@@ -185,17 +196,17 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
       "not show underEnquiry warning when neither chosen nor subsequent periods have underEnquiry flag set" in new BTNConfirmationControllerTestCase {
         val chosenPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
-          startDate = LocalDate.now().minusYears(1),
-          endDate = LocalDate.now(),
-          dueDate = LocalDate.now().plusMonths(6),
+          startDate = accountingPeriodStart,
+          endDate = accountingPeriodEnd,
+          dueDate = accountingPeriodEnd.plusMonths(6),
           underEnquiry = false,
           obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
         )
 
         val subsequentPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
-          startDate = LocalDate.now().minusYears(2),
-          endDate = LocalDate.now().minusYears(1),
-          dueDate = LocalDate.now().minusMonths(6),
+          startDate = accountingPeriodEnd,
+          endDate = accountingPeriodEnd.plusYears(1),
+          dueDate = accountingPeriodEnd.plusYears(1).plusMonths(6),
           underEnquiry = false,
           obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
         )
