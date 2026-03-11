@@ -341,6 +341,127 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       }
     }
 
+    "return OK using V2 endpoint when amendMultipleAccountingPeriods flag is true" in {
+      val v2LocalData = someSubscriptionLocalData.copy(
+        registrationDate = Some(subscriptionData.upeDetails.registrationDate)
+      )
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.successful(v2LocalData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+      }
+    }
+
+    "redirect to JourneyRecovery when V2 endpoint returns NoResultFound and flag is true" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.failed(NoResultFound))
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirect to RegistrationInProgress when V2 endpoint returns UnprocessableEntityError and flag is true" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("12345678").url
+      }
+    }
+
+    "retry and eventually succeed when V2 endpoint returns RetryableGatewayError then succeeds and flag is true" in {
+      val v2LocalData = someSubscriptionLocalData.copy(
+        registrationDate = Some(subscriptionData.upeDetails.registrationDate)
+      )
+      val application =
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.failed(RetryableGatewayError))
+          .thenReturn(Future.failed(RetryableGatewayError))
+          .thenReturn(Future.successful(v2LocalData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).readSubscriptionV2AndSave(any(), any())(using any())
+      }
+    }
+
   }
 
   "getDueOrOverdueReturnsStatus" should {

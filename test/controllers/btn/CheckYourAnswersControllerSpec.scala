@@ -55,6 +55,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   override val mockSessionRepository: SessionRepository = mock[SessionRepository]
   override val mockAuditService:      AuditService      = mock[AuditService]
 
+  private val chosenPeriodDetails = buildAccountingPeriodDetails(LocalDate.of(2025, 7, 18), LocalDate.of(2026, 7, 18), LocalDate.of(2026, 10, 18))
+  private val userAnswersWithChosenPeriod = emptyUserAnswers.setOrException(BTNChooseAccountingPeriodPage, chosenPeriodDetails)
+
   def btnCyaSummaryList(): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2026, 7, 18)), multipleAccountingPeriods = false),
@@ -194,6 +197,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
+
+      "redirect to JourneyRecoveryController when BTNChooseAccountingPeriodPage and subAccountingPeriod are both absent" in {
+        val uaWithEntitiesOnly                 = emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)
+        val subscriptionDataNoAccountingPeriod = someSubscriptionLocalData.copy(subAccountingPeriod = None)
+
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(uaWithEntitiesOnly))
+
+        val application = applicationBuilder(userAnswers = Some(uaWithEntitiesOnly), subscriptionLocalData = Some(subscriptionDataNoAccountingPeriod))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, CheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
     }
 
     ".onSubmit" should {
@@ -204,7 +226,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val slowFuture  = slowPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(slowFuture)
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -229,7 +251,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val successFuture  = successPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(successFuture)
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
         when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenReturn(Future.successful(AuditResult.Success))
 
@@ -258,7 +280,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         val failFuture  = failPromise.future
 
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(failFuture)
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
         when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenReturn(Future.successful(AuditResult.Success))
 
@@ -283,7 +305,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "redirect to waiting room when BTN submission throws an exception" in {
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.failed(InternalIssueError))
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -302,7 +324,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "redirect to waiting room when BTN submission returns Future.failed(ApiError)" in {
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.failed(InternalIssueError))
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -321,7 +343,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "redirect to waiting room for any other error" in {
         when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.failed(new RuntimeException("Some other error")))
-        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
         when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -338,13 +360,30 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
+      "redirect to JourneyRecoveryController when BTNChooseAccountingPeriodPage is missing" in {
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .overrides(bind[BTNService].toInstance(mockBTNService))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
       "audit" when {
         val processedAt = ZonedDateTime.now()
         "submission is successful" in {
           val auditCalled = Promise[Unit]()
           val response    = HttpResponse(201, Json.obj("success" -> Json.obj("processingDate" -> processedAt)).toString())
           when(mockBTNService.submitBTN(any)(using any, any)).thenReturn(Future.successful(response))
-          when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+          when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
           when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>
             auditCalled.success(())
@@ -365,7 +404,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
             verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),
-              eqTo(someSubscriptionLocalData.subAccountingPeriod),
+              eqTo(someSubscriptionLocalData.subAccountingPeriod.get),
               entitiesInsideAndOutsideUK = eqTo(false),
               eqTo(ApiResponseSuccess(CREATED, processedAt))
             )(using any[HeaderCarrier])
@@ -382,7 +421,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           when(mockBTNService.submitBTN(any)(using any, any))
             .thenReturn(Future.successful(response))
-          when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+          when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswersWithChosenPeriod))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
           when(mockAuditService.auditBTNSubmission(any, any, any, any)(using any)).thenAnswer { (_: InvocationOnMock) =>
             auditCalled.success(())
@@ -404,7 +443,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
             verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),
-              eqTo(someSubscriptionLocalData.subAccountingPeriod),
+              eqTo(someSubscriptionLocalData.subAccountingPeriod.get),
               entitiesInsideAndOutsideUK = eqTo(false),
               eqTo(ApiResponseFailure(INTERNAL_SERVER_ERROR, processedAt, errorCode, errorMessage))
             )(using any[HeaderCarrier])

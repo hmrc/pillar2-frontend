@@ -64,29 +64,29 @@ class CheckYourAnswersController @Inject() (
             case Some(true) =>
               val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
 
-              val accountingPeriod: AccountingPeriod =
-                maybeAccountingPeriodDetails
-                  .map { accountingPeriodDetails =>
-                    logger.info("Using AccountingPeriod from User Answers.")
-                    AccountingPeriod(
-                      startDate = accountingPeriodDetails.startDate,
-                      endDate = accountingPeriodDetails.endDate,
-                      dueDate = Some(accountingPeriodDetails.dueDate)
-                    )
-                  }
-                  .getOrElse {
-                    logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
-                    request.subscriptionLocalData.subAccountingPeriod
-                  }
+              maybeAccountingPeriodDetails
+                .map { accountingPeriodDetails =>
+                  logger.info("Using AccountingPeriod from User Answers.")
+                  AccountingPeriod(
+                    startDate = accountingPeriodDetails.startDate,
+                    endDate = accountingPeriodDetails.endDate,
+                    dueDate = Some(accountingPeriodDetails.dueDate)
+                  )
+                }
+                .orElse {
+                  logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
+                  request.subscriptionLocalData.subAccountingPeriod
+                }
+                .fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) { accountingPeriod =>
+                  val summaryList = SummaryListViewModel(
+                    rows = Seq(
+                      SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
+                      BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
+                    ).flatten
+                  ).withCssClass("govuk-!-margin-bottom-9")
 
-              val summaryList = SummaryListViewModel(
-                rows = Seq(
-                  SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
-                  BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
-                ).flatten
-              ).withCssClass("govuk-!-margin-bottom-9")
-
-              Ok(view(summaryList, request.isAgent, request.subscriptionLocalData.organisationName))
+                  Ok(view(summaryList, request.isAgent, request.subscriptionLocalData.organisationName))
+                }
             case _ =>
               Redirect(controllers.routes.IndexController.onPageLoad)
           }
@@ -100,22 +100,25 @@ class CheckYourAnswersController @Inject() (
     given Request[AnyContent] = request
     sessionRepository.get(request.userId).flatMap {
       case Some(userAnswers) =>
-        val subAccountingPeriod: AccountingPeriod =
-          request.subscriptionLocalData.subAccountingPeriod
-        val btnPayload = BTNRequest(
-          accountingPeriodFrom = subAccountingPeriod.startDate,
-          accountingPeriodTo = subAccountingPeriod.endDate
-        )
-
-        btnSubmissionService
-          .startSubmission(
-            userId = request.userId,
-            userAnswers = userAnswers,
-            pillar2Id = request.subscriptionLocalData.plrReference,
-            accountingPeriod = subAccountingPeriod,
-            btnPayload = btnPayload
-          )
-          .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
+        userAnswers.get(BTNChooseAccountingPeriodPage) match {
+          case Some(chosenPeriod) =>
+            val accountingPeriod = AccountingPeriod(chosenPeriod.startDate, chosenPeriod.endDate)
+            val btnPayload       = BTNRequest(
+              accountingPeriodFrom = chosenPeriod.startDate,
+              accountingPeriodTo = chosenPeriod.endDate
+            )
+            btnSubmissionService
+              .startSubmission(
+                userId = request.userId,
+                userAnswers = userAnswers,
+                pillar2Id = request.subscriptionLocalData.plrReference,
+                accountingPeriod = accountingPeriod,
+                btnPayload = btnPayload
+              )
+              .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
+          case None =>
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
       case None =>
         logger.error("user answers not found")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

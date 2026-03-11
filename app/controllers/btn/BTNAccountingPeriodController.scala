@@ -22,6 +22,7 @@ import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
+import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, Mode}
 import pages.{EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
 import play.api.Logging
@@ -70,7 +71,7 @@ class BTNAccountingPeriodController @Inject() (
                       auditService
                         .auditBtnAlreadySubmitted(
                           request.subscriptionLocalData.plrReference,
-                          request.subscriptionLocalData.subAccountingPeriod,
+                          AccountingPeriod(period.startDate, period.endDate),
                           entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
                         )
                         .as(Ok(btnAlreadyInPlaceView()))
