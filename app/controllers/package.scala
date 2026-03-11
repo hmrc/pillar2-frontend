@@ -48,8 +48,8 @@ package object controllers {
     selectedAccountingPeriod: DisplayAccountingPeriod,
     accountingPeriods:        Seq[DisplayAccountingPeriod]
   ): ChosenAccountingPeriod =
-    val sorted: Seq[DisplayAccountingPeriod] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
-    val selectedIndex: Int = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
+    val sorted:        Seq[DisplayAccountingPeriod] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
+    val selectedIndex: Int                          = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
 
     val startBoundaryDate =
       if selectedIndex >= 0 then {

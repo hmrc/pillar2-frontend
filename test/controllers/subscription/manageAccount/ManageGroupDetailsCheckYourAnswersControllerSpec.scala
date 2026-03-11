@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.*
 import models.requests.IdentifierRequest
 import models.subscription.{AccountingPeriodV2, SubscriptionLocalData}
-import models.{InternalIssueError, MneOrDomestic}
+import models.{InternalIssueError, MneOrDomestic, NormalMode}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.SubAccountingPeriodPage
@@ -376,7 +376,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
+            controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(NormalMode).url
           )
           verify(mockSubscriptionConnector).save(eqTo("id"), any())(using any[HeaderCarrier])
         }

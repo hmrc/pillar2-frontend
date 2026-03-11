@@ -23,12 +23,11 @@ import config.FrontendAppConfig
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.MneOrDomestic
+import models.{InternalIssueError, MissingReferenceNumberError, MneOrDomestic, NormalMode, UserAnswers}
 import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage, SubAccountingPeriodPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -167,7 +166,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
           }
           subscriptionConnector
             .save(request.userId, Json.toJson(updated))
-            .map(_ => Redirect(controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad()))
+            .map(_ => Redirect(controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(NormalMode)))
         case None =>
           Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
       }

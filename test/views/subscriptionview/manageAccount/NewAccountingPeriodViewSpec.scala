@@ -30,8 +30,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
   lazy val formProvider: NewAccountingPeriodFormProvider = new NewAccountingPeriodFormProvider
   lazy val page:         NewAccountingPeriodView         = inject[NewAccountingPeriodView]
-  lazy val pageTitle:    String                            = "What is the group’s new accounting period?"
-  lazy val plrReference: String = "XMPLR0123456789"
+  lazy val pageTitle:    String                          = "What is the group’s new accounting period?"
+  lazy val plrReference: String                          = "XMPLR0123456789"
 
   def view(isAgent: Boolean = false, orgName: Option[String] = None): Document =
     Jsoup.parse(page(formProvider(None, None), isAgent, orgName, plrReference, NormalMode)(request, appConfig, messages).toString())

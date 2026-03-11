@@ -53,15 +53,15 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     val form: Form[AccountingPeriod] = formProvider(startDateBoundary, None)
 
     val startDate = LocalDate.of(2023, 12, 31)
-    val endDate = LocalDate.of(2024, 9, 29)
+    val endDate   = LocalDate.of(2024, 9, 29)
 
     val data = Map(
-      "startDate.day" -> startDate.getDayOfMonth.toString,
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
       "startDate.month" -> startDate.getMonthValue.toString,
-      "startDate.year" -> startDate.getYear.toString,
-      "endDate.day" -> endDate.getDayOfMonth.toString,
-      "endDate.month" -> endDate.getMonthValue.toString,
-      "endDate.year" -> endDate.getYear.toString
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
     )
 
     form.bind(data).errors shouldEqual Seq(
@@ -75,15 +75,15 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     val form: Form[AccountingPeriod] = formProvider(None, endDateBoundary)
 
     val startDate = LocalDate.of(2023, 12, 31)
-    val endDate = LocalDate.of(2024, 9, 29)
+    val endDate   = LocalDate.of(2024, 9, 29)
 
     val data = Map(
-      "startDate.day" -> startDate.getDayOfMonth.toString,
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
       "startDate.month" -> startDate.getMonthValue.toString,
-      "startDate.year" -> startDate.getYear.toString,
-      "endDate.day" -> endDate.getDayOfMonth.toString,
-      "endDate.month" -> endDate.getMonthValue.toString,
-      "endDate.year" -> endDate.getYear.toString
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
     )
 
     form.bind(data).errors shouldEqual Seq(
@@ -94,19 +94,19 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
   "throw a form error where both start and end dates breach boundaries" in {
 
     val startDateBoundary = Some(LocalDate.of(2024, 1, 1))
-    val endDateBoundary = Some(LocalDate.of(2024, 9, 28))
+    val endDateBoundary   = Some(LocalDate.of(2024, 9, 28))
     val form: Form[AccountingPeriod] = formProvider(startDateBoundary, endDateBoundary)
 
     val startDate = LocalDate.of(2023, 12, 31)
-    val endDate = LocalDate.of(2024, 9, 29)
+    val endDate   = LocalDate.of(2024, 9, 29)
 
     val data = Map(
-      "startDate.day" -> startDate.getDayOfMonth.toString,
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
       "startDate.month" -> startDate.getMonthValue.toString,
-      "startDate.year" -> startDate.getYear.toString,
-      "endDate.day" -> endDate.getDayOfMonth.toString,
-      "endDate.month" -> endDate.getMonthValue.toString,
-      "endDate.year" -> endDate.getYear.toString
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
     )
 
     form.bind(data).errors shouldEqual Seq(
@@ -541,8 +541,6 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
   }
 
-
-
   "throw a form error for start date with invalid month and year length and missing end date" in {
     val data = Map(
       "startDate.day"   -> "10",
@@ -591,4 +589,3 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
   }
 }
-
