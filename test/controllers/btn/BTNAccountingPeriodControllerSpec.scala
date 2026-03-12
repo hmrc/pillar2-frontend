@@ -97,6 +97,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
         when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any)) thenReturn Future.successful(true)
 
         running(application) {
           val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -115,6 +116,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
             applicationConfig,
             messages(application)
           ).toString
+
+          verify(mockSessionRepository).set(any)
         }
       }
 
@@ -214,6 +217,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       when(mockObligationsAndSubmissionsService.handleData(any, any, any)(using any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(submissionType = BTN).success))
       when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockSessionRepository.set(any)) thenReturn Future.successful(true)
       when(mockAuditService.auditBtnAlreadySubmitted(any, any, any)(using any)).thenReturn(Future.successful(AuditResult.Success))
 
       running(application) {
