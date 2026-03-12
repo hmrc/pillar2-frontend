@@ -20,9 +20,10 @@ import com.google.inject.{Inject, Singleton}
 import models.longrunningsubmissions.LongRunningSubmission
 import play.api.Configuration
 import play.api.mvc.RequestHeader
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 
 @Singleton
@@ -39,11 +40,14 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
 
+  private def encode(value: String): String =
+    URLEncoder.encode(value, StandardCharsets.UTF_8.toString)
+
   def feedbackUrl(using request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${encode(host + request.uri)}"
 
   def supportUrl(using request: RequestHeader): String =
-    s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier&referrerUrl=${SafeRedirectUrl(request.uri).encodedUrl}"
+    s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier&referrerUrl=${encode(request.uri)}"
 
   val loginUrl:                    String = configuration.get[String]("urls.login")
   val loginContinueUrl:            String = configuration.get[String]("urls.loginContinue")
