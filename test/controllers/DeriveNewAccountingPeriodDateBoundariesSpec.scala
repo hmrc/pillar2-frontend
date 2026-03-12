@@ -43,7 +43,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2023).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe None
@@ -60,7 +60,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2024).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe Some(LocalDate.of(2022, 1, 1))
@@ -77,7 +77,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2024).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe None
@@ -94,7 +94,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2025).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe Some(LocalDate.of(2023, 1, 1))
@@ -111,7 +111,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2026).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe Some(LocalDate.of(2026, 1, 1))
@@ -128,7 +128,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
       )
 
       val selectedPeriod = period(2024).toAccountingPeriod
-      val result = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe Some(LocalDate.of(2023, 1, 1))
