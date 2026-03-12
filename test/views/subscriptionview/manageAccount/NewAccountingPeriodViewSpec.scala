@@ -92,7 +92,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after ${chosenAccountingPeriod.startDateBoundaryMinusOneDay}, for example 29 05 25"
+          .text mustBe s"Enter a date after 30 December 2023, for example 31 12 2023"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -104,7 +104,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date before ${chosenAccountingPeriod.endDateBoundaryPlusOneDay}, for example 26 03 26"
+          .text mustBe s"Enter a date, for example 30 12 2024"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -156,7 +156,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after ${chosenAccountingPeriod.startDateBoundaryMinusOneDay}, for example 29 05 25"
+          .text mustBe s"Enter a date after 30 December 2023, for example 31 12 2023"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -168,7 +168,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date before ${chosenAccountingPeriod.endDateBoundaryPlusOneDay}, for example 26 03 26"
+          .text mustBe s"Enter a date, for example 30 12 2024"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined

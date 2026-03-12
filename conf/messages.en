@@ -847,9 +847,10 @@ newAccountingPeriod.p1 = The accounting period is the period covered by the cons
 newAccountingPeriod.p2 = Accounting periods are usually 12 months, but can be longer or shorter.
 
 newAccountingPeriod.startDate.heading = Start date
-newAccountingPeriod.startDate.hint = Enter a date after {0}, for example 29 05 25
+newAccountingPeriod.startDate.hint = Enter a date after {0}, for example {1}
 newAccountingPeriod.endDate.heading = End date
-newAccountingPeriod.endDate.hint = Enter a date before {0}, for example 26 03 26
+newAccountingPeriod.endDate.hint = Enter a date before {0}, for example {1}
+newAccountingPeriod.endDate.hintWithoutBoundary = Enter a date, for example {0}
 newAccountingPeriod.checkYourAnswersLabel = New accounting period
 
 newAccountingPeriod.error.startDate.dayMonthYear.minimum = The start date must be after 31 December 2023. Pillar 2 applies to accounting periods beginning on or after 31 December 2023.

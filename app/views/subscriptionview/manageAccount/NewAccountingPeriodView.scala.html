@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import models.subscription.ChosenAccountingPeriod
+@import utils.DateTimeUtils.{toDateFormat, toDateEntryFormat}
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds._
 
@@ -59,7 +60,12 @@
                 field = form("startDate"),
                 legend = LegendViewModel(messages("newAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
             )
-            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.startDate.hint", chosenAccountingPeriod.startDateBoundaryMinusOneDay))
+            .withHint(HintViewModel(content = Text(
+                messages(
+                    "newAccountingPeriod.startDate.hint",
+                    chosenAccountingPeriod.startBoundaryToDateFormat,
+                    chosenAccountingPeriod.startBoundaryToDateEntryFormat)
+                )
             ))
         )
 
@@ -68,7 +74,12 @@
                 field = form("endDate"),
                 legend = LegendViewModel(messages("newAccountingPeriod.endDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
             )
-            .withHint(HintViewModel(content = Text(messages("newAccountingPeriod.endDate.hint", chosenAccountingPeriod.endDateBoundaryPlusOneDay))
+            .withHint(HintViewModel(
+                content = chosenAccountingPeriod.endDateBoundary.map { boundary =>
+                    messages("newAccountingPeriod.endDate.hint", boundary.plusDays(1).toDateFormat, boundary.toDateEntryFormat)
+                }.getOrElse {
+                    messages("newAccountingPeriod.endDate.hintWithoutBoundary", chosenAccountingPeriod.startBoundary.plusYears(1).toDateEntryFormat)
+                }
             ))
         )
 
