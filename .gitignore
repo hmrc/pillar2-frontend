@@ -38,7 +38,6 @@ bin
 project/.bloop/
 .metals/
 .bloop/
-docs/
 .vscode/
 project/metals.sbt
 
