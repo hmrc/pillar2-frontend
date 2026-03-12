@@ -17,18 +17,36 @@
 package services
 
 import config.FrontendAppConfig
-import models.DueAndOverdueReturnBannerScenario
-import models.DynamicNotificationAreaState
-import models.financialdata.{FinancialData, PaymentState}
+import models.DueAndOverdueReturnBannerScenario.*
+import models.financialdata.PaymentState.*
+import models.financialdata.{AccountActivityData, FinancialData, PaymentState}
 import models.subscription.AccountStatus
 import models.subscription.AccountStatus.InactiveAccount
 import models.{BtnBanner, DueAndOverdueReturnBannerScenario as BannerScenario}
+import models.{DueAndOverdueReturnBannerScenario, DynamicNotificationAreaState}
 
 import java.time.Clock
 import javax.inject.{Inject, Singleton}
 
+@Singleton
+class HomepageBannerService @Inject() () {
+
+  def determineNotificationArea(
+    uktr:          Option[DueAndOverdueReturnBannerScenario],
+    financialData: FinancialData,
+    accountStatus: AccountStatus
+  )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState =
+    HomepageBannerService.determineNotificationArea(uktr, financialData, accountStatus)
+
+  def determineNotificationAreaFromActivity(
+    uktr:                Option[DueAndOverdueReturnBannerScenario],
+    accountActivityData: AccountActivityData,
+    accountStatus:       AccountStatus
+  )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState =
+    HomepageBannerService.determineNotificationAreaFromActivity(uktr, accountActivityData, accountStatus)
+}
+
 object HomepageBannerService {
-  import PaymentState.*
 
   def determineNotificationArea(
     uktr:          Option[DueAndOverdueReturnBannerScenario],
@@ -61,7 +79,39 @@ object HomepageBannerService {
 
     case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(BannerScenario.Received) | None, _) =>
       DynamicNotificationAreaState.NoNotification
+  }
 
+  def determineNotificationAreaFromActivity(
+    uktr:                Option[DueAndOverdueReturnBannerScenario],
+    accountActivityData: AccountActivityData,
+    accountStatus:       AccountStatus
+  )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState = (accountActivityData, uktr, accountStatus) match {
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
+      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Due
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
+      DynamicNotificationAreaState.NoNotification
   }
 
   val determineBtnBanner: (AccountStatus, DynamicNotificationAreaState) => BtnBanner = {
@@ -69,17 +119,4 @@ object HomepageBannerService {
     case (InactiveAccount, _)                                                          => BtnBanner.Show
     case (_, _)                                                                        => BtnBanner.Hide
   }
-}
-
-@Singleton
-class HomepageBannerService @Inject() () {
-  def determineNotificationArea(
-    uktr:          Option[DueAndOverdueReturnBannerScenario],
-    financialData: FinancialData,
-    accountStatus: AccountStatus
-  )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState =
-    HomepageBannerService.determineNotificationArea(uktr, financialData, accountStatus)
-
-  def determineBtnBanner(accountStatus: AccountStatus, dynamicNotificationAreaState: DynamicNotificationAreaState): BtnBanner =
-    HomepageBannerService.determineBtnBanner(accountStatus, dynamicNotificationAreaState)
 }
