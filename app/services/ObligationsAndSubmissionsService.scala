@@ -19,8 +19,7 @@ package services
 import connectors.ObligationsAndSubmissionsConnector
 import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario.*
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationStatus}
+import models.obligationsandsubmissions.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -33,9 +32,6 @@ class ObligationsAndSubmissionsService @Inject() (
 
   def handleData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccess] =
     obligationAndSubmissionsConnector.getData(pillar2Id, fromDate, toDate).flatMap(Future.successful)
-}
-
-object ObligationsAndSubmissionsService {
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 

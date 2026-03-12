@@ -18,105 +18,157 @@ package services
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.DueAndOverdueReturnBannerScenario
-import models.DynamicNotificationAreaState
+import controllers.HomepageController
 import models.financialdata.*
-import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, AccountingPeriod}
-import models.{BtnBanner, DueAndOverdueReturnBannerScenario as BannerScenario}
+import models.{BtnBanner, DueAndOverdueReturnBannerScenario, DynamicNotificationAreaState}
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import java.time.{Clock, LocalDate}
 
-class HomepageBannerServiceSpec extends SpecBase {
+class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   private given Clock             = Clock.systemUTC()
   private given FrontendAppConfig = applicationConfig
 
-  private val period = AccountingPeriod(LocalDate.now().minusYears(1), LocalDate.now().minusDays(1))
-  private val items  =
-    FinancialTransaction.OutstandingCharge.FinancialItems(earliestDueDate = LocalDate.now().minusDays(10), items = Seq(FinancialItem(None, None)))
+  "determineNotificationArea" should {
 
-  private def uktrCharge(outstanding: BigDecimal, dueDate: LocalDate): UktrMainOutstandingCharge =
-    UktrMainOutstandingCharge(
-      accountingPeriod = period,
-      subTransactionRef = EtmpSubtransactionRef.Dtt,
-      outstandingAmount = outstanding,
-      chargeItems = items.copy(earliestDueDate = dueDate)
+    val application = applicationBuilder().build()
+    application.injector.instanceOf[HomepageController]
+
+    val anyReturnStatus  = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
+    val anyAccountStatus = Gen.oneOf(AccountStatus.values)
+
+    val commonChargeFields = (
+      AccountingPeriod(startDate = LocalDate.now().minusYears(1), endDate = LocalDate.now()),
+      EtmpSubtransactionRef.Dtt,
+      BigDecimal(12345.67),
+      OutstandingCharge.FinancialItems(
+        earliestDueDate = LocalDate.now().minusDays(1),
+        items = Seq(FinancialItem(dueDate = Some(LocalDate.now().minusDays(1)), clearingDate = None))
+      )
     )
 
-  private def lpiCharge(outstanding: BigDecimal, dueDate: LocalDate): LatePaymentInterestOutstandingCharge =
-    LatePaymentInterestOutstandingCharge(
-      accountingPeriod = period,
-      subTransactionRef = EtmpSubtransactionRef.Dtt,
-      outstandingAmount = outstanding,
-      chargeItems = items.copy(earliestDueDate = dueDate)
+    val outstandingUktrCharge         = (OutstandingCharge.UktrMainOutstandingCharge.apply _).tupled(commonChargeFields)
+    val uktrLatePaymentInterestCharge = (OutstandingCharge.LatePaymentInterestOutstandingCharge.apply _).tupled(commonChargeFields)
+    val uktrRepaymentInterestCharge   = (OutstandingCharge.LatePaymentInterestOutstandingCharge.apply _).tupled(commonChargeFields)
+
+    "choose to show an 'outstanding payments w/ BTN' notification" when {
+      "there's a regular, non-interest outstanding change and a BTN has been submitted" in forAll(anyReturnStatus) { returnStatus =>
+        val financialData = FinancialData(Seq(outstandingUktrCharge))
+        val result        = HomepageBannerService.determineNotificationArea(returnStatus, financialData, InactiveAccount)
+        result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
+      }
+
+      "there's a interest charge and a BTN has been submitted" in forAll(
+        Gen.oneOf(uktrLatePaymentInterestCharge, uktrRepaymentInterestCharge),
+        anyReturnStatus
+      ) { (interestCharge, returnStatus) =>
+        val financialData = FinancialData(Seq(outstandingUktrCharge, interestCharge))
+        val result        = HomepageBannerService.determineNotificationArea(returnStatus, financialData, InactiveAccount)
+        result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
+      }
+    }
+
+    "choose to show an 'accruing interest' notification" when {
+      "there's a payment for interest outstanding and there is no submitted BTN" in forAll(
+        Gen.oneOf(uktrLatePaymentInterestCharge, uktrRepaymentInterestCharge),
+        anyReturnStatus
+      ) { (interestCharge, returnStatus) =>
+        val financialData = FinancialData(Seq(interestCharge, outstandingUktrCharge))
+        val result        = HomepageBannerService.determineNotificationArea(returnStatus, financialData, ActiveAccount)
+        result mustBe DynamicNotificationAreaState.AccruingInterest(financialData.calculateOutstandingAmount)
+      }
+    }
+
+    "choose to show an 'outstanding payments' notification" when {
+      "outstanding charges are past their due date, but there is no interest charge and there is no submitted BTN" in forAll(anyReturnStatus) {
+        returnStatus =>
+          val financialData = FinancialData(
+            Seq(
+              outstandingUktrCharge.copy(chargeItems = outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().minusDays(7)))
+            )
+          )
+          val result = HomepageBannerService.determineNotificationArea(returnStatus, financialData, ActiveAccount)
+          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.calculateOutstandingAmount)
+      }
+
+      "outstanding charges have not yet reached their due date, and there is no interest charge" in forAll(anyReturnStatus, anyAccountStatus) {
+        (returnStatus, accountStatus) =>
+          val financialData = FinancialData(
+            Seq(
+              outstandingUktrCharge.copy(chargeItems = outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().plusDays(7)))
+            )
+          )
+          val result = HomepageBannerService.determineNotificationArea(returnStatus, financialData, accountStatus)
+          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.calculateOutstandingAmount)
+      }
+    }
+
+    val recentPayment = Payment(
+      Payment.FinancialItems(
+        Seq(FinancialItem(dueDate = None, clearingDate = Some(LocalDate.now().minusDays(14))))
+      )
     )
 
-  "HomepageBannerService.determineNotificationArea" should {
+    val nonImpactingFinancialData = Gen.oneOf(Seq(recentPayment), Seq.empty).map(FinancialData.apply)
 
-    "show AccruingInterest for active accounts with overdue interest charges" in {
-      val financialData = FinancialData(Seq(uktrCharge(100, LocalDate.now().minusDays(10)), lpiCharge(5, LocalDate.now().minusDays(10))))
+    "choose to show a 'return expected' notification" when {
 
-      HomepageBannerService.determineNotificationArea(uktr = None, financialData, AccountStatus.ActiveAccount) mustBe
-        DynamicNotificationAreaState.AccruingInterest(105)
+      val returnExpectedNotificationMappings = Table(
+        "Return status"                              -> "Notification state",
+        DueAndOverdueReturnBannerScenario.Due        -> DynamicNotificationAreaState.ReturnExpectedNotification.Due,
+        DueAndOverdueReturnBannerScenario.Overdue    -> DynamicNotificationAreaState.ReturnExpectedNotification.Overdue,
+        DueAndOverdueReturnBannerScenario.Incomplete -> DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+      )
+
+      "there is no outstanding payment and a return is expected" in forAll(returnExpectedNotificationMappings) { (returnStatus, notificationState) =>
+        forAll(nonImpactingFinancialData, anyAccountStatus) { (financialData, accountStatus) =>
+          val result = HomepageBannerService.determineNotificationArea(Some(returnStatus), financialData, accountStatus)
+          result mustBe notificationState
+        }
+      }
     }
 
-    "show OutstandingPaymentsWithBtn for inactive accounts with overdue interest charges" in {
-      val financialData = FinancialData(Seq(uktrCharge(100, LocalDate.now().minusDays(10)), lpiCharge(5, LocalDate.now().minusDays(10))))
+    "choose to avoid displaying a notification" when {
 
-      HomepageBannerService.determineNotificationArea(uktr = None, financialData, AccountStatus.InactiveAccount) mustBe
-        DynamicNotificationAreaState.OutstandingPaymentsWithBtn(105)
-    }
-
-    "show OutstandingPayments for charges which are not yet due" in {
-      val financialData = FinancialData(Seq(uktrCharge(100, LocalDate.now().plusDays(5))))
-
-      HomepageBannerService.determineNotificationArea(uktr = None, financialData, AccountStatus.InactiveAccount) mustBe
-        DynamicNotificationAreaState.OutstandingPayments(100)
-    }
-
-    "show return expected notification when nothing is due and uktr is due/overdue/incomplete" in {
-      val financialData = FinancialData(Nil)
-
-      HomepageBannerService.determineNotificationArea(uktr = Some(BannerScenario.Due), financialData, AccountStatus.ActiveAccount) mustBe
-        DynamicNotificationAreaState.ReturnExpectedNotification.Due
-
-      HomepageBannerService.determineNotificationArea(uktr = Some(BannerScenario.Overdue), financialData, AccountStatus.ActiveAccount) mustBe
-        DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-
-      HomepageBannerService.determineNotificationArea(uktr = Some(BannerScenario.Incomplete), financialData, AccountStatus.ActiveAccount) mustBe
-        DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-    }
-
-    "show no notification when nothing is due and uktr is received or absent" in {
-      val financialData = FinancialData(Nil)
-
-      HomepageBannerService.determineNotificationArea(
-        uktr = Some(DueAndOverdueReturnBannerScenario.Received),
-        financialData,
-        AccountStatus.ActiveAccount
-      ) mustBe
-        DynamicNotificationAreaState.NoNotification
-
-      HomepageBannerService.determineNotificationArea(uktr = None, financialData, AccountStatus.ActiveAccount) mustBe
-        DynamicNotificationAreaState.NoNotification
+      "there is no outstanding payment and a return is not expected" in forAll(
+        Gen.option(DueAndOverdueReturnBannerScenario.Received),
+        nonImpactingFinancialData,
+        anyAccountStatus
+      ) { case (uktr, financialData, accountStatus) =>
+        val result = HomepageBannerService.determineNotificationArea(uktr, financialData, accountStatus)
+        result mustBe DynamicNotificationAreaState.NoNotification
+      }
     }
   }
 
-  "HomepageBannerService.determineBtnBanner" should {
-    "hide the BTN banner when the inactive account is in the outstanding-with-btn state" in {
-      HomepageBannerService.determineBtnBanner(
-        AccountStatus.InactiveAccount,
-        DynamicNotificationAreaState.OutstandingPaymentsWithBtn(123)
-      ) mustBe BtnBanner.Hide
+  "determineBtnBanner" should {
+    val application = applicationBuilder().build()
+    application.injector.instanceOf[HomepageController]
+    val nonBtnDnaStates = Gen.oneOf(
+      Gen.const(DynamicNotificationAreaState.AccruingInterest(100)),
+      Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)),
+      Gen.const(DynamicNotificationAreaState.NoNotification),
+      Gen.oneOf(DynamicNotificationAreaState.ReturnExpectedNotification.values)
+    )
+    val btnDnaState = DynamicNotificationAreaState.OutstandingPaymentsWithBtn(100)
+
+    "hide the banner when the DNA already includes a message about your BTN" in {
+      HomepageBannerService.determineBtnBanner(InactiveAccount, btnDnaState) mustBe BtnBanner.Hide
     }
 
-    "show the BTN banner when the inactive account is not in the outstanding-with-btn state" in {
-      HomepageBannerService.determineBtnBanner(AccountStatus.InactiveAccount, DynamicNotificationAreaState.NoNotification) mustBe BtnBanner.Show
+    "show the banner when the account is inactive" in forAll(nonBtnDnaStates) { dnaState =>
+      HomepageBannerService.determineBtnBanner(InactiveAccount, dnaState) mustBe BtnBanner.Show
     }
 
-    "hide the BTN banner for active accounts" in {
-      HomepageBannerService.determineBtnBanner(AccountStatus.ActiveAccount, DynamicNotificationAreaState.NoNotification) mustBe BtnBanner.Hide
+    "hide the banner when the account is active" in forAll(
+      Gen.oneOf(nonBtnDnaStates, Gen.const(btnDnaState))
+    ) { anyDnaState =>
+      HomepageBannerService.determineBtnBanner(ActiveAccount, anyDnaState) mustBe BtnBanner.Hide
     }
   }
 }

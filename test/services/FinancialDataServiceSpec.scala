@@ -22,8 +22,8 @@ import config.FrontendAppConfig
 import connectors.FinancialDataConnector
 import models.OutstandingPaymentBannerScenario
 import models.financialdata.*
-import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -267,6 +267,40 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
         FinancialData(Seq(outstandingCharge(100, LocalDate.now().minusDays(5)), interestCharge(5, LocalDate.now().minusDays(5))))
       ) mustBe
         Some(OutstandingPaymentBannerScenario.Outstanding)
+    }
+
+    "return None when there are no outstanding charges or recent payments" in {
+      val oldPayment = Payment(
+        Payment.FinancialItems(
+          Seq(
+            FinancialItem(
+              dueDate = None,
+              clearingDate = Some(LocalDate.now().minusDays(100))
+            )
+          )
+        )
+      )
+
+      FinancialDataService.getPaymentBannerScenario(
+        FinancialData(Seq(oldPayment))
+      ) mustBe None
+    }
+
+    "return Paid when there is a payment made in the last 60 days and no outstanding payment on any transaction" in {
+      val paymentFinancialTransaction = Payment(
+        Payment.FinancialItems(
+          Seq(
+            FinancialItem(
+              dueDate = Some(LocalDate.now().minusDays(26)),
+              clearingDate = Some(LocalDate.now().minusDays(25))
+            )
+          )
+        )
+      )
+
+      FinancialDataService.getPaymentBannerScenario(
+        FinancialData(Seq(paymentFinancialTransaction))
+      ) mustBe Some(OutstandingPaymentBannerScenario.Paid)
     }
   }
 }
