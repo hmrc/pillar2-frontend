@@ -52,117 +52,142 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
   private val localDataWithAmendablePeriods: SubscriptionLocalData =
     emptySubscriptionLocalData.copy(subAccountingPeriod = Some(amendablePeriod.toAccountingPeriod), accountingPeriods = Some(Seq(amendablePeriod)))
 
-  "NewAccountingPeriod Controller for an organisation" must {
+  "NewAccountingPeriod Controller" must {
 
-    "redirect to Journey Recovery" when {
-      "no subscription cache is present" in {
-        val application = applicationBuilder(subscriptionLocalData = None).build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-        }
-      }
-
-      "no user selected accounting period present" in {
-        val x = someSubscriptionLocalData.copy(subAccountingPeriod = None)
-
-        val application = applicationBuilder(subscriptionLocalData = Some(x)).build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-        }
-      }
-    }
-
-    "return OK and the correct view for a GET if no previous filled data is found" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods)).build()
+    "redirect to homepage when amendMultipleAccountingPeriods is false" in {
+      val application = applicationBuilder(subscriptionLocalData = None)
+        .configure("features.amendMultipleAccountingPeriods" -> false)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
-
-        val view = application.injector.instanceOf[NewAccountingPeriodView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(
-          formProvider(chosenAccountingPeriod),
-          chosenAccountingPeriod,
-          isAgent = false,
-          organisationName = None,
-          plrReference = plrReference,
-          mode = NormalMode
-        )(
-          request,
-          applicationConfig,
-          messages(application)
-        ).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.HomepageController.onPageLoad().url)
       }
     }
 
-    "return OK and the correct view for a GET when a previous answer exists" in {
-      val accountingPeriod = AccountingPeriod(startDate, endDate)
-      val ua               = emptyUserAnswers
-        .set(NewAccountingPeriodPage, accountingPeriod)
-        .success
-        .value
+    "allow request when amendMultipleAccountingPeriods is true and" must {
+      "redirect to Journey Recovery" when {
+        "no subscription cache is present" in {
+          val application = applicationBuilder(subscriptionLocalData = None)
+            .configure("features.amendMultipleAccountingPeriods" -> true)
+            .build()
 
-      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods), userAnswers = Some(ua)).build()
+          running(application) {
+            val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+            val result  = route(application, request).value
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+          }
+        }
 
-      running(application) {
-        val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        "no user selected accounting period present" in {
+          val subscriptionDataNoSelectedPeriod = someSubscriptionLocalData.copy(subAccountingPeriod = None)
 
-        val view = application.injector.instanceOf[NewAccountingPeriodView]
+          val application = applicationBuilder(subscriptionLocalData = Some(subscriptionDataNoSelectedPeriod))
+            .configure("features.amendMultipleAccountingPeriods" -> true)
+            .build()
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(
-          formProvider(chosenAccountingPeriod),
-          chosenAccountingPeriod,
-          isAgent = false,
-          organisationName = None,
-          plrReference = plrReference,
-          mode = NormalMode
-        )(
-          request,
-          applicationConfig,
-          messages(application)
-        ).toString
+          running(application) {
+            val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+            val result  = route(application, request).value
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+          }
+        }
       }
-    }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods)).build()
+      "return OK and the correct view for a GET if no previous filled data is found" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods))
+          .configure("features.amendMultipleAccountingPeriods" -> true)
+          .build()
 
-      val request =
-        FakeRequest(POST, routes.NewAccountingPeriodController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "invalid value"))
+        running(application) {
+          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
 
-      running(application) {
-        val boundForm = formProvider(chosenAccountingPeriod).bind(Map("value" -> "invalid value"))
+          val view = application.injector.instanceOf[NewAccountingPeriodView]
 
-        val view = application.injector.instanceOf[NewAccountingPeriodView]
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            formProvider(chosenAccountingPeriod),
+            chosenAccountingPeriod,
+            isAgent = false,
+            organisationName = None,
+            plrReference = plrReference,
+            mode = NormalMode
+          )(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
 
-        val result = route(application, request).value
+      "return OK and the correct view for a GET when a previous answer exists" in {
+        val accountingPeriod = AccountingPeriod(startDate, endDate)
+        val ua               = emptyUserAnswers
+          .set(NewAccountingPeriodPage, accountingPeriod)
+          .success
+          .value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(
-          boundForm,
-          chosenAccountingPeriod = chosenAccountingPeriod,
-          isAgent = false,
-          organisationName = None,
-          plrReference = plrReference,
-          mode = NormalMode
-        )(
-          request,
-          applicationConfig,
-          messages(application)
-        ).toString
+        val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods), userAnswers = Some(ua))
+          .configure("features.amendMultipleAccountingPeriods" -> true)
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
+          val result  = route(application, request).value
+
+          val view = application.injector.instanceOf[NewAccountingPeriodView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            formProvider(chosenAccountingPeriod),
+            chosenAccountingPeriod,
+            isAgent = false,
+            organisationName = None,
+            plrReference = plrReference,
+            mode = NormalMode
+          )(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
+
+      "must return a Bad Request and errors when invalid data is submitted" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods))
+          .configure("features.amendMultipleAccountingPeriods" -> true)
+          .build()
+
+        val request =
+          FakeRequest(POST, routes.NewAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "invalid value"))
+
+        running(application) {
+          val boundForm = formProvider(chosenAccountingPeriod).bind(Map("value" -> "invalid value"))
+
+          val view = application.injector.instanceOf[NewAccountingPeriodView]
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(
+            boundForm,
+            chosenAccountingPeriod = chosenAccountingPeriod,
+            isAgent = false,
+            organisationName = None,
+            plrReference = plrReference,
+            mode = NormalMode
+          )(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
       }
     }
   }

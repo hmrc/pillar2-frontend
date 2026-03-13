@@ -18,6 +18,7 @@ package forms
 
 import forms.mappings.Mappings
 import models.subscription.ChosenAccountingPeriod
+import utils.Constants.Pillar2MinStartDate
 
 import javax.inject.Inject
 
@@ -46,7 +47,7 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
           messageKeyPart = "newAccountingPeriod",
           validateMonthInStringFormat = Some(true)
         )
-          .verifying(minDate(LocalDate.of(2023, 12, 31), "newAccountingPeriod.error.startDate.dayMonthYear.minimum"))
+          .verifying(minDate(Pillar2MinStartDate, "newAccountingPeriod.error.startDate.dayMonthYear.minimum"))
           .verifying(optionalStartDateBoundary(chosenAccountingPeriod.startDateBoundary, "newAccountingPeriod.error.startDate.boundary")),
         "endDate" -> localDate(
           invalidKey = "newAccountingPeriod.error.endDate.format",

@@ -24,6 +24,7 @@ import models.subscription.{AccountingPeriod, ChosenAccountingPeriod}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import utils.DateTimeUtils.toDateFormat
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.NewAccountingPeriodView
 
@@ -36,13 +37,21 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                          = "What is the group’s new accounting period?"
   lazy val plrReference: String                          = "XMPLR0123456789"
 
+  val startDate:        LocalDate        = LocalDate.now
+  val endDate:          LocalDate        = LocalDate.now.plusYears(1)
+  val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate, endDate)
+
   val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
-    AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1), None),
+    accountingPeriod,
     None,
     None
   )
 
-  def view(isAgent: Boolean = false, orgName: Option[String] = None): Document =
+  def view(
+    chosenAccountingPeriod: ChosenAccountingPeriod = chosenAccountingPeriod,
+    isAgent:                Boolean = false,
+    orgName:                Option[String] = None
+  ): Document =
     Jsoup.parse(
       page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent, orgName, plrReference, NormalMode)(request, appConfig, messages)
         .toString()
@@ -71,7 +80,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have inset text" in {
         organisationView.getElementsByClass("govuk-inset-text").text mustBe
-          s"You are changing accounting period: ${chosenAccountingPeriod.toString}"
+          s"You are changing accounting period: ${startDate.toDateFormat} to ${endDate.toDateFormat}"
         organisationView.getElementsByClass("govuk-inset-text").html must include("<br>")
       }
 
@@ -112,6 +121,38 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         Option(endDateFieldset.getElementById("endDate.month")) mustBe defined
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
         Option(endDateFieldset.getElementById("endDate.year")) mustBe defined
+      }
+
+      "have dynamic hint text" when {
+        "there are no boundaries" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(selectedAccountingPeriod = accountingPeriod, startDateBoundary = None, endDateBoundary = None)
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe s"Enter a date after 30 December 2023, for example 31 12 2023"
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe s"Enter a date, for example 30 12 2024"
+        }
+
+        "there are boundaries" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = accountingPeriod,
+              startDateBoundary = Some(LocalDate.of(2024, 1, 1)),
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe s"Enter a date after 31 December 2023, for example 01 01 2024"
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe s"Enter a date before 1 January 2026, for example 31 12 2025"
+        }
       }
 
       "have a 'Continue' button" in {
@@ -176,6 +217,38 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         Option(endDateFieldset.getElementById("endDate.month")) mustBe defined
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
         Option(endDateFieldset.getElementById("endDate.year")) mustBe defined
+      }
+
+      "have dynamic hint text" when {
+        "there are no boundaries" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(selectedAccountingPeriod = accountingPeriod, startDateBoundary = None, endDateBoundary = None)
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+            .getElementById("startDate-hint")
+            .text mustBe s"Enter a date after 30 December 2023, for example 31 12 2023"
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+            .getElementById("endDate-hint")
+            .text mustBe s"Enter a date, for example 30 12 2024"
+        }
+
+        "there are boundaries" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = accountingPeriod,
+              startDateBoundary = Some(LocalDate.of(2024, 1, 1)),
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+            .getElementById("startDate-hint")
+            .text mustBe s"Enter a date after 31 December 2023, for example 01 01 2024"
+
+          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+            .getElementById("endDate-hint")
+            .text mustBe s"Enter a date before 1 January 2026, for example 31 12 2025"
+        }
       }
 
       "have a 'Continue' button" in {

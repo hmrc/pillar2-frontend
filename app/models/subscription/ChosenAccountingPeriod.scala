@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import utils.Constants.Pillar2MinStartDate
 import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
 
 import java.time.LocalDate
@@ -27,11 +28,11 @@ case class ChosenAccountingPeriod(
 ) {
   override def toString: String = s"${selectedAccountingPeriod.startDate.toDateFormat} to ${selectedAccountingPeriod.endDate.toDateFormat}"
 
-  def startBoundary: LocalDate = startDateBoundary match {
+  def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
     case Some(date) => date.minusDays(1)
-    case _          => LocalDate.of(2023, 12, 30)
+    case _          => Pillar2MinStartDate.minusDays(1)
   }
 
-  def startBoundaryToDateFormat:      String = startBoundary.toDateFormat
-  def startBoundaryToDateEntryFormat: String = startBoundary.plusDays(1).toDateEntryFormat
+  def startBoundaryHintFormat:      String = startBoundaryMinusOneDay.toDateFormat
+  def startBoundaryHintEntryFormat: String = startBoundaryMinusOneDay.plusDays(1).toDateEntryFormat
 }

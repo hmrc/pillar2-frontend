@@ -23,7 +23,6 @@ import controllers.deriveNewAccountingPeriodDateBoundaries
 import forms.NewAccountingPeriodFormProvider
 import models.Mode
 import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
-import navigation.AmendSubscriptionNavigator
 import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -41,7 +40,7 @@ class NewAccountingPeriodController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  navigator:                              AmendSubscriptionNavigator,
+  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   formProvider:                           NewAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   NewAccountingPeriodView
@@ -53,7 +52,7 @@ class NewAccountingPeriodController @Inject() (
     formProvider(chosenAccountingPeriod)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { request =>
+    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData) { request =>
       given Request[AnyContent] = request
 
       val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
@@ -82,7 +81,7 @@ class NewAccountingPeriodController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { request =>
+    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
@@ -114,7 +113,7 @@ class NewAccountingPeriodController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(NewAccountingPeriodPage, value))
                   _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                } yield Redirect(navigator.nextPage(NewAccountingPeriodPage, updatedAnswers))
+                } yield Redirect(Call("GET", "#")) // TODO: Redirect to new check your answers page
             )
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
