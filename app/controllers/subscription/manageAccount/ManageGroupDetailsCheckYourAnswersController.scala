@@ -23,12 +23,12 @@ import config.FrontendAppConfig
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
+import models.*
 import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
-import models.*
-import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage, NewAccountingPeriodPage, SubAccountingPeriodPage}
+import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

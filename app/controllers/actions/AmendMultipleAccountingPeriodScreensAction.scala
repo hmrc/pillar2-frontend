@@ -25,7 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AmendMultipleAccountingPeriodScreensActionImpl @Inject() (
   config: FrontendAppConfig
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends AmendMultipleAccountingPeriodScreensAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
