@@ -47,8 +47,12 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
           messageKeyPart = "newAccountingPeriod",
           validateMonthInStringFormat = Some(true)
         )
-          .verifying(minDate(Pillar2MinStartDate, "newAccountingPeriod.error.startDate.dayMonthYear.minimum"))
-          .verifying(optionalStartDateBoundary(chosenAccountingPeriod.startDateBoundary, "newAccountingPeriod.error.startDate.boundary")),
+          .verifying(
+            firstError(
+              optionalStartDateBoundary(chosenAccountingPeriod.startDateBoundary, "newAccountingPeriod.error.startDate.boundary"),
+              minDate(Pillar2MinStartDate, "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
+            )
+          ),
         "endDate" -> localDate(
           invalidKey = "newAccountingPeriod.error.endDate.format",
           allRequiredKey = "newAccountingPeriod.error.endDate.required.all",

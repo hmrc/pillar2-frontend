@@ -60,7 +60,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary))
     val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
 
-    val startDate = LocalDate.of(2023, 12, 31)
+    val startDate = LocalDate.of(2023, 12, 30)
     val endDate   = LocalDate.of(2024, 9, 29)
 
     val data = Map(
