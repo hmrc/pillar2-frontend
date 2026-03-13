@@ -87,6 +87,45 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
+  /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache. */
+  def readSubscriptionV2AndSave(
+    userId:       String,
+    plrReference: String
+  )(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
+    subscriptionConnector.readSubscriptionV2(userId, plrReference).flatMap { v2 =>
+      val local = subscriptionDataV2ToLocalData(plrReference, v2)
+      subscriptionConnector.save(userId, Json.toJson(local)).map(_ => local)
+    }
+
+  private def subscriptionDataV2ToLocalData(plrReference: String, v2: SubscriptionDataV2): SubscriptionLocalData = {
+    val address = v2.upeCorrespAddressDetails
+    SubscriptionLocalData(
+      plrReference = plrReference,
+      subMneOrDomestic = if v2.upeDetails.domesticOnly then MneOrDomestic.Uk else MneOrDomestic.UkAndOther,
+      subPrimaryContactName = v2.primaryContactDetails.name,
+      subPrimaryEmail = v2.primaryContactDetails.emailAddress,
+      subPrimaryPhonePreference = v2.primaryContactDetails.phone.isDefined,
+      subPrimaryCapturePhone = v2.primaryContactDetails.phone,
+      subAddSecondaryContact = v2.secondaryContactDetails.isDefined,
+      subSecondaryContactName = v2.secondaryContactDetails.map(_.name),
+      subSecondaryEmail = v2.secondaryContactDetails.map(_.emailAddress),
+      subSecondaryCapturePhone = v2.secondaryContactDetails.flatMap(_.phone),
+      subSecondaryPhonePreference = v2.secondaryContactDetails.map(_.phone.isDefined),
+      subRegisteredAddress = NonUKAddress(
+        address.addressLine1,
+        address.addressLine2,
+        address.addressLine3.getOrElse(""),
+        address.addressLine4,
+        address.postCode,
+        address.countryCode
+      ),
+      accountStatus = v2.accountStatus,
+      organisationName = Some(v2.upeDetails.organisationName),
+      accountingPeriods = Some(v2.accountingPeriod),
+      registrationDate = Some(v2.upeDetails.registrationDate)
+    )
+  }
+
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[Boolean] =
@@ -155,7 +194,10 @@ class SubscriptionService @Inject() (
         domesticOnly = if userData.subMneOrDomestic == MneOrDomestic.Uk then true else false,
         filingMember = currentData.upeDetails.filingMember
       ),
-      accountingPeriod = AccountingPeriodAmend(startDate = userData.subAccountingPeriod.startDate, endDate = userData.subAccountingPeriod.endDate),
+      accountingPeriod = {
+        val period = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
+        AccountingPeriodAmend(startDate = period.startDate, endDate = period.endDate)
+      },
       upeCorrespAddressDetails = address,
       primaryContactDetails = ContactDetailsType(
         name = userData.subPrimaryContactName,

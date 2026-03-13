@@ -21,12 +21,13 @@ import pages.QuestionPage
 import play.api.libs.json.*
 import queries.{Gettable, Settable}
 
+import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
   plrReference:                String,
   subMneOrDomestic:            MneOrDomestic,
-  subAccountingPeriod:         AccountingPeriod,
+  subAccountingPeriod:         Option[AccountingPeriod] = None,
   subPrimaryContactName:       String,
   subPrimaryEmail:             String,
   subPrimaryPhonePreference:   Boolean,
@@ -38,7 +39,9 @@ case class SubscriptionLocalData(
   subSecondaryPhonePreference: Option[Boolean],
   subRegisteredAddress:        NonUKAddress,
   accountStatus:               Option[AccountStatus],
-  organisationName:            Option[String]
+  organisationName:            Option[String],
+  accountingPeriods:           Option[Seq[AccountingPeriodV2]] = None,
+  registrationDate:            Option[LocalDate] = None
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)
@@ -80,5 +83,7 @@ case class SubscriptionLocalData(
 }
 
 object SubscriptionLocalData {
+
   given format: OFormat[SubscriptionLocalData] = Json.format[SubscriptionLocalData]
+
 }

@@ -1,0 +1,99 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
+@this(
+    layout: templates.Layout,
+    heading: heading,
+    sectionHeader: sectionHeader,
+    paragraphBody: paragraphBody,
+    h2: HeadingH2
+)
+
+@(locationMessageKey: String, periodCards: Seq[(String, String, String, Option[String])], isEmpty: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("manageGroupDetails.multiPeriod.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+    @if(isAgent && organisationName.nonEmpty) {
+        @sectionHeader(messages("manageGroupDetails.multiPeriod.agentHeader", organisationName.get, plrReference))
+    }
+
+    @heading(messages("manageGroupDetails.multiPeriod.heading"), classes = "govuk-heading-l")
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @messages("manageGroupDetails.multiPeriod.locationLabel")
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @messages(locationMessageKey)
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="@controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url">
+                    @messages("site.change")
+                    <span class="govuk-visually-hidden"> @messages("mneOrDomestic.change.hidden")</span>
+                </a>
+            </dd>
+        </div>
+    </dl>
+
+    @h2(messages("manageGroupDetails.multiPeriod.accountingPeriodsTitle"), size = "m")
+
+    @paragraphBody(messages("manageGroupDetails.multiPeriod.intro1"))
+    @paragraphBody(messages("manageGroupDetails.multiPeriod.intro2"))
+
+    @if(isEmpty) {
+        <p class="govuk-body">@messages("manageGroupDetails.multiPeriod.emptyState")</p>
+    } else {
+        @for(card <- periodCards) {
+            @defining(card) { case (title, startDate, endDate, changeUrlOpt) =>
+                <div class="govuk-summary-card govuk-!-margin-bottom-6">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title">@title</h3>
+                        @changeUrlOpt.map { changeUrl =>
+                            <ul class="govuk-summary-card__actions">
+                                <li class="govuk-summary-card__action">
+                                    <a class="govuk-link" href="@changeUrl">
+                                        @messages("site.change")
+                                        <span class="govuk-visually-hidden"> @title</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("manageGroupDetails.multiPeriod.startDate")</dt>
+                                <dd class="govuk-summary-list__value">@startDate</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("manageGroupDetails.multiPeriod.endDate")</dt>
+                                <dd class="govuk-summary-list__value">@endDate</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            }
+        }
+    }
+
+    <p class="govuk-body">
+        <a href="@routes.HomepageController.onPageLoad().url" class="govuk-link">@messages("manageGroupDetails.multiPeriod.backToHomepage")</a>
+    </p>
+}

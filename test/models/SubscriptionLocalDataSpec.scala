@@ -17,8 +17,9 @@
 package models
 
 import base.SpecBase
+import models.subscription.SubscriptionLocalData
 import pages.{SubAddSecondaryContactPage, SubPrimaryCapturePhonePage, UpeRegisteredInUKPage}
-import play.api.libs.json.JsResultException
+import play.api.libs.json.*
 
 class SubscriptionLocalDataSpec extends SpecBase {
 
@@ -51,6 +52,38 @@ class SubscriptionLocalDataSpec extends SpecBase {
       objectBefore.remove(SubAddSecondaryContactPage).map { value =>
         value mustEqual objectAfter
       }
+    }
+  }
+
+  "format" must {
+
+    "round-trip V1 data with subAccountingPeriod present" in {
+      val json   = Json.toJson(emptySubscriptionLocalData)
+      val result = json.validate[SubscriptionLocalData]
+      result.isSuccess mustBe true
+      result.get mustBe emptySubscriptionLocalData
+    }
+
+    "parse JSON where subAccountingPeriod is absent and default to None" in {
+      val json   = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "subAccountingPeriod"
+      val result = json.validate[SubscriptionLocalData]
+      result.isSuccess mustBe true
+      result.get.subAccountingPeriod mustBe None
+    }
+
+    "parse JSON where registrationDate is absent and default to None" in {
+      val json   = Json.toJson(emptySubscriptionLocalData).as[JsObject] - "registrationDate"
+      val result = json.validate[SubscriptionLocalData]
+      result.isSuccess mustBe true
+      result.get.registrationDate mustBe None
+    }
+
+    "round-trip with registrationDate present" in {
+      val dataWithRegDate = emptySubscriptionLocalData.copy(registrationDate = Some(java.time.LocalDate.of(2024, 1, 31)))
+      val json            = Json.toJson(dataWithRegDate)
+      val result          = json.validate[SubscriptionLocalData]
+      result.isSuccess mustBe true
+      result.get.registrationDate mustBe Some(java.time.LocalDate.of(2024, 1, 31))
     }
   }
 
