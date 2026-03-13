@@ -84,7 +84,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "return OK and the correct view for a GET" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -141,7 +141,11 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         .value
 
       val application =
-        applicationBuilder(userAnswers = Some(initialUserAnswers), enrolments)
+        applicationBuilder(
+          userAnswers = Some(initialUserAnswers),
+          enrolments,
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -179,7 +183,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "retry and eventually succeed when maybeReadSubscription returns RetryableGatewayError then succeeds" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -213,7 +217,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "redirect to ViewAmendSubscriptionFailed when retries are exhausted after RetryableGatewayError" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -241,7 +245,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "redirect to registration in progress page when subscription is still processing" in {
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService)
@@ -283,7 +287,11 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "not call retrieveAccountActivityData when useAccountActivityApi flag is false" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
+        applicationBuilder(
+          userAnswers = None,
+          enrolments,
+          additionalData = Map("features.useAccountActivityApi" -> false, "features.amendMultipleAccountingPeriods" -> false)
+        )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -315,7 +323,11 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "redirect to registration in progress page when subscription is still processing for agent" in {
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
+        applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          agentEnrolment,
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+        )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
