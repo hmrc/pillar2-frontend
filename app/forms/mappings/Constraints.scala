@@ -18,6 +18,7 @@ package forms.mappings
 
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
+import utils.DateTimeUtils.toDateFormat
 import utils.countryOptions.CountryOptions
 
 import java.time.LocalDate
@@ -140,6 +141,26 @@ trait Constraints {
         Invalid(errorKey, args*)
       case _ =>
         Valid
+    }
+
+  protected def optionalStartDateBoundary(minStartDate: Option[LocalDate], errorKey: String): Constraint[LocalDate] =
+    Constraint { date =>
+      minStartDate match {
+        case Some(minDate) if date.isBefore(minDate) =>
+          Invalid(errorKey, minDate.minusDays(1).toDateFormat)
+        case _ =>
+          Valid
+      }
+    }
+
+  protected def optionalEndDateBoundary(maxEndDate: Option[LocalDate], errorKey: String): Constraint[LocalDate] =
+    Constraint { date =>
+      maxEndDate match {
+        case Some(maxDate) if date.isAfter(maxDate) =>
+          Invalid(errorKey, maxDate.plusDays(1).toDateFormat)
+        case _ =>
+          Valid
+      }
     }
 
   protected def nonEmptySet(errorKey: String): Constraint[Set[?]] =

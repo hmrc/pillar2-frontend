@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package pages
 
-import java.time.LocalDate
+import models.subscription.AccountingPeriod
+import play.api.libs.json.JsPath
 
-object Constants {
-  final val SubmissionAccountingPeriods: Int       = 7
-  final val BTNPath:                     String    = "/below-threshold-notification"
-  final val SiteYes:                     String    = "site.yes"
-  final val SiteNo:                      String    = "site.no"
-  final val SiteChange:                  String    = "site.change"
-  final val ReceivedPeriodInDays:        Int       = 60
-  final val Pillar2MinStartDate:         LocalDate = LocalDate.of(2023, 12, 31)
+case object NewAccountingPeriodPage extends QuestionPage[AccountingPeriod] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "newAccountingPeriod"
 }

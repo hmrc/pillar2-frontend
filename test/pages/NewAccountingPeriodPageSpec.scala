@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package utils
+package pages
 
-import java.time.LocalDate
+import models.subscription.AccountingPeriod
+import pages.behaviours.PageBehaviours
 
-object Constants {
-  final val SubmissionAccountingPeriods: Int       = 7
-  final val BTNPath:                     String    = "/below-threshold-notification"
-  final val SiteYes:                     String    = "site.yes"
-  final val SiteNo:                      String    = "site.no"
-  final val SiteChange:                  String    = "site.change"
-  final val ReceivedPeriodInDays:        Int       = 60
-  final val Pillar2MinStartDate:         LocalDate = LocalDate.of(2023, 12, 31)
+class NewAccountingPeriodPageSpec extends PageBehaviours {
+
+  "NewAccountingPeriodPage" - {
+
+    beRetrievable[AccountingPeriod](NewAccountingPeriodPage)
+
+    beSettable[AccountingPeriod](NewAccountingPeriodPage)
+
+    beRemovable[AccountingPeriod](NewAccountingPeriodPage)
+  }
 }
