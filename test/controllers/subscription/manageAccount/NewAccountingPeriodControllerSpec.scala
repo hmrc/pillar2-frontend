@@ -101,7 +101,7 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
         }
       }
 
-      "return OK and the correct view for a GET if no previous filled data is found" in {
+      "return OK and the correct view for a GET if no previous data is found" in {
         val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods))
           .configure("features.amendMultipleAccountingPeriods" -> true)
           .build()

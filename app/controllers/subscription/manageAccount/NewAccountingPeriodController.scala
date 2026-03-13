@@ -63,7 +63,6 @@ class NewAccountingPeriodController @Inject() (
         case (Some(periods), Some(selectedPeriod)) =>
           val chosenAccountingPeriod: ChosenAccountingPeriod = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
-          // TODO: Should this be populated?
           sessionRepository.get(request.userId).map { maybeUserAnswers =>
             val preparedForm =
               maybeUserAnswers
