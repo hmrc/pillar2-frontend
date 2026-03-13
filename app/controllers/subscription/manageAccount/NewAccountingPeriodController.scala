@@ -21,14 +21,14 @@ import connectors.SubscriptionConnector
 import controllers.actions.*
 import controllers.deriveNewAccountingPeriodDateBoundaries
 import forms.NewAccountingPeriodFormProvider
-import models.Mode
 import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
+import models.{Mode, UserAnswers}
 import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
 import play.api.mvc.*
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.NewAccountingPeriodView
 
@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class NewAccountingPeriodController @Inject() (
   val subscriptionConnector:              SubscriptionConnector,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  sessionRepository:                      SessionRepository,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
@@ -52,7 +53,7 @@ class NewAccountingPeriodController @Inject() (
     formProvider(chosenAccountingPeriod)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData) { request =>
+    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
@@ -62,21 +63,26 @@ class NewAccountingPeriodController @Inject() (
         case (Some(periods), Some(selectedPeriod)) =>
           val chosenAccountingPeriod: ChosenAccountingPeriod = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
-          val preparedForm = request.subscriptionLocalData.get(NewAccountingPeriodPage) match {
-            case Some(v) => form(chosenAccountingPeriod).fill(v)
-            case None    => form(chosenAccountingPeriod)
-          }
-          Ok(
-            view(
-              preparedForm,
-              chosenAccountingPeriod,
-              request.isAgent,
-              request.subscriptionLocalData.organisationName,
-              request.subscriptionLocalData.plrReference,
-              mode
+          // TODO: Should this be populated?
+          sessionRepository.get(request.userId).map { maybeUserAnswers =>
+            val preparedForm =
+              maybeUserAnswers
+                .flatMap(_.get(NewAccountingPeriodPage))
+                .map(form(chosenAccountingPeriod).fill)
+                .getOrElse(form(chosenAccountingPeriod))
+
+            Ok(
+              view(
+                preparedForm,
+                chosenAccountingPeriod,
+                request.isAgent,
+                request.subscriptionLocalData.organisationName,
+                request.subscriptionLocalData.plrReference,
+                mode
+              )
             )
-          )
-        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }
+        case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
 
@@ -111,10 +117,14 @@ class NewAccountingPeriodController @Inject() (
                 ),
               value =>
                 for {
-                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(NewAccountingPeriodPage, value))
-                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                } yield Redirect(Call("GET", "#")) // TODO: Redirect to new check your answers page
+                  maybeUserAnswers <- sessionRepository.get(request.userId)
+                  updatedAnswers   <- Future.fromTry(
+                                      maybeUserAnswers.getOrElse(UserAnswers(request.userId)).set(NewAccountingPeriodPage, value)
+                                    )
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(Call("GET", "#")) // TODO: Update to check your answers page
             )
+
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }

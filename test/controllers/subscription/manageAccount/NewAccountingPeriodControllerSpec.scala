@@ -21,12 +21,15 @@ import forms.NewAccountingPeriodFormProvider
 import generators.Generators
 import models.subscription.*
 import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.NewAccountingPeriodPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.subscriptionview.manageAccount.NewAccountingPeriodView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
 
@@ -155,6 +158,33 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
             applicationConfig,
             messages(application)
           ).toString
+        }
+      }
+
+      "must save and redirect to the check your answers page when a valid answer is submitted" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods))
+          .configure("features.amendMultipleAccountingPeriods" -> true)
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+          val request =
+            FakeRequest(POST, routes.NewAccountingPeriodController.onSubmit(NormalMode).url)
+              .withFormUrlEncodedBody(
+                "startDate.day"   -> "1",
+                "startDate.month" -> "1",
+                "startDate.year"  -> "2024",
+                "endDate.day"     -> "31",
+                "endDate.month"   -> "12",
+                "endDate.year"    -> "2025"
+              )
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "#" // TODO: Change to new check your answers page
         }
       }
 

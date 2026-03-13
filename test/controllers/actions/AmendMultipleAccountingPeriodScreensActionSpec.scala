@@ -47,8 +47,6 @@ class AmendMultipleAccountingPeriodScreensActionSpec extends SpecBase {
 
         running(application) {
           val identify                    = application.injector.instanceOf[IdentifierAction]
-          val getData                     = application.injector.instanceOf[SubscriptionDataRetrievalAction]
-          val requireData                 = application.injector.instanceOf[SubscriptionDataRequiredAction]
           val checkAmendMultipleAPScreens = application.injector.instanceOf[AmendMultipleAccountingPeriodScreensAction]
           val controllerComponents        = application.injector.instanceOf[MessagesControllerComponents]
 
