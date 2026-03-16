@@ -34,7 +34,7 @@
 
     @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
 
-        @if(isAgent && organisationName.isDefined) {
+        @if(organisationName.isDefined) {
             @sectionHeader(messages("manageGroupDetails.multiPeriod.agentHeader", organisationName.get, plrReference))
         }
 
