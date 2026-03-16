@@ -184,7 +184,7 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "#" // TODO: Change to new check your answers page
+          redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad().url
         }
       }
 

@@ -1,0 +1,101 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.utils.DateTimeUtils._
+@import config.FrontendAppConfig
+@import models.subscription.AccountingPeriod
+@import views.html.components.gds._
+
+@this(
+    layout:           templates.Layout,
+    formHelper:       FormWithCSRF,
+    sectionHeader:    sectionHeader,
+    heading:          heading,
+    govukWarningText: GovukWarningText,
+    govukButton:      GovukButton
+)
+
+@(newPeriod: AccountingPeriod, months: Int, days: Int, predictedPeriods: Seq[(AccountingPeriod, Int, Int)], isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("amendAccountingPeriodCYA.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+    @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
+
+        @if(isAgent && organisationName.isDefined) {
+            @sectionHeader(messages("manageGroupDetails.multiPeriod.agentHeader", organisationName.get, plrReference))
+        }
+
+        @heading(messages("amendAccountingPeriodCYA.heading"), "govuk-heading-l")
+
+        <div class="govuk-summary-card govuk-!-margin-bottom-6">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">@messages("amendAccountingPeriodCYA.newPeriod.title")</h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link" href="@controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(models.CheckMode).url">
+                            @messages("site.change")
+                            <span class="govuk-visually-hidden"> @messages("amendAccountingPeriodCYA.newPeriod.change.hidden")</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriodCYA.startDate")</dt>
+                        <dd class="govuk-summary-list__value">@newPeriod.startDate.toDateFormat</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriodCYA.endDate")</dt>
+                        <dd class="govuk-summary-list__value">@newPeriod.endDate.toDateFormat</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        @govukWarningText(WarningText(
+            iconFallbackText = Some(messages("site.warning")),
+            content = Text(messages("amendAccountingPeriodCYA.warning", months.toString, days.toString))
+        ))
+
+        @for(predicted <- predictedPeriods) {
+            @defining(predicted) { case (period, pMonths, pDays) =>
+                <div class="govuk-summary-card govuk-!-margin-bottom-6">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">@messages("amendAccountingPeriodCYA.predictedPeriod.title")</h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("amendAccountingPeriodCYA.startDate")</dt>
+                                <dd class="govuk-summary-list__value">@period.startDate.toDateFormat</dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">@messages("amendAccountingPeriodCYA.endDate")</dt>
+                                <dd class="govuk-summary-list__value">@period.endDate.toDateFormat</dd>
+                            </div>
+                        </dl>
+                        <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                            @messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString)
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+
+        @govukButton(ButtonViewModel(messages("amendAccountingPeriodCYA.confirm")).withAttribute("id" -> "submit"))
+    }
+}
