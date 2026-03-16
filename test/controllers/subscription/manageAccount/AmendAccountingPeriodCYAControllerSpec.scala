@@ -116,7 +116,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
-        body must not include messages(application)("amendAccountingPeriodCYA.predictedPeriod.duration")
+        body must not include "This will create an accounting period of"
       }
     }
 

@@ -72,10 +72,10 @@
         ))
 
         @for(predicted <- predictedPeriods) {
-            @defining(predicted) { case (_, pMonths, pDays) =>
+            @defining(predicted) { case (period, pMonths, pDays) =>
                 @govukWarningText(WarningText(
                     iconFallbackText = Some(messages("site.warning")),
-                    content = Text(messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString))
+                    content = Text(messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString, period.startDate.toDateFormat, period.endDate.toDateFormat))
                 ))
             }
         }

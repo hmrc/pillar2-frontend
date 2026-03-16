@@ -896,7 +896,7 @@ amendAccountingPeriodCYA.startDate = Start date
 amendAccountingPeriodCYA.endDate = End date
 amendAccountingPeriodCYA.warning = This change will create an accounting period of {0} months and {1} days.
 amendAccountingPeriodCYA.predictedPeriod.title = Period that will be created
-amendAccountingPeriodCYA.predictedPeriod.duration = This will create an accounting period of {0} months and {1} days.
+amendAccountingPeriodCYA.predictedPeriod.duration = This will create an accounting period of {0} months and {1} days from {2} to {3}.
 amendAccountingPeriodCYA.confirm = Confirm
 
 ###############################################
