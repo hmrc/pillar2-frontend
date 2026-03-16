@@ -17,6 +17,7 @@
 @import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
 @import models.subscription.AccountingPeriod
+@import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
 
 @this(
@@ -66,18 +67,16 @@
             </div>
         </div>
 
-        @govukWarningText(WarningText(
-            iconFallbackText = Some(messages("site.warning")),
-            content = Text(messages("amendAccountingPeriodCYA.warning", months.toString, days.toString))
-        ))
-
-        @for(predicted <- predictedPeriods) {
-            @defining(predicted) { case (period, pMonths, pDays) =>
-                @govukWarningText(WarningText(
-                    iconFallbackText = Some(messages("site.warning")),
-                    content = Text(messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString, period.startDate.toDateFormat, period.endDate.toDateFormat))
-                ))
+        @defining(
+            Seq(messages("amendAccountingPeriodCYA.warning", months.toString, days.toString)) ++
+            predictedPeriods.map { case (period, pMonths, pDays) =>
+                messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString, period.startDate.toDateFormat, period.endDate.toDateFormat)
             }
+        ) { warningLines =>
+            @govukWarningText(WarningText(
+                iconFallbackText = Some(messages("site.warning")),
+                content = HtmlContent(warningLines.mkString("<br>"))
+            ))
         }
 
         @govukButton(ButtonViewModel(messages("amendAccountingPeriodCYA.confirm")).withAttribute("id" -> "submit"))
