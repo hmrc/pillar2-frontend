@@ -23,11 +23,11 @@ import cats.syntax.option.*
 import cats.syntax.validated.*
 import config.FrontendAppConfig
 import connectors.{AccountActivityConnector, FinancialDataConnector}
-import models.OutstandingPaymentBannerScenario
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.financialdata.PaymentState.*
 import models.subscription.AccountingPeriod
-import models.{AccountActivityResponse, TransactionType}
+import models.{AccountActivityResponse, OutstandingPaymentBannerScenario, TransactionType}
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
 import services.FinancialDataService.{parseAccountActivityResponse, parseFinancialDataResponse}
@@ -56,7 +56,6 @@ class FinancialDataService @Inject() (financialDataConnector: FinancialDataConne
 }
 
 object FinancialDataService extends Logging {
-  import models.financialdata.PaymentState.*
 
   def getPaymentBannerScenario(financialData: FinancialData)(using
     clock:     Clock,
