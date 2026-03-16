@@ -159,7 +159,12 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
         result mustBe defined
         result mustBe Some(emptySubscriptionLocalData)
+      }
 
+      "return None when the backend returns 200 but JSON is unparseable" in {
+        stubGet(s"$getSubscription/$id", OK, """{"invalid": "json"}""")
+        val result = connector.getSubscriptionCache(id).futureValue
+        result mustBe None
       }
 
       "return None when the backend has returned a non-success status code" in {
@@ -170,6 +175,42 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result = connector.getSubscriptionCache(id).futureValue
         result mustBe None
+      }
+    }
+
+    "readSubscriptionV2" should {
+
+      "return SubscriptionDataV2 when backend returns 200 OK" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
+        val result = connector.readSubscriptionV2(id, plrReference).futureValue
+        result.formBundleNumber mustBe "119000004323"
+        result.accountingPeriod must have size 1
+        result.accountingPeriod.head.canAmendStartDate mustBe true
+      }
+
+      "fail with NoResultFound when backend returns 404" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe models.NoResultFound
+      }
+
+      "fail with UnprocessableEntityError when backend returns 422" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe UnprocessableEntityError
+      }
+
+      "fail with RetryableGatewayError when backend returns 500" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", INTERNAL_SERVER_ERROR, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+      }
+
+      "fail with RetryableGatewayError when backend returns 502" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", BAD_GATEWAY, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+      }
+
+      "fail with InternalIssueError when backend returns 503" in {
+        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", SERVICE_UNAVAILABLE, "")
+        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
       }
     }
 
@@ -215,7 +256,41 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
 object SubscriptionConnectorSpec {
   val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  private val errorCodes:     Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  val readSubscriptionV2Path: String   = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+
+  val v2SuccessJson: String =
+    """
+      |{
+      |  "formBundleNumber": "119000004323",
+      |  "upeDetails": {
+      |    "organisationName": "UK Only Organisation Ltd",
+      |    "registrationDate": "2024-01-31",
+      |    "domesticOnly": true,
+      |    "filingMember": false
+      |  },
+      |  "upeCorrespAddressDetails": {
+      |    "addressLine1": "1 High Street",
+      |    "countryCode": "GB"
+      |  },
+      |  "primaryContactDetails": {
+      |    "name": "Primary Contact",
+      |    "emailAddress": "primary.contact@example.com"
+      |  },
+      |  "secondaryContactDetails": null,
+      |  "filingMemberDetails": null,
+      |  "accountingPeriod": [
+      |    {
+      |      "startDate": "2024-01-06",
+      |      "endDate":   "2025-04-06",
+      |      "dueDate":   "2024-04-06",
+      |      "canAmendStartDate": true,
+      |      "canAmendEndDate":   true
+      |    }
+      |  ],
+      |  "accountStatus": { "inactive": false }
+      |}
+      |""".stripMargin
 
   private val businessSubscriptionSuccessJson: String =
     """

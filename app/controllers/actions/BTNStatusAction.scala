@@ -20,8 +20,8 @@ import controllers.btn.routes.*
 import models.btn.BTNStatus
 import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.requests.SubscriptionDataRequest
-import models.subscription.SubscriptionLocalData
-import pages.EntitiesInsideOutsideUKPage
+import models.subscription.{AccountingPeriod, SubscriptionLocalData}
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, RequestHeader, Result}
@@ -55,19 +55,25 @@ class BTNStatusAction @Inject() (
       .map { maybeAnswers =>
         (
           maybeAnswers.flatMap(_.get(BTNStatus)),
-          maybeAnswers.flatMap(_.get(EntitiesInsideOutsideUKPage))
+          maybeAnswers.flatMap(_.get(EntitiesInsideOutsideUKPage)),
+          maybeAnswers.flatMap(_.get(BTNChooseAccountingPeriodPage))
         )
       }
-      .flatMap { case (btnStatus, entitiesInsideOutsideUk) =>
+      .flatMap { case (btnStatus, entitiesInsideOutsideUk, chosenPeriod) =>
         btnStatus match {
           case Some(BTNStatus.submitted) =>
-            auditService
-              .auditBtnAlreadySubmitted(
-                subscriptionData.plrReference,
-                subscriptionData.subAccountingPeriod,
-                entitiesInsideOutsideUk.getOrElse(false)
-              )
-              .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
+            chosenPeriod match {
+              case Some(period) =>
+                auditService
+                  .auditBtnAlreadySubmitted(
+                    subscriptionData.plrReference,
+                    AccountingPeriod(period.startDate, period.endDate),
+                    entitiesInsideOutsideUk.getOrElse(false)
+                  )
+                  .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
+              case None =>
+                Future.successful(Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
+            }
           case Some(BTNStatus.processing) => Future.successful(Left(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN))))
           case _                          => Future.successful(Right(request))
         }

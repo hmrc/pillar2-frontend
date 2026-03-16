@@ -20,10 +20,12 @@ import cats.syntax.functor.*
 import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
+import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
-import models.{MneOrDomestic, Mode}
-import pages.{EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
+import models.subscription.AccountingPeriod
+import models.{MneOrDomestic, Mode, UserAnswers}
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -35,6 +37,7 @@ import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturn
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -60,36 +63,10 @@ class BTNAccountingPeriodController @Inject() (
         given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
-            Future
-              .successful(btnAccountingPeriodService.selectAccountingPeriod(userAnswers, filteredAccountingPeriodDetails))
-              .flatMap { period =>
-                btnAccountingPeriodService
-                  .outcome(userAnswers, period, filteredAccountingPeriodDetails, btnTypes = Set(BTN), uktrTypes = Set(UKTR_CREATE, UKTR_AMEND))
-                  .match {
-                    case BTNAccountingPeriodService.Outcome.BtnAlreadySubmitted =>
-                      auditService
-                        .auditBtnAlreadySubmitted(
-                          request.subscriptionLocalData.plrReference,
-                          request.subscriptionLocalData.subAccountingPeriod,
-                          entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
-                        )
-                        .as(Ok(btnAlreadyInPlaceView()))
-                    case BTNAccountingPeriodService.Outcome.UktrReturnAlreadySubmitted =>
-                      Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
-                    case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, hasMultipleAccountingPeriods, currentAP) =>
-                      Future.successful(
-                        Ok(
-                          accountingPeriodView(
-                            summaryList,
-                            mode,
-                            request.isAgent,
-                            request.subscriptionLocalData.organisationName,
-                            hasMultipleAccountingPeriods,
-                            currentAP
-                          )
-                        )
-                      )
-                  }
+            val period = btnAccountingPeriodService.selectAccountingPeriod(userAnswers, filteredAccountingPeriodDetails)
+            ensurePeriodPersisted(userAnswers, period)
+              .flatMap { answersToUse =>
+                renderOutcome(request, answersToUse, period, mode)
               }
               .recover { case _ =>
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
@@ -98,6 +75,50 @@ class BTNAccountingPeriodController @Inject() (
             logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
+      }
+
+  private def ensurePeriodPersisted(userAnswers: UserAnswers, period: AccountingPeriodDetails): Future[UserAnswers] =
+    userAnswers.get(BTNChooseAccountingPeriodPage) match {
+      case Some(_) => Future.successful(userAnswers)
+      case None    =>
+        userAnswers.set(BTNChooseAccountingPeriodPage, period) match {
+          case Success(updated) => sessionRepository.set(updated).map(_ => updated)
+          case Failure(_)       => Future.successful(userAnswers)
+        }
+    }
+
+  private def renderOutcome(
+    request:     ObligationsAndSubmissionsSuccessDataRequest[AnyContent],
+    userAnswers: UserAnswers,
+    period:      AccountingPeriodDetails,
+    mode:        Mode
+  )(using ObligationsAndSubmissionsSuccessDataRequest[AnyContent]): Future[Result] =
+    btnAccountingPeriodService
+      .outcome(userAnswers, period, filteredAccountingPeriodDetails, btnTypes = Set(BTN), uktrTypes = Set(UKTR_CREATE, UKTR_AMEND))
+      .match {
+        case BTNAccountingPeriodService.Outcome.BtnAlreadySubmitted =>
+          auditService
+            .auditBtnAlreadySubmitted(
+              request.subscriptionLocalData.plrReference,
+              AccountingPeriod(period.startDate, period.endDate),
+              entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
+            )
+            .as(Ok(btnAlreadyInPlaceView()))
+        case BTNAccountingPeriodService.Outcome.UktrReturnAlreadySubmitted =>
+          Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
+        case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, hasMultipleAccountingPeriods, currentAP) =>
+          Future.successful(
+            Ok(
+              accountingPeriodView(
+                summaryList,
+                mode,
+                request.isAgent,
+                request.subscriptionLocalData.organisationName,
+                hasMultipleAccountingPeriods,
+                currentAP
+              )
+            )
+          )
       }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { request =>

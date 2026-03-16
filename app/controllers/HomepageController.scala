@@ -85,19 +85,46 @@ class HomepageController @Inject() (
         result          <-
           OptionT.liftF {
             def attemptHomepageLoad(attempt: Int): Future[Result] = {
-              val homepageFuture = subscriptionService
-                .maybeReadSubscription(referenceNumber)
-                .flatMap {
-                  case Some(_) =>
-                    subscriptionService
-                      .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                      .flatMap(displayHomepage(_, referenceNumber))
-                  case None =>
-                    Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-                }
-                .recover { case UnprocessableEntityError =>
-                  Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
-                }
+              val homepageFuture =
+                if appConfig.amendMultipleAccountingPeriods then
+                  subscriptionService
+                    .readSubscriptionV2AndSave(request.userId, referenceNumber)
+                    .flatMap { localData =>
+                      renderHomepage(
+                        organisationName = localData.organisationName.getOrElse(""),
+                        registrationDate = localData.registrationDate.getOrElse(LocalDate.now()),
+                        accountStatus = localData.accountStatus.getOrElse(ActiveAccount),
+                        plrReference = referenceNumber
+                      )
+                    }
+                    .recover {
+                      case NoResultFound =>
+                        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                      case UnprocessableEntityError =>
+                        Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+                    }
+                else
+                  subscriptionService
+                    .maybeReadSubscription(referenceNumber)
+                    .flatMap {
+                      case Some(_) =>
+                        subscriptionService
+                          .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                          .flatMap { subData =>
+                            renderHomepage(
+                              organisationName = subData.upeDetails.organisationName,
+                              registrationDate = subData.upeDetails.registrationDate,
+                              accountStatus = subData.accountStatus.getOrElse(ActiveAccount),
+                              plrReference = referenceNumber
+                            )
+                          }
+                      case None =>
+                        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+                    }
+                    .recover { case UnprocessableEntityError =>
+                      Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+                    }
+
               homepageFuture.recoverWith {
                 case RetryableGatewayError if attempt + 1 < appConfig.homepageRetryMaxAttempts =>
                   logger.warn(
@@ -118,11 +145,15 @@ class HomepageController @Inject() (
       } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
-  private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(using
+  private def renderHomepage(
+    organisationName: String,
+    registrationDate: LocalDate,
+    accountStatus:    AccountStatus,
+    plrReference:     String
+  )(using
     request: OptionalDataRequest[?],
     hc:      HeaderCarrier
-  ): Future[Result] = {
-    val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount)
+  ): Future[Result] =
     sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.getOrElse(UserAnswers(request.userId))
       for {
@@ -150,8 +181,8 @@ class HomepageController @Inject() (
         val btnBanner = determineBtnBanner(accountStatus, notificationArea)
         Ok(
           homepageView(
-            subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.toDateFormat,
+            organisationName,
+            registrationDate.toDateFormat,
             btnBanner,
             returnsStatus,
             paymentsStatus,
