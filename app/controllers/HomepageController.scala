@@ -20,11 +20,11 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.*
 import models.financialdata.{AccountActivityData, FinancialData}
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.ActiveAccount
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
-import models.{NoResultFound, RetryableGatewayError, UnprocessableEntityError, UserAnswers}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
