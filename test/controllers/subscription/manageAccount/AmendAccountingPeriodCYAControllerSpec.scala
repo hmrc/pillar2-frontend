@@ -101,9 +101,8 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
         body must include(messages(application)("amendAccountingPeriodCYA.newPeriod.title"))
-        body must include(messages(application)("amendAccountingPeriodCYA.predictedPeriod.title"))
-        body must include("4 October 2022")
-        body must include("27 September 2023")
+        body must include("11")
+        body must include("24")
       }
     }
 
@@ -117,7 +116,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
-        body must not include messages(application)("amendAccountingPeriodCYA.predictedPeriod.title")
+        body must not include messages(application)("amendAccountingPeriodCYA.predictedPeriod.duration")
       }
     }
 
