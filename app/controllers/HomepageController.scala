@@ -21,16 +21,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.*
-import models.DueAndOverdueReturnBannerScenario
-import models.DueAndOverdueReturnBannerScenario.*
-import models.UnprocessableEntityError
-import models.UserAnswers
-import models.financialdata.PaymentState.*
-import models.financialdata.{AccountActivityData, FinancialData, PaymentState}
-import models.obligationsandsubmissions.*
+import models.financialdata.{AccountActivityData, FinancialData}
 import models.requests.OptionalDataRequest
-import models.subscription.*
-import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
+import models.subscription.AccountStatus.ActiveAccount
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -38,6 +32,7 @@ import play.api.libs.concurrent.Futures
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.*
+import services.HomepageBannerService.determineBtnBanner
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
@@ -172,15 +167,15 @@ class HomepageController @Inject() (
           else Future.successful(AccountActivityData(Seq.empty))
       } yield {
         val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
-        val returnsStatus                      = getDueOrOverdueReturnsStatus(obligationsResponse)
+        val returnsStatus                      = osService.getDueOrOverdueReturnsStatus(obligationsResponse)
         val (paymentsStatus, notificationArea) =
           if appConfig.useAccountActivityApi then
             val paymentsStatus   = FinancialDataService.getPaymentBannerScenarioFromActivity(accountActivityData)
-            val notificationArea = determineNotificationAreaFromActivity(returnsStatus, accountActivityData, accountStatus)
+            val notificationArea = homepageBannerService.determineNotificationAreaFromActivity(returnsStatus, accountActivityData, accountStatus)
             (paymentsStatus, notificationArea)
           else
             val paymentsStatus   = FinancialDataService.getPaymentBannerScenario(financialData)
-            val notificationArea = determineNotificationArea(returnsStatus, financialData, accountStatus)
+            val notificationArea = homepageBannerService.determineNotificationArea(returnsStatus, financialData, accountStatus)
             (paymentsStatus, notificationArea)
 
         val btnBanner = determineBtnBanner(accountStatus, notificationArea)
@@ -199,128 +194,4 @@ class HomepageController @Inject() (
         )
       }
     }
-
-  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
-
-    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
-      if period.obligations.isEmpty then {
-        None
-      } else {
-        val uktrObligation:       Option[Obligation] = period.uktrObligation
-        val girObligation:        Option[Obligation] = period.girObligation
-        val dueDatePassed:        Boolean            = period.dueDatePassed
-        val hasAnyOpenObligation: Boolean            = period.hasAnyOpenObligation
-        val isInReceivedPeriod:   Boolean            = period.isInReceivedPeriod
-
-        (uktrObligation, girObligation) match {
-          case (Some(uktr), Some(gir)) =>
-            (uktr.status, gir.status, dueDatePassed, isInReceivedPeriod) match {
-              case (ObligationStatus.Open, ObligationStatus.Open, false, _)          => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false, _)     => Some(Due)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false, _)     => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Open, true, _)           => Some(Overdue)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
-              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
-              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
-              case _                                                                 => None
-            }
-          case (Some(uktr), None) =>
-            (uktr.status, dueDatePassed) match {
-              case (ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, true)  => Some(Overdue)
-              case _                              => None
-            }
-          case (None, Some(gir)) =>
-            (gir.status, dueDatePassed) match {
-              case (ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, true)  => Some(Overdue)
-              case _                              => None
-            }
-          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
-          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
-          case _                                           => None
-        }
-      }
-
-    obligationsAndSubmissions.accountingPeriodDetails
-      .flatMap(periodStatus)
-      .maxOption(using DueAndOverdueReturnBannerScenario.ordering)
-
-  }
-
-  def determineNotificationArea(
-    uktr:          Option[DueAndOverdueReturnBannerScenario],
-    financialData: FinancialData,
-    accountStatus: AccountStatus
-  ): DynamicNotificationAreaState = (financialData, uktr, accountStatus) match {
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Due
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
-      DynamicNotificationAreaState.NoNotification
-
-  }
-
-  def determineNotificationAreaFromActivity(
-    uktr:                Option[DueAndOverdueReturnBannerScenario],
-    accountActivityData: AccountActivityData,
-    accountStatus:       AccountStatus
-  ): DynamicNotificationAreaState = (accountActivityData, uktr, accountStatus) match {
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
-      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
-      DynamicNotificationAreaState.ReturnExpectedNotification.Due
-
-    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
-      DynamicNotificationAreaState.NoNotification
-
-  }
-
-  val determineBtnBanner: (AccountStatus, DynamicNotificationAreaState) => BtnBanner = {
-    case (InactiveAccount, DynamicNotificationAreaState.OutstandingPaymentsWithBtn(_)) => BtnBanner.Hide
-    case (InactiveAccount, _)                                                          => BtnBanner.Show
-    case (_, _)                                                                        => BtnBanner.Hide
-  }
 }
