@@ -23,8 +23,8 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.financialdata.{AccountActivityData, FinancialData}
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{RetryableGatewayError, UnprocessableEntityError, UserAnswers}
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
+import models.{NoResultFound, RetryableGatewayError, UnprocessableEntityError, UserAnswers}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -194,5 +194,4 @@ class HomepageController @Inject() (
         )
       }
     }
-  }
 }
