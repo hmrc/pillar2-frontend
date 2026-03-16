@@ -33,6 +33,8 @@ case class ChosenAccountingPeriod(
     case _          => Pillar2MinStartDate.minusDays(1)
   }
 
-  def startBoundaryHintFormat:      String = startBoundaryMinusOneDay.toDateFormat
-  def startBoundaryHintEntryFormat: String = startBoundaryMinusOneDay.plusDays(1).toDateEntryFormat
+  def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
+
+  def startDateHintEntryFormat: String = selectedAccountingPeriod.startDate.toDateEntryFormat
+  def endDateHintEntryFormat:   String = selectedAccountingPeriod.endDate.toDateEntryFormat
 }
