@@ -101,7 +101,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 03 2026"
+          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -113,7 +113,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date, for example 15 03 2027"
+          .text mustBe s"Enter a date, for example 15 3 2027"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -130,11 +130,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 03 2026"
+            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date, for example 15 03 2027"
+            .text mustBe s"Enter a date, for example 15 3 2027"
         }
 
         "there are boundaries" in {
@@ -147,11 +147,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 03 2024"
+            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 03 2025"
+            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
         }
       }
 
@@ -197,7 +197,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 03 2026"
+          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -209,7 +209,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date, for example 15 03 2027"
+          .text mustBe s"Enter a date, for example 15 3 2027"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -226,11 +226,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 03 2026"
+            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date, for example 15 03 2027"
+            .text mustBe s"Enter a date, for example 15 3 2027"
         }
 
         "there are boundaries" in {
@@ -243,11 +243,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 03 2024"
+            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 03 2025"
+            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
         }
       }
 

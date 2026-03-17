@@ -27,7 +27,7 @@ object DateTimeUtils {
 
   // Patterns
   private val datePattern:       String = "d MMMM yyyy"
-  private val dateEntryPattern:  String = "dd MM yyyy"
+  private val dateEntryPattern:  String = "d M yyyy"
   private val dateTimePattern:   String = "d MMMM yyyy, h:mma (zzz)"
   private val timePattern:       String = "hh:mma (zzz)"
   private val dateAtTimePattern: String = "d MMMM yyyy 'at' h:mma"
@@ -35,7 +35,7 @@ object DateTimeUtils {
   // 3 December 2011
   private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
 
-  // 03 12 2011
+  // 3 12 2011
   private val dateEntryFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateEntryPattern)
 
   // 3 December 2011, 10:15am (GMT)
