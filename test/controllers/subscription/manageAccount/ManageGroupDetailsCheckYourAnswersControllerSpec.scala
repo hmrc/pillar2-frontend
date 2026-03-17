@@ -19,12 +19,13 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.*
+import models.*
 import models.requests.IdentifierRequest
-import models.subscription.{AccountingPeriodV2, SubscriptionLocalData}
-import models.{InternalIssueError, MneOrDomestic}
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, SubscriptionLocalData}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import pages.SubAccountingPeriodPage
+import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
 import play.api.Configuration
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -364,21 +365,37 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
   "selectPeriod" when {
 
     "a valid index is provided" must {
-      "save the selected period to cache and redirect to GroupAccountingPeriodController" in {
+      "save the selected period to cache, wipe NewAccountingPeriodPage and redirect to NewAccountingPeriodController" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
         running(application) {
           val expectedUpdated = localDataWithPeriods
             .setOrException(SubAccountingPeriodPage, amendablePeriod.toAccountingPeriod)
+
+          val startDate: LocalDate = LocalDate.now
+          val endDate:   LocalDate = LocalDate.now.plusYears(1)
+          val accountingPeriod = AccountingPeriod(startDate, endDate)
+          val userAnswers      = emptyUserAnswers
+            .set(NewAccountingPeriodPage, accountingPeriod)
+            .success
+            .value
+
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(Json.toJson(expectedUpdated)))
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+          when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(0).url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
+            controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(NormalMode).url
           )
           verify(mockSubscriptionConnector).save(eqTo("id"), any())(using any[HeaderCarrier])
+
+          val answersCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(answersCaptor.capture())
+          val savedAnswers = answersCaptor.getValue
+          savedAnswers.get(NewAccountingPeriodPage) mustBe None
         }
       }
     }

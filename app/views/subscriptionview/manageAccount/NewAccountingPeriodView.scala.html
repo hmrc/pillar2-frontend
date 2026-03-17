@@ -1,0 +1,90 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import models.subscription.ChosenAccountingPeriod
+@import utils.DateTimeUtils.{toDateFormat, toDateEntryFormat}
+@import viewmodels.LegendSize.Small
+@import views.html.components.gds._
+
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader,
+        heading: heading,
+        govukErrorSummary: GovukErrorSummary,
+        govukDateInput: GovukDateInput,
+        govukButton: GovukButton,
+        govukInsetText: GovukInsetText,
+        paragraphBody: paragraphBody
+)
+
+@(form: Form[_], chosenAccountingPeriod: ChosenAccountingPeriod, isAgent: Boolean, organisationName: Option[String], plrReference: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = title(form, messages("newAccountingPeriod.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+
+    @formHelper(action = controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))
+        }
+
+        @if(isAgent && organisationName.isDefined) {
+            <h2 class="govuk-caption-m hmrc-caption-m"><span id="section-header"><strong>Group:</strong> @organisationName <strong>ID:</strong> @plrReference</span></h2>
+        }
+
+        @heading(messages("newAccountingPeriod.heading"), "govuk-heading-l")
+
+        @govukInsetText(InsetText(content = HtmlContent(s"${messages("newAccountingPeriod.insetText")} <br> ${chosenAccountingPeriod.toString}")))
+
+        @paragraphBody(messages("newAccountingPeriod.p1"))
+        @paragraphBody(messages("newAccountingPeriod.p2"))
+
+        @govukDateInput(
+            DateViewModel(
+                field = form("startDate"),
+                legend = LegendViewModel(messages("newAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
+            )
+            .withHint(HintViewModel(content = Text(
+                messages(
+                    "newAccountingPeriod.startDate.hint",
+                    chosenAccountingPeriod.startBoundaryHintFormat,
+                    chosenAccountingPeriod.startDateHintEntryFormat)
+                )
+            ))
+        )
+
+        @govukDateInput(
+            DateViewModel(
+                field = form("endDate"),
+                legend = LegendViewModel(messages("newAccountingPeriod.endDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
+            )
+            .withHint(HintViewModel(
+                content = chosenAccountingPeriod.endDateBoundary.map { boundary =>
+                    messages("newAccountingPeriod.endDate.hint", boundary.plusDays(1).toDateFormat, chosenAccountingPeriod.endDateHintEntryFormat)
+                }.getOrElse {
+                    messages("newAccountingPeriod.endDate.hintWithoutBoundary", chosenAccountingPeriod.endDateHintEntryFormat)
+                }
+            ))
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}

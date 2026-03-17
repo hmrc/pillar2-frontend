@@ -840,6 +840,54 @@ subscriptionAddress.error.addressLine2.length = Second line of the address must 
 subscriptionAddress.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.change.hidden = the registered contact address
 
+newAccountingPeriod.title = What is the group’s new accounting period?
+newAccountingPeriod.heading = What is the group’s new accounting period?
+newAccountingPeriod.insetText = You are changing accounting period:
+newAccountingPeriod.p1 = The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity.
+newAccountingPeriod.p2 = Accounting periods are usually 12 months, but can be longer or shorter.
+
+newAccountingPeriod.startDate.heading = Start date
+newAccountingPeriod.startDate.hint = Enter a date after {0}, for example {1}
+newAccountingPeriod.endDate.heading = End date
+newAccountingPeriod.endDate.hint = Enter a date before {0}, for example {1}
+newAccountingPeriod.endDate.hintWithoutBoundary = Enter a date, for example {0}
+newAccountingPeriod.checkYourAnswersLabel = New accounting period
+
+newAccountingPeriod.error.startDate.dayMonthYear.minimum = The start date must be after 31 December 2023. Pillar 2 applies to accounting periods beginning on or after 31 December 2023.
+newAccountingPeriod.error.startDate.format = Enter a date in the correct format
+newAccountingPeriod.error.startDate.boundary = The start date must be after {0}
+newAccountingPeriod.error.startDate.required.all = Enter the start date of the group’s accounting period
+newAccountingPeriod.error.startDate.required.two = Start date must include a {0} and {1}
+newAccountingPeriod.error.startDate.required = Start date must include a {0}
+newAccountingPeriod.error.startDate.day.nan = Start date must be a real date
+newAccountingPeriod.error.startDate.month.nan = Start date must be a real date
+newAccountingPeriod.error.startDate.year.nan = Start date must be a real date
+newAccountingPeriod.error.startDate.dayMonthYear.invalid = Start date must be a real date
+newAccountingPeriod.error.startDate.dayMonth.invalid = Start date must be a real date
+newAccountingPeriod.error.startDate.monthYear.invalid = Start date must be a real date
+newAccountingPeriod.error.startDate.dayYear.invalid = Start date must be a real date
+newAccountingPeriod.error.startDate.day.length = Start date must be a real date
+newAccountingPeriod.error.startDate.month.length = Start date must be a real date
+newAccountingPeriod.error.startDate.year.length = Start date must be a real date
+
+newAccountingPeriod.error.endDate.before.startDate = The end date cannot be before the start date
+newAccountingPeriod.error.endDate.format = Enter a date in the correct format
+newAccountingPeriod.error.endDate.boundary = The end date must be before {0}
+newAccountingPeriod.error.endDate.required.all = Enter the end date of the group’s accounting period
+newAccountingPeriod.error.endDate.required.two = End date must include a {0} and {1}
+newAccountingPeriod.error.endDate.required = End date must include a {0}
+newAccountingPeriod.error.endDate.day.nan = End date must be a real date
+newAccountingPeriod.error.endDate.month.nan = End date must be a real date
+newAccountingPeriod.error.endDate.year.nan = End date must be a real date
+newAccountingPeriod.error.endDate.dayMonthYear.invalid = End date must be a real date
+newAccountingPeriod.error.endDate.dayMonth.invalid = End date must be a real date
+newAccountingPeriod.error.endDate.monthYear.invalid = End date must be a real date
+newAccountingPeriod.error.endDate.dayYear.invalid = End date must be a real date
+newAccountingPeriod.error.endDate.day.length = End date must be a real date
+newAccountingPeriod.error.endDate.month.length = End date must be a real date
+newAccountingPeriod.error.endDate.year.length = End date must be a real date
+newAccountingPeriod.change.hidden = the dates of the group’s new accounting period
+
 ###############################################
 #
 # Homepage
