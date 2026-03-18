@@ -48,6 +48,7 @@ class GrsReturnController @Inject() (
           grsReturnService.continueUpe(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
         case EntityType.LimitedLiabilityPartnership =>
           grsReturnService.continueUpe(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
+        case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
@@ -62,6 +63,7 @@ class GrsReturnController @Inject() (
           grsReturnService.continueFm(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
         case EntityType.LimitedLiabilityPartnership =>
           grsReturnService.continueFm(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
+        case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
@@ -77,6 +79,7 @@ class GrsReturnController @Inject() (
             grsReturnService.continueRfm(journeyId, EntityType.UkLimitedCompany, request.userAnswers)
           case EntityType.LimitedLiabilityPartnership =>
             grsReturnService.continueRfm(journeyId, EntityType.LimitedLiabilityPartnership, request.userAnswers)
+          case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
