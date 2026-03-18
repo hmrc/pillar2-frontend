@@ -26,7 +26,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthController @Inject() (
   val controllerComponents:   MessagesControllerComponents,
@@ -41,8 +41,9 @@ class AuthController @Inject() (
   def signOut(): Action[AnyContent] = Action.async { request =>
     given Request[AnyContent] = request
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(Retrievals.internalId) { case Some(internalId) =>
-        sessionRepository.clear(internalId)
+      .retrieve(Retrievals.internalId) {
+        case Some(internalId) => sessionRepository.clear(internalId)
+        case _                => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
@@ -58,8 +59,9 @@ class AuthController @Inject() (
   def signOutNoSurvey(): Action[AnyContent] = Action.async { request =>
     given Request[AnyContent] = request
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(Retrievals.internalId) { case Some(internalId) =>
-        sessionRepository.clear(internalId)
+      .retrieve(Retrievals.internalId) {
+        case Some(internalId) => sessionRepository.clear(internalId)
+        case _                => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad.url)))
