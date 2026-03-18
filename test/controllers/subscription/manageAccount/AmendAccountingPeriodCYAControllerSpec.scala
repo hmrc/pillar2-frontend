@@ -26,6 +26,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import utils.DateTimeUtils.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -117,6 +118,44 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
         body must not include "This will create an accounting period of"
+      }
+    }
+
+    "renders full 12 month open-ended period that covers today" in {
+      val todayDate      = today
+      val existingPeriod = AccountingPeriodV2(
+        startDate = todayDate.minusMonths(4),
+        endDate = todayDate.minusMonths(2),
+        dueDate = todayDate.plusMonths(1),
+        canAmendStartDate = false,
+        canAmendEndDate = true
+      )
+      val newOpenEndedPeriod     = AccountingPeriod(startDate = todayDate.minusMonths(3), endDate = todayDate.minusDays(10))
+      val expectedOpenEndedStart = newOpenEndedPeriod.endDate.plusDays(1)
+      val expectedOpenEndedEnd   = expectedOpenEndedStart.plusMonths(12).minusDays(1)
+
+      val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newOpenEndedPeriod)
+      val application = buildApp(
+        userAnswers = Some(ua),
+        localData = Some(emptySubscriptionLocalData.copy(accountingPeriods = Some(Seq(existingPeriod))))
+      )
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val body = contentAsString(result)
+        body must include(expectedOpenEndedStart.toDateFormat)
+        body must include(expectedOpenEndedEnd.toDateFormat)
+        body must not include messages(application)(
+          "amendAccountingPeriodCYA.predictedPeriod.duration",
+          "0",
+          "10",
+          expectedOpenEndedStart.toDateFormat,
+          todayDate.toDateFormat
+        )
       }
     }
 

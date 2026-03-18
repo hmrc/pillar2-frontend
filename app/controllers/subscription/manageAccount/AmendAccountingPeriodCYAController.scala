@@ -119,8 +119,7 @@ class AmendAccountingPeriodCYAController @Inject() (
       .unfold(from) { cur =>
         Option.when(!cur.isAfter(until)) {
           val periodEnd = cur.plusMonths(12).minusDays(1)
-          val end       = if periodEnd.isBefore(until) then periodEnd else until
-          (AccountingPeriod(cur, end), periodEnd.plusDays(1))
+          (AccountingPeriod(cur, periodEnd), periodEnd.plusDays(1))
         }
       }
       .toSeq
