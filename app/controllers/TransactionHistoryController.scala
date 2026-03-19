@@ -60,15 +60,15 @@ class TransactionHistoryController @Inject() (
 
   private def retrieveTransactions(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
-  ): Future[Seq[Transaction]] =
+  ): Future[(Seq[Transaction], BigDecimal)] =
     if appConfig.useAccountActivityApi then
       accountActivityConnector
         .retrieveAccountActivity(plrReference, fromDate, toDate)
-        .map(_.toTransactions)
+        .map(response => (response.toTransactions, response.unallocatedPaymentAmount))
     else
       financialDataConnector
         .retrieveTransactionHistory(plrReference, fromDate, toDate)
-        .map(_.financialHistory)
+        .map(response => (response.financialHistory, BigDecimal(0)))
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
     (identifierAction andThen dataRetrievalAction).async { request =>
@@ -79,20 +79,21 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
-        financialHistory <-
+        subscriptionData                        <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        transactionsAndUnallocatedPaymentAmount <-
           OptionT.liftF(
             retrieveTransactions(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
           )
+        (financialHistory, unallocatedPaymentAmount) = transactionsAndUnallocatedPaymentAmount
         result <-
-          if financialHistory.isEmpty then
-            OptionT.liftF(Future.successful(Redirect(routes.TransactionHistoryController.onPageLoadNoTransactionHistory())))
-          else
+          if financialHistory.isEmpty then {
+            OptionT.liftF(Future.successful(Ok(noTransactionHistoryView(unallocatedPaymentAmount, appConfig.useAccountActivityApi, request.isAgent))))
+          } else
             OptionT
               .fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
               .map { table =>
                 val pagination = generatePagination(financialHistory, page)
-                Ok(transactionHistoryView(table, pagination, request.isAgent))
+                Ok(transactionHistoryView(unallocatedPaymentAmount, appConfig.useAccountActivityApi, table, pagination, request.isAgent))
               }
       } yield result
 
@@ -113,7 +114,8 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-      } yield Ok(noTransactionHistoryView(request.isAgent))
+
+      } yield Ok(noTransactionHistoryView(BigDecimal(0), appConfig.useAccountActivityApi, request.isAgent))
 
       result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
         Redirect(routes.TransactionHistoryController.onPageLoadError())
@@ -219,7 +221,11 @@ object TransactionHistoryController {
 
     // New API uses message keys (payment, repayment, repaymentInterest); legacy API uses display strings
     val paymentTypeText =
-      if useNewApi then messages(s"transactionHistory.paymentType.${history.paymentType}")
+      if useNewApi then
+        history.paymentType match {
+          case "repayment" | "repaymentInterest" => messages(s"transactionHistory.paymentType.${history.paymentType}")
+          case other                             => other
+        }
       else history.paymentType
 
     Seq(

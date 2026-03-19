@@ -38,18 +38,18 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       TransactionDescription.matches(t.transactionDesc, TransactionDescription.PaymentOnAccount)
     }
 
-    // Payments: PaymentOnAccount transactions that don't have repayment clearingDetails
-    // Uses originalAmount and transactionDate from the transaction
-    val payments: Seq[Transaction] = paymentOnAccountTransactions
-      .filterNot(_.clearingDetails.exists(_.exists(_.clearingReason.contains(AccountActivityClearance.RepaymentReason))))
-      .map { transaction =>
-        Transaction(
-          date = transaction.transactionDate,
-          paymentType = "payment",
-          amountPaid = transaction.originalAmount.abs,
-          amountRepaid = BigDecimal(0)
-        )
-      }
+    // Payments: PaymentOnAccount transactions have been allocated to charges
+    // Uses amount and transactionDate from the transaction
+    val allocatedPayments: Seq[Transaction] = for {
+      transaction    <- paymentOnAccountTransactions
+      clearingDetail <- transaction.clearingDetails.getOrElse(Seq.empty)
+      if clearingDetail.clearingReason.contains(AccountActivityClearance.AllocatedToChargeReason)
+    } yield Transaction(
+      date = clearingDetail.clearingDate,
+      paymentType = s"Payment allocated to ${clearingDetail.transactionDesc}",
+      amountPaid = clearingDetail.amount.abs,
+      amountRepaid = BigDecimal(0)
+    )
 
     // Repayments: From PaymentOnAccount transactions with "Outgoing payment - Paid" in clearingDetails
     // Uses clearingDate and amount from the clearingDetail
@@ -80,7 +80,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       amountRepaid = clearingDetail.amount.abs
     )
 
-    (payments ++ repayments ++ repaymentInterest).sortBy(_.date)(Ordering[java.time.LocalDate].reverse)
+    (allocatedPayments ++ repayments ++ repaymentInterest).sortBy(_.date)(Ordering[java.time.LocalDate].reverse)
   }
 
   /** Converts account activity to outstanding payments summaries for display on Outstanding Payments page. Filters for Debit transactions with
@@ -133,6 +133,13 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
           (t.startDate.isDefined && t.endDate.isDefined)
       )
       .flatMap(_.accruedInterest)
+      .sum
+
+  def unallocatedPaymentAmount: BigDecimal =
+    transactionDetails
+      .filter(_.transactionType == TransactionType.Payment)
+      .flatMap(_.outstandingAmount.filter(_ < 0))
+      .map(_.abs)
       .sum
 }
 
@@ -192,6 +199,7 @@ object AccountActivityTransaction {
 }
 
 object AccountActivityClearance {
-  val RepaymentReason = "Outgoing payment - Paid"
+  val RepaymentReason         = "Outgoing payment - Paid"
+  val AllocatedToChargeReason = "Allocated to Charge"
   given format: OFormat[AccountActivityClearance] = Json.format[AccountActivityClearance]
 }

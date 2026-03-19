@@ -146,7 +146,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     "return OK and the correct view for a payment history" in {
 
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -168,6 +168,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          0,
+          false,
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
@@ -182,7 +184,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     "return OK and the correct view for a payment history with pagination" in {
 
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -204,6 +206,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          0,
+          false,
           generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponsePagination.financialHistory, None),
           isAgent = false
@@ -218,7 +222,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     "redirect to no transaction history page if no payment history results are found" in {
 
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -291,7 +295,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
     "return OK and correct view for no transaction history" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -312,6 +316,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          0,
+          false,
           isAgent = false
         )(
           request,
@@ -367,7 +373,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
     "return OK and correct view confirming that the dates have been formatted correctly" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -389,6 +395,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          0,
+          false,
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
           isAgent = false
@@ -415,7 +423,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         )
 
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -541,8 +549,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/payment/history-empty")
+        status(result) mustEqual OK
+        contentAsString(result) must include("No transactions.")
       }
     }
 

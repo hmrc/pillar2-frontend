@@ -26,6 +26,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.behaviours.ViewScenario
 import views.html.paymenthistory.TransactionHistoryView
 
+import scala.jdk.CollectionConverters.*
+
 class TransactionHistoryViewSpec extends ViewSpecBase {
 
   lazy val table: Table = Table(
@@ -80,10 +82,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  lazy val page:      TransactionHistoryView = inject[TransactionHistoryView]
-  lazy val groupView: Document               = Jsoup.parse(page(table, pagination, isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView: Document               = Jsoup.parse(page(table, pagination, isAgent = true)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                 = "Transaction history"
+  lazy val page: TransactionHistoryView = inject[TransactionHistoryView]
+  lazy val groupView:           Document = Jsoup.parse(page(500, true, table, pagination, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView:           Document = Jsoup.parse(page(500, true, table, pagination, isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle:           String   = "Transaction history"
   lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
   lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
   lazy val viewLinks:           Elements = groupView.getElementsByTag("a")
@@ -107,15 +109,54 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraphs for a group" in {
-      groupViewParagraphs.get(0).text() mustBe "Details of payments made to and by your group over the last 7 years from today's date."
+      groupViewParagraphs.get(0).text() mustBe "Details of payments made to and by your group over the last 7 years from today's date." +
+        " You'll also find the total of any amounts remaining unallocated."
       groupViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
         "each transaction."
     }
 
     "have correct paragraphs for an agent" in {
-      agentViewParagraphs.get(0).text() mustBe "Details of payments made to and by your client over the last 7 years from today's date."
+      agentViewParagraphs.get(0).text() mustBe "Details of payments made to and by your client over the last 7 years from today's date." +
+        " You'll also find the total of any amounts remaining unallocated."
       agentViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
         "each transaction."
+    }
+
+    "have the correct unallocated payment amount shown" in {
+      groupView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Unallocated amount: £500"
+    }
+
+    "display a correct html details section" in {
+      groupView
+        .getElementsByClass("govuk-details")
+        .first()
+        .getElementsByClass("govuk-details__summary-text")
+        .text() mustBe "Charge description abbreviations"
+
+      val items =
+        groupView
+          .getElementsByClass("govuk-details__text")
+          .first()
+          .getElementsByClass("govuk-list")
+          .first()
+          .getElementsByTag("li")
+          .eachText()
+          .asScala
+          .toList
+
+      items mustBe List(
+        "UKTR - UK Tax Return",
+        "DTT - Domestic Top-up Tax",
+        "MTT - Multinational Top-up Tax",
+        "IIR - Income Inclusion Rule",
+        "UTPR - Undertaxed Profit Rule",
+        "ORN/GIR - Overseas Return Notification or GloBE Information Return",
+        "GAAR - General Anti Abuse Rule penalty"
+      )
+    }
+
+    "display transactions heading" in {
+      groupView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
     }
 
     "have a table" in {
@@ -173,7 +214,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have an 'Outstanding payments' heading" in {
       val h2Elements: Elements = groupView.getElementsByTag("h2")
-      h2Elements.first.text() mustBe "Outstanding payments"
+      h2Elements.get(2).text() mustBe "Outstanding payments"
     }
 
     "show the correct transaction history description" in {
