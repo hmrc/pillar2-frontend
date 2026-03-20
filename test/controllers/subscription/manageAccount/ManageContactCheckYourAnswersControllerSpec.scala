@@ -40,7 +40,8 @@ import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import java.util.UUID
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.duration.*
+import scala.concurrent.{Await, Future, Promise}
 
 class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   val subDataWithAddress: SubscriptionLocalData = emptySubscriptionLocalData
@@ -410,8 +411,12 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
+        val finalSetDone = Promise[Unit]()
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
+        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenAnswer { (_: InvocationOnMock) =>
+          finalSetDone.trySuccess(())
+          Future.successful(true)
+        }
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
@@ -431,9 +436,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
+          Await.ready(finalSetDone.future, 15.seconds)
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
@@ -451,8 +458,12 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
+        val finalSetDone = Promise[Unit]()
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenReturn(Future.successful(true)) // Mock for the final set
+        when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenAnswer { (_: InvocationOnMock) =>
+          finalSetDone.trySuccess(())
+          Future.successful(true)
+        }
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
@@ -472,9 +483,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
+          Await.ready(finalSetDone.future, 15.seconds)
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
         }
@@ -490,8 +503,12 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
+        val finalSetDone = Promise[Unit]()
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
+        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenAnswer { (_: InvocationOnMock) =>
+          finalSetDone.trySuccess(())
+          Future.successful(true)
+        }
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
@@ -511,9 +528,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
+          Await.ready(finalSetDone.future, 15.seconds)
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
@@ -529,11 +548,14 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
+        val finalSetDone = Promise[Unit]()
         when(mockSessionRepository.set(initialUserAnswersWithInProgress))
           .thenReturn(Future.successful(true))
 
-        when(mockSessionRepository.set(finalUserAnswersWithFailException))
-          .thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenAnswer { (_: InvocationOnMock) =>
+          finalSetDone.trySuccess(())
+          Future.successful(true)
+        }
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(MissingReferenceNumberError))
@@ -553,9 +575,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
+          await(result)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
+          Await.ready(finalSetDone.future, 15.seconds)
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
