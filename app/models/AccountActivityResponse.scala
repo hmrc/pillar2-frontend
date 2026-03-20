@@ -25,8 +25,8 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
 
   /** Converts account activity to transactions for the Transaction History screen.
     *
-    *   - Allocated Payments: PaymentOnAccount transactions where they have been allocated to a charge. Uses amount and transactionDate from the
-    *     sub transactions.
+    *   - Allocated Payments: PaymentOnAccount transactions where they have been allocated to a charge. Uses amount and transactionDate from the sub
+    *     transactions.
     *   - Repayments: PaymentOnAccount transactions where clearingDetails contain "Outgoing payment - Paid". Uses amount and clearingDate from the
     *     clearingDetail.
     *   - Repayment Interest: Credit transactions with RepaymentInterest description. Uses amount and clearingDate from clearingDetails with "Outgoing
