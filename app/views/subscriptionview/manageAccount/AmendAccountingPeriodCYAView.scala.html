@@ -23,7 +23,6 @@
 @this(
     layout:           templates.Layout,
     formHelper:       FormWithCSRF,
-    sectionHeader:    sectionHeader,
     heading:          heading,
     govukWarningText: GovukWarningText,
     govukButton:      GovukButton
@@ -35,8 +34,9 @@
 
     @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
 
+        @* Matches NewAccountingPeriodView: bold labels separate readable titles from the PLR reference *@
         @if(organisationName.isDefined) {
-            @sectionHeader(messages("manageGroupDetails.multiPeriod.agentHeader", organisationName.get, plrReference))
+            <h2 class="govuk-caption-m hmrc-caption-m"><span id="section-header"><strong>Group:</strong> @organisationName.get <strong>ID:</strong> @plrReference</span></h2>
         }
 
         @heading(messages("amendAccountingPeriodCYA.heading"), "govuk-heading-l")
