@@ -25,7 +25,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
 
   /** Converts account activity to transactions for the Transaction History screen.
     *
-    *   - Payments: PaymentOnAccount transactions where clearingDetails do NOT contain repayments. Uses originalAmount and transactionDate from the
+    *   - Allocated Payments: PaymentOnAccount transactions where they have been allocated to a charge. Uses amount and transactionDate from the
     *     parent transaction.
     *   - Repayments: PaymentOnAccount transactions where clearingDetails contain "Outgoing payment - Paid". Uses amount and clearingDate from the
     *     clearingDetail.
@@ -38,7 +38,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       TransactionDescription.matches(t.transactionDesc, TransactionDescription.PaymentOnAccount)
     }
 
-    // Payments: PaymentOnAccount transactions have been allocated to charges
+    // Allocated Payments: PaymentOnAccount transactions have been allocated to charges
     // Uses amount and transactionDate from the transaction
     val allocatedPayments: Seq[Transaction] = for {
       transaction    <- paymentOnAccountTransactions

@@ -58,7 +58,7 @@ class TransactionHistoryController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def retrieveTransactions(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
+  private def retrieveTransactionsAndUnallocatedAmount(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[(Seq[Transaction], BigDecimal)] =
     if appConfig.useAccountActivityApi then
@@ -82,7 +82,11 @@ class TransactionHistoryController @Inject() (
         subscriptionData                        <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
         transactionsAndUnallocatedPaymentAmount <-
           OptionT.liftF(
-            retrieveTransactions(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+            retrieveTransactionsAndUnallocatedAmount(
+              referenceNumber,
+              subscriptionData.upeDetails.registrationDate,
+              appConfig.transactionHistoryEndDate
+            )
           )
         (financialHistory, unallocatedPaymentAmount) = transactionsAndUnallocatedPaymentAmount
         result <-
