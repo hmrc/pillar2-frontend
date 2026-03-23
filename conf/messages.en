@@ -1562,8 +1562,8 @@ manageGroupDetails.h2 = Do not press back in your browser or leave this page. It
 # ---------------------------------------------
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.group.p1 = Details of payments made to and by your group over the last 7 years from today''s date. You''ll also find the total of any amounts remaining unallocated.
-transactionHistory.agent.p1 = Details of payments made to and by your client over the last 7 years from today''s date. You''ll also find the total of any amounts remaining unallocated.
+transactionHistory.group.p1 = Details of payments made to and by your group over the last 7 years to today''s date. You''ll also find the total of any amounts remaining unallocated.
+transactionHistory.agent.p1 = Details of payments made to and by the group over the last 7 years to today''s date. You''ll also find the total of any amounts remaining unallocated.
 transactionHistory.p2 = It may take up to 5 working days for transactions to appear.
 transactionHistory.unallocatedPaymentAmount = Unallocated amount: £{0}
 transactionHistory.details = Charge description abbreviations

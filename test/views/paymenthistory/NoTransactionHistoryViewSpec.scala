@@ -53,7 +53,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       groupViewParagraphs.get(0).text mustBe
-        "Details of payments made to and by your group over the last 7 years from today's date." +
+        "Details of payments made to and by your group over the last 7 years to today's date." +
         " You'll also find the total of any amounts remaining unallocated."
     }
 
@@ -94,7 +94,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       agentViewParagraphs.get(0).text mustBe
-        "Details of payments made to and by your client over the last 7 years from today's date." +
+        "Details of payments made to and by the group over the last 7 years to today's date." +
         " You'll also find the total of any amounts remaining unallocated."
     }
 
