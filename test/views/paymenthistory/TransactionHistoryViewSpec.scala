@@ -109,13 +109,13 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraphs for a group" in {
-      groupViewParagraphs.get(0).text() mustBe "Details of payments made to and by your group over the last 7 years to today's date." +
+      groupViewParagraphs.get(0).text() mustBe "Details of payments made to and by your group for the last 7 years to today's date." +
         " You'll also find the total of any amounts remaining unallocated."
       groupViewParagraphs.get(1).text() mustBe "It may take up to 5 working days for transactions to appear."
     }
 
     "have correct paragraphs for an agent" in {
-      agentViewParagraphs.get(0).text() mustBe "Details of payments made to and by the group over the last 7 years to today's date." +
+      agentViewParagraphs.get(0).text() mustBe "Details of payments made to and by the group for the last 7 years to today's date." +
         " You'll also find the total of any amounts remaining unallocated."
       agentViewParagraphs.get(1).text() mustBe "It may take up to 5 working days for transactions to appear."
     }
