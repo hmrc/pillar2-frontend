@@ -1564,7 +1564,7 @@ transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
 transactionHistory.group.p1 = Details of payments made to and by your group over the last 7 years from today''s date. You''ll also find the total of any amounts remaining unallocated.
 transactionHistory.agent.p1 = Details of payments made to and by your client over the last 7 years from today''s date. You''ll also find the total of any amounts remaining unallocated.
-transactionHistory.p2 = It will take up to 5 working days for payments to appear after each transaction.
+transactionHistory.p2 = It may take up to 5 working days for transactions to appear.
 transactionHistory.unallocatedPaymentAmount = Unallocated amount: £{0}
 transactionHistory.details = Charge description abbreviations
 transactionHistory.transactions = Transactions
@@ -1589,7 +1589,7 @@ transactionHistory.error.p3 = Return to your account homepage
 
 transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
-transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
+transactionHistory.none.p2 = It may take up to 5 working days for transactions to appear.
 transactionHistory.none.p3 = No transactions.
 
 manageContact.cannotReturn.title = You cannot return, you have updated your contact details

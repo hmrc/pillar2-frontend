@@ -59,7 +59,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 2" in {
       groupViewParagraphs.get(1).text mustBe
-        "It will take up to 5 working days for payments to appear after each transaction."
+        "It may take up to 5 working days for transactions to appear."
     }
 
     "have the correct unallocated payment amount shown" in {
@@ -100,7 +100,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 2" in {
       agentViewParagraphs.get(1).text mustBe
-        "It will take up to 5 working days for payments to appear after each transaction."
+        "It may take up to 5 working days for transactions to appear."
     }
 
     "have the correct unallocated payment amount shown" in {
