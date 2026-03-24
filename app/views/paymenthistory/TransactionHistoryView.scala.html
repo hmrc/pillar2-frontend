@@ -29,10 +29,11 @@
         paragraphMessageWithLink: ParagraphMessageWithLink,
         paragraphBodyLink: paragraphBodyLink,
         govukPagination: GovukPagination,
-        govukTable: GovukTable
+        govukTable: GovukTable,
+        details: GovukDetails
 )
 
-@(transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
@@ -49,6 +50,29 @@
   }
 
   @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
+
+  @if(showUnallocatedPaymentAmount) {
+    @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
+  }
+
+  @details(Details(
+      summary = messages("transactionHistory.details"),
+      content = HtmlContent(Html(
+          s"""
+          |<ul class="govuk-list">
+          |  <li>${messages("payments.outstanding.abbreviation.uktr")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.dtt")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.mtt")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.iir")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.utpr")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.orngir")}</li>
+          |  <li>${messages("payments.outstanding.abbreviation.gaar")}</li>
+          |</ul>
+          """.stripMargin
+      ))
+  ))
+
+  @h2(messages("transactionHistory.transactions"), size = "m")
 
   @ScrollWrapper {
     @govukTable(transactionHistoryTable)

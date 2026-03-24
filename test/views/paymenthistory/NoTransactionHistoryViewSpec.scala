@@ -27,8 +27,8 @@ import views.html.paymenthistory.NoTransactionHistoryView
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
   lazy val page:                NoTransactionHistoryView = inject[NoTransactionHistoryView]
-  lazy val groupView:           Document                 = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView:           Document                 = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+  lazy val groupView:           Document                 = Jsoup.parse(page(500, true, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView:           Document                 = Jsoup.parse(page(0, true, isAgent = true)(request, appConfig, messages).toString())
   lazy val pageTitle:           String                   = "Transaction history"
   lazy val groupViewParagraphs: Elements                 = groupView.getElementsByClass("govuk-body")
   lazy val agentViewParagraphs: Elements                 = agentView.getElementsByClass("govuk-body")
@@ -53,16 +53,30 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       groupViewParagraphs.get(0).text mustBe
-        "Details of payments made to and by your group over the last 7 years from today's date."
+        "Details of payments made to and by your group for the last 7 years to today's date." +
+        " You'll also find the total of any amounts remaining unallocated."
     }
 
     "have paragraph 2" in {
       groupViewParagraphs.get(1).text mustBe
-        "It will take up to 5 working days for payments to appear after each transaction."
+        "It may take up to 5 working days for transactions to appear."
+    }
+
+    "have the correct unallocated payment amount shown" in {
+      groupView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Unallocated amount: £500"
+    }
+
+    "display transactions heading" in {
+      groupView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
     }
 
     "have paragraph 3" in {
-      groupViewParagraphs.get(2).text mustBe "No transactions made."
+      groupViewParagraphs.get(2).text mustBe "No transactions."
+    }
+
+    "show the correct outstanding payments link" in {
+      val outstandingPaymentsLink = groupView.getElementsByTag("a").select(":matchesOwn(View outstanding payments)").first()
+      outstandingPaymentsLink.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
     }
   }
 
@@ -80,16 +94,30 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       agentViewParagraphs.get(0).text mustBe
-        "Details of payments made to and by your client over the last 7 years from today's date."
+        "Details of payments made to and by the group for the last 7 years to today's date." +
+        " You'll also find the total of any amounts remaining unallocated."
     }
 
     "have paragraph 2" in {
       agentViewParagraphs.get(1).text mustBe
-        "It will take up to 5 working days for payments to appear after each transaction."
+        "It may take up to 5 working days for transactions to appear."
+    }
+
+    "have the correct unallocated payment amount shown" in {
+      agentView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Unallocated amount: £0"
+    }
+
+    "display transactions heading" in {
+      agentView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
     }
 
     "have paragraph 3" in {
-      agentViewParagraphs.get(2).text mustBe "No transactions made."
+      agentViewParagraphs.get(2).text mustBe "No transactions."
+    }
+
+    "show the correct outstanding payments link" in {
+      val outstandingPaymentsLink = agentView.getElementsByTag("a").select(":matchesOwn(View outstanding payments)").first()
+      outstandingPaymentsLink.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
     }
 
     val viewScenarios: Seq[ViewScenario] =
