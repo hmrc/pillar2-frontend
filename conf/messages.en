@@ -909,6 +909,7 @@ homepage.payments.title = Payments
 homepage.payments.transactionHistory.linkText = View transaction history
 homepage.payments.outstandingPayments.linkText = View outstanding payments
 homepage.payments.tags.outstanding = Outstanding
+homepage.payments.stoodoverCharges.linkText = Stoodover charges
 homepage.payments.repayments.linkText = Request a repayment
 homepage.payments.tags.paid = Paid
 
@@ -1847,6 +1848,31 @@ payments.noOutstanding.heading = Outstanding payments
 payments.noOutstanding.group.p1 = You have no outstanding payments.
 payments.noOutstanding.agent.p1 = Your client has no outstanding payments.
 payments.noOutstanding.linkText = Return to your account homepage
+
+
+###############################################
+#
+# Stoodover charges
+#
+###############################################
+payments.stoodoverCharges.title = Stoodover charges
+payments.stoodoverCharges.stoodoverTotal = Stoodover total: £{0}
+
+payments.stoodoverCharges.details.heading = Details of stoodover charges
+payments.stoodoverCharges.p1 = We have separated the charges by accounting period.
+payments.stoodoverCharges.details.noStoodoverCharges = No stoodover charges.
+
+payments.stoodoverCharges.abbreviation.heading = Charge description abbreviations
+payments.stoodoverCharges.abbreviation.uktr = UKTR - UK Tax Return
+payments.stoodoverCharges.abbreviation.dtt = DTT - Domestic Top-up Tax
+payments.stoodoverCharges.abbreviation.mtt = MTT - Multinational Top-up Tax
+payments.stoodoverCharges.abbreviation.iir = IIR - Income Inclusion Rule
+payments.stoodoverCharges.abbreviation.utpr = UTPR - Undertaxed Profit Rule
+payments.stoodoverCharges.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
+
+payments.stoodoverCharges.outstandingPayments.p1 = Find full details of any payments due, including penalties and interest.
+payments.stoodoverCharges.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
+
 
 # ---------------------------------------------
 # Pillar 2 Research
