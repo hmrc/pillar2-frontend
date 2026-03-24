@@ -49,8 +49,8 @@ object AmendAccountingPeriodDurationFormatter {
 
   private def joinParts(parts: Seq[String]): String =
     parts match
-      case Seq()    => ""
-      case Seq(one) => one
+      case Seq()     => ""
+      case Seq(one)  => one
       case p :+ last =>
         p.mkString(", ") + " and " + last
 }
