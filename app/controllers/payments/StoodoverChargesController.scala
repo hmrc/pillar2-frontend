@@ -90,8 +90,8 @@ class StoodoverChargesController @Inject() (
         Ok(view(plrReference = plrRef, data = tables, stoodoverTotal = amountDue, organisationName = subscriptionData.upeDetails.organisationName))
       }).getOrElse {
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }.recover {
-        case _ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }.recover { case _ =>
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }
 }

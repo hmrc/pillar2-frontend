@@ -138,7 +138,11 @@
                     ),
                     rows =  summary.rows.map { row =>
                         Seq(
-                            TableRow(content = Text(row.description)),
+                            TableRow(content = if(useAccountActivity && row.appealFlag.contains(true)) {
+                                                   HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
+                                               } else {
+                                                   Text(row.description)
+                                               }),
                             TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
                             TableRow(content = Text(row.dueDate.toDateFormat))
                         )

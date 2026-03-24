@@ -53,7 +53,9 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
     Jsoup.parse(page(plrRef, data, amountDue(data), "orgName")(request, appConfig, messages, isAgent = false).toString())
 
   lazy val noStoodoverChargesView: Document =
-    Jsoup.parse(page(plrRef, noStoodoverChargesData, amountDue(noStoodoverChargesData), "orgName")(request, appConfig, messages, isAgent = false).toString())
+    Jsoup.parse(
+      page(plrRef, noStoodoverChargesData, amountDue(noStoodoverChargesData), "orgName")(request, appConfig, messages, isAgent = false).toString()
+    )
 
   lazy val agentView: Document =
     Jsoup.parse(page(plrRef, data, amountDue(data), "orgName")(request, appConfig, messages, isAgent = true).toString())

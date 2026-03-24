@@ -44,6 +44,17 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         .toString()
     )
 
+  lazy val accountActivityAppealView: Document =
+    Jsoup.parse(
+      page(dataWithAppeal, plrRef, amountDue(dataWithAppeal), hasOverdueReturnPayment = true, useAccountActivity = true)(
+        request,
+        appConfig,
+        messages,
+        isAgent = false
+      )
+        .toString()
+    )
+
   lazy val agentView: Document =
     Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = true).toString())
 
@@ -188,6 +199,85 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
+    "when account activity is enabled" must {
+      "display the appeal label when there's an appeal flag" in {
+
+        val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
+
+        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+
+        val headers: Elements = table.getElementsByTag("th")
+        headers.get(0).text() mustBe "Description"
+        headers.get(1).text() mustBe "Amount"
+        headers.get(2).text() mustBe "Due date"
+
+        val rows: Elements = table.getElementsByTag("td")
+        rows.get(0).text() mustBe "UKTR - DTT Appealed"
+        rows.get(1).text() mustBe "£1,000.00"
+        rows.get(2).text() mustBe "31 March 2024"
+      }
+
+      "not display the appeal label when there's no appeal flag" in {
+
+        val table = accountActivityOrganisationView.getElementsByClass("govuk-table").first()
+
+        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+
+        val headers: Elements = table.getElementsByTag("th")
+        headers.get(0).text() mustBe "Description"
+        headers.get(1).text() mustBe "Amount"
+        headers.get(2).text() mustBe "Due date"
+
+        val rows: Elements = table.getElementsByTag("td")
+        rows.get(0).text() mustBe "UKTR - DTT"
+        rows.get(1).text() mustBe "£1,000.00"
+        rows.get(2).text() mustBe "31 March 2024"
+      }
+    }
+
+    "when account activity is disabled" must {
+      "not display the appeal label even when there's an appeal flag" in {
+
+        val row: OutstandingPaymentsRow =
+          OutstandingPaymentsRow(
+            description = "UKTR - DTT",
+            outstandingAmount = 1000.00,
+            dueDate = LocalDate.of(2024, 3, 31),
+            appealFlag = Some(true)
+          )
+        val tableData: OutstandingPaymentsTable      = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
+        val data:      Seq[OutstandingPaymentsTable] = Seq(tableData)
+
+        lazy val organisationViewWithAppealFlagView: Document =
+          Jsoup.parse(
+            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(
+              request,
+              appConfig,
+              messages,
+              isAgent = false
+            )
+              .toString()
+          )
+
+        val table = organisationViewWithAppealFlagView.getElementsByClass("govuk-table").first()
+
+        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+
+        val headers: Elements = table.getElementsByTag("th")
+        headers.get(0).text() mustBe "Description"
+        headers.get(1).text() mustBe "Amount"
+        headers.get(2).text() mustBe "Due date"
+
+        val rows: Elements = table.getElementsByTag("td")
+        rows.get(0).text() mustBe "UKTR - DTT"
+        rows.get(1).text() mustBe "£1,000.00"
+        rows.get(2).text() mustBe "31 March 2024"
+      }
+    }
+
     "display transaction history section" in {
       h2Elements.get(3).text() mustBe "Transaction history"
       paragraphs.get(7).text() mustBe "Payments will appear in the transaction history page within 3-5 working days."
@@ -288,6 +378,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
               .toString()
           )
         ),
+        ViewScenario("accountActivityAppealView", accountActivityAppealView),
         ViewScenario("agentView", agentView),
         ViewScenario(
           "noOverdueReturnPaymentAgentView",
@@ -308,13 +399,20 @@ object OutstandingPaymentsViewSpec {
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
   val row: OutstandingPaymentsRow =
-    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31))
+    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31), appealFlag = None)
 
   val table: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
 
   val data: Seq[OutstandingPaymentsTable] = Seq(table)
 
   val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
+
+  val rowWithAppeal: OutstandingPaymentsRow =
+    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31), appealFlag = Some(true))
+
+  val tableWithAppeal: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
+
+  val dataWithAppeal: Seq[OutstandingPaymentsTable] = Seq(tableWithAppeal)
 
   def amountDue(data: Seq[OutstandingPaymentsTable]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
 }

@@ -103,10 +103,10 @@ class StoodoverChargesControllerSpec extends SpecBase {
 
     "return OK and display the correct view for a GET with stoodover charges" in {
 
-      val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2025, 1, 1), endDate = LocalDate.of(2025, 12, 31))
-      val row: StoodoverChargesRow = StoodoverChargesRow(description = "UKTR - DTT", stoodoverAmount = BigDecimal(1000))
-      val table: StoodoverChargesTable = StoodoverChargesTable(accountingPeriod = accountingPeriod, rows = Seq(row))
-      val data: Seq[StoodoverChargesTable] = Seq(table)
+      val accountingPeriod: AccountingPeriod           = AccountingPeriod(startDate = LocalDate.of(2025, 1, 1), endDate = LocalDate.of(2025, 12, 31))
+      val row:              StoodoverChargesRow        = StoodoverChargesRow(description = "UKTR - DTT", stoodoverAmount = BigDecimal(1000))
+      val table:            StoodoverChargesTable      = StoodoverChargesTable(accountingPeriod = accountingPeriod, rows = Seq(row))
+      val data:             Seq[StoodoverChargesTable] = Seq(table)
 
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswers),
@@ -127,8 +127,8 @@ class StoodoverChargesControllerSpec extends SpecBase {
           .thenReturn(Future.successful(accountActivityResponse))
 
         val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[StoodoverChargesView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[StoodoverChargesView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
@@ -190,7 +190,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
           .thenReturn(Future.failed(NoResultFound))
 
         val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
