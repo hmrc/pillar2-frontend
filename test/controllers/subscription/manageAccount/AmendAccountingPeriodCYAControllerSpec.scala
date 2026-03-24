@@ -36,7 +36,6 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
   private val newPeriod: AccountingPeriod =
     AccountingPeriod(LocalDate.of(2021, 9, 28), LocalDate.of(2022, 10, 3))
 
-  // Two original periods — Example 2 scenario from PIL-2857
   private val allPeriods: Seq[AccountingPeriodV2] = Seq(
     AccountingPeriodV2(
       LocalDate.of(2021, 9, 28),
@@ -90,9 +89,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
       }
     }
 
-    "renders CYA page with new period, duration and predicted micro-period (Scenario 3)" in {
-      // New period: 2021-09-28 → 2022-10-03
-      // Gap after: 2022-10-04 → 2023-09-27
+    "renders CYA page with new period, duration and predicted micro-period" in {
       val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
       val application = buildApp(userAnswers = Some(ua))
       running(application) {
@@ -102,8 +99,8 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
         body must include(messages(application)("amendAccountingPeriodCYA.newPeriod.title"))
-        body must include("11")
-        body must include("24")
+        body must include("1 year and 6 days")
+        body must include("11 months and 24 days")
       }
     }
 
@@ -149,13 +146,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val body = contentAsString(result)
         body must include(expectedOpenEndedStart.toDateFormat)
         body must include(expectedOpenEndedEnd.toDateFormat)
-        body must not include messages(application)(
-          "amendAccountingPeriodCYA.predictedPeriod.duration",
-          "0",
-          "10",
-          expectedOpenEndedStart.toDateFormat,
-          todayDate.toDateFormat
-        )
+        body must include("1 year")
       }
     }
 
@@ -176,7 +167,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
   "AmendAccountingPeriodCYAController onSubmit" when {
 
-    "redirects to journey recovery (submission deferred to Ticket 7)" in {
+    "redirects to journey recovery on submit" in {
       val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
       val application = buildApp(userAnswers = Some(ua))
       running(application) {

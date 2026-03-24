@@ -28,13 +28,12 @@
     govukButton:      GovukButton
 )
 
-@(newPeriod: AccountingPeriod, months: Int, days: Int, predictedPeriods: Seq[(AccountingPeriod, Int, Int)], isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(newPeriod: AccountingPeriod, newDurationText: String, predictedPeriods: Seq[(AccountingPeriod, String)], isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("amendAccountingPeriodCYA.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
 
-        @* Matches NewAccountingPeriodView: bold labels separate readable titles from the PLR reference *@
         @if(organisationName.isDefined) {
             <h2 class="govuk-caption-m hmrc-caption-m"><span id="section-header"><strong>Group:</strong> @organisationName.get <strong>ID:</strong> @plrReference</span></h2>
         }
@@ -68,9 +67,9 @@
         </div>
 
         @defining(
-            Seq(messages("amendAccountingPeriodCYA.warning", months.toString, days.toString)) ++
-            predictedPeriods.map { case (period, pMonths, pDays) =>
-                messages("amendAccountingPeriodCYA.predictedPeriod.duration", pMonths.toString, pDays.toString, period.startDate.toDateFormat, period.endDate.toDateFormat)
+            Seq(messages("amendAccountingPeriodCYA.warning", newDurationText)) ++
+            predictedPeriods.map { case (period, durationText) =>
+                messages("amendAccountingPeriodCYA.predictedPeriod.duration", durationText, period.startDate.toDateFormat, period.endDate.toDateFormat)
             }
         ) { warningLines =>
             @govukWarningText(WarningText(

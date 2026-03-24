@@ -24,6 +24,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.i18n.Messages
+import utils.AmendAccountingPeriodDurationFormatter
 import utils.DateTimeUtils
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodCYAView
 
@@ -47,6 +49,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
+        given Messages = request.messages
         (
           maybeUserAnswers.flatMap(_.get(NewAccountingPeriodPage)),
           request.subscriptionLocalData.accountingPeriods
@@ -54,16 +57,14 @@ class AmendAccountingPeriodCYAController @Inject() (
           case (Some(newPeriod), Some(allPeriods)) =>
             val affected              = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
             val predicted             = predictMicroPeriods(newPeriod, affected)
-            val (months, days)        = calculateDuration(newPeriod.startDate, newPeriod.endDate)
+            val newDurationText       = AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(newPeriod.startDate, newPeriod.endDate)
             val predictedWithDuration = predicted.map { p =>
-              val (pMonths, pDays) = calculateDuration(p.startDate, p.endDate)
-              (p, pMonths, pDays)
+              (p, AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(p.startDate, p.endDate))
             }
             Ok(
               view(
                 newPeriod,
-                months,
-                days,
+                newDurationText,
                 predictedWithDuration,
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
@@ -78,7 +79,6 @@ class AmendAccountingPeriodCYAController @Inject() (
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData) { _ =>
-      // Submission to ETMP is handled in the next ticket (Ticket 7).
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
 
@@ -123,11 +123,4 @@ class AmendAccountingPeriodCYAController @Inject() (
         }
       }
       .toSeq
-
-  private def calculateDuration(start: LocalDate, end: LocalDate): (Int, Int) = {
-    val period = java.time.Period.between(start, end.plusDays(1))
-    val months = period.getYears * 12 + period.getMonths
-    val days   = period.getDays
-    (months, days)
-  }
 }
