@@ -17,6 +17,7 @@
 package utils
 
 import base.SpecBase
+
 import java.time.{LocalDate, Period}
 
 class AmendAccountingPeriodDurationFormatterSpec extends SpecBase {
