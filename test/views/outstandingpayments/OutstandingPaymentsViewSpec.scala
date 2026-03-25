@@ -169,23 +169,57 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         h2Elements.get(2).text() mustBe "Details of outstanding payments"
       }
 
-      "table if there are outstanding payments" in {
-        paragraphs.get(5).text() mustBe "We have separated any payments due by accounting period."
+      "table if there are outstanding payments" when {
+        "account activity toggle is true, include stoodover charge content" in {
+          val paragraphs = accountActivityOrganisationView.getElementsByClass("govuk-body")
 
-        val table = organisationView.getElementsByClass("govuk-table").first()
+          paragraphs.get(7).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+          paragraphs.get(8).text() mustBe "An appealed charge is still part of the amount due until it is partly or completely stoodover."
 
-        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
-        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+          accountActivityOrganisationView.getElementsByClass("govuk-link")
 
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(0).text() mustBe "Description"
-        headers.get(1).text() mustBe "Amount"
-        headers.get(2).text() mustBe "Due date"
+          val viewStoodoverChargesLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
 
-        val rows: Elements = table.getElementsByTag("td")
-        rows.get(0).text() mustBe "UKTR - DTT"
-        rows.get(1).text() mustBe "£1,000.00"
-        rows.get(2).text() mustBe "31 March 2024"
+          viewStoodoverChargesLink.text() mustBe "View stoodover charges"
+          viewStoodoverChargesLink.attr("href") mustBe controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+
+          val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
+
+          val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+          caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+
+          val headers: Elements = table.getElementsByTag("th")
+          headers.get(0).text() mustBe "Description"
+          headers.get(1).text() mustBe "Amount"
+          headers.get(2).text() mustBe "Due date"
+
+          val rows: Elements = table.getElementsByTag("td")
+          rows.get(0).text() mustBe "UKTR - DTT Appealed"
+          rows.get(1).text() mustBe "£1,000.00"
+          rows.get(2).text() mustBe "31 March 2024"
+        }
+
+        "account activity toggle is false, show correct content" in {
+          paragraphs.get(5).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+
+          val table = organisationView.getElementsByClass("govuk-table").first()
+
+          val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+          caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
+
+          val headers: Elements = table.getElementsByTag("th")
+          headers.get(0).text() mustBe "Description"
+          headers.get(1).text() mustBe "Amount"
+          headers.get(2).text() mustBe "Due date"
+
+          val rows: Elements = table.getElementsByTag("td")
+          rows.get(0).text() mustBe "UKTR - DTT"
+          rows.get(1).text() mustBe "£1,000.00"
+          rows.get(2).text() mustBe "31 March 2024"
+
+          paragraphs.text must not include "An appealed charge is still part of the amount due until it is partly or completely stoodover."
+          links.text      must not include "View stoodover charges"
+        }
       }
 
       "display 'No payments due' message if no payments are outstanding" in {
@@ -200,40 +234,22 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "when account activity is enabled" must {
-      "display the appeal label when there's an appeal flag" in {
-
+      "display the appeal label when the appeal flag is true" in {
         val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
-
-        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
-        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
-
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(0).text() mustBe "Description"
-        headers.get(1).text() mustBe "Amount"
-        headers.get(2).text() mustBe "Due date"
 
         val rows: Elements = table.getElementsByTag("td")
         rows.get(0).text() mustBe "UKTR - DTT Appealed"
-        rows.get(1).text() mustBe "£1,000.00"
-        rows.get(2).text() mustBe "31 March 2024"
+
+        accountActivityAppealView.getElementsByClass("govuk-tag--red").size mustBe 1
       }
 
-      "not display the appeal label when there's no appeal flag" in {
-
+      "not display the appeal label when the appeal flag is false" in {
         val table = accountActivityOrganisationView.getElementsByClass("govuk-table").first()
-
-        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
-        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
-
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(0).text() mustBe "Description"
-        headers.get(1).text() mustBe "Amount"
-        headers.get(2).text() mustBe "Due date"
 
         val rows: Elements = table.getElementsByTag("td")
         rows.get(0).text() mustBe "UKTR - DTT"
-        rows.get(1).text() mustBe "£1,000.00"
-        rows.get(2).text() mustBe "31 March 2024"
+
+        accountActivityOrganisationView.getElementsByClass("govuk-tag--red").size mustBe 0
       }
     }
 
@@ -278,9 +294,30 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
+    "The stoodover charges section" must {
+      "be displayed when account activity toggle is true" in {
+        accountActivityOrganisationView.getElementsByTag("h2").get(3).text() mustBe "Stoodover charges"
+        accountActivityOrganisationView
+          .getElementsByClass("govuk-body")
+          .get(10)
+          .text() mustBe "Details of appealed charges and other standover payments."
+
+        val viewTransactionHistoryLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
+
+        viewTransactionHistoryLink.text() mustBe "View stoodover charges"
+        viewTransactionHistoryLink.attr("href") mustBe controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+      }
+
+      "not be displayed when account activity toggle is false" in {
+        h2Elements.text() must not include "Stoodover charges"
+        paragraphs.text() must not include "Details of appealed charges and other standover payments."
+        links.text()      must not include "View stoodover charges"
+      }
+    }
+
     "display transaction history section" in {
       h2Elements.get(3).text() mustBe "Transaction history"
-      paragraphs.get(7).text() mustBe "Payments will appear in the transaction history page within 3-5 working days."
+      paragraphs.get(6).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
 
       val viewTransactionHistoryLink = links.get(3)
 
@@ -290,7 +327,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display penalties and charges section" in {
       h2Elements.get(4).text() mustBe "Penalties and interest charges"
-      paragraphs.get(9).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      paragraphs.get(8).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
       val penaltiesLink: Element = links.get(4)
 
@@ -337,7 +374,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
         agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(8).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {

@@ -56,6 +56,27 @@ class HomepageViewSpec extends ViewSpecBase {
         .toString()
     )
 
+  lazy val organisationAccountActivityView: Document =
+    Jsoup.parse(
+      page(
+        organisationName,
+        date,
+        BtnBanner.Hide,
+        None,
+        None,
+        DynamicNotificationAreaState.NoNotification,
+        plrRef,
+        isAgent = false,
+        hasReturnsUnderEnquiry = false,
+        useAccountActivity = true
+      )(
+        request,
+        appConfig,
+        messages
+      )
+        .toString()
+    )
+
   lazy val agentView: Document =
     Jsoup.parse(
       page(
@@ -68,6 +89,27 @@ class HomepageViewSpec extends ViewSpecBase {
         plrRef,
         isAgent = true,
         hasReturnsUnderEnquiry = false
+      )(
+        request,
+        appConfig,
+        messages
+      )
+        .toString()
+    )
+
+  lazy val agentAccountActivityView: Document =
+    Jsoup.parse(
+      page(
+        organisationName,
+        date,
+        BtnBanner.Hide,
+        None,
+        None,
+        DynamicNotificationAreaState.NoNotification,
+        plrRef,
+        isAgent = true,
+        hasReturnsUnderEnquiry = false,
+        useAccountActivity = true
       )(
         request,
         appConfig,
@@ -109,27 +151,48 @@ class HomepageViewSpec extends ViewSpecBase {
       links.get(1).attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
-    "display payments card with correct content" in {
-      val paymentsCard:      Element  = organisationView.getElementsByClass("card-half-width").get(1)
-      val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
+    "display payments card with correct content" when {
+      "when account activity toggle is false" in {
+        val paymentsCard:      Element  = organisationView.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
 
-      paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
+        paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
-      paymentsCardLinks.get(0).text() mustBe "View transaction history"
-      paymentsCardLinks.get(0).attr("href") mustBe
-        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCardLinks.get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
 
-      paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
-      paymentsCardLinks.get(1).attr("href") mustBe
-        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCardLinks.get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-      paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
-      paymentsCardLinks.get(2).attr("href") mustBe
-        controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+        paymentsCardLinks.get(2).text() mustBe "Request a repayment"
+        paymentsCardLinks.get(2).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
 
-      paymentsCardLinks.get(3).text() mustBe "Request a repayment"
-      paymentsCardLinks.get(3).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      "when account activity toggle is true" in {
+        val paymentsCard:      Element  = organisationAccountActivityView.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
+
+        paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
+
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCardLinks.get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCardLinks.get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCardLinks.get(2).attr("href") mustBe
+          controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+
+        paymentsCardLinks.get(3).text() mustBe "Request a repayment"
+        paymentsCardLinks.get(3).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
     }
 
     "display manage account card with correct content" in {
@@ -412,49 +475,93 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByClass("govuk-body").first().text() mustBe "You have one or more returns under enquiry"
     }
 
-    "show clean Payments card with no tag when no scenario is provided" in {
-      val organisationViewWithOutstandingScenario: Document =
-        Jsoup.parse(
-          page(
-            organisationName,
-            date,
-            BtnBanner.Hide,
-            None,
-            None,
-            DynamicNotificationAreaState.NoNotification,
-            plrRef,
-            isAgent = false,
-            hasReturnsUnderEnquiry = false
-          )(
-            request,
-            appConfig,
-            messages
+    "show clean Payments card with no tag when no scenario is provided" when {
+      "account activity toggle is true" in {
+        val organisationViewWithOutstandingScenario: Document =
+          Jsoup.parse(
+            page(
+              organisationName,
+              date,
+              BtnBanner.Hide,
+              None,
+              None,
+              DynamicNotificationAreaState.NoNotification,
+              plrRef,
+              isAgent = false,
+              hasReturnsUnderEnquiry = false,
+              useAccountActivity = true
+            )(
+              request,
+              appConfig,
+              messages
+            )
+              .toString()
           )
-            .toString()
-        )
-      val returnsCard:       Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
-      val paymentsCardLinks: Elements = returnsCard.getElementsByTag("a")
+        val returnsCard:       Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = returnsCard.getElementsByTag("a")
 
-      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag")
-      statusTags.size() mustBe 0
+        val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag")
+        statusTags.size() mustBe 0
 
-      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+        returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
 
-      paymentsCardLinks.get(0).text() mustBe "View transaction history"
-      paymentsCardLinks.get(0).attr("href") mustBe
-        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCardLinks.get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
 
-      paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
-      paymentsCardLinks.get(1).attr("href") mustBe
-        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCardLinks.get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-      paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
-      paymentsCardLinks.get(2).attr("href") mustBe
-        controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCardLinks.get(2).attr("href") mustBe
+          controllers.payments.routes.StoodoverChargesController.onPageLoad.url
 
-      paymentsCardLinks.get(3).text() mustBe "Request a repayment"
-      paymentsCardLinks.get(3).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+        paymentsCardLinks.get(3).text() mustBe "Request a repayment"
+        paymentsCardLinks.get(3).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
+
+      "account activity toggle is false" in {
+        val organisationViewWithOutstandingScenario: Document =
+          Jsoup.parse(
+            page(
+              organisationName,
+              date,
+              BtnBanner.Hide,
+              None,
+              None,
+              DynamicNotificationAreaState.NoNotification,
+              plrRef,
+              isAgent = false,
+              hasReturnsUnderEnquiry = false
+            )(
+              request,
+              appConfig,
+              messages
+            )
+              .toString()
+          )
+        val returnsCard:       Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = returnsCard.getElementsByTag("a")
+
+        val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag")
+        statusTags.size() mustBe 0
+
+        returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCardLinks.get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCardLinks.get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+        paymentsCardLinks.get(2).text() mustBe "Request a repayment"
+        paymentsCardLinks.get(2).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
     }
 
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
@@ -520,7 +627,8 @@ class HomepageViewSpec extends ViewSpecBase {
 
     val organisationViewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("organisationView", organisationView)
+        ViewScenario("organisationView", organisationView),
+        ViewScenario("organisationAccountActivityView", organisationAccountActivityView)
       )
 
     behaveLikeAccessiblePage(organisationViewScenarios)
@@ -562,27 +670,48 @@ class HomepageViewSpec extends ViewSpecBase {
         controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
-    "display payments card with correct content" in {
-      val paymentsCard:      Element  = agentView.getElementsByClass("card-half-width").get(1)
-      val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
+    "display payments card with correct content" when {
+      "account activity toggle is true" in {
+        val paymentsCard:      Element  = agentAccountActivityView.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
 
-      paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
+        paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
-      paymentsCardLinks.get(0).text() mustBe "View transaction history"
-      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe
-        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
 
-      paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
-      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe
-        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-      paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
-      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
-        controllers.payments.routes.StoodoverChargesController.onPageLoad.url
+        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
+          controllers.payments.routes.StoodoverChargesController.onPageLoad.url
 
-      paymentsCardLinks.get(3).text() mustBe "Request a repayment"
-      paymentsCard.getElementsByTag("a").get(3).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+        paymentsCardLinks.get(3).text() mustBe "Request a repayment"
+        paymentsCard.getElementsByTag("a").get(3).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
+
+      "account activity toggle is false" in {
+        val paymentsCard:      Element  = agentView.getElementsByClass("card-half-width").get(1)
+        val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
+
+        paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
+
+        paymentsCardLinks.get(0).text() mustBe "View transaction history"
+        paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe
+          controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+
+        paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+        paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe
+          controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+        paymentsCardLinks.get(2).text() mustBe "Request a repayment"
+        paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
+          controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
+      }
     }
 
     "display manage account card with correct content" in {
@@ -694,7 +823,8 @@ class HomepageViewSpec extends ViewSpecBase {
 
     val agentViewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("agentView", agentView)
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentAccountActivityView", agentAccountActivityView)
       )
 
     behaveLikeAccessiblePage(agentViewScenarios)

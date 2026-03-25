@@ -1823,7 +1823,8 @@ payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this referen
 payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay (opens in a new page)
 
 payments.outstanding.details.heading = Details of outstanding payments
-payments.outstanding.details.p1 = We have separated any payments due by accounting period.
+payments.outstanding.details.p1 = We have separated any payments due by the associated accounting period where there is one.
+payments.outstanding.details.p2 = An appealed charge is still part of the amount due until it is partly or completely stoodover.
 payments.outstanding.details.nothingDue = No payments due.
 
 payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
@@ -1835,8 +1836,10 @@ payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
 payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
 payments.outstanding.abbreviation.gaar = GAAR - General Anti Abuse Rule penalty
 
-payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
-payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
+payments.outstanding.stoodoverCharges.p1 = Details of appealed charges and other standover payments.
+payments.outstanding.stoodoverCharges.linkText = View stoodover charges
+
+payments.outstanding.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
 
 payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
 payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
