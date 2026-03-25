@@ -907,6 +907,33 @@ amendAccountingPeriodCYA.confirm = Confirm
 
 ###############################################
 #
+# Amend Accounting Period - Waiting Room
+#
+###############################################
+amendAccountingPeriod.waitingRoom.title = Submitting your accounting period amendment
+amendAccountingPeriod.waitingRoom.h1 = Submitting your accounting period amendment
+amendAccountingPeriod.waitingRoom.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
+
+###############################################
+#
+# Amend Accounting Period - Confirmation
+#
+###############################################
+amendAccountingPeriod.confirmation.title = Accounting period change successful
+amendAccountingPeriod.confirmation.heading = Accounting period change successful
+amendAccountingPeriod.confirmation.group = Group
+amendAccountingPeriod.confirmation.id = ID
+amendAccountingPeriod.confirmation.timestamp = You have successfully made an accounting period change on: {0}
+amendAccountingPeriod.confirmation.whatHasChanged = What has changed
+amendAccountingPeriod.confirmation.gapPeriods = Your new accounting period left a gap. We have created an additional accounting period to cover this. This period is subject to the usual obligations for Pillar 2 Top-up Taxes.
+amendAccountingPeriod.confirmation.newPeriod.title = New accounting period
+amendAccountingPeriod.confirmation.startDate = Start date
+amendAccountingPeriod.confirmation.endDate = End date
+amendAccountingPeriod.confirmation.furtherAdjustments = Any changes made may have affected the periods before or after. You can return to the group details page to make further adjustments as needed.
+amendAccountingPeriod.confirmation.backToGroupDetails = Back to manage group details
+
+###############################################
+#
 # Homepage
 #
 ###############################################

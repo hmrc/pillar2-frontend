@@ -16,22 +16,29 @@
 
 package controllers.subscription.manageAccount
 
+import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.*
-import models.subscription.{AccountingPeriod, AccountingPeriodV2}
-import pages.NewAccountingPeriodPage
-import play.api.i18n.I18nSupport
-import play.api.i18n.Messages
+import models.*
+import models.longrunningsubmissions.LongRunningSubmission
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, AmendAccountingPeriodStatus, SubscriptionLocalData}
+import pages.*
+import play.api.Logging
+import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.{ReferenceNumberService, SubscriptionService}
+import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.AmendAccountingPeriodDurationFormatter
-import utils.DateTimeUtils
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.{AmendAccountingPeriodDurationFormatter, DateTimeUtils}
+import utils.DateTimeUtils.*
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodCYAView
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
 import javax.inject.{Inject, Named}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AmendAccountingPeriodCYAController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
@@ -39,11 +46,14 @@ class AmendAccountingPeriodCYAController @Inject() (
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
+  subscriptionService:                    SubscriptionService,
+  referenceNumberService:                 ReferenceNumberService,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   AmendAccountingPeriodCYAView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
@@ -78,11 +88,91 @@ class AmendAccountingPeriodCYAController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData) { _ =>
-      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+      given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+        val maybeNewPeriod = maybeUserAnswers.flatMap(_.get(NewAccountingPeriodPage))
+        val allPeriods     = request.subscriptionLocalData.accountingPeriods.getOrElse(Seq.empty)
+
+        (maybeNewPeriod, allPeriods) match {
+          case (Some(newPeriod), periods) if periods.nonEmpty =>
+            for {
+              ua           <- Future.successful(maybeUserAnswers.getOrElse(UserAnswers(request.userId)))
+              withOriginal <- Future.fromTry(ua.set(OriginalAccountingPeriodsPage, periods))
+              withStatus   <- Future.fromTry(withOriginal.set(AmendAccountingPeriodStatusPage, AmendAccountingPeriodStatus.InProgress))
+              _            <- sessionRepository.set(withStatus)
+            } yield {
+              amendAccountingPeriodsInBackground(
+                request.userId,
+                request.subscriptionLocalData,
+                request.enrolments,
+                allPeriods,
+                newPeriod
+              )
+              logger.info(s"[AmendAccountingPeriodCYA] Redirecting to waiting room for ${request.userId}")
+              Redirect(controllers.routes.WaitingRoomController.onPageLoad(LongRunningSubmission.AmendAccountingPeriod))
+            }
+          case _ =>
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+      }
     }
 
-  private def findAffectedPeriods(
+  private def amendAccountingPeriodsInBackground(
+    userId:           String,
+    subscriptionData: SubscriptionLocalData,
+    enrolments:       Set[Enrolment],
+    allPeriods:       Seq[AccountingPeriodV2],
+    newPeriod:        AccountingPeriod
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val affected = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
+
+    val result = for {
+      userAnswers     <- OptionT.liftF(sessionRepository.get(userId))
+      referenceNumber <- OptionT
+                           .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                           .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
+      updatedPeriods <- OptionT.liftF(
+                          subscriptionService.amendAccountingPeriods(userId, referenceNumber, subscriptionData, affected, newPeriod)
+                        )
+      timestamp = ZonedDateTime.now(DateTimeUtils.utcZoneId).toDateAtTimeFormat
+      latestAnswers <- OptionT.liftF(sessionRepository.get(userId))
+      answersToUpdate = latestAnswers.getOrElse(UserAnswers(userId))
+      withUpdatedPeriods <- OptionT.liftF(Future.fromTry(answersToUpdate.set(UpdatedAccountingPeriodsPage, updatedPeriods)))
+      withTimestamp      <- OptionT.liftF(Future.fromTry(withUpdatedPeriods.set(AmendAPConfirmationTimestampPage, timestamp)))
+      withStatus         <- OptionT.liftF(
+                      Future.fromTry(withTimestamp.set(AmendAccountingPeriodStatusPage, AmendAccountingPeriodStatus.SuccessfullyCompleted))
+                    )
+      _ <- OptionT.liftF(sessionRepository.set(withStatus))
+    } yield ()
+
+    result
+      .getOrElseF(Future.failed(MissingReferenceNumberError))
+      .recoverWith {
+        case InternalIssueError =>
+          logger.error(s"[AmendAccountingPeriodCYA] Amendment failed for $userId due to InternalIssueError")
+          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailedInternalIssueError)
+        case e: Exception =>
+          logger.error(s"[AmendAccountingPeriodCYA] Amendment failed for $userId: ${e.getMessage}")
+          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailException)
+        case MissingReferenceNumberError =>
+          logger.error(s"[AmendAccountingPeriodCYA] Pillar 2 Reference Number for $userId not found")
+          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailException)
+      }
+      .map(_ => ())
+  }
+
+  private def setStatusOnFailure(userId: String, status: AmendAccountingPeriodStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
+    sessionRepository
+      .get(userId)
+      .flatMap { maybeUa =>
+        val userAnswersToUpdate = maybeUa.getOrElse(UserAnswers(userId))
+        sessionRepository.set(userAnswersToUpdate.setOrException(AmendAccountingPeriodStatusPage, status))
+      }
+      .map(_ => None)
+
+  private[manageAccount] def findAffectedPeriods(
     newStart:   LocalDate,
     newEnd:     LocalDate,
     allPeriods: Seq[AccountingPeriodV2]

@@ -90,6 +90,14 @@ object LongRunningSubmission extends StringEnum[LongRunningSubmission] {
     }
   }
 
+  case object AmendAccountingPeriod extends LongRunningSubmission {
+    override val value:              String = "amend-accounting-period"
+    override val configKey:          String = "amend-accounting-period"
+    override lazy val submittedPage: Call   =
+      controllers.subscription.manageAccount.routes.AmendAccountingPeriodConfirmationController.onPageLoad()
+    override val errorPage: AnyError => Call = _ => controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()
+  }
+
   val values: IndexedSeq[LongRunningSubmission] = findValues
 
   given pathBinder(using stringBinder: PathBindable[String]): PathBindable[LongRunningSubmission] =
