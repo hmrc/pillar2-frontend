@@ -31,9 +31,9 @@ case class AmendSubscriptionV2(
 )
 
 final case class AccountingPeriodAmendV2(
-  amendAccountingPeriod:    Boolean,
+  amendAccountingPeriod:     Boolean,
   originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]] = None,
-  newAccountingPeriod:      Option[NewAccountingPeriod] = None
+  newAccountingPeriod:       Option[NewAccountingPeriod] = None
 )
 
 final case class OriginalAccountingPeriod(

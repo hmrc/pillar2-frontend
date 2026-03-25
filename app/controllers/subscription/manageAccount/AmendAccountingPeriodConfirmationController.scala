@@ -31,6 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class AmendAccountingPeriodConfirmationController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
@@ -41,7 +42,7 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { request =>
+    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
@@ -50,7 +51,7 @@ class AmendAccountingPeriodConfirmationController @Inject() (
             updatedPeriods  <- userAnswers.get(UpdatedAccountingPeriodsPage)
             timestamp       <- userAnswers.get(AmendAPConfirmationTimestampPage)
           } yield {
-            val newPeriods  = computeNewPeriods(originalPeriods, updatedPeriods)
+            val newPeriods    = computeNewPeriods(originalPeriods, updatedPeriods)
             val hasGapPeriods = newPeriods.size > 1
 
             Ok(

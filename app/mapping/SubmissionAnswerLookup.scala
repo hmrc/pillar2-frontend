@@ -24,7 +24,7 @@ import models.longrunningsubmissions.LongRunningSubmission.*
 import models.longrunningsubmissions.{LongRunningSubmission, SubmissionLookupError, SubmissionState}
 import models.repayments.RepaymentsStatus
 import models.rfm.RfmStatus
-import models.subscription.{AmendAccountingPeriodStatus, ManageContactDetailsStatus, ManageGroupDetailsStatus, SubscriptionStatus}
+import models.subscription.*
 import pages.*
 import play.api.libs.json.Reads
 import queries.Gettable
