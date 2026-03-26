@@ -30,17 +30,35 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
 
   lazy val page: AmendAccountingPeriodConfirmationView = inject[AmendAccountingPeriodConfirmationView]
 
-  val timestamp     = "25 March 2026 at 2:25pm"
-  val plrReference  = "XEPLR0000000001"
-  val orgName       = Some("Test Organisation Ltd")
+  val timestamp    = "25 March 2026 at 2:25pm"
+  val plrReference = "XEPLR0000000001"
+  val orgName: Some[String]      = Some("Test Organisation Ltd")
 
   val singleNewPeriod: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31), LocalDate.of(2027, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
+    AccountingPeriodV2(
+      LocalDate.of(2026, 1, 1),
+      LocalDate.of(2026, 12, 31),
+      LocalDate.of(2027, 3, 31),
+      canAmendStartDate = true,
+      canAmendEndDate = true
+    )
   )
 
   val multipleNewPeriods: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 12, 31), LocalDate.of(2027, 3, 31), canAmendStartDate = true, canAmendEndDate = true),
-    AccountingPeriodV2(LocalDate.of(2025, 7, 1), LocalDate.of(2025, 12, 31), LocalDate.of(2026, 3, 31), canAmendStartDate = true, canAmendEndDate = true)
+    AccountingPeriodV2(
+      LocalDate.of(2026, 1, 1),
+      LocalDate.of(2026, 12, 31),
+      LocalDate.of(2027, 3, 31),
+      canAmendStartDate = true,
+      canAmendEndDate = true
+    ),
+    AccountingPeriodV2(
+      LocalDate.of(2025, 7, 1),
+      LocalDate.of(2025, 12, 31),
+      LocalDate.of(2026, 3, 31),
+      canAmendStartDate = true,
+      canAmendEndDate = true
+    )
   )
 
   def groupView(newPeriods: Seq[AccountingPeriodV2] = singleNewPeriod, hasGapPeriods: Boolean = false): Document =
@@ -106,7 +124,9 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
     }
 
     "show a 'Back to manage group details' link" in {
-      val link = groupView().select(s"a[href='${controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url}']")
+      val link = groupView().select(
+        s"a[href='${controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url}']"
+      )
       link.text() mustBe "Back to manage group details"
     }
 

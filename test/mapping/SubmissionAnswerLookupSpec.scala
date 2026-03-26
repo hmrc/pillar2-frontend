@@ -23,7 +23,7 @@ import models.longrunningsubmissions.SubmissionLookupError.SpecificAnswerNotFoun
 import models.longrunningsubmissions.{LongRunningSubmission, SubmissionState}
 import models.repayments.RepaymentsStatus
 import models.rfm.RfmStatus
-import models.subscription.{AmendAccountingPeriodStatus, ManageContactDetailsStatus, ManageGroupDetailsStatus, SubscriptionStatus}
+import models.subscription.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.matchers.must
