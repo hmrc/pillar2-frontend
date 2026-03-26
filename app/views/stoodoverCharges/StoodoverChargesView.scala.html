@@ -1,0 +1,109 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import utils.DateTimeUtils._
+@import views.ViewUtils._
+@import views.html.components.gds._
+@import views.html.templates.Layout
+
+@this(
+        layout: Layout,
+        govukBackLink: GovukBackLink,
+        govukTable: GovukTable,
+        govukWarningText: GovukWarningText,
+        h1: heading,
+        h2: HeadingH2,
+        paragraphBody: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        details: GovukDetails
+)
+@(plrReference: String, data: Seq[StoodoverChargesTable], stoodoverTotal: BigDecimal, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
+
+@layout(pageTitle = titleNoForm(messages("payments.stoodoverCharges.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+    @if(isAgent) {
+        <span class="govuk-caption-m"><strong>Group:</strong> @organisationName <strong>ID:</strong> @plrReference</span>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @h1(messages("payments.stoodoverCharges.title"), classes = "govuk-heading-l")
+            @h2(messages("payments.stoodoverCharges.stoodoverTotal", formatAmount(stoodoverTotal)), size = "m")
+            @h2(messages("payments.stoodoverCharges.details.heading"), size = "m")
+            @paragraphBody(messages("payments.stoodoverCharges.p1"))
+        </div>
+    </div>
+
+    @details(Details(
+        summary = messages("payments.stoodoverCharges.abbreviation.heading"),
+        content = HtmlContent(Html(
+            s"""
+            |<ul class="govuk-list">
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.uktr")}</li>
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.dtt")}</li>
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.mtt")}</li>
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.iir")}</li>
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.utpr")}</li>
+            |  <li>${messages("payments.stoodoverCharges.abbreviation.orngir")}</li>
+            |</ul>
+            """.stripMargin
+        ))
+    ))
+
+    @{
+        if(stoodoverTotal <= 0 || data.isEmpty) {
+            paragraphBody(messages("payments.stoodoverCharges.details.noStoodoverCharges"), classes = "govuk-body govuk-!-margin-bottom-8 govuk-!-margin-top-7")
+        } else {
+            data.map { summary =>
+                govukTable(Table(
+                    head = Some(
+                        Seq(
+                            HeadCell(Text("Description"), classes = "govuk-table__header govuk-!-width-one-half"),
+                            HeadCell(Text("Stoodover amount"), format = Some("numeric"), classes = "govuk-table__header govuk-table__header--numeric"),
+                        )
+                    ),
+                    rows =  summary.rows.map { row =>
+                        Seq(
+                            TableRow(content = Text(row.description)),
+                            TableRow(content = Text(formatCurrencyAmount(row.stoodoverAmount)), format = Some("numeric"))
+                        )
+                    },
+                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
+                    captionClasses = "govuk-table__caption govuk-table__caption--m"
+                ))
+            }
+        }
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @h2(messages("payments.outstanding.title"), size = "m")
+            @paragraphBody(messages("payments.stoodoverCharges.outstandingPayments.p1"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("homepage.payments.outstandingPayments.linkText"),
+                linkUrl = payments.routes.OutstandingPaymentsController.onPageLoad.url
+            )
+
+            @h2(messages("transactionHistory.title"), size = "m")
+            @paragraphBody(messages("payments.stoodoverCharges.transactionHistory.p1"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("homepage.payments.transactionHistory.linkText"),
+                linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+            )
+        </div>
+    </div>
+}
