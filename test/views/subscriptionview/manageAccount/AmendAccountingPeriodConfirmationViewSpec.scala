@@ -32,7 +32,7 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
 
   val timestamp    = "25 March 2026 at 2:25pm"
   val plrReference = "XEPLR0000000001"
-  val orgName: Some[String]      = Some("Test Organisation Ltd")
+  val orgName: Some[String] = Some("Test Organisation Ltd")
 
   val singleNewPeriod: Seq[AccountingPeriodV2] = Seq(
     AccountingPeriodV2(
