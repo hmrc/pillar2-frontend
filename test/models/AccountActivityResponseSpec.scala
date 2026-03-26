@@ -134,6 +134,82 @@ class AccountActivityResponseSpec extends SpecBase {
     )
   )
 
+  val expectedResponseWithUnallocatedPayment: AccountActivityResponse = AccountActivityResponse(
+    processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
+    transactionDetails = Seq(
+      AccountActivityTransaction(
+        transactionType = TransactionType.Payment,
+        transactionDesc = "Pillar 2 Payment on Account",
+        startDate = None,
+        endDate = None,
+        accruedInterest = None,
+        chargeRefNo = None,
+        transactionDate = LocalDate.of(2025, 10, 15),
+        dueDate = None,
+        originalAmount = BigDecimal(-1000),
+        outstandingAmount = Some(BigDecimal(-500)),
+        clearedAmount = Some(BigDecimal(-500)),
+        standOverAmount = None,
+        appealFlag = None,
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
+              transactionDesc = "UKTR - DTT",
+              chargeRefNo = Some("X123456789012"),
+              dueDate = Some(LocalDate.of(2025, 12, 31)),
+              amount = BigDecimal(1000),
+              clearingDate = LocalDate.of(2025, 10, 15),
+              clearingReason = Some("Allocated to Charge")
+            )
+          )
+        )
+      ),
+      AccountActivityTransaction(
+        transactionType = TransactionType.Credit,
+        transactionDesc = "Repayment interest - UKTR",
+        startDate = None,
+        endDate = None,
+        accruedInterest = None,
+        chargeRefNo = Some("XR23456789012"),
+        transactionDate = LocalDate.of(2025, 3, 15),
+        dueDate = None,
+        originalAmount = BigDecimal(-100),
+        outstandingAmount = Some(BigDecimal(-100)),
+        clearedAmount = None,
+        standOverAmount = None,
+        appealFlag = None,
+        clearingDetails = None
+      ),
+      AccountActivityTransaction(
+        transactionType = TransactionType.Debit,
+        transactionDesc = "UKTR - DTT",
+        startDate = Some(LocalDate.of(2025, 1, 1)),
+        endDate = Some(LocalDate.of(2025, 12, 31)),
+        accruedInterest = Some(BigDecimal(35)),
+        chargeRefNo = Some("X123456789012"),
+        transactionDate = LocalDate.of(2025, 2, 15),
+        dueDate = Some(LocalDate.of(2025, 12, 31)),
+        originalAmount = BigDecimal(500),
+        outstandingAmount = None,
+        clearedAmount = Some(BigDecimal(500)),
+        standOverAmount = None,
+        appealFlag = Some(false),
+        clearingDetails = Some(
+          Seq(
+            AccountActivityClearance(
+              transactionDesc = "Pillar 2 Payment on Account",
+              chargeRefNo = None,
+              dueDate = None,
+              amount = 500,
+              clearingDate = LocalDate.of(2025, 10, 15),
+              clearingReason = Some("Cleared by Payment")
+            )
+          )
+        )
+      )
+    )
+  )
+
   "AccountActivityResponse" should {
     "parse JSON correctly" in {
       val result = Json.parse(sampleJson).validate[AccountActivityResponse]
@@ -180,7 +256,7 @@ class AccountActivityResponseSpec extends SpecBase {
       response.toTransactions mustBe empty
     }
 
-    "keep multiple Payment transactions as separate entries" in {
+    "keep multiple allocated Payment transactions as separate entries" in {
       val response = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
@@ -193,12 +269,23 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 10),
             dueDate = None,
-            originalAmount = BigDecimal(300),
+            originalAmount = BigDecimal(-300),
             outstandingAmount = None,
-            clearedAmount = None,
+            clearedAmount = Some(BigDecimal(-300)),
             standOverAmount = None,
             appealFlag = None,
-            clearingDetails = None
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - DTT",
+                  chargeRefNo = Some("X123456789001"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(300),
+                  clearingDate = LocalDate.of(2025, 1, 10),
+                  clearingReason = Some("Allocated to Charge")
+                )
+              )
+            )
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
@@ -209,12 +296,23 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 15),
             dueDate = None,
-            originalAmount = BigDecimal(500),
+            originalAmount = BigDecimal(-500),
             outstandingAmount = None,
-            clearedAmount = None,
+            clearedAmount = Some(BigDecimal(-500)),
             standOverAmount = None,
             appealFlag = None,
-            clearingDetails = None
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - IIR",
+                  chargeRefNo = Some("X123456789002"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(500),
+                  clearingDate = LocalDate.of(2025, 1, 15),
+                  clearingReason = Some("Allocated to Charge")
+                )
+              )
+            )
           ),
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
@@ -225,12 +323,23 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 5),
             dueDate = None,
-            originalAmount = BigDecimal(200),
+            originalAmount = BigDecimal(-200),
             outstandingAmount = None,
-            clearedAmount = None,
+            clearedAmount = Some(BigDecimal(-200)),
             standOverAmount = None,
             appealFlag = None,
-            clearingDetails = None
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - UTPR",
+                  chargeRefNo = Some("X123456789003"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(200),
+                  clearingDate = LocalDate.of(2025, 1, 5),
+                  clearingReason = Some("Allocated to Charge")
+                )
+              )
+            )
           )
         )
       )
@@ -238,17 +347,96 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toTransactions
 
       result must have size 3
+
       // Sorted descending (newest first)
       result(0).date mustBe LocalDate.of(2025, 1, 15)
-      result(0).paymentType mustBe "payment"
+      result(0).paymentType mustBe "Payment allocated to UKTR - IIR"
       result(0).amountPaid mustBe BigDecimal(500)
+      result(0).amountRepaid mustBe BigDecimal(0)
+
       result(1).date mustBe LocalDate.of(2025, 1, 10)
+      result(1).paymentType mustBe "Payment allocated to UKTR - DTT"
       result(1).amountPaid mustBe BigDecimal(300)
+      result(1).amountRepaid mustBe BigDecimal(0)
+
       result(2).date mustBe LocalDate.of(2025, 1, 5)
+      result(2).paymentType mustBe "Payment allocated to UKTR - UTPR"
       result(2).amountPaid mustBe BigDecimal(200)
+      result(2).amountRepaid mustBe BigDecimal(0)
     }
 
-    "convert Payment transactions to 'Payment' display name" in {
+    "create separate entries for multiple allocated charges from a single Payment transaction" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Payment,
+            transactionDesc = "Pillar 2 Payment on Account",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 1, 10),
+            dueDate = None,
+            originalAmount = BigDecimal(-1000),
+            outstandingAmount = None,
+            clearedAmount = Some(BigDecimal(-1000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - DTT",
+                  chargeRefNo = Some("X123456789001"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(300),
+                  clearingDate = LocalDate.of(2025, 1, 10),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - IIR",
+                  chargeRefNo = Some("X123456789002"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(500),
+                  clearingDate = LocalDate.of(2025, 1, 15),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                AccountActivityClearance(
+                  transactionDesc = "UKTR - UTPR",
+                  chargeRefNo = Some("X123456789003"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(200),
+                  clearingDate = LocalDate.of(2025, 1, 5),
+                  clearingReason = Some("Allocated to Charge")
+                )
+              )
+            )
+          )
+        )
+      )
+
+      val result = response.toTransactions
+
+      result must have size 3
+
+      // Sorted descending (newest first)
+      result(0).date mustBe LocalDate.of(2025, 1, 15)
+      result(0).paymentType mustBe "Payment allocated to UKTR - IIR"
+      result(0).amountPaid mustBe BigDecimal(500)
+      result(0).amountRepaid mustBe BigDecimal(0)
+
+      result(1).date mustBe LocalDate.of(2025, 1, 10)
+      result(1).paymentType mustBe "Payment allocated to UKTR - DTT"
+      result(1).amountPaid mustBe BigDecimal(300)
+      result(1).amountRepaid mustBe BigDecimal(0)
+
+      result(2).date mustBe LocalDate.of(2025, 1, 5)
+      result(2).paymentType mustBe "Payment allocated to UKTR - UTPR"
+      result(2).amountPaid mustBe BigDecimal(200)
+      result(2).amountRepaid mustBe BigDecimal(0)
+    }
+
+    "not include Payment transactions with no allocations or repayments in transaction history" in {
       val response = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
@@ -261,8 +449,8 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 15),
             dueDate = None,
-            originalAmount = BigDecimal(500),
-            outstandingAmount = None,
+            originalAmount = BigDecimal(-500),
+            outstandingAmount = Some(BigDecimal(-500)),
             clearedAmount = None,
             standOverAmount = None,
             appealFlag = None,
@@ -273,11 +461,7 @@ class AccountActivityResponseSpec extends SpecBase {
 
       val result = response.toTransactions
 
-      result must have size 1
-      result.head.date mustBe LocalDate.of(2025, 1, 15)
-      result.head.paymentType mustBe "payment"
-      result.head.amountPaid mustBe BigDecimal(500)
-      result.head.amountRepaid mustBe BigDecimal(0)
+      result mustBe empty
     }
 
     "extract Repayment from clearingDetails with 'Outgoing payment - Paid' reason" in {
@@ -351,11 +535,10 @@ class AccountActivityResponseSpec extends SpecBase {
       result mustBe empty
     }
 
-    "convert separate PaymentOnAccount transactions for payments and repayments" in {
+    "convert PaymentOnAccount transactions into allocated payment and repayment entries" in {
       val response = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
         transactionDetails = Seq(
-          // Payment transaction (no repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
             transactionDesc = "Pillar 2 Payment on Account",
@@ -365,9 +548,9 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 1),
             dueDate = None,
-            originalAmount = BigDecimal(100),
+            originalAmount = BigDecimal(-100),
             outstandingAmount = None,
-            clearedAmount = Some(BigDecimal(100)),
+            clearedAmount = Some(BigDecimal(-100)),
             standOverAmount = None,
             appealFlag = None,
             clearingDetails = Some(
@@ -383,7 +566,6 @@ class AccountActivityResponseSpec extends SpecBase {
               )
             )
           ),
-          // Repayment transaction (has repayment clearingDetails)
           AccountActivityTransaction(
             transactionType = TransactionType.Payment,
             transactionDesc = "Pillar 2 Payment on Account",
@@ -393,9 +575,9 @@ class AccountActivityResponseSpec extends SpecBase {
             chargeRefNo = None,
             transactionDate = LocalDate.of(2025, 1, 2),
             dueDate = None,
-            originalAmount = BigDecimal(50),
+            originalAmount = BigDecimal(-50),
             outstandingAmount = None,
-            clearedAmount = Some(BigDecimal(50)),
+            clearedAmount = Some(BigDecimal(-50)),
             standOverAmount = None,
             appealFlag = None,
             clearingDetails = Some(
@@ -404,14 +586,13 @@ class AccountActivityResponseSpec extends SpecBase {
                   transactionDesc = "Repayment",
                   chargeRefNo = None,
                   dueDate = None,
-                  amount = BigDecimal(50),
+                  amount = BigDecimal(-50),
                   clearingDate = LocalDate.of(2025, 1, 3),
                   clearingReason = Some("Outgoing payment - Paid")
                 )
               )
             )
           ),
-          // Debit - should be filtered
           AccountActivityTransaction(
             transactionType = TransactionType.Debit,
             transactionDesc = "Charge - should be filtered",
@@ -428,7 +609,6 @@ class AccountActivityResponseSpec extends SpecBase {
             appealFlag = None,
             clearingDetails = None
           ),
-          // Credit (not RPI) - should be ignored
           AccountActivityTransaction(
             transactionType = TransactionType.Credit,
             transactionDesc = "Some Credit - should be ignored",
@@ -451,13 +631,17 @@ class AccountActivityResponseSpec extends SpecBase {
       val result = response.toTransactions
 
       result must have size 2
-      // Sorted descending: repayment (Jan 3) before payment (Jan 1)
+
+      // Sorted descending: repayment (Jan 3) before allocated payment (Jan 1)
       result.head.paymentType mustBe "repayment"
       result.head.date mustBe LocalDate.of(2025, 1, 3)
+      result.head.amountPaid mustBe BigDecimal(0)
       result.head.amountRepaid mustBe BigDecimal(50)
-      result(1).paymentType mustBe "payment"
+
+      result(1).paymentType mustBe "Payment allocated to UKTR - DTT"
       result(1).date mustBe LocalDate.of(2025, 1, 1)
       result(1).amountPaid mustBe BigDecimal(100)
+      result(1).amountRepaid mustBe BigDecimal(0)
     }
 
     "extract Repayment Interest from Credit transactions with RPI description" in {
@@ -822,6 +1006,13 @@ class AccountActivityResponseSpec extends SpecBase {
     "calculate total accrued Interest accurately for relevant transactions" in {
       val accruedInterest = expectedResponse.totalAccruedInterest
       accruedInterest mustEqual 35
+    }
+  }
+
+  "AccountActivityResponse.unallocatedPaymentAmount" should {
+    "calculate the total unallocated payment amount for relevant transactions" in {
+      val unallocatedAmount = expectedResponseWithUnallocatedPayment.unallocatedPaymentAmount
+      unallocatedAmount mustEqual 500
     }
   }
 

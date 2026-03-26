@@ -27,7 +27,7 @@ import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.*
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify, when}
+import org.mockito.Mockito.*
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.{ManageContactDetailsStatusPage, ManageGroupDetailsStatusPage}
 import play.api.inject.bind
@@ -79,7 +79,11 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     "return OK and the correct view for a GET" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+        applicationBuilder(
+          userAnswers = None,
+          enrolments,
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false, "features.useAccountActivityApi" -> false)
+        )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -310,6 +314,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        clearInvocations(mockFinancialDataService)
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(FinancialData(Seq.empty)))
 

@@ -22,24 +22,35 @@
         heading: heading,
         h2: HeadingH2,
         p: paragraphBody,
-        paragraphMessageWithLink: ParagraphMessageWithLink
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        paragraphBodyLink: paragraphBodyLink,
 )
 
-@(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @heading(messages("transactionHistory.none.heading"))
 
     @if(isAgent) {
-        @p(messages("transactionHistory.agent.none.p1"), classes = "govuk-body govuk-!-width-two-thirds")
+        @p(messages("transactionHistory.agent.p1"), classes = "govuk-body govuk-!-width-two-thirds")
     } else {
-        @p(messages("transactionHistory.group.none.p1"), classes = "govuk-body govuk-!-width-two-thirds")
+        @p(messages("transactionHistory.group.p1"), classes = "govuk-body govuk-!-width-two-thirds")
     }
 
     @p(messages("transactionHistory.none.p2"))
 
-    <br>
+    @if(showUnallocatedPaymentAmount) {
+        @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
+    }
+
+    @h2(messages("transactionHistory.transactions"), size = "m")
     @p(messages("transactionHistory.none.p3"))
-    <br>
+
+    @h2(messages("transactionHistory.h2"), size = "m")
+
+    @p(messages("transactionHistory.p3"), classes = "govuk-body govuk-!-width-two-thirds")
+    @paragraphBodyLink(messages("homepage.payments.outstandingPayments.linkText"), linkUrl = outstandingPaymentsUrl)
 }
