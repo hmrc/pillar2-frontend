@@ -23,7 +23,7 @@ import models.longrunningsubmissions.SubmissionLookupError.SpecificAnswerNotFoun
 import models.longrunningsubmissions.{LongRunningSubmission, SubmissionState}
 import models.repayments.RepaymentsStatus
 import models.rfm.RfmStatus
-import models.subscription.{ManageContactDetailsStatus, ManageGroupDetailsStatus, SubscriptionStatus}
+import models.subscription.{AmendAccountingPeriodStatus, ManageContactDetailsStatus, ManageGroupDetailsStatus, SubscriptionStatus}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.matchers.must
@@ -246,6 +246,36 @@ class SubmissionAnswerLookupSpec extends AnyWordSpec with must.Matchers with Sca
           .extractStateFromAnswers(RFM, ua.set(RfmStatusPage, RfmStatus.FailException).success.value)
           .value mustBe SubmissionState.Error.Incomplete
       }
+    }
+  }
+
+  "instance for amend accounting period" should {
+    import mapping.SubmissionAnswerLookup.Instances.forAmendAccountingPeriod
+
+    behave like returnsSpecificAnswerNotFound(AmendAccountingPeriod, AmendAccountingPeriodStatusPage)
+
+    "map completed" in {
+      forAmendAccountingPeriod
+        .extractStateFromAnswers(
+          AmendAccountingPeriod,
+          ua.set(AmendAccountingPeriodStatusPage, AmendAccountingPeriodStatus.SuccessfullyCompleted).success.value
+        )
+        .value mustBe SubmissionState.Submitted
+    }
+
+    "map processing" in {
+      forAmendAccountingPeriod
+        .extractStateFromAnswers(
+          AmendAccountingPeriod,
+          ua.set(AmendAccountingPeriodStatusPage, AmendAccountingPeriodStatus.InProgress).success.value
+        )
+        .value mustBe SubmissionState.Processing
+    }
+
+    "map errors" in forAll(Gen.oneOf(AmendAccountingPeriodStatus.FailException, AmendAccountingPeriodStatus.FailedInternalIssueError)) { error =>
+      forAmendAccountingPeriod
+        .extractStateFromAnswers(AmendAccountingPeriod, ua.set(AmendAccountingPeriodStatusPage, error).success.value)
+        .value mustBe SubmissionState.Error.GenericTechnical
     }
   }
 
