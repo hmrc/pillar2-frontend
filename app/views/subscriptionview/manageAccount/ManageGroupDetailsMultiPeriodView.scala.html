@@ -20,7 +20,6 @@
 @this(
     layout: templates.Layout,
     heading: heading,
-    sectionHeader: sectionHeader,
     paragraphBody: paragraphBody,
     h2: HeadingH2
 )
@@ -30,7 +29,7 @@
 @layout(pageTitle = titleNoForm(messages("manageGroupDetails.multiPeriod.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent && organisationName.nonEmpty) {
-        @sectionHeader(messages("manageGroupDetails.multiPeriod.agentHeader", organisationName.get, plrReference))
+        <h2 class="govuk-caption-l hmrc-caption-l"><span id="section-header"><strong>Group:</strong> @organisationName.get <strong>ID:</strong> @plrReference</span></h2>
     }
 
     @heading(messages("manageGroupDetails.multiPeriod.heading"), classes = "govuk-heading-l")

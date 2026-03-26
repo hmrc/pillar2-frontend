@@ -225,8 +225,10 @@ GET         /manage-account/account-details/select-period/:index                
 
 GET         /manage-account/account-details/new-accounting-period                                    controllers.subscription.manageAccount.NewAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
 POST        /manage-account/account-details/new-accounting-period                                    controllers.subscription.manageAccount.NewAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
-GET        /manage-account/account-details/change-new-accounting-period                              controllers.subscription.manageAccount.NewAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+GET         /manage-account/account-details/change-new-accounting-period                             controllers.subscription.manageAccount.NewAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
 POST        /manage-account/account-details/change-new-accounting-period                             controllers.subscription.manageAccount.NewAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+GET         /manage-account/account-details/amend-period-cya                                         controllers.subscription.manageAccount.AmendAccountingPeriodCYAController.onPageLoad()
+POST        /manage-account/account-details/amend-period-cya                                         controllers.subscription.manageAccount.AmendAccountingPeriodCYAController.onSubmit()
 
 GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad()
 POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit()

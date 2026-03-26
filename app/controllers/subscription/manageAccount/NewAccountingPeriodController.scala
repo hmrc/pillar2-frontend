@@ -121,7 +121,7 @@ class NewAccountingPeriodController @Inject() (
                                       maybeUserAnswers.getOrElse(UserAnswers(request.userId)).set(NewAccountingPeriodPage, value)
                                     )
                   _ <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(Call("GET", "#")) // TODO: Update to check your answers page
+                } yield Redirect(controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad())
             )
 
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
