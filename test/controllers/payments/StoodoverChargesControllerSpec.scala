@@ -65,135 +65,154 @@ class StoodoverChargesControllerSpec extends SpecBase {
     )
   )
 
-  "StoodoverChargesController" should {
-    "return OK and display the correct view for a GET with no stoodover charges" in {
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
-        )
+  "StoodoverChargesController" must {
+    "redirect to homepage when useAccountActivityApi is false" in {
+      val application = applicationBuilder(subscriptionLocalData = None)
+        .configure("features.useAccountActivityApi" -> false)
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(accountActivityEmptyResponse))
-
-        val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.StoodoverChargesController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[StoodoverChargesView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(plrReference, Seq.empty, 0, "orgName")(
-            request,
-            applicationConfig,
-            messages(application),
-            isAgent = false
-          ).toString
-      }
-    }
-
-    "return OK and display the correct view for a GET with stoodover charges" in {
-
-      val accountingPeriod: AccountingPeriod           = AccountingPeriod(startDate = LocalDate.of(2025, 1, 1), endDate = LocalDate.of(2025, 12, 31))
-      val row:              StoodoverChargesRow        = StoodoverChargesRow(description = "UKTR - DTT", stoodoverAmount = BigDecimal(1000))
-      val table:            StoodoverChargesTable      = StoodoverChargesTable(accountingPeriod = accountingPeriod, rows = Seq(row))
-      val data:             Seq[StoodoverChargesTable] = Seq(table)
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(accountActivityResponse))
-
-        val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
-        val result  = route(application, request).value
-        val view    = application.injector.instanceOf[StoodoverChargesView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(plrReference, data, BigDecimal(1000), "orgName")(
-            request,
-            applicationConfig,
-            messages(application),
-            isAgent = false
-          ).toString
-      }
-    }
-
-    "redirect to journey recovery when there is no plrReference" in {
-
-      val application = applicationBuilder(
-        userAnswers = None,
-        enrolments = enrolments
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(accountActivityResponse))
-
-        val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
-        val result  = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result) mustBe Some(controllers.routes.HomepageController.onPageLoad().url)
       }
     }
 
-    "redirect to journey recovery when the subscription service call fails" in {
+    "allow request when useAccountActivityApi is true and" must {
+      "return OK and display the correct view for a GET with no stoodover charges" in {
 
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          enrolments = enrolments
         )
-        .build()
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
+          )
+          .configure("features.useAccountActivityApi" -> true)
+          .build()
 
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.failed(NoResultFound))
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.failed(NoResultFound))
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(subscriptionData))
+          when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(accountActivityEmptyResponse))
 
-        val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
-        val result  = route(application, request).value
+          val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[StoodoverChargesView]
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(plrReference, Seq.empty, 0, "orgName")(
+              request,
+              applicationConfig,
+              messages(application),
+              isAgent = false
+            ).toString
+        }
+      }
+
+      "return OK and display the correct view for a GET with stoodover charges" in {
+
+        val accountingPeriod: AccountingPeriod      = AccountingPeriod(startDate = LocalDate.of(2025, 1, 1), endDate = LocalDate.of(2025, 12, 31))
+        val row:              StoodoverChargesRow   = StoodoverChargesRow(description = "UKTR - DTT", stoodoverAmount = BigDecimal(1000))
+        val table:            StoodoverChargesTable = StoodoverChargesTable(accountingPeriod = accountingPeriod, rows = Seq(row))
+        val data: Seq[StoodoverChargesTable] = Seq(table)
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
+          )
+          .configure("features.useAccountActivityApi" -> true)
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(subscriptionData))
+          when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(accountActivityResponse))
+
+          val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[StoodoverChargesView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual
+            view(plrReference, data, BigDecimal(1000), "orgName")(
+              request,
+              applicationConfig,
+              messages(application),
+              isAgent = false
+            ).toString
+        }
+      }
+
+      "redirect to journey recovery when there is no plrReference" in {
+
+        val application = applicationBuilder(
+          userAnswers = None,
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
+          )
+          .configure("features.useAccountActivityApi" -> true)
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(subscriptionData))
+          when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(accountActivityResponse))
+
+          val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "redirect to journey recovery when the subscription service call fails" in {
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
+          )
+          .configure("features.useAccountActivityApi" -> true)
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+            .thenReturn(Future.failed(NoResultFound))
+          when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+            .thenReturn(Future.failed(NoResultFound))
+
+          val request = FakeRequest(GET, controllers.payments.routes.StoodoverChargesController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
   }

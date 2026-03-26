@@ -44,6 +44,7 @@ class StoodoverChargesController @Inject() (
   accountActivityConnector:               AccountActivityConnector,
   referenceNumberService:                 ReferenceNumberService,
   subscriptionService:                    SubscriptionService,
+  checkAccountActivityScreens:            AccountActivityScreensAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   view:                                   StoodoverChargesView
@@ -68,7 +69,7 @@ class StoodoverChargesController @Inject() (
     }
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { request =>
+    (identify andThen checkAccountActivityScreens andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       given isAgent: Boolean = request.isAgent
