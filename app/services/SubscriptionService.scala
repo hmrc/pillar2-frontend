@@ -122,7 +122,11 @@ class SubscriptionService @Inject() (
       accountStatus = v2.accountStatus,
       organisationName = Some(v2.upeDetails.organisationName),
       accountingPeriods = Some(v2.accountingPeriod),
-      registrationDate = Some(v2.upeDetails.registrationDate)
+      registrationDate = Some(v2.upeDetails.registrationDate),
+      upeCustomerIdentification1 = v2.upeDetails.customerIdentification1,
+      upeCustomerIdentification2 = v2.upeDetails.customerIdentification2,
+      upeFilingMember = Some(v2.upeDetails.filingMember),
+      filingMemberDetails = v2.filingMemberDetails
     )
   }
 
@@ -144,6 +148,75 @@ class SubscriptionService @Inject() (
       amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
+
+  def amendAccountingPeriods(
+    userId:          String,
+    plrReference:    String,
+    userData:        SubscriptionLocalData,
+    affectedPeriods: Seq[AccountingPeriodV2],
+    newPeriod:       AccountingPeriod
+  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodV2]] = {
+    val amendData = buildAmendSubscriptionV2(plrReference, userData, affectedPeriods, newPeriod)
+    for {
+      _       <- subscriptionConnector.amendSubscriptionV2(userId, amendData)
+      updated <- readSubscriptionV2AndSave(userId, plrReference)
+    } yield updated.accountingPeriods.getOrElse(Seq.empty)
+  }
+
+  private def buildAmendSubscriptionV2(
+    plrReference:    String,
+    userData:        SubscriptionLocalData,
+    affectedPeriods: Seq[AccountingPeriodV2],
+    newPeriod:       AccountingPeriod
+  ): AmendSubscriptionV2 = {
+    val address = UpeCorrespAddressDetails(
+      addressLine1 = userData.subRegisteredAddress.addressLine1,
+      addressLine2 = userData.subRegisteredAddress.addressLine2,
+      addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
+      addressLine4 = userData.subRegisteredAddress.addressLine4,
+      postCode = userData.subRegisteredAddress.postalCode,
+      countryCode = userData.subRegisteredAddress.countryCode
+    )
+    AmendSubscriptionV2(
+      replaceFilingMember = false,
+      upeDetails = UpeDetailsAmend(
+        plrReference,
+        customerIdentification1 = userData.upeCustomerIdentification1,
+        customerIdentification2 = userData.upeCustomerIdentification2,
+        organisationName = userData.organisationName.getOrElse(""),
+        registrationDate = userData.registrationDate.getOrElse(LocalDate.now()),
+        domesticOnly = if userData.subMneOrDomestic == MneOrDomestic.Uk then true else false,
+        filingMember = userData.upeFilingMember.getOrElse(false)
+      ),
+      accountingPeriod = AccountingPeriodAmendV2(
+        amendAccountingPeriod = true,
+        originalAccountingPeriods = Some(affectedPeriods.map(p => OriginalAccountingPeriod(p.startDate, p.endDate))),
+        newAccountingPeriod = Some(NewAccountingPeriod(newPeriod.startDate, newPeriod.endDate))
+      ),
+      upeCorrespAddressDetails = address,
+      primaryContactDetails = ContactDetailsType(
+        name = userData.subPrimaryContactName,
+        phone = userData.subPrimaryCapturePhone,
+        emailAddress = userData.subPrimaryEmail
+      ),
+      secondaryContactDetails = if userData.subAddSecondaryContact then {
+        for {
+          name  <- userData.subSecondaryContactName
+          email <- userData.subSecondaryEmail
+        } yield ContactDetailsType(name = name, phone = userData.subSecondaryCapturePhone, emailAddress = email)
+      } else {
+        None
+      },
+      filingMemberDetails = userData.filingMemberDetails.map(details =>
+        FilingMemberAmendDetails(
+          safeId = details.safeId,
+          customerIdentification1 = details.customerIdentification1,
+          customerIdentification2 = details.customerIdentification2,
+          organisationName = details.organisationName
+        )
+      )
+    )
+  }
   private def registerUpe(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
