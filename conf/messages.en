@@ -1049,7 +1049,6 @@ manageGroupDetails.multiPeriod.intro1 = You can only make changes to the account
 manageGroupDetails.multiPeriod.intro2 = Any changes made affect future accounting periods. You can return to this page to make further adjustments as needed.
 manageGroupDetails.multiPeriod.currentPeriod = Current period
 manageGroupDetails.multiPeriod.previousPeriod = Previous period
-manageGroupDetails.multiPeriod.periodLabel = Period {0}
 manageGroupDetails.multiPeriod.startDate = Start date
 manageGroupDetails.multiPeriod.endDate = End date
 manageGroupDetails.multiPeriod.emptyState = There are no accounting periods available to amend
