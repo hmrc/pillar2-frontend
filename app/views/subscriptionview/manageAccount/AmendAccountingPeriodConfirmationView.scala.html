@@ -47,7 +47,10 @@
         attributes = Map("id" -> "plr2-banner")
     ))
 
-    @p(messages("amendAccountingPeriod.confirmation.timestamp", timestamp))
+    <p class="govuk-body">
+        @messages("amendAccountingPeriod.confirmation.timestamp")<br>
+        @timestamp
+    </p>
 
     @h2(messages("amendAccountingPeriod.confirmation.whatHasChanged"), size = "m")
 
