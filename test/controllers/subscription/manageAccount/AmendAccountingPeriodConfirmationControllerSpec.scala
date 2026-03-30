@@ -104,6 +104,24 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
       }
     }
 
+    "renders new periods in descending end date order" in {
+      val application = buildApp(Some(userAnswersWithConfirmationData))
+      running(application) {
+        val request = FakeRequest(
+          GET,
+          controllers.subscription.manageAccount.routes.AmendAccountingPeriodConfirmationController.onPageLoad().url
+        )
+        val result = route(application, request).value
+        status(result) mustEqual OK
+        val body      = contentAsString(result)
+        val firstIdx  = body.indexOf("31 December 2026")
+        val secondIdx = body.indexOf("1 January 2026")
+        firstIdx  must be >= 0
+        secondIdx must be >= 0
+        firstIdx  must be < secondIdx
+      }
+    }
+
     "does not show gap period message when only one new period exists" in {
       val singleNewUpdated = originalPeriods ++ Seq(
         AccountingPeriodV2(

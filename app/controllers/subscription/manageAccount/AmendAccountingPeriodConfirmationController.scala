@@ -75,6 +75,8 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     updated:  Seq[AccountingPeriodV2]
   ): Seq[AccountingPeriodV2] = {
     val originalSet = original.map(p => (p.startDate, p.endDate)).toSet
-    updated.filterNot(p => originalSet.contains((p.startDate, p.endDate)))
+    updated
+      .filterNot(p => originalSet.contains((p.startDate, p.endDate)))
+      .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
   }
 }
