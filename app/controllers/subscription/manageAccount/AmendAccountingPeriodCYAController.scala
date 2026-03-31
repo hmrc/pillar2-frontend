@@ -38,7 +38,7 @@ import views.html.subscriptionview.manageAccount.AmendAccountingPeriodCYAView
 
 import java.time.{LocalDate, ZonedDateTime}
 import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future, blocking}
 
 class AmendAccountingPeriodCYAController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
@@ -133,8 +133,11 @@ class AmendAccountingPeriodCYAController @Inject() (
       referenceNumber <- OptionT
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
+      _ <- OptionT.liftF(
+             subscriptionService.amendAccountingPeriods(userId, referenceNumber, subscriptionData, affected, newPeriod)
+           )
       updatedPeriods <- OptionT.liftF(
-                          subscriptionService.amendAccountingPeriods(userId, referenceNumber, subscriptionData, affected, newPeriod)
+                          readSubscriptionWithRetry(userId, referenceNumber)
                         )
       timestamp = ZonedDateTime.now(DateTimeUtils.utcZoneId).toDateAtTimeFormat
       latestAnswers <- OptionT.liftF(sessionRepository.get(userId))
@@ -149,19 +152,33 @@ class AmendAccountingPeriodCYAController @Inject() (
 
     result
       .getOrElseF(Future.failed(MissingReferenceNumberError))
-      .recoverWith {
-        case InternalIssueError =>
-          logger.error(s"[AmendAccountingPeriodCYA] Amendment failed for $userId due to InternalIssueError")
-          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailedInternalIssueError)
-        case e: Exception =>
-          logger.error(s"[AmendAccountingPeriodCYA] Amendment failed for $userId: ${e.getMessage}")
-          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailException)
-        case MissingReferenceNumberError =>
-          logger.error(s"[AmendAccountingPeriodCYA] Pillar 2 Reference Number for $userId not found")
-          setStatusOnFailure(userId, AmendAccountingPeriodStatus.FailException)
+      .recoverWith { case e: Throwable =>
+        val status = e match {
+          case InternalIssueError | UnprocessableEntityError => AmendAccountingPeriodStatus.FailedInternalIssueError
+          case _                                             => AmendAccountingPeriodStatus.FailException
+        }
+        logger.error(s"[AmendAccountingPeriodCYA] Amendment failed for $userId: ${e.getClass.getSimpleName}", e)
+        setStatusOnFailure(userId, status)
       }
       .map(_ => ())
   }
+
+  private def readSubscriptionWithRetry(
+    userId:       String,
+    plrReference: String,
+    attempt:      Int = 0
+  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodV2]] =
+    subscriptionService
+      .readSubscriptionV2AndSave(userId, plrReference)
+      .map(_.accountingPeriods.getOrElse(Seq.empty))
+      .recoverWith {
+        case UnprocessableEntityError | RetryableGatewayError if attempt < appConfig.amendAPReadRetryMaxAttempts =>
+          logger.warn(
+            s"[AmendAccountingPeriodCYA] readSubscriptionV2 retry ${attempt + 1}/${appConfig.amendAPReadRetryMaxAttempts} for $userId"
+          )
+          Future(blocking(Thread.sleep(appConfig.amendAPReadRetryDelaySeconds * 1000L)))
+            .flatMap(_ => readSubscriptionWithRetry(userId, plrReference, attempt + 1))
+      }
 
   private def setStatusOnFailure(userId: String, status: AmendAccountingPeriodStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
     sessionRepository

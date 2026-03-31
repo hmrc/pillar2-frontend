@@ -155,12 +155,9 @@ class SubscriptionService @Inject() (
     userData:        SubscriptionLocalData,
     affectedPeriods: Seq[AccountingPeriodV2],
     newPeriod:       AccountingPeriod
-  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodV2]] = {
+  )(using hc: HeaderCarrier): Future[Done] = {
     val amendData = buildAmendSubscriptionV2(plrReference, userData, affectedPeriods, newPeriod)
-    for {
-      _       <- subscriptionConnector.amendSubscriptionV2(userId, amendData)
-      updated <- readSubscriptionV2AndSave(userId, plrReference)
-    } yield updated.accountingPeriods.getOrElse(Seq.empty)
+    subscriptionConnector.amendSubscriptionV2(userId, amendData)
   }
 
   private def buildAmendSubscriptionV2(
