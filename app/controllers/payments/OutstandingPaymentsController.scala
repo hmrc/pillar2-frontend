@@ -50,7 +50,7 @@ class OutstandingPaymentsController @Inject() (
   accountActivityConnector:               AccountActivityConnector,
   subscriptionService:                    SubscriptionService,
   view:                                   OutstandingPaymentsView,
-  legacyTablePartial:                     _OutstandingPaymentsTable,
+  tablePartial:                           _OutstandingPaymentsTable,
   activityTablePartial:                   _OutstandingPaymentsActivityTable,
   sessionRepository:                      SessionRepository
 )(using
@@ -146,7 +146,7 @@ class OutstandingPaymentsController @Inject() (
           val tables                  = toTablesFromFinancial(financialSummaries)
           val amountDue               = tables.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
           val hasOverdueReturnPayment = financialSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
-          val tableHtml               = legacyTablePartial(tables)
+          val tableHtml               = tablePartial(tables)
           val orgName                 = subscriptionData.upeDetails.organisationName
           Ok(view(tableHtml, orgName, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
