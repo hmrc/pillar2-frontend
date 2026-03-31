@@ -26,8 +26,7 @@ final case class AccountActivityData(accountActivityTransactions: Seq[AccountAct
 
   def onlyOutstandingCharges: Seq[AccountActivityTransaction] =
     accountActivityTransactions.filter { tx =>
-      tx.transactionType == TransactionType.Debit && tx.outstandingAmount.exists(_ > 0) &&
-      (tx.startDate.isDefined || tx.endDate.isDefined)
+      tx.transactionType == TransactionType.Debit && tx.outstandingAmount.exists(_ > 0)
     }
 
   def calculateOutstandingAmount: BigDecimal =

@@ -34,7 +34,7 @@ import repositories.SessionRepository
 import services.{FinancialDataService, SubscriptionService}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.outstandingpayments.OutstandingPaymentsView
+import views.html.outstandingpayments.{OutstandingPaymentsView, _OutstandingPaymentsTable}
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
@@ -73,13 +73,15 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
           .thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-        val view    = application.injector.instanceOf[OutstandingPaymentsView]
+        val request      = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result       = route(application, request).value
+        val view         = application.injector.instanceOf[OutstandingPaymentsView]
+        val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
+        val tableHtml    = tablePartial(overdueTables)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(overdueTables, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
+          view(tableHtml, orgName, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
             request,
             applicationConfig,
             messages(application),
@@ -119,14 +121,15 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
           .thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        val view = application.injector.instanceOf[OutstandingPaymentsView]
+        val request      = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result       = route(application, request).value
+        val view         = application.injector.instanceOf[OutstandingPaymentsView]
+        val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
+        val tableHtml    = tablePartial(preRegistrationOverdueTables)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(preRegistrationOverdueTables, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
+          view(tableHtml, orgName: String, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
             request,
             applicationConfig,
             messages(application),
@@ -357,6 +360,8 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 }
 
 object OutstandingPaymentsControllerSpec {
+
+  val orgName: String = "Company Ltd"
 
   val pillar2Id: String = "XMPLR0123456789"
 
