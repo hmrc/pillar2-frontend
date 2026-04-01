@@ -1015,4 +1015,241 @@ class AccountActivityResponseSpec extends SpecBase {
       unallocatedAmount mustEqual 500
     }
   }
+
+  "AccountActivityResponse.toStoodoverCharges" should {
+    "return empty list when no stoodover charges exist" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Payment,
+            transactionDesc = "Pillar 2 Payment on Account",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 1, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(500),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toStoodoverCharges mustBe empty
+    }
+
+    "return empty list when stoodover charge amount is 0" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(0)),
+            clearedAmount = Some(BigDecimal(2000)),
+            standOverAmount = Some(BigDecimal(0)),
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toStoodoverCharges mustBe empty
+    }
+
+    "filter out transactions without startDate and endDate" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      response.toStoodoverCharges mustBe empty
+    }
+
+    "convert stoodover charge amounts to StoodoverChargeSummary grouped by accounting period" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = None,
+            clearedAmount = Some(BigDecimal(1000)),
+            standOverAmount = Some(BigDecimal(1000)),
+            appealFlag = None,
+            clearingDetails = None
+          ),
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - MTT (IIR)",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789013"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 30)),
+            originalAmount = BigDecimal(1500),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = Some(BigDecimal(1500)),
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toStoodoverCharges
+
+      result must have size 1
+      result.head.accountingPeriod.startDate mustBe LocalDate.of(2025, 1, 1)
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2025, 12, 31)
+      result.head.items must have size 2
+      result.head.items.head.description mustBe "UKTR - DTT"
+      result.head.items.head.stoodoverAmount mustBe BigDecimal(1000)
+      result.head.items(1).description mustBe "UKTR - MTT (IIR)"
+      result.head.items(1).stoodoverAmount mustBe BigDecimal(1500)
+    }
+
+    "group transactions by different accounting periods" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = Some(BigDecimal(1000)),
+            appealFlag = None,
+            clearingDetails = None
+          ),
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Determination - DTT",
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789013"),
+            transactionDate = LocalDate.of(2026, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = BigDecimal(3000),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = Some(BigDecimal(3000)),
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toStoodoverCharges
+
+      result must have size 2
+
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2026, 12, 31)
+      result.head.items.head.description mustBe "Determination - DTT"
+      result(1).accountingPeriod.endDate mustBe LocalDate.of(2025, 12, 31)
+      result(1).items.head.description mustBe "UKTR - DTT"
+    }
+
+    "use transactionDate as fallback when startDate or endDate is missing" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = Some(BigDecimal(1000)),
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toStoodoverCharges
+
+      result.head.accountingPeriod.startDate mustBe LocalDate.of(2025, 1, 1)
+      result.head.accountingPeriod.endDate mustBe LocalDate.of(2025, 2, 15)
+    }
+
+    "map unknown transaction descriptions to original description" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Unknown Transaction Type",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = None,
+            clearedAmount = None,
+            standOverAmount = Some(BigDecimal(1000)),
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toStoodoverCharges
+
+      result.head.items.head.description mustBe "Unknown Transaction Type"
+    }
+  }
 }

@@ -43,7 +43,8 @@
     dynamicNotificationAreaState: DynamicNotificationAreaState,
     plrReference: String,
     isAgent: Boolean,
-    hasReturnsUnderEnquiry: Boolean
+    hasReturnsUnderEnquiry: Boolean,
+    useAccountActivity: Boolean = false
 )(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
@@ -192,6 +193,11 @@
                  <li class="card-links">
                      <a href="@controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url" class="govuk-link">@messages("homepage.payments.outstandingPayments.linkText")</a>
                  </li>
+                 @if(useAccountActivity) {
+                     <li class="card-links">
+                         <a href="@controllers.payments.routes.StoodoverChargesController.onPageLoad.url" class="govuk-link">@messages("homepage.payments.stoodoverCharges.linkText")</a>
+                     </li>
+                 }
                  <li class="card-links">
                      <a href="@controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url" class="govuk-link">@messages("homepage.payments.repayments.linkText")</a>
                  </li>
@@ -201,11 +207,21 @@
  } else {
      @card(
          title = messages("homepage.payments.title"),
-         links = Seq(
-             (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
-             (messages("homepage.payments.outstandingPayments.linkText"), controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url, None),
-             (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url, None),
-         )
+         links =
+             if(useAccountActivity) {
+                 Seq(
+                     (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
+                     (messages("homepage.payments.outstandingPayments.linkText"), controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url, None),
+                     (messages("homepage.payments.stoodoverCharges.linkText"), controllers.payments.routes.StoodoverChargesController.onPageLoad.url, None),
+                     (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url, None)
+                 )
+             } else {
+                 Seq(
+                    (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
+                    (messages("homepage.payments.outstandingPayments.linkText"), controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url, None),
+                    (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url, None)
+                )
+            }
      )
  }
 
