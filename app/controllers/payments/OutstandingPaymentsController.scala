@@ -87,7 +87,7 @@ class OutstandingPaymentsController @Inject() (
     financialSummaries.map { summary =>
       OutstandingPaymentsTable(
         accountingPeriod = summary.accountingPeriod,
-        rows = summary.transactions.map(tx => OutstandingPaymentsRow(tx.description, tx.outstandingAmount, tx.dueDate, None))
+        rows = summary.transactions.map(tx => OutstandingPaymentsRow(tx.description, tx.outstandingAmount, tx.dueDate))
       )
     }
 
@@ -97,7 +97,9 @@ class OutstandingPaymentsController @Inject() (
     accountActivitySummaries.map { summary =>
       OutstandingPaymentsTableForActivity(
         accountingPeriod = summary.accountingPeriod,
-        rows = summary.items.map(item => OutstandingPaymentsRowForActivity(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag))
+        rows = summary.items.map(item =>
+          OutstandingPaymentsRowForActivity(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
+        )
       )
     }
 
@@ -126,6 +128,7 @@ class OutstandingPaymentsController @Inject() (
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         subscriptionData          <- OptionT.liftF(subscriptionService.readSubscription(plrRef))
+        orgName = subscriptionData.upeDetails.organisationName
         outstandingPaymentsResult <-
           OptionT.liftF(
             retrieveOutstandingPayments(plrRef, LocalDate.now.minusYears(SubmissionAccountingPeriods), now())
@@ -139,7 +142,6 @@ class OutstandingPaymentsController @Inject() (
           val hasOverdueReturnPayment = tables.exists(_.rows.exists(_.dueDate.isBefore(now())))
           val accruedInterest         = accountActivityResponse.totalAccruedInterest
           val tableHtml               = activityTablePartial(tables, penalties)
-          val orgName                 = subscriptionData.upeDetails.organisationName
           Ok(view(tableHtml, orgName, plrRef, amountDue, hasOverdueReturnPayment, useAccountActivity = true, accruedInterest))
         case Right(financialSummaries) =>
           // Legacy Financial Data API path
@@ -147,7 +149,6 @@ class OutstandingPaymentsController @Inject() (
           val amountDue               = tables.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
           val hasOverdueReturnPayment = financialSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
           val tableHtml               = tablePartial(tables)
-          val orgName                 = subscriptionData.upeDetails.organisationName
           Ok(view(tableHtml, orgName, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))

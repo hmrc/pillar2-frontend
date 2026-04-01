@@ -39,8 +39,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
   lazy val tablePartial:         _OutstandingPaymentsTable         = app.injector.instanceOf[_OutstandingPaymentsTable]
   lazy val activityTablePartial: _OutstandingPaymentsActivityTable = app.injector.instanceOf[_OutstandingPaymentsActivityTable]
 
-  lazy val tableHtml:         Html = tablePartial(data)
-  lazy val activityTableHtml: Html = activityTablePartial(activityData, penalties)
+  lazy val tableHtml:               Html = tablePartial(data)
+  lazy val activityTableHtml:       Html = activityTablePartial(activityData, penalties)
+  lazy val activityAppealTableHtml: Html = activityTablePartial(dataWithAppeal, penalties)
 
   lazy val organisationView: Document =
     Jsoup.parse(
@@ -60,7 +61,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val accountActivityAppealView: Document =
     Jsoup.parse(
-      page(dataWithAppeal, plrRef, amountDue(dataWithAppeal), hasOverdueReturnPayment = true, useAccountActivity = true)(
+      page(activityAppealTableHtml, orgName, plrRef, amountDueForActivity(dataWithAppeal), hasOverdueReturnPayment = true, useAccountActivity = true)(
         request,
         appConfig,
         messages,
@@ -212,18 +213,20 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
           val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
 
-          val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+          val caption: Element = table.getElementsByClass("govuk-table__caption--m").first()
           caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
 
           val headers: Elements = table.getElementsByTag("th")
           headers.get(0).text() mustBe "Description"
-          headers.get(1).text() mustBe "Amount"
-          headers.get(2).text() mustBe "Due date"
+          headers.get(1).text() mustBe "Charge amount"
+          headers.get(2).text() mustBe "Amount due"
+          headers.get(3).text() mustBe "Due date"
 
           val rows: Elements = table.getElementsByTag("td")
           rows.get(0).text() mustBe "UKTR - DTT Appealed"
           rows.get(1).text() mustBe "£1,000.00"
-          rows.get(2).text() mustBe "31 March 2024"
+          rows.get(2).text() mustBe "£1,000.00"
+          rows.get(3).text() mustBe "31 March 2024"
         }
 
         "account activity toggle is false, show correct content" in {
@@ -285,47 +288,6 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
-    "when account activity is disabled" must {
-      "not display the appeal label even when there's an appeal flag" in {
-
-        val row: OutstandingPaymentsRow =
-          OutstandingPaymentsRow(
-            description = "UKTR - DTT",
-            outstandingAmount = 1000.00,
-            dueDate = LocalDate.of(2024, 3, 31),
-            appealFlag = Some(true)
-          )
-        val tableData: OutstandingPaymentsTable      = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
-        val data:      Seq[OutstandingPaymentsTable] = Seq(tableData)
-
-        lazy val organisationViewWithAppealFlagView: Document =
-          Jsoup.parse(
-            page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(
-              request,
-              appConfig,
-              messages,
-              isAgent = false
-            )
-              .toString()
-          )
-
-        val table = organisationViewWithAppealFlagView.getElementsByClass("govuk-table").first()
-
-        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
-        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
-
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(0).text() mustBe "Description"
-        headers.get(1).text() mustBe "Amount"
-        headers.get(2).text() mustBe "Due date"
-
-        val rows: Elements = table.getElementsByTag("td")
-        rows.get(0).text() mustBe "UKTR - DTT"
-        rows.get(1).text() mustBe "£1,000.00"
-        rows.get(2).text() mustBe "31 March 2024"
-      }
-    }
-
     "The stoodover charges section" must {
       "be displayed when account activity toggle is true" in {
         accountActivityOrganisationView.getElementsByTag("h2").get(3).text() mustBe "Stoodover charges"
@@ -359,7 +321,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display penalties and charges section" in {
       h2Elements.get(4).text() mustBe "Penalties and interest charges"
-      paragraphs.get(8).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      paragraphs.get(9).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
       val penaltiesLink: Element = links.get(4)
 
@@ -411,7 +373,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
         agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(8).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {
@@ -483,18 +445,21 @@ object OutstandingPaymentsViewSpec {
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
   val row: OutstandingPaymentsRow =
-    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31), appealFlag = None)
+    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31))
 
   val table: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
 
   val data: Seq[OutstandingPaymentsTable] = Seq(table)
+
+  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
 
   val activityRow: OutstandingPaymentsRowForActivity =
     OutstandingPaymentsRowForActivity(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
       outstandingAmount = 1000.00,
-      dueDate = LocalDate.of(2024, 3, 31)
+      dueDate = LocalDate.of(2024, 3, 31),
+      appealFlag = None
     )
 
   val activityTable: OutstandingPaymentsTableForActivity =
@@ -502,15 +467,21 @@ object OutstandingPaymentsViewSpec {
 
   val activityData: Seq[OutstandingPaymentsTableForActivity] = Seq(activityTable)
 
-  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
-  val penalties:      Seq[OutstandingPaymentItem]   = Seq.empty
+  val penalties: Seq[OutstandingPaymentItem] = Seq.empty
 
-  val rowWithAppeal: OutstandingPaymentsRow =
-    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31), appealFlag = Some(true))
+  val rowWithAppeal: OutstandingPaymentsRowForActivity =
+    OutstandingPaymentsRowForActivity(
+      description = "UKTR - DTT",
+      chargeAmount = 1000.00,
+      outstandingAmount = 1000.00,
+      dueDate = LocalDate.of(2024, 3, 31),
+      appealFlag = Some(true)
+    )
 
-  val tableWithAppeal: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
+  val tableWithAppeal: OutstandingPaymentsTableForActivity =
+    OutstandingPaymentsTableForActivity(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
 
-  val dataWithAppeal: Seq[OutstandingPaymentsTable] = Seq(tableWithAppeal)
+  val dataWithAppeal: Seq[OutstandingPaymentsTableForActivity] = Seq(tableWithAppeal)
 
   def amountDue(data:            Seq[OutstandingPaymentsTable]):            BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
   def amountDueForActivity(data: Seq[OutstandingPaymentsTableForActivity]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)

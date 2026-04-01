@@ -146,7 +146,8 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
           description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
           chargeAmount = t.originalAmount,
           outstandingAmount = t.outstandingAmount.get,
-          dueDate = t.dueDate.getOrElse(t.transactionDate)
+          dueDate = t.dueDate.getOrElse(t.transactionDate),
+          appealFlag = t.appealFlag
         )
       }
       .sortBy(_.dueDate)(Ordering[LocalDate].reverse)

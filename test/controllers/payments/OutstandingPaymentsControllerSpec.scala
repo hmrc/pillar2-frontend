@@ -430,8 +430,7 @@ object OutstandingPaymentsControllerSpec {
         OutstandingPaymentsRow(
           description = "UKTR - DTT",
           outstandingAmount = BigDecimal(1000.00),
-          dueDate = LocalDate.of(2024, 12, 31),
-          appealFlag = None
+          dueDate = LocalDate.of(2024, 12, 31)
         )
       )
     )
@@ -444,8 +443,7 @@ object OutstandingPaymentsControllerSpec {
         OutstandingPaymentsRow(
           description = "UKTR - DTT",
           outstandingAmount = BigDecimal(1000.00),
-          dueDate = LocalDate.of(2020, 12, 31),
-          appealFlag = None
+          dueDate = LocalDate.of(2020, 12, 31)
         )
       )
     )
