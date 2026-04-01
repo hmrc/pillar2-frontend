@@ -25,6 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.behaviours.ViewScenario
 import views.html.paymenthistory.TransactionHistoryView
+import views.paymenthistory.TransactionHistoryViewSpec.{orgName, plrRef}
 
 import scala.jdk.CollectionConverters.*
 
@@ -82,9 +83,11 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  lazy val page: TransactionHistoryView = inject[TransactionHistoryView]
-  lazy val groupView:           Document = Jsoup.parse(page(500, true, table, pagination, isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView:           Document = Jsoup.parse(page(500, true, table, pagination, isAgent = true)(request, appConfig, messages).toString())
+  lazy val page:      TransactionHistoryView = inject[TransactionHistoryView]
+  lazy val groupView: Document               =
+    Jsoup.parse(page(orgName, plrRef, 500, true, table, pagination, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView: Document =
+    Jsoup.parse(page(orgName, plrRef, 500, true, table, pagination, isAgent = true)(request, appConfig, messages).toString())
   lazy val pageTitle:           String   = "Transaction history"
   lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
   lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
@@ -106,6 +109,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       val className: String = "govuk-header__link govuk-header__service-name"
       groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+    }
+
+    "have correct text for agents at the top of the page" in {
+      agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: $orgName ID: $plrRef"
     }
 
     "have correct paragraphs for a group" in {
@@ -232,4 +239,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     behaveLikeAccessiblePage(viewScenarios)
   }
+}
+
+object TransactionHistoryViewSpec {
+  val orgName: String = "Company Inc"
+
+  val plrRef: String = "somePillar2Ref"
 }

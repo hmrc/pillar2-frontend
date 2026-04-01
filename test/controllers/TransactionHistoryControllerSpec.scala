@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.{AccountActivityConnector, FinancialDataConnector}
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
+import controllers.TransactionHistoryControllerSpec.{orgName, plrRef}
 import helpers.ViewInstances
 import models.*
 import models.subscription.*
@@ -168,6 +169,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          orgName,
+          plrRef,
           0,
           false,
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
@@ -206,6 +209,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          orgName,
+          plrRef,
           0,
           false,
           generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory, useNewApi = false).get,
@@ -316,6 +321,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          orgName,
+          plrRef,
           0,
           false,
           isAgent = false
@@ -395,6 +402,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
+          orgName,
+          plrRef,
           0,
           false,
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory, useNewApi = false).get,
@@ -581,4 +590,10 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
       }
     }
   }
+}
+
+object TransactionHistoryControllerSpec {
+  val orgName: String = "Company Inc"
+
+  val plrRef: String = "somePillar2Ref"
 }

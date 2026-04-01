@@ -23,15 +23,16 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.paymenthistory.NoTransactionHistoryView
+import views.paymenthistory.TransactionHistoryViewSpec.{orgName, plrRef}
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
-  lazy val page:                NoTransactionHistoryView = inject[NoTransactionHistoryView]
-  lazy val groupView:           Document                 = Jsoup.parse(page(500, true, isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView:           Document                 = Jsoup.parse(page(0, true, isAgent = true)(request, appConfig, messages).toString())
-  lazy val pageTitle:           String                   = "Transaction history"
-  lazy val groupViewParagraphs: Elements                 = groupView.getElementsByClass("govuk-body")
-  lazy val agentViewParagraphs: Elements                 = agentView.getElementsByClass("govuk-body")
+  lazy val page: NoTransactionHistoryView = inject[NoTransactionHistoryView]
+  lazy val groupView:           Document = Jsoup.parse(page(orgName, plrRef, 500, true, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView:           Document = Jsoup.parse(page(orgName, plrRef, 0, true, isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle:           String   = "Transaction history"
+  lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
+  lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
   "No Transaction History View for Group" should {
 
@@ -90,6 +91,10 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
       val h1Elements: Elements = groupView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
+    }
+
+    "have correct text for agents at the top of the page" in {
+      agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: $orgName ID: $plrRef"
     }
 
     "have paragraph 1" in {
