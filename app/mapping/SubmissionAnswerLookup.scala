@@ -24,7 +24,7 @@ import models.longrunningsubmissions.LongRunningSubmission.*
 import models.longrunningsubmissions.{LongRunningSubmission, SubmissionLookupError, SubmissionState}
 import models.repayments.RepaymentsStatus
 import models.rfm.RfmStatus
-import models.subscription.{ManageContactDetailsStatus, ManageGroupDetailsStatus, SubscriptionStatus}
+import models.subscription.*
 import pages.*
 import play.api.libs.json.Reads
 import queries.Gettable
@@ -41,12 +41,14 @@ object SubmissionAnswerLookup {
     given forAnySubmission[A <: LongRunningSubmission]: SubmissionAnswerLookup[A] =
       (submission: LongRunningSubmission, answers: UserAnswers) =>
         submission match {
-          case LongRunningSubmission.BTN                  => forBtn.extractStateFromAnswers(BTN, answers)
-          case LongRunningSubmission.ManageContactDetails => forContactDetails.extractStateFromAnswers(ManageContactDetails, answers)
-          case LongRunningSubmission.ManageGroupDetails   => forGroupDetails.extractStateFromAnswers(ManageGroupDetails, answers)
-          case LongRunningSubmission.Registration         => forRegistration.extractStateFromAnswers(Registration, answers)
-          case LongRunningSubmission.Repayments           => forRepayments.extractStateFromAnswers(Repayments, answers)
-          case LongRunningSubmission.RFM                  => forRfm.extractStateFromAnswers(RFM, answers)
+          case LongRunningSubmission.BTN                   => forBtn.extractStateFromAnswers(BTN, answers)
+          case LongRunningSubmission.ManageContactDetails  => forContactDetails.extractStateFromAnswers(ManageContactDetails, answers)
+          case LongRunningSubmission.ManageGroupDetails    => forGroupDetails.extractStateFromAnswers(ManageGroupDetails, answers)
+          case LongRunningSubmission.Registration          => forRegistration.extractStateFromAnswers(Registration, answers)
+          case LongRunningSubmission.Repayments            => forRepayments.extractStateFromAnswers(Repayments, answers)
+          case LongRunningSubmission.RFM                   => forRfm.extractStateFromAnswers(RFM, answers)
+          case LongRunningSubmission.AmendAccountingPeriod =>
+            forAmendAccountingPeriod.extractStateFromAnswers(AmendAccountingPeriod, answers)
         }
 
     given forBtn: SubmissionAnswerLookup[BTN.type] = (_, answers: UserAnswers) =>
@@ -97,6 +99,14 @@ object SubmissionAnswerLookup {
         case RfmStatus.InProgress               => SubmissionState.Processing.asRight
         case RfmStatus.FailedInternalIssueError => SubmissionState.Error.GenericTechnical.asRight
         case RfmStatus.FailException            => SubmissionState.Error.Incomplete.asRight
+      }
+
+    given forAmendAccountingPeriod: SubmissionAnswerLookup[AmendAccountingPeriod.type] = (_, answers: UserAnswers) =>
+      withField(AmendAccountingPeriodStatusPage, answers) {
+        case AmendAccountingPeriodStatus.SuccessfullyCompleted                                                => SubmissionState.Submitted.asRight
+        case AmendAccountingPeriodStatus.InProgress                                                           => SubmissionState.Processing.asRight
+        case AmendAccountingPeriodStatus.FailedInternalIssueError | AmendAccountingPeriodStatus.FailException =>
+          SubmissionState.Error.GenericTechnical.asRight
       }
 
     private def withField[A](key: Gettable[A], ua: UserAnswers)(extractor: A => ExtractResult)(using reads: Reads[A]): ExtractResult =

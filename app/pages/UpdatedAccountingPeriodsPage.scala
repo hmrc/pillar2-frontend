@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import models.subscription.AccountingPeriod
+import models.subscription.AccountingPeriodV2
+import play.api.libs.json.JsPath
 
-import java.time.LocalDate
-
-final case class OutstandingPaymentsTable(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRow])
-
-final case class OutstandingPaymentsRow(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate, appealFlag: Option[Boolean])
+case object UpdatedAccountingPeriodsPage extends QuestionPage[Seq[AccountingPeriodV2]] {
+  override def path:     JsPath = JsPath \ toString
+  override def toString: String = "updatedAccountingPeriods"
+}

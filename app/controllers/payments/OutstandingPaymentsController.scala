@@ -85,7 +85,7 @@ class OutstandingPaymentsController @Inject() (
     financialSummaries.map { summary =>
       OutstandingPaymentsTable(
         accountingPeriod = summary.accountingPeriod,
-        rows = summary.transactions.map(tx => OutstandingPaymentsRow(tx.description, tx.outstandingAmount, tx.dueDate))
+        rows = summary.transactions.map(tx => OutstandingPaymentsRow(tx.description, tx.outstandingAmount, tx.dueDate, None))
       )
     }
 
@@ -93,7 +93,7 @@ class OutstandingPaymentsController @Inject() (
     accountActivitySummaries.map { summary =>
       OutstandingPaymentsTable(
         accountingPeriod = summary.accountingPeriod,
-        rows = summary.items.map(item => OutstandingPaymentsRow(item.description, item.outstandingAmount, item.dueDate))
+        rows = summary.items.map(item => OutstandingPaymentsRow(item.description, item.outstandingAmount, item.dueDate, item.appealFlag))
       )
     }
 

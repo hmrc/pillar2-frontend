@@ -189,7 +189,8 @@ class HomepageController @Inject() (
             notificationArea,
             plrReference,
             request.isAgent,
-            hasReturnsUnderEnquiry
+            hasReturnsUnderEnquiry,
+            appConfig.useAccountActivityApi
           )
         )
       }
