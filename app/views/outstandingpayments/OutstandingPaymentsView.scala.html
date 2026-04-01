@@ -106,6 +106,15 @@
 
     @h2(messages("payments.outstanding.details.heading"), size = "m")
     @paragraphBody(messages("payments.outstanding.details.p1"))
+
+    @if(useAccountActivity) {
+        @paragraphBody(messages("payments.outstanding.details.p2"))
+        @paragraphMessageWithLink(
+            linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+            linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
+        )
+    }
+
     @details(Details(
         summary = messages("payments.outstanding.abbreviation.heading"),
         content = HtmlContent(Html(
@@ -138,7 +147,11 @@
                     ),
                     rows =  summary.rows.map { row =>
                         Seq(
-                            TableRow(content = Text(row.description)),
+                            TableRow(content = if(useAccountActivity && row.appealFlag.contains(true)) {
+                                                   HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
+                                               } else {
+                                                   Text(row.description)
+                                               }),
                             TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
                             TableRow(content = Text(row.dueDate.toDateFormat))
                         )
@@ -152,9 +165,17 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if(useAccountActivity) {
+                @h2(messages("payments.stoodoverCharges.title"), size = "m")
+                @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
+                @paragraphMessageWithLink(
+                    linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+                    linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
+                )
+            }
+
             @h2(messages("transactionHistory.title"), size = "m")
             @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
-            @paragraphBody(messages("payments.outstanding.transactionHistory.p2"))
             @paragraphMessageWithLink(
                 linkMessage = messages("homepage.payments.transactionHistory.linkText"),
                 linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url

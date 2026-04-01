@@ -113,7 +113,8 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
               OutstandingPaymentItem(
                 description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
                 outstandingAmount = t.outstandingAmount.get,
-                dueDate = t.dueDate.getOrElse(t.transactionDate)
+                dueDate = t.dueDate.getOrElse(t.transactionDate),
+                appealFlag = t.appealFlag
               )
             }
             .sortBy(_.dueDate)(Ordering[LocalDate].reverse) // Sort by dueDate descending
@@ -141,6 +142,42 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
       .flatMap(_.outstandingAmount.filter(_ < 0))
       .map(_.abs)
       .sum
+
+  def toStoodoverCharges: Seq[StoodoverChargeSummary] = {
+    val stoodoverCharges = transactionDetails.filter { t =>
+      t.standOverAmount.exists(_ > 0) &&
+      (t.startDate.isDefined || t.endDate.isDefined)
+    }
+
+    if stoodoverCharges.isEmpty then Seq.empty
+    else {
+      val itemsByPeriod = stoodoverCharges
+        .groupBy { t =>
+          val start = t.startDate.getOrElse(t.transactionDate)
+          val end   = t.endDate.getOrElse(t.transactionDate)
+          AccountingPeriod(start, end)
+        }
+        .map { case (accountingPeriod, transactions) =>
+          val items = transactions
+            .map { t =>
+              val uiDescription = TransactionDescription
+                .fromString(t.transactionDesc)
+                .map(_.toUiDescription)
+                .getOrElse(t.transactionDesc)
+
+              StoodoverChargeItem(
+                description = uiDescription,
+                stoodoverAmount = t.standOverAmount.get
+              )
+            }
+
+          StoodoverChargeSummary(accountingPeriod, items)
+        }
+        .toSeq
+
+      itemsByPeriod.sortBy(_.accountingPeriod.endDate)(Ordering[LocalDate].reverse)
+    }
+  }
 }
 
 sealed trait TransactionType
