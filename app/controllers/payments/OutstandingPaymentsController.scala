@@ -127,7 +127,7 @@ class OutstandingPaymentsController @Inject() (
         plrRef <- OptionT
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        subscriptionData          <- OptionT.liftF(subscriptionService.readSubscription(plrRef))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(plrRef))
         orgName = subscriptionData.upeDetails.organisationName
         outstandingPaymentsResult <-
           OptionT.liftF(
