@@ -27,6 +27,7 @@ import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
+import views.subscriptionview.manageAccount.ManageContactCheckYourAnswersViewSpec.{orgName, plrRef}
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
   given subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
@@ -40,7 +41,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       subscriptionDataSecondaryContactList(),
       subscriptionDataAddress(inject[CountryOptions]),
       isAgent = false,
-      Some("OrgName")
+      orgName,
+      plrRef
     )(
       request,
       appConfig,
@@ -54,8 +56,9 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
       subscriptionDataAddress(inject[CountryOptions]),
-      isAgent = false,
-      Some("OrgName")
+      isAgent = true,
+      orgName,
+      plrRef
     )(request, appConfig, messages).toString()
   )
 
@@ -192,6 +195,10 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         h1Elements.text() mustBe pageTitle
       }
 
+      "show the correct hint text at the top of the page" in {
+        agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
+      }
+
       "have first contact header" in {
         agentView.getElementsByTag("h2").first.text mustBe "Primary contact"
       }
@@ -277,6 +284,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
               subscriptionDataSecondaryContactList(),
               subscriptionDataAddress(inject[CountryOptions]),
               isAgent = true,
+              None,
               None
             )(request, appConfig, messages).toString()
           )
@@ -286,4 +294,10 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     behaveLikeAccessiblePage(viewScenarios)
   }
 
+}
+
+object ManageContactCheckYourAnswersViewSpec {
+  val orgName: Option[String] = Some("Company Inc")
+
+  val plrRef: Option[String] = Some("somePillar2Ref")
 }
