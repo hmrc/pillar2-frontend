@@ -41,7 +41,11 @@ case class SubscriptionLocalData(
   accountStatus:               Option[AccountStatus],
   organisationName:            Option[String],
   accountingPeriods:           Option[Seq[AccountingPeriodV2]] = None,
-  registrationDate:            Option[LocalDate] = None
+  registrationDate:            Option[LocalDate] = None,
+  upeCustomerIdentification1:  Option[String] = None,
+  upeCustomerIdentification2:  Option[String] = None,
+  upeFilingMember:             Option[Boolean] = None,
+  filingMemberDetails:         Option[FilingMemberDetails] = None
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)

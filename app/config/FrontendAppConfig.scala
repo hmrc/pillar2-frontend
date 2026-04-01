@@ -126,6 +126,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val homepageRetryMaxAttempts:  Int = configuration.get[Int]("homepage.retryMaxAttempts")
   val homepageRetryDelaySeconds: Int = configuration.get[Int]("homepage.retryDelaySeconds")
 
+  val amendAPReadRetryMaxAttempts:  Int = configuration.get[Int]("long-running-submissions.amend-accounting-period.readRetryMaxAttempts")
+  val amendAPReadRetryDelaySeconds: Int = configuration.get[Int]("long-running-submissions.amend-accounting-period.readRetryDelaySeconds")
+
   val longRunningSubmissionConfig: LongRunningSubmission => LongRunningSubmissionConfig =
     LongRunningSubmission.values.map { submission =>
       submission -> LongRunningSubmissionConfig(

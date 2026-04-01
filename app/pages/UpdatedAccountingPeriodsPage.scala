@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-import models.subscription.AccountingPeriod
+import models.subscription.AccountingPeriodV2
+import play.api.libs.json.JsPath
 
-import java.time.LocalDate
-
-case class OutstandingPaymentSummary(accountingPeriod: AccountingPeriod, items: Seq[OutstandingPaymentItem])
-
-case class OutstandingPaymentItem(description: String, chargeAmount: BigDecimal, outstandingAmount: BigDecimal, dueDate: LocalDate, appealFlag: Option[Boolean])
+case object UpdatedAccountingPeriodsPage extends QuestionPage[Seq[AccountingPeriodV2]] {
+  override def path:     JsPath = JsPath \ toString
+  override def toString: String = "updatedAccountingPeriods"
+}

@@ -18,12 +18,6 @@ package models
 
 import models.subscription.AccountingPeriod
 
-import java.time.LocalDate
+final case class StoodoverChargesTable(accountingPeriod: AccountingPeriod, rows: Seq[StoodoverChargesRow])
 
-final case class OutstandingPaymentsTable(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRow])
-
-final case class OutstandingPaymentsRow(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate, appealFlag: Option[Boolean])
-
-final case class OutstandingPaymentsTableForActivity(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRowForActivity])
-
-final case class OutstandingPaymentsRowForActivity(description: String, chargeAmount: BigDecimal, outstandingAmount: BigDecimal, dueDate: LocalDate)
+final case class StoodoverChargesRow(description: String, stoodoverAmount: BigDecimal)

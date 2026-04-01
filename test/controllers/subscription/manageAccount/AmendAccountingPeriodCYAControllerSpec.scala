@@ -18,14 +18,17 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.{AccountingPeriod, AccountingPeriodV2}
+import models.longrunningsubmissions.LongRunningSubmission
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, AmendAccountingPeriodStatus}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.NewAccountingPeriodPage
+import org.mockito.Mockito.{verify, when}
+import pages.{AmendAccountingPeriodStatusPage, NewAccountingPeriodPage, OriginalAccountingPeriodsPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.{ReferenceNumberService, SubscriptionService}
 import utils.DateTimeUtils.*
 
 import java.time.LocalDate
@@ -58,11 +61,14 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
   private def buildApp(userAnswers: Option[UserAnswers], localData: Option[models.subscription.SubscriptionLocalData] = Some(baseLocalData)) = {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(userAnswers))
+    when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
     applicationBuilder(
       subscriptionLocalData = localData,
       additionalData = Map("features.amendMultipleAccountingPeriods" -> true)
     ).overrides(
-      bind[SessionRepository].toInstance(mockSessionRepository)
+      bind[SessionRepository].toInstance(mockSessionRepository),
+      bind[SubscriptionService].toInstance(mockSubscriptionService),
+      bind[ReferenceNumberService].toInstance(mockReferenceNumberService)
     ).build()
   }
 
@@ -167,9 +173,48 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
   "AmendAccountingPeriodCYAController onSubmit" when {
 
-    "redirects to journey recovery on submit" in {
+    "redirects to waiting room when valid data is present" in {
       val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
       val application = buildApp(userAnswers = Some(ua))
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit().url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController
+          .onPageLoad(LongRunningSubmission.AmendAccountingPeriod)
+          .url
+      }
+    }
+
+    "saves original periods and sets status to InProgress in session" in {
+      val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
+      val application = buildApp(userAnswers = Some(ua))
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit().url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository, org.mockito.Mockito.atLeastOnce()).set(captor.capture())
+        val firstSavedAnswers = captor.getAllValues.get(0)
+        firstSavedAnswers.get(OriginalAccountingPeriodsPage) mustBe Some(allPeriods)
+        firstSavedAnswers.get(AmendAccountingPeriodStatusPage) mustBe Some(AmendAccountingPeriodStatus.InProgress)
+      }
+    }
+
+    "redirects to journey recovery when NewAccountingPeriodPage not in session" in {
+      val application = buildApp(userAnswers = Some(UserAnswers("id")))
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit().url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "redirects to journey recovery when no periods in local data" in {
+      val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
+      val application = buildApp(userAnswers = Some(ua), localData = Some(emptySubscriptionLocalData))
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit().url)
         val result  = route(application, request).value
