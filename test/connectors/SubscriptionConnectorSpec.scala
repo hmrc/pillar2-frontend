@@ -250,6 +250,20 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result.failed.futureValue mustEqual UnexpectedResponse
       }
     }
+
+    "amendSubscriptionV2" should {
+      val amendV2Data = Json.parse(successfulAmendV2Object).as[AmendSubscriptionV2]
+
+      "return Done when the backend has returned 200 OK" in {
+        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", OK, Some(successfulAmendV2Object))
+        connector.amendSubscriptionV2(id, amendV2Data).futureValue mustBe Done
+      }
+
+      "fail with UnexpectedResponse when the backend has returned a non-success status code" in {
+        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", errorCodes.sample.value, None)
+        connector.amendSubscriptionV2(id, amendV2Data).failed.futureValue mustEqual UnexpectedResponse
+      }
+    }
   }
 
 }
@@ -322,6 +336,7 @@ object SubscriptionConnectorSpec {
   private val readSubscriptionPath       = "/report-pillar2-top-up-taxes/subscription/read-subscription"
   private val getSubscription            = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
   private val amendSubscription          = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
+  private val amendSubscriptionV2        = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
   private val id                         = "testId"
   private val plrReference               = "testPlrRef"
   private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
@@ -424,6 +439,38 @@ object SubscriptionConnectorSpec {
       |          "inactive": true
       |      }
       |  }
+      |""".stripMargin
+
+  private val successfulAmendV2Object =
+    """
+      |{
+      |  "replaceFilingMember": false,
+      |  "upeDetails": {
+      |    "plrReference": "PLRXLM123123123",
+      |    "organisationName": "Organisation Ltd",
+      |    "registrationDate": "2024-01-31",
+      |    "domesticOnly": true,
+      |    "filingMember": false
+      |  },
+      |  "accountingPeriod": {
+      |    "amendAccountingPeriod": true,
+      |    "originalAccountingPeriods": [
+      |      { "taxObligationStartDate": "2024-01-06", "taxObligationEndDate": "2025-04-06" }
+      |    ],
+      |    "newAccountingPeriod": {
+      |      "updateObligationStartDate": "2024-06-01",
+      |      "updateObligationEndDate": "2025-05-31"
+      |    }
+      |  },
+      |  "upeCorrespAddressDetails": {
+      |    "addressLine1": "1 High Street",
+      |    "countryCode": "GB"
+      |  },
+      |  "primaryContactDetails": {
+      |    "name": "Primary Contact",
+      |    "emailAddress": "primary@example.com"
+      |  }
+      |}
       |""".stripMargin
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""

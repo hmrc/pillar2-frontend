@@ -30,13 +30,14 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
   "fromLongRunningSubmission" must {
     "produce the correct page titles" in forAll(
       Table(
-        "submission"         -> "expected title",
-        BTN                  -> "Submitting your Below-Threshold Notification",
-        ManageContactDetails -> "Submitting your contact details",
-        ManageGroupDetails   -> "Submitting your group details",
-        Registration         -> "Submitting your registration",
-        Repayments           -> "Submitting your repayment request",
-        RFM                  -> "Submitting..."
+        "submission"          -> "expected title",
+        BTN                   -> "Submitting your Below-Threshold Notification",
+        ManageContactDetails  -> "Submitting your contact details",
+        ManageGroupDetails    -> "Submitting your group details",
+        Registration          -> "Submitting your registration",
+        Repayments            -> "Submitting your repayment request",
+        RFM                   -> "Submitting...",
+        AmendAccountingPeriod -> "Submitting your accounting period amendment"
       )
     ) { (submission, expectedTitle) =>
       viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).pageTitle mustBe expectedTitle
@@ -44,13 +45,14 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
 
     "produce the correct page h1" in forAll(
       Table(
-        "submission"         -> "expected h1",
-        BTN                  -> "Submitting your Below-Threshold Notification",
-        ManageContactDetails -> "Submitting your contact details",
-        ManageGroupDetails   -> "Submitting your group details",
-        Registration         -> "Submitting your registration",
-        Repayments           -> "Submitting your repayment request",
-        RFM                  -> "Submitting..."
+        "submission"          -> "expected h1",
+        BTN                   -> "Submitting your Below-Threshold Notification",
+        ManageContactDetails  -> "Submitting your contact details",
+        ManageGroupDetails    -> "Submitting your group details",
+        Registration          -> "Submitting your registration",
+        Repayments            -> "Submitting your repayment request",
+        RFM                   -> "Submitting...",
+        AmendAccountingPeriod -> "Submitting your accounting period amendment"
       )
     ) { (submission, expectedH1) =>
       viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).h1Message mustBe expectedH1
@@ -58,13 +60,14 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
 
     "produce the correct page h2" in forAll(
       Table(
-        "submission"         -> "expected h2",
-        BTN                  -> "Don’t leave this page",
-        ManageContactDetails -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change.",
-        ManageGroupDetails   -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change.",
-        Registration         -> "Do not leave this page.",
-        Repayments           -> "Do not leave this page.",
-        RFM                  -> "Do not leave this page."
+        "submission"          -> "expected h2",
+        BTN                   -> "Don’t leave this page",
+        ManageContactDetails  -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change.",
+        ManageGroupDetails    -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change.",
+        Registration          -> "Do not leave this page.",
+        Repayments            -> "Do not leave this page.",
+        RFM                   -> "Do not leave this page.",
+        AmendAccountingPeriod -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
       )
     ) { (submission, expectedH2) =>
       viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).h2Message mustBe expectedH2
@@ -72,13 +75,14 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
 
     "produce the correct post-headings content" in forAll(
       Table(
-        "submission"         -> "expected post-headings content",
-        BTN                  -> Some("You will be redirected automatically when the submission is complete."),
-        ManageContactDetails -> None,
-        ManageGroupDetails   -> None,
-        Registration         -> None,
-        Repayments           -> None,
-        RFM                  -> None
+        "submission"          -> "expected post-headings content",
+        BTN                   -> Some("You will be redirected automatically when the submission is complete."),
+        ManageContactDetails  -> None,
+        ManageGroupDetails    -> None,
+        Registration          -> None,
+        Repayments            -> None,
+        RFM                   -> None,
+        AmendAccountingPeriod -> None
       )
     ) { (submission, expectedPostHeadingsContent) =>
       viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).afterHeadingsContent mustBe expectedPostHeadingsContent

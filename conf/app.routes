@@ -229,6 +229,7 @@ GET         /manage-account/account-details/change-new-accounting-period        
 POST        /manage-account/account-details/change-new-accounting-period                             controllers.subscription.manageAccount.NewAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
 GET         /manage-account/account-details/amend-period-cya                                         controllers.subscription.manageAccount.AmendAccountingPeriodCYAController.onPageLoad()
 POST        /manage-account/account-details/amend-period-cya                                         controllers.subscription.manageAccount.AmendAccountingPeriodCYAController.onSubmit()
+GET         /manage-account/account-details/amend-period-confirmation                               controllers.subscription.manageAccount.AmendAccountingPeriodConfirmationController.onPageLoad()
 
 GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad()
 POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit()

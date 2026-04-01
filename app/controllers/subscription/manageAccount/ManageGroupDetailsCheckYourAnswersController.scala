@@ -98,8 +98,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                   val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
                     val title =
                       if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
-                      else if displayIdx == 1 then msgs("manageGroupDetails.multiPeriod.previousPeriod")
-                      else msgs("manageGroupDetails.multiPeriod.periodLabel", displayIdx + 1)
+                      else msgs("manageGroupDetails.multiPeriod.previousPeriod")
                     (
                       title,
                       p.startDate.toDateFormat,
