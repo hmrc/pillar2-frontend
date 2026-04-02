@@ -149,6 +149,17 @@ class LongRunningSubmissionSpec extends AnyWordSpec with must.Matchers with Scal
     }
   }
 
+  "AmendAccountingPeriod" must {
+    "redirect to the confirmation screen on success" in {
+      LongRunningSubmission.AmendAccountingPeriod.submittedPage mustBe
+        controllers.subscription.manageAccount.routes.AmendAccountingPeriodConfirmationController.onPageLoad()
+    }
+
+    "redirect to the amend subscription failed page on any error" in forAll(anyError) { error =>
+      LongRunningSubmission.AmendAccountingPeriod.errorPage(error) mustBe controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()
+    }
+  }
+
   "path binding" must {
     "extract the proper waiting room config from the URL" in forAll(
       Table(
@@ -158,7 +169,8 @@ class LongRunningSubmissionSpec extends AnyWordSpec with must.Matchers with Scal
         "manage-group"                 -> LongRunningSubmission.ManageGroupDetails,
         "registration"                 -> LongRunningSubmission.Registration,
         "repayment"                    -> LongRunningSubmission.Repayments,
-        "replace-filing-member"        -> LongRunningSubmission.RFM
+        "replace-filing-member"        -> LongRunningSubmission.RFM,
+        "amend-accounting-period"      -> LongRunningSubmission.AmendAccountingPeriod
       )
     ) { (fragment, expectedConfig) =>
       LongRunningSubmission.pathBinder(using PathBindable.bindableString).bind("submission", fragment).value mustBe expectedConfig

@@ -942,11 +942,12 @@ class SubscriptionServiceSpec extends SpecBase {
         accountStatus = None
       )
 
-      "fetch V2 data from connector, convert to SubscriptionLocalData, save and return it" in {
-        val application = applicationBuilder()
-          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-          .build()
-        val service = application.injector.instanceOf[SubscriptionService]
+      val application = applicationBuilder()
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+        .build()
+      val service = application.injector.instanceOf[SubscriptionService]
+
+      "fetch V2 data from connector, convert to SubscriptionLocalData, save and return it" in
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
@@ -960,13 +961,39 @@ class SubscriptionServiceSpec extends SpecBase {
           result.organisationName mustBe Some("Org Ltd")
           result.registrationDate mustBe Some(LocalDate.of(2024, 1, 31))
         }
+
+      "populate UPE identification and filing member fields from V2 data" in {
+        val v2DataWithDetails = v2Data.copy(
+          upeDetails = v2Data.upeDetails.copy(
+            customerIdentification1 = Some("CRN123"),
+            customerIdentification2 = Some("UTR456")
+          ),
+          filingMemberDetails = Some(
+            models.subscription.FilingMemberDetails(
+              safeId = "XL6967739016188",
+              customerIdentification1 = Some("FM_CRN"),
+              customerIdentification2 = Some("FM_UTR"),
+              organisationName = "Filing Member Ltd"
+            )
+          )
+        )
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+            .thenReturn(Future.successful(v2DataWithDetails))
+          when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
+            .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
+
+          val result = service.readSubscriptionV2AndSave("id", plrRef).futureValue
+          result.upeCustomerIdentification1 mustBe Some("CRN123")
+          result.upeCustomerIdentification2 mustBe Some("UTR456")
+          result.upeFilingMember mustBe Some(false)
+          result.filingMemberDetails mustBe Some(
+            models.subscription.FilingMemberDetails("XL6967739016188", Some("FM_CRN"), Some("FM_UTR"), "Filing Member Ltd")
+          )
+        }
       }
 
-      "propagate failure when save fails" in {
-        val application = applicationBuilder()
-          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-          .build()
-        val service = application.injector.instanceOf[SubscriptionService]
+      "propagate failure when save fails" in
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
@@ -975,20 +1002,75 @@ class SubscriptionServiceSpec extends SpecBase {
 
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
-      }
 
-      "propagate failure when readSubscriptionV2 fails" in {
-        val application = applicationBuilder()
-          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-          .build()
-        val service = application.injector.instanceOf[SubscriptionService]
+      "propagate failure when readSubscriptionV2 fails" in
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(any(), any())(using any(), any()))
             .thenReturn(Future.failed(InternalIssueError))
 
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
-      }
+    }
+
+    "amendAccountingPeriods" when {
+
+      val plrRef = "XEPLR0000000001"
+
+      val affectedPeriod = AccountingPeriodV2(
+        startDate = LocalDate.of(2024, 1, 1),
+        endDate = LocalDate.of(2024, 12, 31),
+        dueDate = LocalDate.of(2025, 3, 31),
+        canAmendStartDate = true,
+        canAmendEndDate = true
+      )
+
+      val newPeriod = AccountingPeriod(
+        startDate = LocalDate.of(2024, 6, 1),
+        endDate = LocalDate.of(2025, 5, 31)
+      )
+
+      val updatedV2Period = AccountingPeriodV2(
+        startDate = LocalDate.of(2024, 6, 1),
+        endDate = LocalDate.of(2025, 5, 31),
+        dueDate = LocalDate.of(2025, 9, 30),
+        canAmendStartDate = true,
+        canAmendEndDate = true
+      )
+
+      SubscriptionDataV2(
+        formBundleNumber = "119000004323",
+        upeDetails = UpeDetails(None, None, None, "Org Ltd", LocalDate.of(2024, 1, 31), domesticOnly = true, filingMember = false),
+        upeCorrespAddressDetails = UpeCorrespAddressDetails("1 High St", None, None, None, None, "GB"),
+        primaryContactDetails = ContactDetailsType("Contact", None, "c@example.com"),
+        secondaryContactDetails = None,
+        filingMemberDetails = None,
+        accountingPeriod = Seq(updatedV2Period),
+        accountStatus = None
+      )
+
+      val application = applicationBuilder()
+        .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+        .build()
+      val service = application.injector.instanceOf[SubscriptionService]
+
+      "call amendSubscriptionV2 and return Done" in
+        running(application) {
+          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[AmendSubscriptionV2])(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(Done))
+
+          service.amendAccountingPeriods("id", plrRef, emptySubscriptionLocalData, Seq(affectedPeriod), newPeriod).futureValue mustBe Done
+        }
+
+      "propagate failure when amendSubscriptionV2 fails" in
+        running(application) {
+          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[AmendSubscriptionV2])(using any[HeaderCarrier]))
+            .thenReturn(Future.failed(UnexpectedResponse))
+
+          service
+            .amendAccountingPeriods("id", plrRef, emptySubscriptionLocalData, Seq(affectedPeriod), newPeriod)
+            .failed
+            .futureValue mustBe UnexpectedResponse
+        }
     }
   }
 }

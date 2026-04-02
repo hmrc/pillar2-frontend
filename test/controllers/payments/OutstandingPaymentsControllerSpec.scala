@@ -422,7 +422,12 @@ object OutstandingPaymentsControllerSpec {
     OutstandingPaymentsTable(
       accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       rows = Seq(
-        OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = BigDecimal(1000.00), dueDate = LocalDate.of(2024, 12, 31))
+        OutstandingPaymentsRow(
+          description = "UKTR - DTT",
+          outstandingAmount = BigDecimal(1000.00),
+          dueDate = LocalDate.of(2024, 12, 31),
+          appealFlag = None
+        )
       )
     )
   )
@@ -431,7 +436,12 @@ object OutstandingPaymentsControllerSpec {
     OutstandingPaymentsTable(
       accountingPeriod = AccountingPeriod(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31)),
       rows = Seq(
-        OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = BigDecimal(1000.00), dueDate = LocalDate.of(2020, 12, 31))
+        OutstandingPaymentsRow(
+          description = "UKTR - DTT",
+          outstandingAmount = BigDecimal(1000.00),
+          dueDate = LocalDate.of(2020, 12, 31),
+          appealFlag = None
+        )
       )
     )
   )

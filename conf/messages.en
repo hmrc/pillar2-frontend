@@ -910,6 +910,33 @@ amendAccountingPeriodCYA.confirm = Confirm
 
 ###############################################
 #
+# Amend Accounting Period - Waiting Room
+#
+###############################################
+amendAccountingPeriod.waitingRoom.title = Submitting your accounting period amendment
+amendAccountingPeriod.waitingRoom.h1 = Submitting your accounting period amendment
+amendAccountingPeriod.waitingRoom.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
+
+###############################################
+#
+# Amend Accounting Period - Confirmation
+#
+###############################################
+amendAccountingPeriod.confirmation.title = Accounting period change successful
+amendAccountingPeriod.confirmation.heading = Accounting period change successful
+amendAccountingPeriod.confirmation.group = Group
+amendAccountingPeriod.confirmation.id = ID
+amendAccountingPeriod.confirmation.timestamp = You have successfully made an accounting period change on:
+amendAccountingPeriod.confirmation.whatHasChanged = What has changed
+amendAccountingPeriod.confirmation.gapPeriods = Your new accounting period left a gap. We have created an additional accounting period to cover this. This period is subject to the usual obligations for Pillar 2 Top-up Taxes.
+amendAccountingPeriod.confirmation.newPeriod.title = New accounting period
+amendAccountingPeriod.confirmation.startDate = Start date
+amendAccountingPeriod.confirmation.endDate = End date
+amendAccountingPeriod.confirmation.furtherAdjustments = Any changes made may have affected the periods before or after. You can return to the group details page to make further adjustments as needed.
+amendAccountingPeriod.confirmation.backToGroupDetails = Back to manage group details
+
+###############################################
+#
 # Homepage
 #
 ###############################################
@@ -929,6 +956,7 @@ homepage.payments.title = Payments
 homepage.payments.transactionHistory.linkText = View transaction history
 homepage.payments.outstandingPayments.linkText = View outstanding payments
 homepage.payments.tags.outstanding = Outstanding
+homepage.payments.stoodoverCharges.linkText = Stoodover charges
 homepage.payments.repayments.linkText = Request a repayment
 homepage.payments.tags.paid = Paid
 
@@ -1025,7 +1053,6 @@ manageGroupDetails.multiPeriod.intro1 = You can only make changes to the account
 manageGroupDetails.multiPeriod.intro2 = Any changes made affect future accounting periods. You can return to this page to make further adjustments as needed.
 manageGroupDetails.multiPeriod.currentPeriod = Current period
 manageGroupDetails.multiPeriod.previousPeriod = Previous period
-manageGroupDetails.multiPeriod.periodLabel = Period {0}
 manageGroupDetails.multiPeriod.startDate = Start date
 manageGroupDetails.multiPeriod.endDate = End date
 manageGroupDetails.multiPeriod.emptyState = There are no accounting periods available to amend
@@ -1843,7 +1870,8 @@ payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this referen
 payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay (opens in a new page)
 
 payments.outstanding.details.heading = Details of outstanding payments
-payments.outstanding.details.p1 = We have separated any payments due by accounting period.
+payments.outstanding.details.p1 = We have separated any payments due by the associated accounting period where there is one.
+payments.outstanding.details.p2 = An appealed charge is still part of the amount due until it is partly or completely stoodover.
 payments.outstanding.details.nothingDue = No payments due.
 
 payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
@@ -1855,8 +1883,10 @@ payments.outstanding.abbreviation.utpr = UTPR - Undertaxed Profit Rule
 payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
 payments.outstanding.abbreviation.gaar = GAAR - General Anti Abuse Rule penalty
 
-payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
-payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
+payments.outstanding.stoodoverCharges.p1 = Details of appealed charges and other standover payments.
+payments.outstanding.stoodoverCharges.linkText = View stoodover charges
+
+payments.outstanding.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
 
 payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
 payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
@@ -1868,6 +1898,31 @@ payments.noOutstanding.heading = Outstanding payments
 payments.noOutstanding.group.p1 = You have no outstanding payments.
 payments.noOutstanding.agent.p1 = Your client has no outstanding payments.
 payments.noOutstanding.linkText = Return to your account homepage
+
+
+###############################################
+#
+# Stoodover charges
+#
+###############################################
+payments.stoodoverCharges.title = Stoodover charges
+payments.stoodoverCharges.stoodoverTotal = Stoodover total: £{0}
+
+payments.stoodoverCharges.details.heading = Details of stoodover charges
+payments.stoodoverCharges.p1 = We have separated the charges by accounting period.
+payments.stoodoverCharges.details.noStoodoverCharges = No stoodover charges.
+
+payments.stoodoverCharges.abbreviation.heading = Charge description abbreviations
+payments.stoodoverCharges.abbreviation.uktr = UKTR - UK Tax Return
+payments.stoodoverCharges.abbreviation.dtt = DTT - Domestic Top-up Tax
+payments.stoodoverCharges.abbreviation.mtt = MTT - Multinational Top-up Tax
+payments.stoodoverCharges.abbreviation.iir = IIR - Income Inclusion Rule
+payments.stoodoverCharges.abbreviation.utpr = UTPR - Undertaxed Profit Rule
+payments.stoodoverCharges.abbreviation.orngir = ORN/GIR - Overseas Return Notification or GloBE Information Return
+
+payments.stoodoverCharges.outstandingPayments.p1 = Find full details of any payments due, including penalties and interest.
+payments.stoodoverCharges.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
+
 
 # ---------------------------------------------
 # Pillar 2 Research

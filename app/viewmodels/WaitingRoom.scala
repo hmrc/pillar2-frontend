@@ -70,5 +70,12 @@ object WaitingRoom {
         h2Message = messages("rfmWaitingRoom.h2"),
         afterHeadingsContent = None
       )
+    case LongRunningSubmission.AmendAccountingPeriod =>
+      WaitingRoom(
+        pageTitle = messages("amendAccountingPeriod.waitingRoom.title"),
+        h1Message = messages("amendAccountingPeriod.waitingRoom.h1"),
+        h2Message = messages("amendAccountingPeriod.waitingRoom.h2"),
+        afterHeadingsContent = None
+      )
   }
 }

@@ -18,8 +18,6 @@ package models
 
 import models.subscription.AccountingPeriod
 
-import java.time.LocalDate
+case class StoodoverChargeSummary(accountingPeriod: AccountingPeriod, items: Seq[StoodoverChargeItem])
 
-final case class OutstandingPaymentsTable(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRow])
-
-final case class OutstandingPaymentsRow(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate, appealFlag: Option[Boolean])
+case class StoodoverChargeItem(description: String, stoodoverAmount: BigDecimal)

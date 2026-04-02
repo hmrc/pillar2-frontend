@@ -22,4 +22,4 @@ import java.time.LocalDate
 
 case class OutstandingPaymentSummary(accountingPeriod: AccountingPeriod, items: Seq[OutstandingPaymentItem])
 
-case class OutstandingPaymentItem(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
+case class OutstandingPaymentItem(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate, appealFlag: Option[Boolean])

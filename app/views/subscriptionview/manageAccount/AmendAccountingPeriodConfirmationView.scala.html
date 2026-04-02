@@ -1,0 +1,92 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.utils.DateTimeUtils._
+@import config.FrontendAppConfig
+@import models.subscription.AccountingPeriodV2
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.gds._
+
+@this(
+    layout:           templates.Layout,
+    h2:               HeadingH2,
+    p:                paragraphBody,
+    printLink:        printLink,
+    paragraphMessageWithLink: ParagraphMessageWithLink,
+    govukPanel:       GovukPanel,
+    govukInsetText:   GovukInsetText
+)
+
+@(timestamp: String, newPeriods: Seq[AccountingPeriodV2], hasGapPeriods: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("amendAccountingPeriod.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+    @if(isAgent) {
+        <div class="govuk-hint govuk-!-margin-top-0">
+            <span><strong>@messages("amendAccountingPeriod.confirmation.group"):</strong> @organisationName</span>
+            <span><strong>@messages("amendAccountingPeriod.confirmation.id"):</strong> @plrReference</span>
+        </div>
+    }
+
+    @govukPanel(Panel(
+        title = Text(messages("amendAccountingPeriod.confirmation.heading")),
+        content = HtmlContent(""),
+        attributes = Map("id" -> "plr2-banner")
+    ))
+
+    <p class="govuk-body">
+        @messages("amendAccountingPeriod.confirmation.timestamp")<br>
+        @timestamp
+    </p>
+
+    @h2(messages("amendAccountingPeriod.confirmation.whatHasChanged"), size = "m")
+
+    @if(hasGapPeriods) {
+        @govukInsetText(InsetText(
+            content = Text(messages("amendAccountingPeriod.confirmation.gapPeriods"))
+        ))
+    }
+
+    @for(period <- newPeriods) {
+        <div class="govuk-summary-card govuk-!-margin-bottom-6">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">@messages("amendAccountingPeriod.confirmation.newPeriod.title")</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriod.confirmation.startDate")</dt>
+                        <dd class="govuk-summary-list__value">@period.startDate.toDateFormat</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriod.confirmation.endDate")</dt>
+                        <dd class="govuk-summary-list__value">@period.endDate.toDateFormat</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    }
+
+    @p(messages("amendAccountingPeriod.confirmation.furtherAdjustments"))
+
+    @printLink(messages("site.print"))
+
+    @paragraphMessageWithLink(
+        linkMessage = messages("amendAccountingPeriod.confirmation.backToGroupDetails"),
+        linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url,
+        classes = "govuk-body govuk-!-display-none-print"
+    )
+}

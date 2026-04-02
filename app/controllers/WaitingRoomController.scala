@@ -81,8 +81,8 @@ class WaitingRoomController @Inject() (
     }
 
   private val pageLoadAction: LongRunningSubmission => ActionBuilder[UserIdRequest, AnyContent] = {
-    case BTN                                                    => identifyEnrolment andThen retrieveSubscription andThen requireSubscription
-    case ManageContactDetails | ManageGroupDetails | Repayments => identifyEnrolment andThen retrieveSubscription
-    case Registration | RFM                                     => identifyUserWithNoEnrolmentRestriction
+    case BTN => identifyEnrolment andThen retrieveSubscription andThen requireSubscription
+    case ManageContactDetails | ManageGroupDetails | Repayments | AmendAccountingPeriod => identifyEnrolment andThen retrieveSubscription
+    case Registration | RFM                                                             => identifyUserWithNoEnrolmentRestriction
   }
 }
