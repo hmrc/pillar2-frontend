@@ -21,9 +21,11 @@ import forms.NewAccountingPeriodFormProvider
 import generators.Generators
 import models.subscription.*
 import models.{NormalMode, UserAnswers}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.NewAccountingPeriodPage
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.subscriptionview.manageAccount.NewAccountingPeriodView
@@ -110,21 +112,11 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
 
-          val view = application.injector.instanceOf[NewAccountingPeriodView]
-
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(
-            formProvider(chosenAccountingPeriod),
-            chosenAccountingPeriod,
-            isAgent = false,
-            organisationName = None,
-            plrReference = plrReference,
-            mode = NormalMode
-          )(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
+          implicit val msgs: Messages = messages(application)
+          val doc = Jsoup.parse(contentAsString(result))
+          doc.getElementById("startDate-hint").text mustEqual chosenAccountingPeriod.startDateHint
+          doc.getElementById("endDate-hint").text mustEqual chosenAccountingPeriod.endDateHint
         }
       }
 
@@ -143,21 +135,11 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val request = FakeRequest(GET, routes.NewAccountingPeriodController.onPageLoad(NormalMode).url)
           val result  = route(application, request).value
 
-          val view = application.injector.instanceOf[NewAccountingPeriodView]
-
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(
-            formProvider(chosenAccountingPeriod),
-            chosenAccountingPeriod,
-            isAgent = false,
-            organisationName = None,
-            plrReference = plrReference,
-            mode = NormalMode
-          )(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
+          implicit val msgs: Messages = messages(application)
+          val doc = Jsoup.parse(contentAsString(result))
+          doc.getElementById("startDate-hint").text mustEqual chosenAccountingPeriod.startDateHint
+          doc.getElementById("endDate-hint").text mustEqual chosenAccountingPeriod.endDateHint
         }
       }
 

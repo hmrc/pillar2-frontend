@@ -56,7 +56,7 @@ package object controllers {
         sorted
           .drop(selectedIndex)
           .find(period => !period.canAmendStartDate)
-          .map(_.startDate)
+          .map(_.endDate.plusDays(1))
       } else {
         None
       }

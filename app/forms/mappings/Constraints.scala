@@ -153,6 +153,23 @@ trait Constraints {
       }
     }
 
+  protected def pillar2MinimumThenOptionalStartBoundary(
+    pillarMinimum:         LocalDate,
+    pillarMinimumErrorKey: String,
+    startDateBoundary:     Option[LocalDate],
+    boundaryErrorKey:      String
+  ): Constraint[LocalDate] =
+    Constraint { date =>
+      if date.isBefore(pillarMinimum) then Invalid(pillarMinimumErrorKey)
+      else
+        startDateBoundary match {
+          case Some(minDate) if date.isBefore(minDate) =>
+            Invalid(boundaryErrorKey, minDate.minusDays(1).toDateFormat)
+          case _ =>
+            Valid
+        }
+    }
+
   protected def optionalEndDateBoundary(maxEndDate: Option[LocalDate], errorKey: String): Constraint[LocalDate] =
     Constraint { date =>
       maxEndDate match {

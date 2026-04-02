@@ -56,12 +56,12 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
   "throw a form error for a start date that is before a start date boundary" in {
 
-    val startDateBoundary      = LocalDate.of(2024, 1, 1)
+    val startDateBoundary      = LocalDate.of(2025, 6, 1)
     val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary))
     val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
 
-    val startDate = LocalDate.of(2023, 12, 30)
-    val endDate   = LocalDate.of(2024, 9, 29)
+    val startDate = LocalDate.of(2024, 1, 1)
+    val endDate   = LocalDate.of(2025, 12, 31)
 
     val data = Map(
       "startDate.day"   -> startDate.getDayOfMonth.toString,
@@ -74,6 +74,29 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
     form.bind(data).errors shouldEqual Seq(
       FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.minusDays(1).toDateFormat))
+    )
+  }
+
+  "throw the Pillar 2 minimum error before the start date boundary when the start date is before 31 December 2023" in {
+
+    val startDateBoundary      = LocalDate.of(2025, 6, 1)
+    val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary))
+    val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
+
+    val startDate = LocalDate.of(2023, 6, 1)
+    val endDate   = LocalDate.of(2025, 12, 31)
+
+    val data = Map(
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
+      "startDate.month" -> startDate.getMonthValue.toString,
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
     )
   }
 

@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import play.api.i18n.Messages
 import utils.Constants.Pillar2MinStartDate
 import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
 
@@ -28,13 +29,53 @@ case class ChosenAccountingPeriod(
 ) {
   override def toString: String = s"${selectedAccountingPeriod.startDate.toDateFormat} to ${selectedAccountingPeriod.endDate.toDateFormat}"
 
-  def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
-    case Some(date) => date.minusDays(1)
-    case _          => Pillar2MinStartDate.minusDays(1)
-  }
+  private def originalStartsBeforePillar2: Boolean =
+    selectedAccountingPeriod.startDate.isBefore(Pillar2MinStartDate)
 
-  def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
+  private def endDateHintExampleEntryFormat: String =
+    if originalStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryFormat
+    else selectedAccountingPeriod.endDate.toDateEntryFormat
 
-  def startDateHintEntryFormat: String = selectedAccountingPeriod.startDate.toDateEntryFormat
-  def endDateHintEntryFormat:   String = selectedAccountingPeriod.endDate.toDateEntryFormat
+  def startDateHint(implicit messages: Messages): String =
+    startDateBoundary match {
+      case Some(b) if b.isAfter(Pillar2MinStartDate) =>
+        messages(
+          "newAccountingPeriod.startDate.hint.afterSubmittedPeriodEnd",
+          b.minusDays(1).toDateFormat,
+          selectedAccountingPeriod.startDate.toDateEntryFormat
+        )
+      case _ if originalStartsBeforePillar2 =>
+        messages(
+          "newAccountingPeriod.startDate.hint.onOrAfterPillarEarliest",
+          Pillar2MinStartDate.toDateEntryFormat
+        )
+      case _ =>
+        messages(
+          "newAccountingPeriod.startDate.hint.onOrAfterPillarWithOriginalStart",
+          selectedAccountingPeriod.startDate.toDateEntryFormat
+        )
+    }
+
+  def endDateHint(implicit messages: Messages): String =
+    endDateBoundary match {
+      case Some(maxEnd) =>
+        val firstDayAfterMaxEnd = maxEnd.plusDays(1).toDateFormat
+        if originalStartsBeforePillar2 then {
+          messages(
+            "newAccountingPeriod.endDate.hint.beforeSubmittedStartWithExample",
+            firstDayAfterMaxEnd,
+            Pillar2MinStartDate.toDateEntryFormat
+          )
+        } else {
+          messages(
+            "newAccountingPeriod.endDate.hint.beforeSubmittedStart",
+            firstDayAfterMaxEnd
+          )
+        }
+      case None =>
+        messages(
+          "newAccountingPeriod.endDate.hint.withExample",
+          endDateHintExampleEntryFormat
+        )
+    }
 }
