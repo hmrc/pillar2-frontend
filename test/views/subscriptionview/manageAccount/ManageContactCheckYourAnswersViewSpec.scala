@@ -195,8 +195,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         h1Elements.text() mustBe pageTitle
       }
 
-      "show the correct hint text at the top of the page" in {
-        agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
+      "show the correct caption text at the top of the page" in {
+        agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
       }
 
       "have first contact header" in {
