@@ -32,7 +32,7 @@
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @if(isAgent) {
-        <div class="govuk-hint govuk-!-margin-top-0">
+        <div class="govuk-caption-m">
             <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
             <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
         </div>
