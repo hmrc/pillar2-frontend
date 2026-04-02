@@ -38,9 +38,9 @@
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent && companyName.isDefined) {
-        <span class="govuk-caption-m"><strong>Group: </strong>@companyName<strong> ID: </strong>@plrRef</span>
+        <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@companyName<strong> @{messages("homepage.id")}: </strong>@plrRef</span>
     } else if(isAgent) {
-        <span class="govuk-caption-m"><strong>ID: </strong>@plrRef</span>
+        <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrRef</span>
     }
 
     @govukPanel(Panel(
