@@ -26,24 +26,29 @@ import views.html.btn.BTNUnderEnquiryWarningView
 
 class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
 
-  lazy val page:      BTNUnderEnquiryWarningView = inject[BTNUnderEnquiryWarningView]
-  lazy val view:      Document                   = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                     = "You have one or more returns under enquiry"
+  lazy val page:         BTNUnderEnquiryWarningView = inject[BTNUnderEnquiryWarningView]
+  lazy val plrReference: String                     = "XMPLR0123456789"
+  lazy val pageTitle:    String                     = "You have one or more returns under enquiry"
+
+  lazy val organisationView: Document = Jsoup.parse(page(plrReference, isAgent = false, Some("orgName"))(request, appConfig, messages).toString())
+  lazy val agentView:        Document = Jsoup.parse(page(plrReference, isAgent = true, Some("orgName"))(request, appConfig, messages).toString())
+  lazy val agentNoOrgView:   Document =
+    Jsoup.parse(page(plrReference, isAgent = true, organisationName = None)(request, appConfig, messages).toString())
 
   "BTNUnderEnquiryWarningView" should {
 
     "have a title" in {
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {
-      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      val paragraphs: Elements = organisationView.getElementsByClass("govuk-body")
       paragraphs.get(0).text mustBe "You cannot add a Below-Threshold Notification to an accounting period that is currently under enquiry."
       paragraphs
         .get(1)
@@ -51,18 +56,25 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+      organisationView.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
     "have a return to homepage link" in {
-      val link = view.select("a:contains(Return to home page)")
+      val link = organisationView.select("a:contains(Return to home page)")
       link.size() mustBe 1
       link.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
+    "have a caption for agent view" in {
+      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
+    }
+
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view)
+        ViewScenario("organisationView", organisationView),
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentNoOrgView", agentNoOrgView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

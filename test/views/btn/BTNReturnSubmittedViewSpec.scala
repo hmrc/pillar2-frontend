@@ -34,6 +34,7 @@ import java.time.{LocalDate, ZonedDateTime}
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
   lazy val page:                      BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
+  lazy val plrReference:              String                 = "XMPLR0123456789"
   lazy val accountingPeriodStartDate: LocalDate              = LocalDate.now().minusYears(1)
   lazy val accountingPeriodEndDate:   LocalDate              = LocalDate.now()
   lazy val accountingPeriodDueDate:   LocalDate              = LocalDate.now().plusYears(1)
@@ -50,44 +51,51 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
     Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
   )
 
-  def view(isAgent: Boolean = false): Document = Jsoup.parse(page(isAgent, accountingPeriodDetails)(request, appConfig, messages).toString())
+  lazy val organisationView: Document =
+    Jsoup.parse(page(plrReference, isAgent = false, Some("orgName"), accountingPeriodDetails)(request, appConfig, messages).toString())
+
+  lazy val agentView: Document =
+    Jsoup.parse(page(plrReference, isAgent = true, Some("orgName"), accountingPeriodDetails)(request, appConfig, messages).toString())
+
+  lazy val agentNoOrgView: Document =
+    Jsoup.parse(page(plrReference, isAgent = true, organisationName = None, accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = view().getElementsByTag("h1")
+        val h1Elements: Elements = organisationView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-        view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a paragraph" in {
-        view().getElementsByClass("govuk-body").get(0).text mustBe
+        organisationView.getElementsByClass("govuk-body").get(0).text mustBe
           "By continuing, your UK Tax Return will be replaced for this period."
       }
 
       "have an inset text" in {
-        view().getElementsByClass("govuk-inset-text").text mustBe
+        organisationView.getElementsByClass("govuk-inset-text").text mustBe
           "If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification."
       }
 
       "have a 'Continue' button" in {
-        val continueButton: Element = view().getElementsByClass("govuk-button").first()
+        val continueButton: Element = organisationView.getElementsByClass("govuk-button").first()
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
       }
 
       "have a Return to Homepage link" in {
-        val link: Element = view().getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+        val link: Element = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
         link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
         link.attr("target") mustBe "_self"
@@ -98,33 +106,38 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
     "it's an agent" should {
       "have a title" in {
-        view(isAgent = true).title() mustBe s"$agentPageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        agentView.title() mustBe s"$agentPageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+        agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
+        val h1Elements: Elements = agentView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe agentPageTitle
       }
 
       "have a paragraph" in {
-        view(isAgent = true).getElementsByClass("govuk-body").get(0).text mustBe
+        agentView.getElementsByClass("govuk-body").get(0).text mustBe
           "By continuing, the group’s UK Tax Return will be replaced for this period."
       }
 
       "have an inset text" in {
-        view(isAgent = true).getElementsByClass("govuk-inset-text").text mustBe
+        agentView.getElementsByClass("govuk-inset-text").text mustBe
           "If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification."
       }
 
       "have a 'Continue' button" in {
-        val continueButton: Element = view(isAgent = true).getElementsByClass("govuk-button").first()
+        val continueButton: Element = agentView.getElementsByClass("govuk-button").first()
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
       }
 
       "have a Return to Homepage link" in {
-        val link: Element = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+        val link: Element = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
         link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -135,8 +148,9 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view()),
-        ViewScenario("agentView", view(isAgent = true))
+        ViewScenario("view", organisationView),
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentNoOrgView", agentNoOrgView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

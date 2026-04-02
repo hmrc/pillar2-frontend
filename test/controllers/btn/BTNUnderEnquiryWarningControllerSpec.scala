@@ -27,7 +27,7 @@ class BTNUnderEnquiryWarningControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.btn.routes.BTNUnderEnquiryWarningController.onPageLoad.url)
@@ -37,7 +37,11 @@ class BTNUnderEnquiryWarningControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[BTNUnderEnquiryWarningView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(PlrReference, isAgent = false, Some("orgName"))(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 

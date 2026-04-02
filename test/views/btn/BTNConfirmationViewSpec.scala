@@ -55,6 +55,15 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       ).toString()
     )
 
+  def agentNoOrgView(showUnderEnquiryWarning: Boolean = false): Document =
+    Jsoup.parse(
+      page(companyName = None, Some(plrRef), submissionDateTime, accountingPeriodStart, accountingPeriodEnd, isAgent = true, showUnderEnquiryWarning)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
+
   "BTNConfirmationView" should {
 
     "have a title" in {
@@ -102,10 +111,9 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
     "have paragraph content (containing company name) and a link when in an agent flow" in {
       val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
-      val hints:      Elements = agentView().getElementsByClass("govuk-hint")
 
-      hints.get(0).text() mustBe
-        s"Group: $companyName ID: $plrRef"
+      agentView().getElementsByClass("govuk-caption-m").text mustBe "Group: Test Company ID: somePillar2Id"
+      agentNoOrgView().getElementsByClass("govuk-caption-m").text mustBe "ID: somePillar2Id"
 
       paragraphs.get(0).text() mustBe
         s"You have submitted a Below-Threshold Notification on: $submissionDateTime."
@@ -145,6 +153,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         ViewScenario("groupView", groupView()),
         ViewScenario("showUnderEnquiryWarningGroupView", groupView(showUnderEnquiryWarning = true)),
         ViewScenario("agentView", agentView()),
+        ViewScenario("agentNoOrgView", agentNoOrgView()),
         ViewScenario("showUnderEnquiryWarningAgentView", agentView(showUnderEnquiryWarning = true))
       )
 

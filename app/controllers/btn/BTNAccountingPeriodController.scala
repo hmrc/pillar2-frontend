@@ -103,15 +103,22 @@ class BTNAccountingPeriodController @Inject() (
               AccountingPeriod(period.startDate, period.endDate),
               entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
             )
-            .as(Ok(btnAlreadyInPlaceView()))
+            .as(
+              Ok(btnAlreadyInPlaceView(request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName))
+            )
         case BTNAccountingPeriodService.Outcome.UktrReturnAlreadySubmitted =>
-          Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
+          Future.successful(
+            Ok(
+              viewReturnSubmitted(request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName, period)
+            )
+          )
         case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, hasMultipleAccountingPeriods, currentAP) =>
           Future.successful(
             Ok(
               accountingPeriodView(
                 summaryList,
                 mode,
+                request.subscriptionLocalData.plrReference,
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
                 hasMultipleAccountingPeriods,

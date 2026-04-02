@@ -28,9 +28,15 @@
     formWithCSRF: FormWithCSRF
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(plrReference: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.underEnquiryWarning.title")), showBackLink = true) {
+
+  @if(isAgent && organisationName.isDefined) {
+    <span class="govuk-caption-m"><strong>Group: </strong>@organisationName<strong> ID: </strong>@plrReference</span>
+  } else if(isAgent) {
+    <span class="govuk-caption-m"><strong>ID: </strong>@plrReference</span>
+  }
 
   @heading(messages("btn.underEnquiryWarning.heading"), classes = "govuk-heading-l")
 

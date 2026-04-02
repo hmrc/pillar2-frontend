@@ -36,7 +36,7 @@
 @layout(pageTitle = titleNoForm(messages("payments.stoodoverCharges.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent) {
-        <span class="govuk-caption-m"><strong>Group:</strong> @organisationName <strong>ID:</strong> @plrReference</span>
+        <span class="govuk-caption-m"><strong>Group: </strong>@organisationName<strong> ID: </strong>@plrReference</span>
     }
 
     <div class="govuk-grid-row">

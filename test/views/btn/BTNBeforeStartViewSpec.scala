@@ -20,38 +20,56 @@ import base.ViewSpecBase
 import controllers.routes
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.btn.BTNBeforeStartView
 
 class BTNBeforeStartViewSpec extends ViewSpecBase {
 
-  lazy val page:      BTNBeforeStartView = inject[BTNBeforeStartView]
-  lazy val pageTitle: String             = "Below-Threshold Notification (BTN)"
+  lazy val page:         BTNBeforeStartView = inject[BTNBeforeStartView]
+  lazy val pageTitle:    String             = "Below-Threshold Notification (BTN)"
+  lazy val plrReference: String             = "XMPLR0123456789"
 
-  def view(isAgent: Boolean = false, hasMultipleAccountPeriods: Boolean = false): Document =
-    Jsoup.parse(page(isAgent, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages).toString())
+  def organisationView(hasMultipleAccountPeriods: Boolean = false, organisationName: Option[String] = Some("orgName")): Document =
+    Jsoup.parse(
+      page(plrReference, isAgent = false, organisationName, hasMultipleAccountPeriods, NormalMode)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
+
+  def agentView(hasMultipleAccountPeriods: Boolean = false, organisationName: Option[String] = Some("orgName")): Document =
+    Jsoup.parse(
+      page(plrReference, isAgent = true, organisationName, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages)
+        .toString()
+    )
+
+  def agentViewNoOrg(hasMultipleAccountPeriods: Boolean = false): Document =
+    Jsoup.parse(
+      page(plrReference, isAgent = true, organisationName = None, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages)
+        .toString()
+    )
 
   "BTNBeforeStartView" should {
     "have a title" in {
-      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view().getElementsByTag("h1")
+      val h1Elements: Elements = organisationView().getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      organisationView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have two h2 headings" in {
-      val h2Elements: Elements = view().getElementsByTag("h2")
+      val h2Elements: Elements = organisationView().getElementsByTag("h2")
       h2Elements.get(0).text mustBe "Who can submit a Below-Threshold Notification"
       h2Elements.get(0).hasClass("govuk-heading-m") mustBe true
       h2Elements.get(1).text mustBe "Before you start"
@@ -59,7 +77,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have group specific content" in {
-      val paragraphs: Elements = view().getElementsByClass("govuk-body")
+      val paragraphs: Elements = organisationView().getElementsByClass("govuk-body")
 
       paragraphs.get(0).text mustBe
         "The Below-Threshold Notification satisfies your group’s obligation to submit a UK Tax Return for the " +
@@ -67,12 +85,16 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
         "group remains below-threshold."
       paragraphs.get(1).text mustBe "You can submit a Below-Threshold Notification if the group:"
 
-      view().getElementsByClass("govuk-inset-text").text mustBe
+      organisationView().getElementsByClass("govuk-inset-text").text mustBe
         "If you need to submit a UK tax return for this accounting period you do not qualify for a Below-Threshold Notification."
     }
 
     "have agent specific content" in {
-      val paragraphs: Elements = view(isAgent = true).getElementsByClass("govuk-body")
+
+      agentView().getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      agentViewNoOrg().getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
+
+      val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
 
       paragraphs.get(0).text mustBe
         "The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the " +
@@ -81,13 +103,13 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
       paragraphs.get(1).text mustBe "The group can submit a Below-Threshold Notification if it:"
 
-      view(isAgent = true).getElementsByClass("govuk-inset-text").text mustBe
+      agentView().getElementsByClass("govuk-inset-text").text mustBe
         "If your client needs to submit a UK tax return for this accounting period they do not qualify for a Below-Threshold Notification."
     }
 
     "have the following common content" in {
-      val paragraphs: Elements = view().getElementsByClass("govuk-body")
-      val listItems:  Elements = view().getElementsByTag("li")
+      val paragraphs: Elements = organisationView().getElementsByClass("govuk-body")
+      val listItems:  Elements = organisationView().getElementsByTag("li")
 
       paragraphs.get(2).text() mustBe "To submit a Below-Threshold Notification you’ll need to tell us:"
 
@@ -105,14 +127,14 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     "have a button" that {
       "links to the accounting period page when there is only one accounting period present" in {
-        val button: Element = view().getElementsByClass("govuk-button").first()
+        val button: Element = organisationView().getElementsByClass("govuk-button").first()
 
         button.text mustBe "Continue"
         button.attr("href") mustBe controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode).url
       }
 
       "links to the choose accounting period page when there are multiple accounting periods present" in {
-        val button: Element = view(hasMultipleAccountPeriods = true).getElementsByClass("govuk-button").first()
+        val button: Element = organisationView(hasMultipleAccountPeriods = true).getElementsByClass("govuk-button").first()
 
         button.text mustBe "Continue"
         button.attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
@@ -121,9 +143,10 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view()),
-        ViewScenario("hasMultipleAccountPeriodsView", view(hasMultipleAccountPeriods = true)),
-        ViewScenario("agentView", view(isAgent = true))
+        ViewScenario("view", organisationView()),
+        ViewScenario("hasMultipleAccountPeriodsView", organisationView(hasMultipleAccountPeriods = true)),
+        ViewScenario("agentView", agentView()),
+        ViewScenario("agentViewNoOrg", agentViewNoOrg())
       )
 
     behaveLikeAccessiblePage(viewScenarios)

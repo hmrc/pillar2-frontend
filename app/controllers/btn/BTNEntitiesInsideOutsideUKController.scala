@@ -60,7 +60,9 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
             case Some(value) => form.fill(value)
           }
 
-          Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
+          Future.successful(
+            Ok(view(preparedForm, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName, mode))
+          )
         case None =>
           logger.error("user answers not found")
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -78,7 +80,15 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
             .fold(
               formWithErrors =>
                 Future.successful(
-                  BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName, mode))
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      request.subscriptionLocalData.plrReference,
+                      request.isAgent,
+                      request.subscriptionLocalData.organisationName,
+                      mode
+                    )
+                  )
                 ),
               value =>
                 for {
@@ -95,7 +105,16 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { request =>
     given Request[AnyContent] = request
     request.maybeSubscriptionLocalData
-      .map(subData => Ok(viewAmend(subData.subMneOrDomestic, request.isAgent)))
+      .map(subData =>
+        Ok(
+          viewAmend(
+            subData.subMneOrDomestic,
+            subData.plrReference,
+            request.isAgent,
+            subData.organisationName
+          )
+        )
+      )
       .getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
   }
 }

@@ -30,13 +30,15 @@
         formHelper: FormWithCSRF
 )
 
-@(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, plrReference: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.cya.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
   @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
 
     @if(isAgent && organisationName.isDefined) {
-      <span class="govuk-caption-m">@organisationName.get</span>
+        <span class="govuk-caption-m"><strong>Group: </strong>@organisationName<strong> ID: </strong>@plrReference</span>
+    } else if(isAgent) {
+        <span class="govuk-caption-m"><strong>ID: </strong>@plrReference</span>
     }
 
     @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")

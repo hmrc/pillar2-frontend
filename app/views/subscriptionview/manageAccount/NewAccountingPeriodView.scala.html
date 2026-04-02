@@ -45,7 +45,9 @@
         }
 
         @if(isAgent && organisationName.isDefined) {
-            <span class="govuk-caption-m"><strong>Group:</strong> @organisationName <strong>ID:</strong> @plrReference</span>
+            <span class="govuk-caption-m"><strong>Group: </strong>@organisationName<strong> ID: </strong>@plrReference</span>
+        } else if(isAgent) {
+            <span class="govuk-caption-m"><strong>ID: </strong>@plrReference</span>
         }
 
         @heading(messages("newAccountingPeriod.heading"), "govuk-heading-l")
