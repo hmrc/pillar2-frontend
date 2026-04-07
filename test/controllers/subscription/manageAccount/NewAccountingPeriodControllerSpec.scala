@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.NewAccountingPeriodFormProvider
 import generators.Generators
 import models.subscription.*
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -117,6 +117,29 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val doc        = Jsoup.parse(contentAsString(result))
           doc.getElementById("startDate-hint").text mustEqual chosenAccountingPeriod.startDateHint
           doc.getElementById("endDate-hint").text mustEqual chosenAccountingPeriod.endDateHint
+        }
+      }
+
+      "use new-accounting-period route and new accounting period heading" in {
+        val application = applicationBuilder(subscriptionLocalData = Some(localDataWithAmendablePeriods))
+          .configure("features.amendMultipleAccountingPeriods" -> true)
+          .build()
+
+        running(application) {
+          val pageUrl = routes.NewAccountingPeriodController.onPageLoad(NormalMode).url
+          pageUrl must include("/new-accounting-period")
+          pageUrl must not include "/change-accounting-period"
+
+          val request = FakeRequest(GET, pageUrl)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+
+          val msgs = messages(application)
+          val doc  = Jsoup.parse(contentAsString(result))
+          doc.select("h1").text mustEqual msgs("newAccountingPeriod.heading")
+
+          val checkModeUrl = routes.NewAccountingPeriodController.onPageLoad(CheckMode).url
+          checkModeUrl must include("/change-new-accounting-period")
         }
       }
 

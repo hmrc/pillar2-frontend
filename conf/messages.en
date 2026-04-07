@@ -856,7 +856,7 @@ newAccountingPeriod.endDate.hint.beforeSubmittedStart = Enter a date before {0},
 newAccountingPeriod.endDate.hint.beforeSubmittedStartWithExample = Enter a date before {0}, for example {1}
 newAccountingPeriod.checkYourAnswersLabel = New accounting period
 
-newAccountingPeriod.error.startDate.dayMonthYear.minimum = The start date must be on or after 31 December 2023. Pillar 2 applies to accounting periods beginning on or after 31 December 2023.
+newAccountingPeriod.error.startDate.dayMonthYear.minimum = The start date must be on or after 31 December 2023 Pillar 2 applies to accounting periods beginning on or after 31 December 2023.
 newAccountingPeriod.error.startDate.format = Enter a date in the correct format
 newAccountingPeriod.error.startDate.boundary = The start date must be after {0}
 newAccountingPeriod.error.startDate.required.all = Enter the start date of the group’s accounting period

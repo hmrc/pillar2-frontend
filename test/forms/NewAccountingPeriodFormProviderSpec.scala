@@ -16,8 +16,9 @@
 
 package forms
 
+import controllers.deriveNewAccountingPeriodDateBoundaries
 import forms.behaviours.DateBehaviours
-import models.subscription.{AccountingPeriod, ChosenAccountingPeriod}
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
 import org.scalatest.matchers.should.Matchers.*
 import play.api.data.{Form, FormError}
 import utils.DateTimeUtils.toDateFormat
@@ -85,6 +86,53 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
     val startDate = LocalDate.of(2023, 6, 1)
     val endDate   = LocalDate.of(2025, 12, 31)
+
+    val data = Map(
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
+      "startDate.month" -> startDate.getMonthValue.toString,
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
+    )
+  }
+
+  "prefer Pillar 2 minimum error over start boundary when a submitted period sets a boundary" in {
+    val due   = LocalDate.of(2026, 3, 31)
+    val p2027 = AccountingPeriodV2(
+      startDate = LocalDate.of(2027, 1, 1),
+      endDate = LocalDate.of(2027, 12, 31),
+      dueDate = due,
+      canAmendStartDate = true,
+      canAmendEndDate = true
+    )
+    val p2026 = AccountingPeriodV2(
+      startDate = LocalDate.of(2026, 1, 1),
+      endDate = LocalDate.of(2026, 12, 31),
+      dueDate = due,
+      canAmendStartDate = true,
+      canAmendEndDate = true
+    )
+    val p2025Submitted = AccountingPeriodV2(
+      startDate = LocalDate.of(2025, 1, 1),
+      endDate = LocalDate.of(2025, 12, 31),
+      dueDate = due,
+      canAmendStartDate = false,
+      canAmendEndDate = false
+    )
+
+    val selected = p2026.toAccountingPeriod
+    val chosen   = deriveNewAccountingPeriodDateBoundaries(Seq(p2027, p2026, p2025Submitted), selected)
+
+    chosen.startDateBoundary mustBe Some(LocalDate.of(2026, 1, 1))
+
+    val form: Form[AccountingPeriod] = formProvider(chosen)
+    val startDate = LocalDate.of(2023, 6, 1)
+    val endDate   = LocalDate.of(2026, 12, 31)
 
     val data = Map(
       "startDate.day"   -> startDate.getDayOfMonth.toString,
