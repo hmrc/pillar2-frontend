@@ -63,7 +63,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryPhonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -88,7 +88,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryPhonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -113,7 +113,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -251,7 +251,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryPhonePreferenceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -282,7 +282,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryPhonePreferenceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -313,7 +313,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[SecondaryPhonePreferenceView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)

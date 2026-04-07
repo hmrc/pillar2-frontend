@@ -33,7 +33,7 @@
 )
 
 
-@(form: Form[_], countryOptions: Seq[InputOption], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], countryOptions: Seq[InputOption], isAgent: Boolean, organisationName: Option[String], plrRef: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 

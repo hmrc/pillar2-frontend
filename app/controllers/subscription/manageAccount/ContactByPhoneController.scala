@@ -55,7 +55,15 @@ class ContactByPhoneController @Inject() (
             case Some(v) => form.fill(v)
             case None    => form
           }
-          Ok(view(preparedForm, contactName, request.isAgent, request.subscriptionLocalData.organisationName))
+          Ok(
+            view(
+              preparedForm,
+              contactName,
+              request.isAgent,
+              request.subscriptionLocalData.organisationName,
+              Some(request.subscriptionLocalData.plrReference)
+            )
+          )
 
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -73,7 +81,17 @@ class ContactByPhoneController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, request.subscriptionLocalData.organisationName))),
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      contactName,
+                      request.isAgent,
+                      request.subscriptionLocalData.organisationName,
+                      Some(request.subscriptionLocalData.plrReference)
+                    )
+                  )
+                ),
               {
                 case nominatePrimaryContactNumber @ true =>
                   for {

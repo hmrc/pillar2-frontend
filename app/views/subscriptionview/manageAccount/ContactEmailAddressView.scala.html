@@ -28,7 +28,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], UserName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], UserName: String, isAgent: Boolean, organisationName: Option[String], plrRef: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactEmailAddress.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -40,7 +40,14 @@
         }
 
         @if(isAgent) {
-            @sectionHeader(organisationName.getOrElse(messages("taskList.task.contact.heading")))
+            <div class="govuk-caption-m">
+                <span><strong>@{
+                    messages("homepage.group")
+                }:</strong> @organisationName</span>
+                <span><strong>@{
+                    messages("homepage.id")
+                }:</strong> @plrRef</span>
+            </div>
         } else {
             @sectionHeader(messages("contactEmailAddress.heading.caption"))
         }

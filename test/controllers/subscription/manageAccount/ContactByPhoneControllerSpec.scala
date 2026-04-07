@@ -62,7 +62,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -90,7 +90,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -147,7 +147,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -181,7 +181,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)

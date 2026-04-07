@@ -59,7 +59,8 @@ class AddSecondaryContactController @Inject() (
             form.fill(subscriptionLocalData.subAddSecondaryContact),
             contactName,
             request.isAgent,
-            request.maybeSubscriptionLocalData.flatMap(_.organisationName)
+            request.maybeSubscriptionLocalData.flatMap(_.organisationName),
+            request.maybeSubscriptionLocalData.map(_.plrReference)
           )
         )
       })
@@ -77,7 +78,17 @@ class AddSecondaryContactController @Inject() (
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, request.subscriptionLocalData.organisationName))),
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      contactName,
+                      request.isAgent,
+                      request.subscriptionLocalData.organisationName,
+                      Some(request.subscriptionLocalData.plrReference)
+                    )
+                  )
+                ),
               {
                 case wantsToNominateSecondaryContact @ true =>
                   for {

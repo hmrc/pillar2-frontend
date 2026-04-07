@@ -53,7 +53,14 @@ class ContactNameComplianceController @Inject() (
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
+      Ok(
+        view(
+          preparedForm,
+          request.isAgent,
+          request.maybeSubscriptionLocalData.flatMap(_.organisationName),
+          request.maybeSubscriptionLocalData.map(_.plrReference)
+        )
+      )
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -62,7 +69,17 @@ class ContactNameComplianceController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  Some(request.subscriptionLocalData.plrReference)
+                )
+              )
+            ),
           value =>
             for {
               updatedAnswers <-
