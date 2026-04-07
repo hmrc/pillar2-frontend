@@ -36,7 +36,7 @@ case class ChosenAccountingPeriod(
     if originalStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryFormat
     else selectedAccountingPeriod.endDate.toDateEntryFormat
 
-  def startDateHint(implicit messages: Messages): String =
+  def startDateHint(using messages: Messages): String =
     startDateBoundary match {
       case Some(b) if b.isAfter(Pillar2MinStartDate) =>
         messages(
@@ -56,7 +56,7 @@ case class ChosenAccountingPeriod(
         )
     }
 
-  def endDateHint(implicit messages: Messages): String =
+  def endDateHint(using messages: Messages): String =
     endDateBoundary match {
       case Some(maxEnd) =>
         val firstDayAfterMaxEnd = maxEnd.plusDays(1).toDateFormat

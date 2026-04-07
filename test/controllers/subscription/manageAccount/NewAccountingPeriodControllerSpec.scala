@@ -113,8 +113,8 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          implicit val msgs: Messages = messages(application)
-          val doc = Jsoup.parse(contentAsString(result))
+          given Messages = messages(application)
+          val doc        = Jsoup.parse(contentAsString(result))
           doc.getElementById("startDate-hint").text mustEqual chosenAccountingPeriod.startDateHint
           doc.getElementById("endDate-hint").text mustEqual chosenAccountingPeriod.endDateHint
         }
@@ -136,8 +136,8 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          implicit val msgs: Messages = messages(application)
-          val doc = Jsoup.parse(contentAsString(result))
+          given Messages = messages(application)
+          val doc        = Jsoup.parse(contentAsString(result))
           doc.getElementById("startDate-hint").text mustEqual chosenAccountingPeriod.startDateHint
           doc.getElementById("endDate-hint").text mustEqual chosenAccountingPeriod.endDateHint
         }
