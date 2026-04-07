@@ -35,8 +35,8 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                          = "What is the email address?"
 
   "ContactEmailAddressView" should {
-    def view(isAgent: Boolean = false, orgName: Option[String] = None): Document = Jsoup.parse(
-      page(form, contactName, isAgent, orgName)(request, appConfig, messages).toString()
+    def view(isAgent: Boolean = false, orgName: Option[String] = None, plrRef: Option[String] = None): Document = Jsoup.parse(
+      page(form, contactName, isAgent, orgName, plrRef)(request, appConfig, messages).toString()
     )
 
     "have a title" in {
@@ -57,8 +57,25 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
 
     "have a caption" in {
       view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-      view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-      view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
+
+      val agentView = Jsoup.parse(
+        page(
+          form.bind(Map("emailAddress" -> "user@email.com")),
+          UserName = contactName,
+          isAgent = true,
+          organisationName = Some("Organisation Inc"),
+          plrRef = Some("somePillar2Ref")
+        )(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+      agentView
+        .getElementsByClass("govuk-caption-m")
+        .get(0)
+        .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
     }
 
     "have a hint description" in {
@@ -71,7 +88,7 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
 
     "show appropriate error when the email field is left empty" in {
       val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> "")), isAgent = false, UserName = contactName, organisationName = None)(
+        page(form.bind(Map("emailAddress" -> "")), isAgent = false, UserName = contactName, organisationName = None, plrRef = None)(
           request,
           appConfig,
           messages
@@ -89,7 +106,7 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
 
     "show error when email format is invalid" in {
       val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> "invalid-email")), isAgent = false, UserName = contactName, organisationName = None)(
+        page(form.bind(Map("emailAddress" -> "invalid-email")), isAgent = false, UserName = contactName, organisationName = None, plrRef = None)(
           request,
           appConfig,
           messages
@@ -108,7 +125,7 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
     "show error when email is too long (over 132 characters)" in {
       val longEmail = "a" * 130 + "@email.com"
       val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> longEmail)), isAgent = false, UserName = contactName, organisationName = None)(
+        page(form.bind(Map("emailAddress" -> longEmail)), isAgent = false, UserName = contactName, organisationName = None, plrRef = None)(
           request,
           appConfig,
           messages

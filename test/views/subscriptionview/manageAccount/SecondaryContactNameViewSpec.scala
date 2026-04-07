@@ -34,8 +34,8 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                           = "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
 
   "Secondary Contact Name page" should {
-    def view(isAgent: Boolean = false, orgName: Option[String] = None): Document = Jsoup.parse(
-      page(form, isAgent, orgName)(request, appConfig, messages).toString()
+    def view(isAgent: Boolean = false, orgName: Option[String] = None, plrRef: Option[String] = None): Document = Jsoup.parse(
+      page(form, isAgent, orgName, plrRef)(request, appConfig, messages).toString()
     )
 
     "display the correct page title" in {
@@ -44,8 +44,24 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "have a caption" in {
       view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-      view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-      view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
+
+      val agentView = Jsoup.parse(
+        page(
+          form.bind(Map("value" -> "value")),
+          isAgent = true,
+          organisationName = Some("Organisation Inc"),
+          plrRef = Some("somePillar2Ref")
+        )(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+      agentView
+        .getElementsByClass("govuk-caption-m")
+        .get(0)
+        .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
     }
 
     "display the main heading asking for alternative contact details" in {
@@ -70,7 +86,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "show appropriate error when the name field is left empty" in {
       val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> "")), isAgent = false, organisationName = None)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> "")), isAgent = false, organisationName = None, plrRef = None)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
@@ -87,7 +103,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     "show error when name is too long (over 160 characters)" in {
       val longInput = "A" * 161
       val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> longInput)), isAgent = false, organisationName = None)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> longInput)), isAgent = false, organisationName = None, plrRef = None)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
@@ -102,7 +118,8 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     "show error when name contains invalid characters" in {
       val invalidInput = "Test <script>alert('xss')</script> & Company"
       val errorView    = Jsoup.parse(
-        page(form.bind(Map("value" -> invalidInput)), isAgent = false, organisationName = None)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> invalidInput)), isAgent = false, organisationName = None, plrRef = None)(request, appConfig, messages)
+          .toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"

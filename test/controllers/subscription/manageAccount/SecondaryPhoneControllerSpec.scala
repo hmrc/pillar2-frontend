@@ -63,7 +63,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryPhoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -88,7 +88,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("1234567"), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill("1234567"), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -113,7 +113,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -210,7 +210,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryPhoneView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -241,7 +241,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[SecondaryPhoneView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("1234567"), "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(formProvider.fill("1234567"), "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -273,7 +273,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[SecondaryPhoneView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)

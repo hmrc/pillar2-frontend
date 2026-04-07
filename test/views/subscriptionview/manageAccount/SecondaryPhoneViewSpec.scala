@@ -31,7 +31,9 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
   lazy val page:         SecondaryPhoneView              = inject[SecondaryPhoneView]
   lazy val username:     String                          = "John Doe"
   lazy val view:         Document                        =
-    Jsoup.parse(page(formProvider(username), username, isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(formProvider(username), username, isAgent = false, Some("OrgName"), Some("somePillar2Ref"))(request, appConfig, messages).toString()
+    )
   lazy val pageTitle: String = "What is the phone number"
 
   "CapturePhoneDetailsView" should {
@@ -70,11 +72,13 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
         ViewScenario("view", view),
         ViewScenario(
           "agentViewNoOrg",
-          Jsoup.parse(page(formProvider(username), username, isAgent = true, None)(request, appConfig, messages).toString())
+          Jsoup.parse(page(formProvider(username), username, isAgent = true, None, None)(request, appConfig, messages).toString())
         ),
         ViewScenario(
           "agentViewSomeOrg",
-          Jsoup.parse(page(formProvider(username), username, isAgent = true, Some("OrgName"))(request, appConfig, messages).toString())
+          Jsoup.parse(
+            page(formProvider(username), username, isAgent = true, Some("OrgName"), Some("somePillar2Ref"))(request, appConfig, messages).toString()
+          )
         )
       )
 
