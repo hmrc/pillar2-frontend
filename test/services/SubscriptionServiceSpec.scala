@@ -953,6 +953,8 @@ class SubscriptionServiceSpec extends SpecBase {
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
+          when(mockSubscriptionConnector.getSubscriptionCache(eqTo("id"))(using any(), any()))
+            .thenReturn(Future.successful(None))
 
           val result = service.readSubscriptionV2AndSave("id", plrRef).futureValue
           result.plrReference mustBe plrRef
@@ -982,6 +984,8 @@ class SubscriptionServiceSpec extends SpecBase {
             .thenReturn(Future.successful(v2DataWithDetails))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
+          when(mockSubscriptionConnector.getSubscriptionCache(eqTo("id"))(using any(), any()))
+            .thenReturn(Future.successful(None))
 
           val result = service.readSubscriptionV2AndSave("id", plrRef).futureValue
           result.upeCustomerIdentification1 mustBe Some("CRN123")
@@ -999,6 +1003,8 @@ class SubscriptionServiceSpec extends SpecBase {
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionConnector.getSubscriptionCache(eqTo("id"))(using any(), any()))
+            .thenReturn(Future.successful(None))
 
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
@@ -1007,6 +1013,8 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(any(), any())(using any(), any()))
             .thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionConnector.getSubscriptionCache(eqTo("id"))(using any(), any()))
+            .thenReturn(Future.successful(None))
 
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }

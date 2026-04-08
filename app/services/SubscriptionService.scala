@@ -87,15 +87,29 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache. */
+  /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache, also does not overwrite phone related fields on flag
+    * alternation.
+    */
   def readSubscriptionV2AndSave(
     userId:       String,
     plrReference: String
   )(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
-    subscriptionConnector.readSubscriptionV2(userId, plrReference).flatMap { v2 =>
-      val local = subscriptionDataV2ToLocalData(plrReference, v2)
-      subscriptionConnector.save(userId, Json.toJson(local)).map(_ => local)
-    }
+    for {
+      existingOpt <- subscriptionConnector.getSubscriptionCache(userId)
+      v2          <- subscriptionConnector.readSubscriptionV2(userId, plrReference)
+      fresh  = subscriptionDataV2ToLocalData(plrReference, v2)
+      merged = existingOpt match {
+                 case Some(existing) =>
+                   fresh.copy(
+                     subPrimaryPhonePreference = existing.subPrimaryPhonePreference,
+                     subPrimaryCapturePhone = existing.subPrimaryCapturePhone,
+                     subSecondaryPhonePreference = existing.subSecondaryPhonePreference,
+                     subSecondaryCapturePhone = existing.subSecondaryCapturePhone
+                   )
+                 case None => fresh
+               }
+      _ <- subscriptionConnector.save(userId, Json.toJson(merged))
+    } yield merged
 
   private def subscriptionDataV2ToLocalData(plrReference: String, v2: SubscriptionDataV2): SubscriptionLocalData = {
     val address = v2.upeCorrespAddressDetails
