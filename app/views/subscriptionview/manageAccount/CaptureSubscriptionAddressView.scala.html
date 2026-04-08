@@ -45,9 +45,16 @@
         }
 
         @if(isAgent) {
-            @sectionHeader(organisationName.getOrElse(messages("subscriptionAddress.heading.caption")))
+            <div class="govuk-caption-m">
+                <span><strong>@{
+                    messages("homepage.group")
+                }:</strong> @organisationName</span>
+                <span><strong>@{
+                    messages("homepage.id")
+                }:</strong> @plrRef</span>
+            </div>
         } else {
-            @sectionHeader(messages("subscriptionAddress.heading.caption"))
+            @sectionHeader(messages("contactEmailAddress.heading.caption"))
         }
 
         @heading(messages("subscriptionAddress.heading"), "govuk-heading-l")

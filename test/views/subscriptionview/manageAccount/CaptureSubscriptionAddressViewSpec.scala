@@ -47,8 +47,25 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
 
       "have a caption" in {
         view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
+
+        val agentView = Jsoup.parse(
+          page(
+            nonUkAddressForm,
+            Seq.empty,
+            isAgent = true,
+            organisationName = Some("Organisation Inc"),
+            plrRef = Some("somePillar2Ref")
+          )(
+            request,
+            appConfig,
+            messages
+          ).toString()
+        )
+
+        agentView
+          .getElementsByClass("govuk-caption-m")
+          .get(0)
+          .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
       }
 
       "have a unique H1 heading" in {
