@@ -79,7 +79,8 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        subscriptionData                        <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        orgName = subscriptionData.upeDetails.organisationName
         transactionsAndUnallocatedPaymentAmount <-
           OptionT.liftF(
             retrieveTransactionsAndUnallocatedAmount(
@@ -91,13 +92,27 @@ class TransactionHistoryController @Inject() (
         (financialHistory, unallocatedPaymentAmount) = transactionsAndUnallocatedPaymentAmount
         result <-
           if financialHistory.isEmpty then {
-            OptionT.liftF(Future.successful(Ok(noTransactionHistoryView(unallocatedPaymentAmount, appConfig.useAccountActivityApi, request.isAgent))))
+            OptionT.liftF(
+              Future.successful(
+                Ok(noTransactionHistoryView(orgName, referenceNumber, unallocatedPaymentAmount, appConfig.useAccountActivityApi, request.isAgent))
+              )
+            )
           } else
             OptionT
               .fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
               .map { table =>
                 val pagination = generatePagination(financialHistory, page)
-                Ok(transactionHistoryView(unallocatedPaymentAmount, appConfig.useAccountActivityApi, table, pagination, request.isAgent))
+                Ok(
+                  transactionHistoryView(
+                    orgName,
+                    referenceNumber,
+                    unallocatedPaymentAmount,
+                    appConfig.useAccountActivityApi,
+                    table,
+                    pagination,
+                    request.isAgent
+                  )
+                )
               }
       } yield result
 
@@ -118,8 +133,8 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-
-      } yield Ok(noTransactionHistoryView(BigDecimal(0), appConfig.useAccountActivityApi, request.isAgent))
+        orgName <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber).map(_.upeDetails.organisationName))
+      } yield Ok(noTransactionHistoryView(orgName, referenceNumber, BigDecimal(0), appConfig.useAccountActivityApi, request.isAgent))
 
       result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
         Redirect(routes.TransactionHistoryController.onPageLoadError())
