@@ -33,3 +33,5 @@ final case class OutstandingPaymentsRowForActivity(
   dueDate:           LocalDate,
   appealFlag:        Option[Boolean]
 )
+
+case class OutstandingPaymentSummary(accountingPeriod: AccountingPeriod, items: Seq[OutstandingPaymentsRowForActivity])

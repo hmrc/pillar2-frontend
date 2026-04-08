@@ -1873,6 +1873,13 @@ payments.outstanding.details.p1 = We have separated any payments due by the asso
 payments.outstanding.details.p2 = An appealed charge is still part of the amount due until it is partly or completely stoodover.
 payments.outstanding.details.nothingDue = No payments due.
 
+payments.outstanding.table.heading.description = Description
+payments.outstanding.table.heading.chargeAmount = Charge amount
+payments.outstanding.table.heading.amountDue = Amount due
+payments.outstanding.table.heading.amount = Amount
+payments.outstanding.table.heading.dueDate = Due date
+payments.outstanding.table.caption = Other Penalties
+
 payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
 payments.outstanding.abbreviation.uktr = UKTR - UK Tax Return
 payments.outstanding.abbreviation.dtt = DTT - Domestic Top-up Tax

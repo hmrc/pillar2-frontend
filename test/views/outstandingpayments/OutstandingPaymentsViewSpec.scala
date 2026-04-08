@@ -467,7 +467,7 @@ object OutstandingPaymentsViewSpec {
 
   val activityData: Seq[OutstandingPaymentsTableForActivity] = Seq(activityTable)
 
-  val penalties: Seq[OutstandingPaymentItem] = Seq.empty
+  val penalties: Seq[OutstandingPaymentsRowForActivity] = Seq.empty
 
   val rowWithAppeal: OutstandingPaymentsRowForActivity =
     OutstandingPaymentsRowForActivity(
