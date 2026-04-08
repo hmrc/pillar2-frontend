@@ -17,7 +17,7 @@
 package models.subscription
 
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{Json, OFormat, OWrites, Reads, __}
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
