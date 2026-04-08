@@ -37,7 +37,7 @@
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(isAgent && organisationName.isDefined) {
-            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName<strong> @{messages("homepage.id")}: </strong>@plrReference</span>
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName <strong>@{messages("homepage.id")}: </strong>@plrReference</span>
         } else if(isAgent) {
             <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
         }
