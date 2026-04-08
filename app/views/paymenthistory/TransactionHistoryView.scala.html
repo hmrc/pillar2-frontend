@@ -33,13 +33,19 @@
         details: GovukDetails
 )
 
-@(unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(orgName: String, plrRef: String, unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
   @tableScrollStyles()
+  @if(isAgent) {
+      <div class="govuk-caption-m">
+          <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
+          <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+      </div>
+    }
 
   @h1(messages("transactionHistory.heading"))
 
