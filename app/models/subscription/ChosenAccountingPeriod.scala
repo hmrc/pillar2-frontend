@@ -39,7 +39,6 @@ case class ChosenAccountingPeriod(
 
   private def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
 
-  /** Example day/month/year for end date hint: Pillar 2 floor when amending a pre-Pillar period, else current period end. */
   private def endDateHintExampleFormat: String =
     if periodBeingAmendedStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryFormat
     else selectedAccountingPeriod.endDate.toDateEntryFormat

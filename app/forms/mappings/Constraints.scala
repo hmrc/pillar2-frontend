@@ -153,7 +153,6 @@ trait Constraints {
       }
     }
 
-  /** Pillar 2 minimum is enforced before optional ETMP start boundary (PIL-2900). */
   protected def pillar2MinimumThenOptionalStartBoundary(
     pillar2Min:               LocalDate,
     minimumErrorKey:          String,
