@@ -101,7 +101,16 @@ class ManageContactCheckYourAnswersController @Inject() (
             )
 
             Future.successful(
-              Ok(view(primaryContactList, secondaryContactRows, address, request.isAgent, request.subscriptionLocalData.organisationName))
+              Ok(
+                view(
+                  primaryContactList,
+                  secondaryContactRows,
+                  address,
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  Some(request.subscriptionLocalData.plrReference)
+                )
+              )
             )
         }
     }

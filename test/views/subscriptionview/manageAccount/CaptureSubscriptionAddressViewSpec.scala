@@ -34,8 +34,8 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
   lazy val nonUkAddressForm: Form[NonUKAddress]                     = formProvider()
   lazy val page:             CaptureSubscriptionAddressView         = inject[CaptureSubscriptionAddressView]
   lazy val pageTitle:        String                                 = "What address do you want to use as the filing member’s contact address?"
-  def view(isAgent: Boolean = false, orgName: Option[String] = None): Document =
-    Jsoup.parse(page(nonUkAddressForm, Seq.empty, isAgent, orgName)(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false, orgName: Option[String] = None, plrRef: Option[String] = None): Document =
+    Jsoup.parse(page(nonUkAddressForm, Seq.empty, isAgent, orgName, plrRef)(request, appConfig, messages).toString())
   lazy val addressFormLabels: Elements = view().getElementsByClass("govuk-label")
 
   "Capture Subscription Address View" when {
@@ -47,8 +47,25 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
 
       "have a caption" in {
         view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
+
+        val agentView = Jsoup.parse(
+          page(
+            nonUkAddressForm,
+            Seq.empty,
+            isAgent = true,
+            organisationName = Some("Organisation Inc"),
+            plrRef = Some("somePillar2Ref")
+          )(
+            request,
+            appConfig,
+            messages
+          ).toString()
+        )
+
+        agentView
+          .getElementsByClass("govuk-caption-m")
+          .get(0)
+          .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
       }
 
       "have a unique H1 heading" in {
@@ -108,7 +125,8 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
           ),
           Seq.empty,
           isAgent = false,
-          organisationName = None
+          organisationName = None,
+          plrRef = None
         )(request, appConfig, messages).toString()
       )
 
@@ -151,7 +169,8 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
           ),
           Seq.empty,
           isAgent = false,
-          organisationName = None
+          organisationName = None,
+          plrRef = None
         )(request, appConfig, messages).toString()
       )
 
@@ -195,7 +214,8 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
       )
 
       val errorView: Document = Jsoup.parse(
-        page(nonUkAddressForm.bind(xssInput), Seq.empty, isAgent = false, organisationName = None)(request, appConfig, messages).toString()
+        page(nonUkAddressForm.bind(xssInput), Seq.empty, isAgent = false, organisationName = None, plrRef = None)(request, appConfig, messages)
+          .toString()
       )
 
       "show XSS validation error summary" in {
@@ -236,7 +256,8 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
         "postalCode"   -> "12345"
       )
       val view: Document = Jsoup.parse(
-        page(nonUkAddressForm.bind(userInput), Seq.empty, isAgent = false, organisationName = None)(request, appConfig, messages).toString()
+        page(nonUkAddressForm.bind(userInput), Seq.empty, isAgent = false, organisationName = None, plrRef = None)(request, appConfig, messages)
+          .toString()
       )
       view.getElementById("addressLine1").attr("value") mustBe "123 Test Street"
       view.getElementById("addressLine2").attr("value") mustBe "<script>alert('xss')</script>"

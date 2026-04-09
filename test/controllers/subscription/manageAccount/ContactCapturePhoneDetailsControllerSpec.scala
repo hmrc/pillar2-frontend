@@ -57,7 +57,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"))(
+        contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -81,7 +81,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"))(
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -174,7 +174,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactCapturePhoneDetailsView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"))(
+        contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
@@ -206,7 +206,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactCapturePhoneDetailsView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"))(
+        contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"), Some("somePillar2Ref"))(
           request,
           applicationConfig,
           messages(application)
