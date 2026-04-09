@@ -72,7 +72,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(form, mode, isAgent = false, Some(organisationName), zippedAccountingPeriodDetails)(
+        contentAsString(result) mustEqual view(form, mode, plrReference, isAgent = false, Some(organisationName), zippedAccountingPeriodDetails)(
           request,
           applicationConfig,
           messages(application)
@@ -95,6 +95,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(
           form.fill(chosenAccountingPeriod._2),
           mode,
+          plrReference,
           isAgent = false,
           Some(organisationName),
           zippedAccountingPeriodDetails
@@ -161,7 +162,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, mode, isAgent = false, Some(organisationName), zippedAccountingPeriodDetails)(
+        contentAsString(result) mustEqual view(boundForm, mode, plrReference, isAgent = false, Some(organisationName), zippedAccountingPeriodDetails)(
           request,
           applicationConfig,
           messages(application)

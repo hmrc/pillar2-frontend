@@ -26,7 +26,7 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(mneOrDomestic: MneOrDomestic, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(mneOrDomestic: MneOrDomestic, plrReference: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = if(isAgent) {
@@ -36,6 +36,12 @@
     },
     bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
+
+    @if(isAgent && organisationName.isDefined) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName<strong> @{messages("homepage.id")}: </strong>@plrReference</span>
+    } else if(isAgent) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
+    }
 
     @if(isAgent) {
         @heading(messages("btn.entitiesInsideOutsideUK.amend.agent.heading"), classes = "govuk-heading-l")

@@ -65,7 +65,18 @@ class BTNChooseAccountingPeriodController @Inject() (
                 }
               }
               .getOrElse(form)
-            Future.successful(Ok(view(preparedForm, mode, request.isAgent, request.subscriptionLocalData.organisationName, accountingPeriods)))
+            Future.successful(
+              Ok(
+                view(
+                  preparedForm,
+                  mode,
+                  request.subscriptionLocalData.plrReference,
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  accountingPeriods
+                )
+              )
+            )
           case None =>
             logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -89,6 +100,7 @@ class BTNChooseAccountingPeriodController @Inject() (
                       view(
                         formWithErrors,
                         mode,
+                        request.subscriptionLocalData.plrReference,
                         request.isAgent,
                         request.subscriptionLocalData.organisationName,
                         accountingPeriods

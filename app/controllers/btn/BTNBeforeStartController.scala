@@ -69,8 +69,19 @@ class BTNBeforeStartController @Inject() (
         } yield maybeSubscriptionData
       ).value
         .flatMap {
-          case Some(_) => Future.successful(Ok(view(request.isAgent, filteredAccountingPeriodDetails.size > 1, mode)))
-          case None    => Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+          case Some(_) =>
+            Future.successful(
+              Ok(
+                view(
+                  request.subscriptionLocalData.plrReference,
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  filteredAccountingPeriodDetails.size > 1,
+                  mode
+                )
+              )
+            )
+          case None => Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         }
         .recover { case _ =>
           Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
