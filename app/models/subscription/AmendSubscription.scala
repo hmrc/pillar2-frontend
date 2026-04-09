@@ -48,7 +48,7 @@ final case class ContactDetailsType(
 )
 
 object ContactDetailsType {
-  val reads: Reads[ContactDetailsType] = (
+  given reads: Reads[ContactDetailsType] = (
     (__ \ "name").read[String] and
       (__ \ "telephone")
         .readNullable[String]
@@ -56,7 +56,7 @@ object ContactDetailsType {
       (__ \ "emailAddress").read[String]
   )(ContactDetailsType.apply _)
 
-  val writes: OWrites[ContactDetailsType] = (
+  given writes: OWrites[ContactDetailsType] = (
     (__ \ "name").write[String] and
       (__ \ "telephone").writeNullable[String] and
       (__ \ "emailAddress").write[String]
