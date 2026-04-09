@@ -39,8 +39,8 @@ class ContactByPhoneViewSpec extends ViewSpecBase with StringGenerators {
 
     "page loaded" should {
 
-      def view(isAgent: Boolean = false, orgName: Option[String] = None): Document = Jsoup.parse(
-        page(formProvider(contactName), contactName, isAgent, orgName)(request, appConfig, messages).toString()
+      def view(isAgent: Boolean = false, orgName: Option[String] = None, plrRef: Option[String] = None): Document = Jsoup.parse(
+        page(formProvider(contactName), contactName, isAgent, orgName, plrRef)(request, appConfig, messages).toString()
       )
 
       "have a title" in {
@@ -49,8 +49,24 @@ class ContactByPhoneViewSpec extends ViewSpecBase with StringGenerators {
 
       "have a caption" in {
         view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-        view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
+        val agentView = Jsoup.parse(
+          page(
+            formProvider(contactName),
+            contactName,
+            isAgent = true,
+            organisationName = Some("Organisation Inc"),
+            plrRef = Some("somePillar2Ref")
+          )(
+            request,
+            appConfig,
+            messages
+          ).toString()
+        )
+
+        agentView
+          .getElementsByClass("govuk-caption-m")
+          .get(0)
+          .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
       }
 
       "have a unique H1 heading" in {
@@ -91,7 +107,8 @@ class ContactByPhoneViewSpec extends ViewSpecBase with StringGenerators {
         ),
         contactName,
         isAgent = false,
-        organisationName = None
+        organisationName = None,
+        plrRef = None
       )(request, appConfig, messages).toString()
     )
 
@@ -118,19 +135,20 @@ class ContactByPhoneViewSpec extends ViewSpecBase with StringGenerators {
       ViewScenario(
         "view",
         Jsoup.parse(
-          page(formProvider(contactName), contactName, isAgent = false, None)(request, appConfig, messages).toString()
+          page(formProvider(contactName), contactName, isAgent = false, None, None)(request, appConfig, messages).toString()
         )
       ),
       ViewScenario(
         "agentViewNoOrg",
         Jsoup.parse(
-          page(formProvider(contactName), contactName, isAgent = true, None)(request, appConfig, messages).toString()
+          page(formProvider(contactName), contactName, isAgent = true, None, None)(request, appConfig, messages).toString()
         )
       ),
       ViewScenario(
         "agentViewSomeOrg",
         Jsoup.parse(
-          page(formProvider(contactName), contactName, isAgent = true, Some("orgName"))(request, appConfig, messages).toString()
+          page(formProvider(contactName), contactName, isAgent = true, Some("orgName"), Some("somePillar2Ref"))(request, appConfig, messages)
+            .toString()
         )
       )
     )
