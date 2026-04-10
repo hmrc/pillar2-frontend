@@ -16,7 +16,8 @@
 
 package models.subscription
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
@@ -46,6 +47,24 @@ final case class ContactDetailsType(
   emailAddress: String
 )
 
+object ContactDetailsType {
+  given reads: Reads[ContactDetailsType] = (
+    (__ \ "name").read[String] and
+      (__ \ "telephone")
+        .readNullable[String]
+        .orElse((__ \ "phone").readNullable[String]) and
+      (__ \ "emailAddress").read[String]
+  )(ContactDetailsType.apply _)
+
+  given writes: OWrites[ContactDetailsType] = (
+    (__ \ "name").write[String] and
+      (__ \ "telephone").writeNullable[String] and
+      (__ \ "emailAddress").write[String]
+  )(c => (c.name, c.phone, c.emailAddress))
+
+  given format: OFormat[ContactDetailsType] = OFormat(reads, writes)
+}
+
 final case class FilingMemberAmendDetails(
   addNewFilingMember:      Boolean = false,
   safeId:                  String,
@@ -58,9 +77,6 @@ object AmendSubscription {
 }
 object UpeDetailsAmend {
   given format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
-}
-object ContactDetailsType {
-  given format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
 }
 
 object FilingMemberAmendDetails {
