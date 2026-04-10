@@ -21,7 +21,7 @@ import controllers.actions.*
 import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
-import pages.{AgentClientOrganisationNamePage, RepaymentsContactByPhonePage, RepaymentsContactNamePage, RepaymentsPhoneDetailsPage}
+import pages.*
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.*

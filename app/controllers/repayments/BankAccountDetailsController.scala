@@ -22,7 +22,7 @@ import controllers.actions.*
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
-import pages.{AgentClientOrganisationNamePage, BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
+import pages.*
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
