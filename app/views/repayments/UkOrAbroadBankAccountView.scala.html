@@ -24,7 +24,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
+@(form: Form[_], mode: Mode, isAgent: Boolean, plrReference: Option[String], organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig,messages: Messages)
 
 @layout(pageTitle = title(form, messages("ukOrAbroadBankAccount.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -32,6 +32,10 @@
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
+        @if(isAgent && plrReference.isDefined && organisationName.isDefined) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
         }
 
         @govukRadios(

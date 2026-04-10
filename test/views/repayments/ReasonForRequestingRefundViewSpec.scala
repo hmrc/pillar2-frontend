@@ -32,14 +32,24 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
   lazy val formProvider: ReasonForRequestingRepaymentFormProvider = new ReasonForRequestingRepaymentFormProvider
   lazy val page:         ReasonForRequestingRefundView            = inject[ReasonForRequestingRefundView]
   lazy val pageTitle:    String                                   = "Why are you requesting a repayment?"
+  lazy val plrReference: String                                   = "XMPLR0123456789"
+
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString())
+  lazy val agentView: Document =
+    Jsoup.parse(
+      page(formProvider(), NormalMode, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString()
+    )
 
   "Reason For Requesting Repayment View" when {
 
     "page loaded" should {
-      val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
@@ -69,7 +79,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
 
     "form is submitted with missing value" should {
       val errorView: Document = Jsoup.parse(
-        page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
+        page(formProvider().bind(Map("value" -> "")), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString()
       )
 
       "show a missing value error summary" in {
@@ -93,7 +103,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
     "form is submitted with value exceeding maximum length" should {
       val longInput: String   = randomAlphaNumericStringGenerator(299)
       val errorView: Document = Jsoup.parse(
-        page(formProvider().bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
+        page(formProvider().bind(Map("value" -> longInput)), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString()
       )
 
       "show length validation error summary" in {
@@ -120,7 +130,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
       )
 
       val errorView: Document = Jsoup.parse(
-        page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+        page(formProvider().bind(xssInput), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString()
       )
 
       "show XSS validation error summary" in {
@@ -145,12 +155,8 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario(
-          "view",
-          Jsoup.parse(
-            page(formProvider(), NormalMode)(request, appConfig, messages).toString()
-          )
-        )
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

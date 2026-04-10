@@ -67,7 +67,17 @@ class RepaymentsCheckYourAnswersController @Inject() (
           Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
-        case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
+        case _ =>
+          Ok(
+            view(
+              listRefund(),
+              listBankAccountDetails(),
+              contactDetailsList(),
+              request.request.isAgent,
+              request.request.clientPillar2Id,
+              request.userAnswers.get(AgentClientOrganisationNamePage)
+            )
+          )
       }
     }
 
