@@ -32,15 +32,25 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   lazy val formProvider: NonUKBankFormProvider = new NonUKBankFormProvider
   lazy val page:         NonUKBankView         = inject[NonUKBankView]
   lazy val pageTitle:    String                = "Bank account details"
+  lazy val plrReference: String                = "XMPLR0123456789"
+
+  lazy val view: Document = Jsoup.parse(
+    page(formProvider(), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString()
+  )
+
+  lazy val agentView: Document = Jsoup.parse(
+    page(formProvider(), NormalMode, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString()
+  )
 
   "Non UK Bank View" when {
     "page loaded" should {
-      val view: Document = Jsoup.parse(
-        page(formProvider(), NormalMode)(request, appConfig, messages).toString()
-      )
 
       "have a title" in {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
@@ -95,7 +105,10 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
             "iban"              -> ""
           )
         ),
-        NormalMode
+        NormalMode,
+        isAgent = false,
+        None,
+        None
       )(request, appConfig, messages).toString()
     )
 
@@ -136,7 +149,10 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
             "iban"              -> "GB82WEST12345698765432"
           )
         ),
-        NormalMode
+        NormalMode,
+        isAgent = false,
+        None,
+        None
       )(request, appConfig, messages).toString()
     )
 
@@ -172,7 +188,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     val errorView: Document = Jsoup.parse(
-      page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+      page(formProvider().bind(xssInput), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString()
     )
 
     "show XSS validation error summary" in {
@@ -202,12 +218,8 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
   val viewScenarios: Seq[ViewScenario] =
     Seq(
-      ViewScenario(
-        "view",
-        Jsoup.parse(
-          page(formProvider(), NormalMode)(request, appConfig, messages).toString()
-        )
-      )
+      ViewScenario("view", view),
+      ViewScenario("agentView", agentView)
     )
 
   behaveLikeAccessiblePage(viewScenarios)

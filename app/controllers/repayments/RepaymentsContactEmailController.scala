@@ -21,7 +21,7 @@ import controllers.actions.*
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
-import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
+import pages.{AgentClientOrganisationNamePage, RepaymentsContactEmailPage, RepaymentsContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.*
@@ -57,7 +57,16 @@ class RepaymentsContactEmailController @Inject() (
             case Some(value) => form.fill(value)
             case None        => form
           }
-          Ok(view(preparedForm, mode, username))
+          Ok(
+            view(
+              preparedForm,
+              mode,
+              username,
+              request.request.isAgent,
+              request.request.clientPillar2Id,
+              request.userAnswers.get(AgentClientOrganisationNamePage)
+            )
+          )
         }
         .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad))
     }
@@ -71,7 +80,19 @@ class RepaymentsContactEmailController @Inject() (
           formProvider(name)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      mode,
+                      name,
+                      request.request.isAgent,
+                      request.request.clientPillar2Id,
+                      request.userAnswers.get(AgentClientOrganisationNamePage)
+                    )
+                  )
+                ),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))

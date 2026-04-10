@@ -22,7 +22,7 @@ import controllers.actions.*
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
-import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
+import pages.{AgentClientOrganisationNamePage, BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -65,7 +65,9 @@ class BankAccountDetailsController @Inject() (
         updatedUserAnswer  <- Future.fromTry(request.userAnswers.remove(BarsAccountNamePartialPage))
         updatedUserAnswer1 <- Future.fromTry(updatedUserAnswer.remove(RepaymentAccountNameConfirmationPage))
         _                  <- sessionRepository.set(updatedUserAnswer1)
-      } yield Ok(view(preparedForm, mode))
+      } yield Ok(
+        view(preparedForm, mode, request.request.isAgent, request.request.clientPillar2Id, request.userAnswers.get(AgentClientOrganisationNamePage))
+      )
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -74,14 +76,33 @@ class BankAccountDetailsController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  request.request.isAgent,
+                  request.request.clientPillar2Id,
+                  request.userAnswers.get(AgentClientOrganisationNamePage)
+                )
+              )
+            ),
           bankAccountDetails =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, bankAccountDetails))
               _              <- sessionRepository.set(updatedAnswers)
               result         <-
                 barsService
-                  .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, mode)
+                  .verifyBusinessAccount(
+                    bankAccountDetails,
+                    updatedAnswers,
+                    form,
+                    mode,
+                    request.request.isAgent,
+                    request.request.clientPillar2Id,
+                    request.userAnswers.get(AgentClientOrganisationNamePage)
+                  )
             } yield result
         )
     }

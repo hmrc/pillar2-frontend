@@ -21,7 +21,7 @@ import controllers.actions.*
 import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
-import pages.RepaymentsRefundAmountPage
+import pages.{AgentClientOrganisationNamePage, RepaymentsRefundAmountPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -55,7 +55,15 @@ class RequestRepaymentAmountController @Inject() (
         case None        => form
         case Some(value) => form.fill(value.setScale(2))
       }
-      Ok(view(preparedForm, mode))
+      Ok(
+        view(
+          preparedForm,
+          mode,
+          request.request.isAgent,
+          request.request.clientPillar2Id,
+          request.userAnswers.get(AgentClientOrganisationNamePage)
+        )
+      )
     }
 
   def onSubmit(mode: Mode = NormalMode): Action[AnyContent] =
@@ -64,7 +72,18 @@ class RequestRepaymentAmountController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  request.request.isAgent,
+                  request.request.clientPillar2Id,
+                  request.userAnswers.get(AgentClientOrganisationNamePage)
+                )
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))

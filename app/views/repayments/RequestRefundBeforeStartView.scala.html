@@ -30,12 +30,15 @@
     bulletList: bulletList,
 )
 
-@(agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(agentView: Boolean, plrReference: Option[String], organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("repayment.requestRepaymentBeforeStart.title")),
     bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
+    @if(agentView && plrReference.isDefined && organisationName.isDefined) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
+    }
     @heading(messages("repayment.requestRepaymentBeforeStart.header"), classes = "govuk-heading-l")
     @if(agentView) {
         @p(messages("repayment.requestRepaymentBeforeStart.agentView.p1"))

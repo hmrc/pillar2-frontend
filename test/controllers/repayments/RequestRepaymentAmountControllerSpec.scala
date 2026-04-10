@@ -43,7 +43,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         val result  = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -64,7 +64,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(amount), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(amount), NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -98,7 +98,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -115,7 +115,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -133,7 +133,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RequestRefundAmountView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
