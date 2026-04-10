@@ -53,7 +53,15 @@ class CaptureSubscriptionAddressController @Inject() (
       given Request[AnyContent] = request
       val preparedForm          =
         request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
-      Ok(view(preparedForm, countryOptions.options(), request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
+      Ok(
+        view(
+          preparedForm,
+          countryOptions.options(),
+          request.isAgent,
+          request.maybeSubscriptionLocalData.flatMap(_.organisationName),
+          request.maybeSubscriptionLocalData.map(_.plrReference)
+        )
+      )
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -64,7 +72,15 @@ class CaptureSubscriptionAddressController @Inject() (
         .fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(formWithErrors, countryOptions.options(), request.isAgent, request.subscriptionLocalData.organisationName))
+              BadRequest(
+                view(
+                  formWithErrors,
+                  countryOptions.options(),
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  Some(request.subscriptionLocalData.plrReference)
+                )
+              )
             ),
           value =>
             for {

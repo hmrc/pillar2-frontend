@@ -27,14 +27,18 @@
         h2: HeadingH2
 )
 
-@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, isAgent: Boolean, organisationName: Option[String], plrRef: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit()) {
 
-            @if(isAgent && organisationName.isDefined) {
-                @sectionHeader(organisationName.get)
+            @if(isAgent) {
+                <div class="govuk-caption-m">
+                    <span><strong>@{messages("homepage.group")}:</strong> @organisationName</span>
+                    <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+                </div>
             }
+
             @h1(messages("manageContactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
 
             @h2(messages("manageContactCheckYourAnswers.first"), size = "m")

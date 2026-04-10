@@ -54,7 +54,7 @@ class SecondaryContactNameController @Inject() (
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName))
+      Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, Some(request.subscriptionLocalData.plrReference)))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -63,7 +63,17 @@ class SecondaryContactNameController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  request.isAgent,
+                  request.subscriptionLocalData.organisationName,
+                  Some(request.subscriptionLocalData.plrReference)
+                )
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryContactNamePage, value))
