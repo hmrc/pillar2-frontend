@@ -101,7 +101,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+          .text mustBe
+          "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -130,11 +131,27 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe s"Enter a date, for example 15 3 2027"
+        }
+
+        "the period being amended starts before Pillar 2 and there are no boundaries" in {
+          val prePillarPeriod = AccountingPeriod(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 1), None)
+          val chosen          =
+            ChosenAccountingPeriod(selectedAccountingPeriod = prePillarPeriod, startDateBoundary = None, endDateBoundary = None)
+
+          view(chosenAccountingPeriod = chosen)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+
+          view(chosenAccountingPeriod = chosen)
+            .getElementById("endDate-hint")
+            .text mustBe "Enter a date, for example 31 12 2023"
         }
 
         "there are boundaries" in {
@@ -151,7 +168,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
         }
       }
 
@@ -197,7 +215,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+          .text mustBe
+          "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -226,7 +245,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("endDate-hint")
@@ -247,7 +267,8 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
         }
       }
 

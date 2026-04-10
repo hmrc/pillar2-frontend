@@ -73,7 +73,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.minusDays(1).toDateFormat))
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
     )
   }
 

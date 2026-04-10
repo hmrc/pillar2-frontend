@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import play.api.i18n.Messages
 import utils.Constants.Pillar2MinStartDate
 import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
 
@@ -28,13 +29,50 @@ case class ChosenAccountingPeriod(
 ) {
   override def toString: String = s"${selectedAccountingPeriod.startDate.toDateFormat} to ${selectedAccountingPeriod.endDate.toDateFormat}"
 
-  def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
+  private def periodBeingAmendedStartsBeforePillar2: Boolean =
+    selectedAccountingPeriod.startDate.isBefore(Pillar2MinStartDate)
+
+  private def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
     case Some(date) => date.minusDays(1)
     case _          => Pillar2MinStartDate.minusDays(1)
   }
 
-  def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
+  private def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
 
-  def startDateHintEntryFormat: String = selectedAccountingPeriod.startDate.toDateEntryFormat
-  def endDateHintEntryFormat:   String = selectedAccountingPeriod.endDate.toDateEntryFormat
+  private def endDateHintExampleFormat: String =
+    if periodBeingAmendedStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryFormat
+    else selectedAccountingPeriod.endDate.toDateEntryFormat
+
+  def startDateHintText(using messages: Messages): String =
+    startDateBoundary match {
+      case Some(_) =>
+        messages(
+          "newAccountingPeriod.startDate.hint.afterBoundary",
+          startBoundaryHintFormat,
+          selectedAccountingPeriod.startDate.toDateEntryFormat
+        )
+      case None =>
+        if periodBeingAmendedStartsBeforePillar2 then
+          messages(
+            "newAccountingPeriod.startDate.hint.onOrAfterPillarEarliest",
+            Pillar2MinStartDate.toDateEntryFormat
+          )
+        else
+          messages(
+            "newAccountingPeriod.startDate.hint.onOrAfterPillarWithOriginalStart",
+            selectedAccountingPeriod.startDate.toDateEntryFormat
+          )
+    }
+
+  def endDateHintText(using messages: Messages): String =
+    endDateBoundary match {
+      case Some(boundary) =>
+        messages(
+          "newAccountingPeriod.endDate.hint.beforeSubmittedStart",
+          boundary.plusDays(1).toDateFormat,
+          endDateHintExampleFormat
+        )
+      case None =>
+        messages("newAccountingPeriod.endDate.hintWithoutBoundary", endDateHintExampleFormat)
+    }
 }
