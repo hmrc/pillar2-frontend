@@ -24,7 +24,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.ObligationsAndSubmissionsService
+import services.{ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
@@ -42,11 +42,13 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
       running(application) {
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -56,7 +58,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual viewNoSubmissions(false)(
+        contentAsString(result) mustEqual viewNoSubmissions(subscriptionData.upeDetails.organisationName, PlrReference, false)(
           request,
           applicationConfig,
           messages(application)
@@ -68,11 +70,13 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
       running(application) {
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(allFulfilledResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -82,7 +86,12 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         val view    = application.injector.instanceOf[SubmissionHistoryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(allFulfilledResponse.accountingPeriodDetails, false)(
+        contentAsString(result) mustEqual view(
+          subscriptionData.upeDetails.organisationName,
+          PlrReference,
+          allFulfilledResponse.accountingPeriodDetails,
+          false
+        )(
           request,
           applicationConfig,
           messages(application)
