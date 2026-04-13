@@ -32,11 +32,14 @@
     pageTitle = titleNoForm(messages("submissionHistoryNoSubmissions.title")),
     bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
-    @if(isAgent) {
+    @if(isAgent && orgName.trim.nonEmpty) {
         <div class="govuk-caption-m">
-            @if(orgName.trim.nonEmpty) {
-                <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
-            }
+            <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
+            <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+        </div>
+    }
+    @if(isAgent && orgName.trim.isEmpty) {
+        <div class="govuk-caption-m">
             <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
         </div>
     }
