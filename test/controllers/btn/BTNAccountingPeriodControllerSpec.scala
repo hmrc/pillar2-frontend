@@ -107,6 +107,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           contentAsString(result) mustEqual view(
             list(LocalDate.now(), LocalDate.now.plusYears(1)),
             NormalMode,
+            plrReference,
             isAgent = false,
             Some("orgName"),
             hasMultipleAccountingPeriods = false,
@@ -136,6 +137,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           contentAsString(result) mustEqual view(
             list(chosenAccountPeriod.startDate, chosenAccountPeriod.endDate),
             NormalMode,
+            plrReference,
             isAgent = false,
             Some("orgName"),
             hasMultipleAccountingPeriods = true,
@@ -205,7 +207,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNReturnSubmittedView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(isAgent = false, osResponse.success.accountingPeriodDetails.head)(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), osResponse.success.accountingPeriodDetails.head)(
           request,
           applicationConfig,
           messages(application)
@@ -225,7 +227,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[BTNAlreadyInPlaceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"))(
           request,
           applicationConfig,
           messages(application)

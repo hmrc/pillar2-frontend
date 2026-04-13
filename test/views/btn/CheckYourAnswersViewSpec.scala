@@ -36,6 +36,7 @@ import java.time.LocalDate
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
+  lazy val plrReference:     String               = "XMPLR0123456789"
   lazy val startDate:        LocalDate            = LocalDate.of(2024, 10, 24)
   lazy val endDate:          LocalDate            = LocalDate.of(2025, 10, 24)
   lazy val accountingPeriod: AccountingPeriod     = AccountingPeriod(startDate, endDate)
@@ -53,42 +54,50 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  def view(summaryList: SummaryList = summaryListCYA(), isAgent: Boolean = false): Document =
-    Jsoup.parse(page(summaryList, isAgent, Some("orgName"))(request, appConfig, realMessagesApi.preferred(request)).toString())
+  def organisationView(summaryList: SummaryList = summaryListCYA()): Document =
+    Jsoup.parse(page(summaryList, plrReference, isAgent = false, Some("orgName"))(request, appConfig, realMessagesApi.preferred(request)).toString())
+
+  def agentView(summaryList: SummaryList = summaryListCYA()): Document =
+    Jsoup.parse(page(summaryList, plrReference, isAgent = true, Some("orgName"))(request, appConfig, realMessagesApi.preferred(request)).toString())
+
+  def agentNoOrgView(summaryList: SummaryList = summaryListCYA()): Document =
+    Jsoup.parse(
+      page(summaryList, plrReference, isAgent = true, organisationName = None)(request, appConfig, realMessagesApi.preferred(request)).toString()
+    )
 
   def getSummaryListActions(doc: Document): Elements = doc.getElementsByClass("govuk-summary-list__actions")
 
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view().getElementsByTag("h1")
+      val h1Elements: Elements = organisationView().getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      organisationView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph" in {
-      view().getElementsByClass("govuk-body").get(0).text mustBe "If you submit a Below-Threshold Notification for " +
+      organisationView().getElementsByClass("govuk-body").get(0).text mustBe "If you submit a Below-Threshold Notification for " +
         "a previous accounting period, any return you have submitted this accounting period will be removed."
     }
 
     "have an H2 heading" in {
-      val h2Elements: Elements = view().getElementsByTag("h2")
+      val h2Elements: Elements = organisationView().getElementsByTag("h2")
       h2Elements.get(0).text() mustBe "Submit your Below-Threshold Notification"
       h2Elements.get(0).hasClass("govuk-heading-s") mustBe true
     }
 
     "have a second paragraph" in {
-      view().getElementsByClass("govuk-body").get(1).text mustBe "By submitting these details, you are confirming " +
+      organisationView().getElementsByClass("govuk-body").get(1).text mustBe "By submitting these details, you are confirming " +
         "that the information is correct and complete to the best of your knowledge."
     }
 
@@ -97,7 +106,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       "UK only entities" should {
 
         "have a summary list" in {
-          val ukOnlyEntitiesView:  Document = view(summaryList = summaryListCYA(ukOnlyEntities = true))
+          val ukOnlyEntitiesView:  Document = organisationView(summaryList = summaryListCYA(ukOnlyEntities = true))
           val summaryListElements: Elements = ukOnlyEntitiesView.getElementsByClass("govuk-summary-list")
           val summaryListKeys:     Elements = ukOnlyEntitiesView.getElementsByClass("govuk-summary-list__key")
           val summaryListItems:    Elements = ukOnlyEntitiesView.getElementsByClass("govuk-summary-list__value")
@@ -115,7 +124,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
         "have the correct summary list actions" when {
 
           "single accounting period" in {
-            val summaryListActions: Elements = getSummaryListActions(view(summaryList = summaryListCYA(ukOnlyEntities = true)))
+            val summaryListActions: Elements = getSummaryListActions(organisationView(summaryList = summaryListCYA(ukOnlyEntities = true)))
 
             summaryListActions.get(0).text mustBe "Change are the entities still located only in the UK?"
             summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
@@ -124,7 +133,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
           "multiple accounting periods" in {
             val summaryListActions: Elements =
-              getSummaryListActions(view(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true)))
+              getSummaryListActions(organisationView(summaryList = summaryListCYA(ukOnlyEntities = true, multipleAccountingPeriods = true)))
 
             summaryListActions.get(0).text mustBe "Change group’s accounting period"
             summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
@@ -140,7 +149,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       "when inside and outside UK entities" should {
 
         "have a summary list" in {
-          val ukAndOtherEntities:  Document = view(summaryList = summaryListCYA(ukOnlyEntities = false))
+          val ukAndOtherEntities:  Document = organisationView(summaryList = summaryListCYA(ukOnlyEntities = false))
           val summaryListElements: Elements = ukAndOtherEntities.getElementsByClass("govuk-summary-list")
           val summaryListKeys:     Elements = ukAndOtherEntities.getElementsByClass("govuk-summary-list__key")
           val summaryListItems:    Elements = ukAndOtherEntities.getElementsByClass("govuk-summary-list__value")
@@ -157,7 +166,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
         "have a summary list actions" when {
           "single accounting period" in {
-            val summaryListActions: Elements = getSummaryListActions(view())
+            val summaryListActions: Elements = getSummaryListActions(organisationView())
 
             summaryListActions.get(0).text mustBe "Change are the entities still located in both the UK and outside the UK?"
             summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
@@ -165,7 +174,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
           }
 
           "multiple accounting periods" in {
-            val summaryListActions: Elements = getSummaryListActions(view(summaryList = summaryListCYA(multipleAccountingPeriods = true)))
+            val summaryListActions: Elements = getSummaryListActions(organisationView(summaryList = summaryListCYA(multipleAccountingPeriods = true)))
 
             summaryListActions.get(0).text mustBe "Change group’s accounting period"
             summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
@@ -180,19 +189,21 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a 'Confirm and submit' button" in {
-      val continueButton: Element = view().getElementsByClass("govuk-button").first()
+      val continueButton: Element = organisationView().getElementsByClass("govuk-button").first()
       continueButton.text mustBe "Confirm and submit"
       continueButton.attr("type") mustBe "submit"
     }
 
     "have a caption displaying the organisation name for an agent view" in {
-      view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe "orgName"
+      agentView().getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      agentNoOrgView().getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
     }
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view()),
-        ViewScenario("agentView", view(isAgent = true))
+        ViewScenario("view", organisationView()),
+        ViewScenario("agentView", agentView()),
+        ViewScenario("agentNoOrgView", agentNoOrgView())
       )
 
     behaveLikeAccessiblePage(viewScenarios)

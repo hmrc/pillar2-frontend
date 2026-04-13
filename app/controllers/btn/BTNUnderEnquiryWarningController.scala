@@ -17,24 +17,28 @@
 package controllers.btn
 
 import config.FrontendAppConfig
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import models.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNUnderEnquiryWarningView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 class BTNUnderEnquiryWarningController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BTNUnderEnquiryWarningView
+  val controllerComponents:               MessagesControllerComponents,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getSubscriptionData:                    SubscriptionDataRetrievalAction,
+  requireSubscriptionData:                SubscriptionDataRequiredAction,
+  view:                                   BTNUnderEnquiryWarningView
 )(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData) { request =>
     given Request[AnyContent] = request
-    Ok(view())
+    Ok(view(request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName))
   }
 
   def onSubmit: Action[AnyContent] = Action { _ =>

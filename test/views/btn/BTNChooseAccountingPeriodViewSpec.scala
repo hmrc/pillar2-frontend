@@ -33,46 +33,63 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
   lazy val formProvider: BTNChooseAccountingPeriodFormProvider = new BTNChooseAccountingPeriodFormProvider
   lazy val page:         BTNChooseAccountingPeriodView         = inject[BTNChooseAccountingPeriodView]
   lazy val pageTitle:        String = "Which accounting period would you like to register a Below-Threshold Notification for?"
+  lazy val plrReference:     String = "XMPLR0123456789"
   lazy val organisationName: String = "orgName"
   lazy val accountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = Seq(
     AccountingPeriodDetails(LocalDate.now.minusYears(1), LocalDate.now(), LocalDate.now.plusYears(1), underEnquiry = false, Seq.empty),
     AccountingPeriodDetails(LocalDate.now.minusYears(2), LocalDate.now.minusYears(1), LocalDate.now(), underEnquiry = false, Seq.empty)
   ).zipWithIndex
 
-  def view(isAgent: Boolean = false): Document =
-    Jsoup.parse(page(formProvider(), NormalMode, isAgent, Some(organisationName), accountingPeriodDetails)(request, appConfig, messages).toString())
+  lazy val organisationView: Document =
+    Jsoup.parse(
+      page(formProvider(), NormalMode, plrReference, isAgent = false, Some(organisationName), accountingPeriodDetails)(request, appConfig, messages)
+        .toString()
+    )
+
+  lazy val agentView: Document =
+    Jsoup.parse(
+      page(formProvider(), NormalMode, plrReference, isAgent = true, Some(organisationName), accountingPeriodDetails)(request, appConfig, messages)
+        .toString()
+    )
+
+  lazy val agentNoOrgView: Document =
+    Jsoup.parse(
+      page(formProvider(), NormalMode, plrReference, isAgent = true, organisationName = None, accountingPeriodDetails)(request, appConfig, messages)
+        .toString()
+    )
 
   "BTNChooseAccountingPeriodView" should {
     "have a title" in {
-      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view().getElementsByTag("h1")
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a caption for an agent view" in {
-      view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe organisationName
+      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
     }
 
     "not have a caption for organisation view" in {
-      view().getElementsByClass("govuk-caption-m").text mustNot include(organisationName)
+      organisationView.getElementsByClass("govuk-caption-m").text mustNot include(organisationName)
     }
 
     "have a paragraph" in {
-      view().getElementsByClass("govuk-body").get(0).text mustBe "We only list the current and previous accounting periods."
+      organisationView.getElementsByClass("govuk-body").get(0).text mustBe "We only list the current and previous accounting periods."
     }
 
     "have radio items" in {
-      val radioButtons: Elements = view().getElementsByClass("govuk-label govuk-radios__label")
+      val radioButtons: Elements = organisationView.getElementsByClass("govuk-label govuk-radios__label")
 
       radioButtons.size() mustBe 2
       radioButtons.get(0).text mustBe s"${accountingPeriodDetails.head._1.formattedDates}"
@@ -80,15 +97,16 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
     }
 
     "have a 'Continue' button" in {
-      val continueButton: Element = view().getElementsByClass("govuk-button").first()
+      val continueButton: Element = organisationView.getElementsByClass("govuk-button").first()
       continueButton.text mustBe "Continue"
       continueButton.attr("type") mustBe "submit"
     }
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view()),
-        ViewScenario("agentView", view(isAgent = true))
+        ViewScenario("view", organisationView),
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentNoOrgView", agentNoOrgView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

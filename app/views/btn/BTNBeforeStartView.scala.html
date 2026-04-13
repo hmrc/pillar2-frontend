@@ -28,9 +28,16 @@
         govukInsetText: GovukInsetText
 )
 
-@(isAgent: Boolean, hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(plrReference: String, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.beforeStart.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+
+    @if(isAgent && organisationName.isDefined) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName<strong> @{messages("homepage.id")}: </strong>@plrReference</span>
+    } else if(isAgent) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
+    }
+
     @heading(messages("btn.beforeStart.header"), classes = "govuk-heading-l")
 
     @if(isAgent) {
