@@ -33,11 +33,22 @@
         govukTable: GovukTable
 )
 
-@(accountPeriods: Seq[AccountingPeriodDetails],isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(orgName: String, plrRef: String, accountPeriods: Seq[AccountingPeriodDetails], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle = titleNoForm(messages("submissionHistory.title")),
     bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
+    @if(isAgent && orgName.trim.nonEmpty) {
+        <div class="govuk-caption-m">
+            <span><strong>@{messages("homepage.group")}:</strong> @orgName</span>
+            <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+        </div>
+    }
+    @if(isAgent && orgName.trim.isEmpty) {
+        <div class="govuk-caption-m">
+            <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
+        </div>
+    }
     @heading(messages("submissionHistory.heading"), classes = "govuk-heading-l")
     @if(isAgent) {
     @p(messages("submissionHistory.agent.p1"))

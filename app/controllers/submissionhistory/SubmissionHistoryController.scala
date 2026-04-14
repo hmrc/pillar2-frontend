@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.i18n.Lang.logger
 import play.api.mvc.*
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
+import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
@@ -38,6 +38,7 @@ class SubmissionHistoryController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   val controllerComponents:               MessagesControllerComponents,
   referenceNumberService:                 ReferenceNumberService,
+  subscriptionService:                    SubscriptionService,
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
@@ -56,19 +57,21 @@ class SubmissionHistoryController @Inject() (
       referenceNumber <- OptionT
                            .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+      subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+      orgName = subscriptionData.upeDetails.organisationName
 
       fromDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)
       toDate   = LocalDate.now()
       data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
     } yield
       if data.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) then {
-        Ok(view(data.accountingPeriodDetails, request.isAgent))
+        Ok(view(orgName, referenceNumber, data.accountingPeriodDetails, request.isAgent))
       } else {
-        Ok(viewNoSubmissions(request.isAgent))
+        Ok(viewNoSubmissions(orgName, referenceNumber, request.isAgent))
       }).value
       .map(_.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))))
       .recover { case e =>
-        logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
+        logger.error(s"Error loading submission history: ${e.getMessage}", e)
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad(None))
       }
   }
