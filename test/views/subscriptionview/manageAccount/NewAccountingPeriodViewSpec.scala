@@ -160,12 +160,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           val chosen          =
             ChosenAccountingPeriod(selectedAccountingPeriod = prePillarPeriod, startDateBoundary = None, endDateBoundary = None)
 
-          view(chosenAccountingPeriod = chosen)
+          organisationView(chosenAccountingPeriod = chosen)
             .getElementById("startDate-hint")
             .text mustBe
             "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
 
-          view(chosenAccountingPeriod = chosen)
+          organisationView(chosenAccountingPeriod = chosen)
             .getElementById("endDate-hint")
             .text mustBe "Enter a date, for example 31 12 2023"
         }
