@@ -65,7 +65,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[BTNEntitiesInUKOnlyView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(form, PlrReference, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -93,7 +93,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(true), PlrReference, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -152,7 +152,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(boundForm, PlrReference, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)

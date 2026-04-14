@@ -85,7 +85,7 @@ class CheckYourAnswersController @Inject() (
                     ).flatten
                   ).withCssClass("govuk-!-margin-bottom-9")
 
-                  Ok(view(summaryList, request.isAgent, request.subscriptionLocalData.organisationName))
+                  Ok(view(summaryList, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName))
                 }
             case _ =>
               Redirect(controllers.routes.IndexController.onPageLoad)

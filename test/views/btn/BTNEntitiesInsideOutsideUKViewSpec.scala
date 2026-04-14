@@ -28,32 +28,39 @@ import views.html.btn.BTNEntitiesInsideOutsideUKView
 
 class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
   lazy val formProvider: BTNEntitiesInsideOutsideUKFormProvider = new BTNEntitiesInsideOutsideUKFormProvider
+  lazy val plrReference: String                                 = "XMPLR0123456789"
   lazy val page:         BTNEntitiesInsideOutsideUKView         = inject[BTNEntitiesInsideOutsideUKView]
   lazy val pageTitle:    String                                 = "Does the group still have entities located in both the UK and outside the UK?"
 
-  def view(isAgent: Boolean = false): Document =
-    Jsoup.parse(page(formProvider(), isAgent, Some("orgName"), NormalMode)(request, appConfig, messages).toString())
+  lazy val organisationView: Document =
+    Jsoup.parse(page(formProvider(), plrReference, isAgent = false, Some("orgName"), NormalMode)(request, appConfig, messages).toString())
+
+  lazy val agentView: Document =
+    Jsoup.parse(page(formProvider(), plrReference, isAgent = true, Some("orgName"), NormalMode)(request, appConfig, messages).toString())
+
+  lazy val agentNoOrgView: Document =
+    Jsoup.parse(page(formProvider(), plrReference, isAgent = true, organisationName = None, NormalMode)(request, appConfig, messages).toString())
 
   "BTN Entities Both In UK And Outside View" should {
 
     "have a title" in {
-      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view().getElementsByTag("h1")
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have radio items" in {
-      val radioButtons: Elements = view().getElementsByClass("govuk-label govuk-radios__label")
+      val radioButtons: Elements = organisationView.getElementsByClass("govuk-label govuk-radios__label")
 
       radioButtons.size() mustBe 2
       radioButtons.get(0).text mustBe "Yes"
@@ -61,19 +68,21 @@ class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
     }
 
     "have a 'Continue' button" in {
-      val continueButton: Element = view().getElementsByClass("govuk-button").first()
+      val continueButton: Element = organisationView.getElementsByClass("govuk-button").first()
       continueButton.text mustBe "Continue"
       continueButton.attr("type") mustBe "submit"
     }
 
-    "have a caption displaying the organisation name for an agent view" in {
-      view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe "orgName"
+    "have a caption for agent view" in {
+      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
     }
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view()),
-        ViewScenario("agentView", view(isAgent = true))
+        ViewScenario("view", organisationView),
+        ViewScenario("agentView", agentView),
+        ViewScenario("agentNoOrgView", agentNoOrgView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

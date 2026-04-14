@@ -36,12 +36,13 @@
 @(companyName: Option[String], plrRef: Option[String], submissionDate: String, accountingPeriodStartDate: LocalDate, accountingPeriodEndDate: LocalDate, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
-    @if(isAgent) {
-        <div class="govuk-hint govuk-!-margin-top-0">
-            <span><strong>@{messages("homepage.group")}:</strong> @companyName</span>
-            <span><strong>@{messages("homepage.id")}:</strong> @plrRef</span>
-        </div>
+
+    @if(isAgent && companyName.isDefined) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@companyName<strong> @{messages("homepage.id")}:</strong> @plrRef</span>
+    } else if(isAgent) {
+        <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrRef</span>
     }
+
     @govukPanel(Panel(
       title = Text(messages("btn.confirmation.heading")),
       content = HtmlContent(""),

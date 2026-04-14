@@ -68,7 +68,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = false, NormalMode)(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), hasMultipleAccountingPeriods = false, NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -91,7 +91,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustBe OK
 
-        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), hasMultipleAccountingPeriods = true, NormalMode)(
           request,
           applicationConfig,
           messages(application)

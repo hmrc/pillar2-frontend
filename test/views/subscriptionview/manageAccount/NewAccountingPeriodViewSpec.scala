@@ -41,60 +41,76 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
   val endDate:          LocalDate        = LocalDate.of(2027, 3, 15)
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate, endDate)
 
-  val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
+  val chosenAccountingPeriodData: ChosenAccountingPeriod = ChosenAccountingPeriod(
     accountingPeriod,
     None,
     None
   )
 
-  def view(
-    chosenAccountingPeriod: ChosenAccountingPeriod = chosenAccountingPeriod,
-    isAgent:                Boolean = false,
-    orgName:                Option[String] = None
-  ): Document =
+  def organisationView(chosenAccountingPeriod: ChosenAccountingPeriod = chosenAccountingPeriodData): Document =
     Jsoup.parse(
-      page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent, orgName, plrReference, NormalMode)(request, appConfig, messages)
+      page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent = false, Some("orgName"), plrReference, NormalMode)(
+        request,
+        appConfig,
+        messages
+      )
         .toString()
     )
 
-  lazy val organisationView: Document = view()
-  lazy val agentView:        Document = view(isAgent = true, orgName = Some("orgName"))
-  lazy val agentViewNoOrg:   Document = view(isAgent = true)
+  def agentView(chosenAccountingPeriod: ChosenAccountingPeriod = chosenAccountingPeriodData): Document =
+    Jsoup.parse(
+      page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent = true, Some("orgName"), plrReference, NormalMode)(
+        request,
+        appConfig,
+        messages
+      )
+        .toString()
+    )
+
+  def agentNoOrgView(chosenAccountingPeriod: ChosenAccountingPeriod = chosenAccountingPeriodData): Document =
+    Jsoup.parse(
+      page(formProvider(chosenAccountingPeriod), chosenAccountingPeriod, isAgent = true, organisationName = None, plrReference, NormalMode)(
+        request,
+        appConfig,
+        messages
+      )
+        .toString()
+    )
 
   "NewAccountingPeriodView" when {
     "it's an organisation" must {
       "have a title" in {
-        organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        organisationView().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = organisationView.getElementsByTag("h1")
+        val h1Elements: Elements = organisationView().getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        organisationView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have inset text" in {
-        organisationView.getElementsByClass("govuk-inset-text").text mustBe
+        organisationView().getElementsByClass("govuk-inset-text").text mustBe
           s"You are changing accounting period: ${startDate.toDateFormat} to ${endDate.toDateFormat}"
-        organisationView.getElementsByClass("govuk-inset-text").html must include("<br>")
+        organisationView().getElementsByClass("govuk-inset-text").html must include("<br>")
       }
 
       "have the following paragraph content" in {
-        organisationView.getElementsByClass("govuk-body").get(0).text mustBe
+        organisationView().getElementsByClass("govuk-body").get(0).text mustBe
           "The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity."
 
-        organisationView.getElementsByClass("govuk-body").get(1).text mustBe
+        organisationView().getElementsByClass("govuk-body").get(1).text mustBe
           "Accounting periods are usually 12 months, but can be longer or shorter."
 
       }
 
       "have start and end date legends" in {
-        val datesFieldsets:    Elements = organisationView.getElementsByClass("govuk-fieldset")
+        val datesFieldsets:    Elements = organisationView().getElementsByClass("govuk-fieldset")
         val startDateFieldset: Element  = datesFieldsets.get(0)
         val endDateFieldset:   Element  = datesFieldsets.get(1)
 
@@ -129,12 +145,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           val chosenAccountingPeriod =
             ChosenAccountingPeriod(selectedAccountingPeriod = accountingPeriod, startDateBoundary = None, endDateBoundary = None)
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod)
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
             "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod)
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe s"Enter a date, for example 15 3 2027"
         }
@@ -162,11 +178,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
               endDateBoundary = Some(LocalDate.of(2025, 12, 31))
             )
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod)
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod)
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
             "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
@@ -174,41 +190,41 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        organisationView.getElementsByClass("govuk-button").text mustBe "Continue"
+        organisationView().getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
     "it's an agent" must {
       "have a title" in {
-        agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        agentView().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
-        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
-        agentViewNoOrg.getElementsByClass("govuk-caption-m") mustBe empty
+        agentView().getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+        agentNoOrgView().getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = agentView.getElementsByTag("h1")
+        val h1Elements: Elements = agentView().getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        agentView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have the following paragraph content" in {
-        agentView.getElementsByClass("govuk-body").get(0).text mustBe
+        agentView().getElementsByClass("govuk-body").get(0).text mustBe
           "The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity."
 
-        agentView.getElementsByClass("govuk-body").get(1).text mustBe
+        agentView().getElementsByClass("govuk-body").get(1).text mustBe
           "Accounting periods are usually 12 months, but can be longer or shorter."
       }
 
       "have start and end date legends" in {
-        val datesFieldsets:    Elements = agentView.getElementsByClass("govuk-fieldset")
+        val datesFieldsets:    Elements = agentView().getElementsByClass("govuk-fieldset")
         val startDateFieldset: Element  = datesFieldsets.get(0)
         val endDateFieldset:   Element  = datesFieldsets.get(1)
 
@@ -243,12 +259,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           val chosenAccountingPeriod =
             ChosenAccountingPeriod(selectedAccountingPeriod = accountingPeriod, startDateBoundary = None, endDateBoundary = None)
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
             "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe s"Enter a date, for example 15 3 2027"
         }
@@ -261,11 +277,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
               endDateBoundary = Some(LocalDate.of(2025, 12, 31))
             )
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
 
-          view(chosenAccountingPeriod = chosenAccountingPeriod, isAgent = true)
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
             "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
@@ -273,15 +289,15 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        agentView.getElementsByClass("govuk-button").text mustBe "Continue"
+        agentView().getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", organisationView),
-        ViewScenario("agentView", agentView),
-        ViewScenario("agentViewNoOrg", agentViewNoOrg)
+        ViewScenario("view", organisationView()),
+        ViewScenario("agentView", agentView()),
+        ViewScenario("agentViewNoOrg", agentNoOrgView())
       )
 
     behaveLikeAccessiblePage(viewScenarios)
