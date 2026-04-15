@@ -79,7 +79,7 @@ class AccountActivityDataSpec extends SpecBase with ScalaCheckPropertyChecks wit
 
         val data = AccountActivityData(Seq(outstandingDebit, paidDebit, debitWithNoDates, payment))
 
-        data.onlyOutstandingCharges.loneElement mustEqual outstandingDebit
+        data.onlyOutstandingCharges mustEqual Seq(outstandingDebit, debitWithNoDates)
       }
     }
 
