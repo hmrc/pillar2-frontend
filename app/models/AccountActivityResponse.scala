@@ -110,8 +110,9 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
                 .map(_.toUiDescription)
                 .getOrElse(t.transactionDesc) // Fallback to original description if not mapped
 
-              OutstandingPaymentItem(
+              OutstandingPaymentsRowForActivity(
                 description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
+                chargeAmount = t.originalAmount,
                 outstandingAmount = t.outstandingAmount.get,
                 dueDate = t.dueDate.getOrElse(t.transactionDate),
                 appealFlag = t.appealFlag
@@ -127,12 +128,33 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     }
   }
 
+  def toOtherPenaltyItems: Seq[OutstandingPaymentsRowForActivity] =
+    transactionDetails
+      .filter { t =>
+        t.transactionType == TransactionType.Debit &&
+        t.outstandingAmount.exists(_ > 0) &&
+        t.startDate.isEmpty &&
+        t.endDate.isEmpty
+      }
+      .map { t =>
+        val uiDescription = TransactionDescription
+          .fromString(t.transactionDesc)
+          .map(_.toUiDescription)
+          .getOrElse(t.transactionDesc)
+
+        OutstandingPaymentsRowForActivity(
+          description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
+          chargeAmount = t.originalAmount,
+          outstandingAmount = t.outstandingAmount.get,
+          dueDate = t.dueDate.getOrElse(t.transactionDate),
+          appealFlag = t.appealFlag
+        )
+      }
+      .sortBy(_.dueDate)(Ordering[LocalDate].reverse)
+
   def totalAccruedInterest: BigDecimal =
     transactionDetails
-      .filter(t =>
-        t.transactionType == TransactionType.Debit && t.outstandingAmount.exists(_ > 0) &&
-          (t.startDate.isDefined && t.endDate.isDefined)
-      )
+      .filter(t => t.transactionType == TransactionType.Debit && t.outstandingAmount.exists(_ > 0))
       .flatMap(_.accruedInterest)
       .sum
 
