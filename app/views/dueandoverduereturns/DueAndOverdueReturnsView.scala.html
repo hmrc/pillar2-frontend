@@ -34,7 +34,7 @@
     paragraphBody: paragraphBody,
     paragraphBodyLink: paragraphBodyLink
 )
-@(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean, plrReference: String, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @hasOpenObligations = @{
   data.accountingPeriodDetails.exists(period => 
@@ -46,7 +46,11 @@
 
 @layout(pageTitle = titleNoForm(messages("dueAndOverdueReturns.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @tableScrollStyles()
-    
+
+        @if(agentView && organisationName.isDefined) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
+        }
+
         <h1 class="govuk-heading-l">@messages("dueAndOverdueReturns.heading")</h1>
     
         @if(data.accountingPeriodDetails.isEmpty || !hasOpenObligations) {

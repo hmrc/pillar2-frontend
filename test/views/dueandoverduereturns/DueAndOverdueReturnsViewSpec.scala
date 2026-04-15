@@ -34,6 +34,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
   lazy val currentDate: LocalDate                = LocalDate.now()
   lazy val page:        DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
   lazy val pageTitle:   String                   = "Due and overdue returns"
+  lazy val plrRef:      String                   = "XMPLR0012345678"
 
   def verifyCommonPageElements(view: Document): Unit = {
 
@@ -84,7 +85,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
   "DueAndOverdueReturnsView" when {
     "there are no returns" must {
       lazy val view: Document = Jsoup.parse(
-        page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+        page(emptyResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
       )
 
       "display the common page elements" in
@@ -102,7 +103,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
     "all returns are fulfilled" must {
       lazy val view: Document = Jsoup.parse(
-        page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+        page(allFulfilledResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
       )
 
       "display the common page elements" in
@@ -123,7 +124,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
     "there are due returns" must {
       lazy val view: Document = Jsoup.parse(
-        page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+        page(dueReturnsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
       )
 
       "display the common page elements" in
@@ -158,7 +159,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
     "there are overdue returns" must {
       lazy val view: Document =
-        Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+        Jsoup.parse(
+          page(overdueReturnsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+        )
 
       "display the common page elements" in
         verifyCommonPageElements(view)
@@ -181,7 +184,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     }
 
     "there is a mix of due and fulfilled returns" must {
-      lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+      lazy val view: Document =
+        Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString())
 
       "display the common page elements" in
         verifyCommonPageElements(view)
@@ -199,7 +203,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     }
 
     "there are multiple accounting periods" must {
-      lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(
+        page(multiplePeriodsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+      )
 
       "display the common page elements" in
         verifyCommonPageElements(view)
@@ -269,7 +275,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
     "displaying agent-specific content" when {
       "there are no returns" must {
-        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+        lazy val view: Document =
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
 
         "show the correct 'no returns' message for agents" in {
           val noReturnsMessage: Element = view.getElementsByClass("govuk-body").first()
@@ -278,7 +285,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       }
 
       "there are due returns" must {
-        lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+        lazy val view: Document =
+          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
 
         "show the correct multiple returns information for agents" in {
           val infoMessages: Elements = view.select("p.govuk-body")
@@ -288,7 +296,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       }
 
       "displaying how to submit a return section" must {
-        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+        lazy val view: Document =
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
 
         "show the agent-specific how to submit a return description" in {
           val howToSubmitAReturnParagraph: Element =
@@ -296,38 +305,56 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
           howToSubmitAReturnParagraph.text mustBe "Find out more about how to report your client’s Pillar 2 Top-up Taxes."
         }
       }
+
+      "displaying caption for agent view" in {
+        lazy val view: Document =
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
+
+        view.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0012345678"
+      }
     }
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("noReturnsView", Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())),
+        ViewScenario(
+          "noReturnsView",
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString())
+        ),
         ViewScenario(
           "allReturnsView",
-          Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+          Jsoup.parse(
+            page(allFulfilledResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+          )
         ),
         ViewScenario(
           "dueReturnsView",
-          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString())
         ),
         ViewScenario(
           "overdueReturnsView",
-          Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+          Jsoup.parse(
+            page(overdueReturnsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+          )
         ),
         ViewScenario(
           "mixedReturnsView",
-          Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+          Jsoup.parse(
+            page(mixedStatusResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+          )
         ),
         ViewScenario(
           "multiplePeriodsReturnsView",
-          Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+          Jsoup.parse(
+            page(multiplePeriodsResponse, fromDate, toDate, agentView = false, plrRef, Some("orgName"))(request, appConfig, messages).toString()
+          )
         ),
         ViewScenario(
           "noReturnsAgentView",
-          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
         ),
         ViewScenario(
           "dueReturnsAgentView",
-          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+          Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
         )
       )
 

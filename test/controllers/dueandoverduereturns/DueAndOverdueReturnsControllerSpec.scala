@@ -64,7 +64,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, false)(
+        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, agentView = false, PlrReference, None)(
           request,
           applicationConfig,
           messages(application)
@@ -81,7 +81,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, false)(
+        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, agentView = false, PlrReference, None)(
           request,
           applicationConfig,
           messages(application)
@@ -98,7 +98,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, false)(
+        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, agentView = false, PlrReference, None)(
           request,
           applicationConfig,
           messages(application)
@@ -120,7 +120,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
       "display agent-specific content when isAgent is true" in {
 
         val emptyContent = contentAsString(
-          view(emptyResponse, fromDate, toDate, true)(
+          view(emptyResponse, fromDate, toDate, agentView = true, PlrReference, None)(
             FakeRequest(),
             applicationConfig,
             messages(application)
@@ -128,7 +128,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
         )
 
         val dueContent = contentAsString(
-          view(dueReturnsResponse, fromDate, toDate, true)(
+          view(dueReturnsResponse, fromDate, toDate, agentView = true, PlrReference, None)(
             FakeRequest(),
             applicationConfig,
             messages(application)
