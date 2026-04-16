@@ -59,7 +59,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsPhoneDetailsView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited")(
+        contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited", isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -94,7 +94,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form.fill("12345"), NormalMode, "ABC Limited")(
+          view(form.fill("12345"), NormalMode, "ABC Limited", isAgent = false, None, None)(
             request,
             applicationConfig,
             messages(application)
@@ -134,7 +134,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RepaymentsPhoneDetailsView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited")(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited", isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)

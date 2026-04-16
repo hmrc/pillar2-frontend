@@ -51,7 +51,11 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UkOrAbroadBankAccountView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, isAgent = false, None, None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -70,7 +74,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill(UkOrAbroadBankAccount.values.head), NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -94,7 +98,11 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isAgent = false, None, None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 

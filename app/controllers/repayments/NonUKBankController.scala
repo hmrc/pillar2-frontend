@@ -22,7 +22,7 @@ import forms.NonUKBankFormProvider
 import models.Mode
 import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
-import pages.NonUKBankPage
+import pages.{AgentClientOrganisationNamePage, NonUKBankPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -57,7 +57,7 @@ class NonUKBankController @Inject() (
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, mode, request.request.isAgent, request.request.clientPillar2Id, request.userAnswers.get(AgentClientOrganisationNamePage)))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -66,7 +66,18 @@ class NonUKBankController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  request.request.isAgent,
+                  request.request.clientPillar2Id,
+                  request.userAnswers.get(AgentClientOrganisationNamePage)
+                )
+              )
+            ),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NonUKBankPage, value))

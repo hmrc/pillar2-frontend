@@ -50,7 +50,11 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[ReasonForRequestingRefundView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, isAgent = false, None, None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -64,7 +68,7 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
+        contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode, isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -82,7 +86,11 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, isAgent = false, None, None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 

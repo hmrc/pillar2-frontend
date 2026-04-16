@@ -44,7 +44,11 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode, isAgent = false, None, None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -67,7 +71,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill("ABC Limited"), NormalMode)(
+          view(formProvider().fill("ABC Limited"), NormalMode, isAgent = false, None, None)(
             request,
             applicationConfig,
             messages(application)

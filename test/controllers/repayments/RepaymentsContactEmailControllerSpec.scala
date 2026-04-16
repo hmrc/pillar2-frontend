@@ -58,7 +58,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsContactEmailView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited")(
+        contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited", isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)
@@ -91,7 +91,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form.fill("hello@bye.com"), NormalMode, "ABC Limited")(
+          view(form.fill("hello@bye.com"), NormalMode, "ABC Limited", isAgent = false, None, None)(
             request,
             applicationConfig,
             messages(application)
@@ -131,7 +131,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RepaymentsContactEmailView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited")(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited", isAgent = false, None, None)(
           request,
           applicationConfig,
           messages(application)

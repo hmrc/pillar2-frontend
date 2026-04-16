@@ -26,15 +26,20 @@ import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
-  lazy val page:      RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
-  lazy val view:      Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
-  lazy val agentView: Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                       = "Request a repayment"
+  lazy val page:         RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
+  lazy val plrReference: String                       = "XMPLR0123456789"
+  lazy val view:         Document                     = Jsoup.parse(page(agentView = false, None, None)(request, appConfig, messages).toString())
+  lazy val agentView: Document = Jsoup.parse(page(agentView = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Request a repayment"
 
   "Request Repayment Before Start View" should {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a caption for an agent view" in {
+      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
     }
 
     "have a h1 heading" in {

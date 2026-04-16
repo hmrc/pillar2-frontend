@@ -29,24 +29,30 @@ import views.html.repayments.RepaymentsPhoneDetailsView
 class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
 
   lazy val formProvider = new CapturePhoneDetailsFormProvider
-  lazy val page:        RepaymentsPhoneDetailsView = inject[RepaymentsPhoneDetailsView]
-  lazy val mode:        Mode                       = NormalMode
-  lazy val contactName: String                     = "ABC Limited"
-  lazy val pageTitle:   String                     = "What is the phone number"
+  lazy val page:         RepaymentsPhoneDetailsView = inject[RepaymentsPhoneDetailsView]
+  lazy val mode:         Mode                       = NormalMode
+  lazy val contactName:  String                     = "ABC Limited"
+  lazy val pageTitle:    String                     = "What is the phone number"
+  lazy val plrReference: String                     = "XMPLR0123456789"
+
+  lazy val view: Document =
+    Jsoup.parse(page(formProvider(contactName), mode, contactName, isAgent = false, None, None)(request, appConfig, messages).toString())
+
+  lazy val agentView: Document =
+    Jsoup.parse(
+      page(formProvider(contactName), mode, contactName, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString()
+    )
 
   "Repayments Phone Details View" should {
 
     "page loaded" should {
 
-      val view: Document =
-        Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
-
       "have a title" in {
         view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a caption" in {
-        view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
@@ -76,7 +82,7 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
   "form is submitted with missing value" should {
     val errorView: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("phoneNumber" -> "")), mode, contactName)(request, appConfig, messages)
+        page(formProvider(contactName).bind(Map("phoneNumber" -> "")), mode, contactName, isAgent = false, None, None)(request, appConfig, messages)
           .toString()
       )
 
@@ -102,7 +108,7 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
     val phoneNumber = "+".padTo(51, '1')
     val errorView: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("phoneNumber" -> phoneNumber)), mode, contactName)(
+        page(formProvider(contactName).bind(Map("phoneNumber" -> phoneNumber)), mode, contactName, isAgent = false, None, None)(
           request,
           appConfig,
           messages
@@ -137,7 +143,10 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
         page(
           formProvider(contactName).bind(xssInput),
           mode,
-          contactName
+          contactName,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -161,7 +170,8 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
 
   val viewScenarios: Seq[ViewScenario] =
     Seq(
-      ViewScenario("view", Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()))
+      ViewScenario("view", view),
+      ViewScenario("agentView", agentView)
     )
 
   behaveLikeAccessiblePage(viewScenarios)
