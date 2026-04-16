@@ -85,7 +85,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   "Agent view" should {
     "show the correct hint text above the confirmation panel" in {
-      agentView.getElementsByClass("govuk-hint").get(0).text mustBe s"Group: $testOrgName ID: $testPillar2Ref"
+      agentView.getElementsByClass("govuk-caption-m").text mustBe s"Group: $testOrgName ID: $testPillar2Ref"
     }
 
     "show the extended confirmation message below the existing text" in {

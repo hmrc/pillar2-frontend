@@ -33,11 +33,15 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
   lazy val ukOrAbroadBankAccountForm: Form[UkOrAbroadBankAccount]       = formProvider()
   lazy val page:                      UkOrAbroadBankAccountView         = inject[UkOrAbroadBankAccountView]
   lazy val pageTitle:                 String                            = "What type of account will the repayment be sent to?"
+  lazy val plrReference:              String                            = "XMPLR0123456789"
+
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), NormalMode, isAgent = false, None, None)(request, appConfig, messages).toString())
+  lazy val agentView: Document =
+    Jsoup.parse(page(formProvider(), NormalMode, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString())
 
   "UK or Abroad Bank Account View" when {
 
     "page loaded" should {
-      val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -73,7 +77,10 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
           ukOrAbroadBankAccountForm.bind(
             Map("value" -> "")
           ),
-          NormalMode
+          NormalMode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -97,7 +104,8 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString()))
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

@@ -32,7 +32,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
   lazy val mode:         Mode                               = NormalMode
   lazy val page:         RequestRefundAmountView            = inject[RequestRefundAmountView]
   lazy val pageTitle:    String                             = "Enter your requested repayment amount in pounds"
-  lazy val view:         Document                           = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
+  lazy val plrReference: String                             = "XMPLR0123456789"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), mode, isAgent = false, None, None)(request, appConfig, messages).toString())
+  lazy val agentView: Document =
+    Jsoup.parse(page(formProvider(), mode, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString())
 
   "Request Repayment Amount View" should {
 
@@ -40,6 +43,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
       "have a title" in {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a h1 heading" in {
@@ -64,7 +71,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
           formProvider().bind(
             Map("value" -> "")
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -92,7 +102,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
           formProvider().bind(
             Map("value" -> "£-1.0")
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -120,7 +133,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
           formProvider().bind(
             Map("value" -> "£100,000,000,000.00")
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -148,7 +164,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
           formProvider().bind(
             Map("value" -> "$100.00")
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -172,7 +191,8 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view)
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

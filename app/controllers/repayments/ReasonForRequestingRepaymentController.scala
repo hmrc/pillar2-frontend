@@ -21,7 +21,7 @@ import controllers.actions.*
 import forms.ReasonForRequestingRepaymentFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
-import pages.ReasonForRequestingRefundPage
+import pages.{AgentClientOrganisationNamePage, ReasonForRequestingRefundPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -53,7 +53,15 @@ class ReasonForRequestingRepaymentController @Inject() (
     (identify andThen getData andThen requireData andThen journeyGuard) { request =>
       given Request[AnyContent] = request
       val preparedForm          = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode))
+      Ok(
+        view(
+          preparedForm,
+          mode,
+          request.request.isAgent,
+          request.request.clientPillar2Id,
+          request.userAnswers.get(AgentClientOrganisationNamePage)
+        )
+      )
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -61,7 +69,18 @@ class ReasonForRequestingRepaymentController @Inject() (
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors =>
+          Future.successful(
+            BadRequest(
+              view(
+                formWithErrors,
+                mode,
+                request.request.isAgent,
+                request.request.clientPillar2Id,
+                request.userAnswers.get(AgentClientOrganisationNamePage)
+              )
+            )
+          ),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForRequestingRefundPage, value))

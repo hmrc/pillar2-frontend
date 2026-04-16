@@ -34,17 +34,26 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
   lazy val page:         RepaymentsContactByPhoneView         = inject[RepaymentsContactByPhoneView]
   lazy val pageTitle:    String                               = "Can we contact by phone"
   lazy val contactName:  String                               = "John Doe"
+  lazy val plrReference: String                               = "XMPLR0123456789"
+
+  lazy val view: Document = Jsoup.parse(
+    page(formProvider(contactName), mode, contactName, isAgent = false, None, None)(request, appConfig, messages).toString()
+  )
+
+  lazy val agentView: Document = Jsoup.parse(
+    page(formProvider(contactName), mode, contactName, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString()
+  )
 
   "Repayments Contact By Phone View" when {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(
-        page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()
-      )
-
       "have a title" in {
         view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
@@ -83,7 +92,10 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
           Map("value" -> "")
         ),
         mode,
-        contactName
+        contactName,
+        isAgent = false,
+        None,
+        None
       )(request, appConfig, messages).toString()
     )
 
@@ -107,12 +119,8 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
 
   val viewScenarios: Seq[ViewScenario] =
     Seq(
-      ViewScenario(
-        "view",
-        Jsoup.parse(
-          page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()
-        )
-      )
+      ViewScenario("view", view),
+      ViewScenario("agentView", agentView)
     )
 
   behaveLikeAccessiblePage(viewScenarios)

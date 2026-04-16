@@ -50,10 +50,13 @@ class BarsService @Inject() (
 ) extends Logging {
 
   def verifyBusinessAccount(
-    details:     BankAccountDetails,
-    userAnswers: UserAnswers,
-    form:        Form[BankAccountDetails],
-    mode:        Mode
+    details:          BankAccountDetails,
+    userAnswers:      UserAnswers,
+    form:             Form[BankAccountDetails],
+    mode:             Mode,
+    isAgent:          Boolean,
+    plrReference:     Option[String],
+    organisationName: Option[String]
   )(using
     hc:       HeaderCarrier,
     request:  Request[?],
@@ -64,7 +67,7 @@ class BarsService @Inject() (
     for {
       barsResponse <- barsConnector.verify(Business(details.nameOnBankAccount), Account(details.sortCode, details.accountNumber), trackingId)
       _ = logger.info(s"Request has been sent to BARS with trackingId=$trackingId")
-      result <- handleBarsResponse(barsResponse, userAnswers, mode, form)
+      result <- handleBarsResponse(barsResponse, userAnswers, mode, isAgent, plrReference, organisationName, form)
     } yield result
   }
 
@@ -72,6 +75,9 @@ class BarsService @Inject() (
     barsAccountResponse: BarsAccountResponse,
     userAnswers:         UserAnswers,
     mode:                Mode,
+    isAgent:             Boolean,
+    plrReference:        Option[String],
+    organisationName:    Option[String],
     form:                Form[BankAccountDetails]
   )(using request: Request[?], messages: Messages): Future[Result] = {
     import barsAccountResponse.*
@@ -112,6 +118,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
+          isAgent,
+          plrReference,
+          organisationName,
           form
         )
 
@@ -123,6 +132,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
+          isAgent,
+          plrReference,
+          organisationName,
           form
         )
 
@@ -140,6 +152,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
+          isAgent,
+          plrReference,
+          organisationName,
           form
         )
 
@@ -163,6 +178,9 @@ class BarsService @Inject() (
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
     mode:                         Mode,
+    isAgent:                      Boolean,
+    plrReference:                 Option[String],
+    organisationName:             Option[String],
     form:                         Form[BankAccountDetails]
   )(using request: Request[?], messages: Messages): Result =
     accountExists match {
@@ -176,6 +194,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
+          isAgent,
+          plrReference,
+          organisationName,
           form
         )
       case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
@@ -188,6 +209,9 @@ class BarsService @Inject() (
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
     mode:                         Mode,
+    isAgent:                      Boolean,
+    plrReference:                 Option[String],
+    organisationName:             Option[String],
     form:                         Form[BankAccountDetails]
   )(using request: Request[?], messages: Messages): Result =
     nameMatches match {
@@ -201,6 +225,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
+          isAgent,
+          plrReference,
+          organisationName,
           form
         )
       case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
@@ -225,6 +252,9 @@ class BarsService @Inject() (
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
     mode:                         Mode,
+    isAgent:                      Boolean,
+    plrReference:                 Option[String],
+    organisationName:             Option[String],
     form:                         Form[BankAccountDetails]
   )(using request: Request[?], messages: Messages): Result = {
     val preparedForm = userAnswers.get(BankAccountDetailsPage).map(ua => form.fill(ua)).getOrElse(form)
@@ -247,6 +277,6 @@ class BarsService @Inject() (
       }
     }
 
-    BadRequest(view(bankAccountFormWithErrors, mode))
+    BadRequest(view(bankAccountFormWithErrors, mode, isAgent, plrReference, organisationName))
   }
 }
