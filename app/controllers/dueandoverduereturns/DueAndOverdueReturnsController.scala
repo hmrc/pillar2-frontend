@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.routes.JourneyRecoveryController
 import models.UserAnswers
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -66,7 +66,7 @@ class DueAndOverdueReturnsController @Inject() (
         fromDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)
         toDate   = LocalDate.now()
         data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
-      } yield Ok(view(data, fromDate, toDate, request.isAgent))).value
+      } yield Ok(view(data, fromDate, toDate, request.isAgent, referenceNumber, userAnswers.get(AgentClientOrganisationNamePage)))).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
         .recover { case e =>
           logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
