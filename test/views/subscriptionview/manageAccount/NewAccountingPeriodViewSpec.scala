@@ -155,6 +155,25 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
             .text mustBe s"Enter a date, for example 15 3 2027"
         }
 
+        "the period being amended is in 2025 and there is no submitted period" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = None
+            )
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2025"
+        }
+
         "the period being amended starts before Pillar 2 and there are no boundaries" in {
           val prePillarPeriod = AccountingPeriod(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 1), None)
           val chosen          =
@@ -186,6 +205,82 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
             .getElementById("endDate-hint")
             .text mustBe
             "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
+        }
+
+        "the period being amended is in 2025 and there is a submitted period in 2026" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 1 6 2025"
+        }
+
+        "the period being amended is in 2025 and there is a submitted period ending in 2024" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = Some(LocalDate.of(2025, 1, 1)),
+              endDateBoundary = None
+            )
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date after 31 December 2024, for example 1 1 2025"
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2025"
+        }
+
+        "the period being amended is in 2027 and there is a submitted period ending in 2025" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2027, 1, 1), LocalDate.of(2027, 6, 1)),
+              startDateBoundary = Some(LocalDate.of(2026, 1, 1)),
+              endDateBoundary = None
+            )
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date after 31 December 2025, for example 1 1 2027"
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2027"
+        }
+
+        "the period being amended starts before Pillar 2 and there is a submitted period in 2026" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+
+          organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 31 12 2023"
         }
       }
 
@@ -269,6 +364,40 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
             .text mustBe s"Enter a date, for example 15 3 2027"
         }
 
+        "the period being amended is in 2025 and there is no submitted period" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = None
+            )
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2025"
+        }
+
+        "the period being amended starts before Pillar 2 and there are no boundaries" in {
+          val prePillarPeriod = AccountingPeriod(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 1), None)
+          val chosen          =
+            ChosenAccountingPeriod(selectedAccountingPeriod = prePillarPeriod, startDateBoundary = None, endDateBoundary = None)
+
+          agentView(chosenAccountingPeriod = chosen)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+
+          agentView(chosenAccountingPeriod = chosen)
+            .getElementById("endDate-hint")
+            .text mustBe "Enter a date, for example 31 12 2023"
+        }
+
         "there are boundaries" in {
           val chosenAccountingPeriod =
             ChosenAccountingPeriod(
@@ -285,6 +414,82 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
             .getElementById("endDate-hint")
             .text mustBe
             "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
+        }
+
+        "the period being amended is in 2025 and there is a submitted period in 2026" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 1 6 2025"
+        }
+
+        "the period being amended is in 2025 and there is a submitted period ending in 2024" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 6, 1)),
+              startDateBoundary = Some(LocalDate.of(2025, 1, 1)),
+              endDateBoundary = None
+            )
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date after 31 December 2024, for example 1 1 2025"
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2025"
+        }
+
+        "the period being amended is in 2027 and there is a submitted period ending in 2025" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2027, 1, 1), LocalDate.of(2027, 6, 1)),
+              startDateBoundary = Some(LocalDate.of(2026, 1, 1)),
+              endDateBoundary = None
+            )
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date after 31 December 2025, for example 1 1 2027"
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date, for example 1 6 2027"
+        }
+
+        "the period being amended starts before Pillar 2 and there is a submitted period in 2026" in {
+          val chosenAccountingPeriod =
+            ChosenAccountingPeriod(
+              selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2021, 1, 1), LocalDate.of(2021, 6, 1)),
+              startDateBoundary = None,
+              endDateBoundary = Some(LocalDate.of(2025, 12, 31))
+            )
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("startDate-hint")
+            .text mustBe
+            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+
+          agentView(chosenAccountingPeriod = chosenAccountingPeriod)
+            .getElementById("endDate-hint")
+            .text mustBe
+            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 31 12 2023"
         }
       }
 
