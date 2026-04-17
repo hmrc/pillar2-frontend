@@ -32,23 +32,16 @@ case class ChosenAccountingPeriod(
   private def periodBeingAmendedStartsBeforePillar2: Boolean =
     selectedAccountingPeriod.startDate.isBefore(Pillar2MinStartDate)
 
-  private def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
-    case Some(date) => date.minusDays(1)
-    case _          => Pillar2MinStartDate.minusDays(1)
-  }
-
-  private def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
-
   private def endDateHintExampleFormat: String =
     if periodBeingAmendedStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryShortYearFormat
     else selectedAccountingPeriod.endDate.toDateEntryShortYearFormat
 
   def startDateHintText(using messages: Messages): String =
     startDateBoundary match {
-      case Some(_) =>
+      case Some(boundary) =>
         messages(
           "newAccountingPeriod.startDate.hint.afterBoundary",
-          startBoundaryHintFormat,
+          boundary.toDateFormat,
           selectedAccountingPeriod.startDate.toDateEntryShortYearFormat
         )
       case None =>

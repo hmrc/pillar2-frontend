@@ -164,7 +164,7 @@ trait Constraints {
       else
         minStartDateFromBoundary match {
           case Some(minDate) if date.isBefore(minDate) =>
-            Invalid(boundaryErrorKey, minDate.minusDays(1).toDateFormat)
+            Invalid(boundaryErrorKey, minDate.toDateFormat)
           case _ =>
             Valid
         }

@@ -163,7 +163,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
       FormError(
         "startDate",
         "newAccountingPeriod.error.startDate.boundary",
-        List(startDateBoundary.minusDays(1).toDateFormat)
+        List(startDateBoundary.toDateFormat)
       ),
       FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
     )
