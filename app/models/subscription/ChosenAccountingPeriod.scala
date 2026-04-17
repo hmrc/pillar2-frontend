@@ -18,7 +18,7 @@ package models.subscription
 
 import play.api.i18n.Messages
 import utils.Constants.Pillar2MinStartDate
-import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
+import utils.DateTimeUtils.{toDateEntryShortYearFormat, toDateFormat}
 
 import java.time.LocalDate
 
@@ -40,8 +40,8 @@ case class ChosenAccountingPeriod(
   private def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
 
   private def endDateHintExampleFormat: String =
-    if periodBeingAmendedStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryFormat
-    else selectedAccountingPeriod.endDate.toDateEntryFormat
+    if periodBeingAmendedStartsBeforePillar2 then Pillar2MinStartDate.toDateEntryShortYearFormat
+    else selectedAccountingPeriod.endDate.toDateEntryShortYearFormat
 
   def startDateHintText(using messages: Messages): String =
     startDateBoundary match {
@@ -49,18 +49,18 @@ case class ChosenAccountingPeriod(
         messages(
           "newAccountingPeriod.startDate.hint.afterBoundary",
           startBoundaryHintFormat,
-          selectedAccountingPeriod.startDate.toDateEntryFormat
+          selectedAccountingPeriod.startDate.toDateEntryShortYearFormat
         )
       case None =>
         if periodBeingAmendedStartsBeforePillar2 then
           messages(
             "newAccountingPeriod.startDate.hint.onOrAfterPillarEarliest",
-            Pillar2MinStartDate.toDateEntryFormat
+            Pillar2MinStartDate.toDateEntryShortYearFormat
           )
         else
           messages(
             "newAccountingPeriod.startDate.hint.onOrAfterPillarWithOriginalStart",
-            selectedAccountingPeriod.startDate.toDateEntryFormat
+            selectedAccountingPeriod.startDate.toDateEntryShortYearFormat
           )
     }
 
@@ -73,6 +73,8 @@ case class ChosenAccountingPeriod(
           endDateHintExampleFormat
         )
       case None =>
-        messages("newAccountingPeriod.endDate.hintWithoutBoundary", endDateHintExampleFormat)
+        if !periodBeingAmendedStartsBeforePillar2 && startDateBoundary.isEmpty then
+          messages("newAccountingPeriod.endDate.hintWithoutBoundary.withOriginalEnd", endDateHintExampleFormat)
+        else messages("newAccountingPeriod.endDate.hintWithoutBoundary", endDateHintExampleFormat)
     }
 }

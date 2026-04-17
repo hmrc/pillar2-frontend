@@ -118,7 +118,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset
           .getElementById("startDate-hint")
           .text mustBe
-          "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
+          "Enter a date on or after the 31 December 2023, for example 16 3 26 which is the original accounting period start date"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -130,7 +130,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date, for example 15 3 2027"
+          .text mustBe "Enter a date, for example 15 3 27 which is the original accounting period end date"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -148,11 +148,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 16 3 26 which is the original accounting period start date"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date, for example 15 3 2027"
+            .text mustBe "Enter a date, for example 15 3 27 which is the original accounting period end date"
         }
 
         "the period being amended is in 2025 and there is no submitted period" in {
@@ -166,12 +166,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 1 1 25 which is the original accounting period start date"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2025"
+            "Enter a date, for example 1 6 25 which is the original accounting period end date"
         }
 
         "the period being amended starts before Pillar 2 and there are no boundaries" in {
@@ -182,11 +182,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosen)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+            "Enter a date on or after the 31 December 2023, for example 31 12 23 (this is the earliest permitted date as this is when Pillar 2 started)"
 
           organisationView(chosenAccountingPeriod = chosen)
             .getElementById("endDate-hint")
-            .text mustBe "Enter a date, for example 31 12 2023"
+            .text mustBe "Enter a date, for example 31 12 23"
         }
 
         "there are boundaries" in {
@@ -199,12 +199,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
+            .text mustBe "Enter a date after 31 December 2023, for example 16 3 24"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
+            "Enter a date before 1 January 2026, for example 15 3 25 (which is the start date of the submitted accounting period)"
         }
 
         "the period being amended is in 2025 and there is a submitted period in 2026" in {
@@ -218,12 +218,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 1 1 25 which is the original accounting period start date"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 1 6 2025"
+            "Enter a date before 1 January 2026, for example 1 6 25 (which is the start date of the submitted accounting period)"
         }
 
         "the period being amended is in 2025 and there is a submitted period ending in 2024" in {
@@ -237,12 +237,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date after 31 December 2024, for example 1 1 2025"
+            "Enter a date after 31 December 2024, for example 1 1 25"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2025"
+            "Enter a date, for example 1 6 25"
         }
 
         "the period being amended is in 2027 and there is a submitted period ending in 2025" in {
@@ -256,12 +256,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date after 31 December 2025, for example 1 1 2027"
+            "Enter a date after 31 December 2025, for example 1 1 27"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2027"
+            "Enter a date, for example 1 6 27"
         }
 
         "the period being amended starts before Pillar 2 and there is a submitted period in 2026" in {
@@ -275,12 +275,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+            "Enter a date on or after the 31 December 2023, for example 31 12 23 (this is the earliest permitted date as this is when Pillar 2 started)"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 31 12 2023"
+            "Enter a date before 1 January 2026, for example 31 12 23 (which is the start date of the submitted accounting period)"
         }
       }
 
@@ -327,7 +327,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset
           .getElementById("startDate-hint")
           .text mustBe
-          "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
+          "Enter a date on or after the 31 December 2023, for example 16 3 26 which is the original accounting period start date"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -339,7 +339,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
         endDateFieldset
           .getElementById("endDate-hint")
-          .text mustBe s"Enter a date, for example 15 3 2027"
+          .text mustBe "Enter a date, for example 15 3 27 which is the original accounting period end date"
 
         endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
@@ -357,11 +357,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 16 3 2026, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 16 3 26 which is the original accounting period start date"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date, for example 15 3 2027"
+            .text mustBe "Enter a date, for example 15 3 27 which is the original accounting period end date"
         }
 
         "the period being amended is in 2025 and there is no submitted period" in {
@@ -375,12 +375,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 1 1 25 which is the original accounting period start date"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2025"
+            "Enter a date, for example 1 6 25 which is the original accounting period end date"
         }
 
         "the period being amended starts before Pillar 2 and there are no boundaries" in {
@@ -391,11 +391,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosen)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+            "Enter a date on or after the 31 December 2023, for example 31 12 23 (this is the earliest permitted date as this is when Pillar 2 started)"
 
           agentView(chosenAccountingPeriod = chosen)
             .getElementById("endDate-hint")
-            .text mustBe "Enter a date, for example 31 12 2023"
+            .text mustBe "Enter a date, for example 31 12 23"
         }
 
         "there are boundaries" in {
@@ -408,12 +408,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
+            .text mustBe "Enter a date after 31 December 2023, for example 16 3 24"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 15 3 2025"
+            "Enter a date before 1 January 2026, for example 15 3 25 (which is the start date of the submitted accounting period)"
         }
 
         "the period being amended is in 2025 and there is a submitted period in 2026" in {
@@ -427,12 +427,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 1 1 2025, which is the original accounting period start date"
+            "Enter a date on or after the 31 December 2023, for example 1 1 25 which is the original accounting period start date"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 1 6 2025"
+            "Enter a date before 1 January 2026, for example 1 6 25 (which is the start date of the submitted accounting period)"
         }
 
         "the period being amended is in 2025 and there is a submitted period ending in 2024" in {
@@ -446,12 +446,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date after 31 December 2024, for example 1 1 2025"
+            "Enter a date after 31 December 2024, for example 1 1 25"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2025"
+            "Enter a date, for example 1 6 25"
         }
 
         "the period being amended is in 2027 and there is a submitted period ending in 2025" in {
@@ -465,12 +465,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date after 31 December 2025, for example 1 1 2027"
+            "Enter a date after 31 December 2025, for example 1 1 27"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date, for example 1 6 2027"
+            "Enter a date, for example 1 6 27"
         }
 
         "the period being amended starts before Pillar 2 and there is a submitted period in 2026" in {
@@ -484,12 +484,12 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
             .text mustBe
-            "Enter a date on or after 31 December 2023, for example 31 12 2023. This is the earliest permitted date as this is when Pillar 2 started."
+            "Enter a date on or after the 31 December 2023, for example 31 12 23 (this is the earliest permitted date as this is when Pillar 2 started)"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
             .text mustBe
-            "Enter a date before 1 January 2026, which is the start date of the submitted accounting period, for example 31 12 2023"
+            "Enter a date before 1 January 2026, for example 31 12 23 (which is the start date of the submitted accounting period)"
         }
       }
 
