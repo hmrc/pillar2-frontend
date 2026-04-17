@@ -58,8 +58,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     howToSubmitAReturnParagraph.isPresent mustBe true
 
     val howToSubmitAReturnLink: Element = view.getElementsByClass("govuk-link").get(2)
-    howToSubmitAReturnLink.text mustBe "Pillar 2 Top-up Taxes Guidance"
+    howToSubmitAReturnLink.text mustBe "How to report Pillar 2 Top-up Taxes (opens in a new tab)"
     howToSubmitAReturnLink.attr("href") mustBe "https://www.gov.uk/guidance/how-to-report-pillar-2-top-up-taxes"
+    howToSubmitAReturnLink.attr("target") mustBe "_blank"
 
     val submissionHistoryHeading: Optional[Element] =
       headings.stream.filter(h => h.text.contains("Submission history")).findFirst()

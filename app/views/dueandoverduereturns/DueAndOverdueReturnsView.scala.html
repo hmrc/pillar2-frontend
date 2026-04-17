@@ -130,7 +130,7 @@
             @paragraphBody(messages("dueAndOverdueReturns.howToSubmitAReturn.description"))
         }
 
-        @paragraphBodyLink(messages("dueAndOverdueReturns.howToSubmitAReturn.link"), linkUrl = appConfig.pillar2TopupGuidance)
+        @paragraphBodyLink(messages("dueAndOverdueReturns.howToSubmitAReturn.link"), linkUrl = appConfig.pillar2TopupGuidance, target = Some("_blank"))
 
         <h2 class="govuk-heading-m">@messages("dueAndOverdueReturns.submissionHistory")</h2>
         <p class="govuk-body">@messages("dueAndOverdueReturns.submissionHistory.description1")</p>
