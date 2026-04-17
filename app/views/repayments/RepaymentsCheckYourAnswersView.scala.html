@@ -30,12 +30,16 @@
         bulletList: bulletList
 )
 
-@(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList, isAgent: Boolean, plrReference: Option[String], organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
 
     @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit()) {
+
+        @if(isAgent && plrReference.isDefined && organisationName.isDefined) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
+        }
 
         @heading(messages("repaymentsCheckYourAnswers.heading"), classes = "govuk-heading-l")
 

@@ -32,9 +32,26 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
 
   lazy val page:             SubmissionHistoryView = inject[SubmissionHistoryView]
   lazy val organisationView: Document              =
-    Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(SubmissionHistoryViewSpec.orgName, SubmissionHistoryViewSpec.plrRef, allFulfilledResponse.accountingPeriodDetails, isAgent = false)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
   lazy val agentView: Document =
-    Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(SubmissionHistoryViewSpec.orgName, SubmissionHistoryViewSpec.plrRef, allFulfilledResponse.accountingPeriodDetails, isAgent = true)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
+  lazy val agentViewIdOnly: Document =
+    Jsoup.parse(
+      page("", SubmissionHistoryViewSpec.plrRef, allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages)
+        .toString()
+    )
   lazy val pageTitle:       String = "Submission history"
   lazy val bannerClassName: String = "govuk-header__link govuk-header__service-name"
 
@@ -111,6 +128,17 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
+    "have correct text for agents at the top of the page" in {
+      agentView
+        .getElementsByClass("govuk-caption-m")
+        .get(0)
+        .text mustBe s"Group: ${SubmissionHistoryViewSpec.orgName} ID: ${SubmissionHistoryViewSpec.plrRef}"
+    }
+
+    "show only group ID in the caption when the organisation name is empty" in {
+      agentViewIdOnly.getElementsByClass("govuk-caption-m").get(0).text mustBe s"ID: ${SubmissionHistoryViewSpec.plrRef}"
+    }
+
     "have a paragraph detailing submission details" in {
       agentViewParagraphs.get(1).text() mustBe
         "Submission and amendment dates for your client's returns over the last 7 years from today's date."
@@ -133,4 +161,9 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
 
     behaveLikeAccessiblePage(viewScenarios)
   }
+}
+
+object SubmissionHistoryViewSpec {
+  val orgName: String = "Company Inc"
+  val plrRef:  String = "somePillar2Ref"
 }

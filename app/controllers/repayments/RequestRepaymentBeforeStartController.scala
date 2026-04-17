@@ -18,7 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import pages.RepaymentsStatusPage
+import pages.{AgentClientOrganisationNamePage, RepaymentsStatusPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -45,7 +45,15 @@ class RequestRepaymentBeforeStartController @Inject() (
       Future
         .fromTry(request.userAnswers.remove(RepaymentsStatusPage))
         .flatMap(sessionRepository.set)
-        .map(_ => Ok(view(agentView = request.request.isAgent)))
+        .map(_ =>
+          Ok(
+            view(
+              agentView = request.request.isAgent,
+              plrReference = request.request.clientPillar2Id,
+              organisationName = request.userAnswers.get(AgentClientOrganisationNamePage)
+            )
+          )
+        )
         .recover { case _ =>
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }

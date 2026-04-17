@@ -33,14 +33,23 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
   lazy val mode:         Mode                              = NormalMode
   lazy val page:         RepaymentsContactNameView         = inject[RepaymentsContactNameView]
   lazy val pageTitle:    String                            = "What is the name of the person or team we should contact about the repayment request?"
+  lazy val plrReference: String                            = "XMPLR0123456789"
+
+  lazy val view: Document = Jsoup.parse(page(formProvider(), mode, isAgent = false, None, None)(request, appConfig, messages).toString())
+
+  lazy val agentView: Document =
+    Jsoup.parse(page(formProvider(), mode, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages).toString())
 
   "Repayments Contact Name View" when {
 
     "page loaded" should {
-      val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption for an agent view" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
       }
 
       "have a unique H1 heading" in {
@@ -70,7 +79,10 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
           formProvider().bind(
             Map("contactName" -> "")
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -99,7 +111,10 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
           formProvider().bind(
             Map("contactName" -> longInput)
           ),
-          mode
+          mode,
+          isAgent = false,
+          None,
+          None
         )(request, appConfig, messages).toString()
       )
 
@@ -127,7 +142,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val errorView: Document = Jsoup.parse(
-        page(formProvider().bind(xssInput), mode)(request, appConfig, messages).toString()
+        page(formProvider().bind(xssInput), mode, isAgent = false, None, None)(request, appConfig, messages).toString()
       )
 
       "show XSS validation error summary" in {
@@ -150,7 +165,8 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString()))
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

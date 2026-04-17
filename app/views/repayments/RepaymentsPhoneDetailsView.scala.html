@@ -29,7 +29,7 @@
 )
 
 
-@(form: Form[_], mode: Mode, contactName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, contactName: String, isAgent: Boolean, plrReference: Option[String], organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("capturePhoneDetails.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -39,7 +39,10 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("repayments.phoneDetails.heading.caption"))
+        @if(isAgent && plrReference.isDefined && organisationName.isDefined) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
+        }
+
         @govukInput(
             InputViewModel(
                 field = form("phoneNumber"),

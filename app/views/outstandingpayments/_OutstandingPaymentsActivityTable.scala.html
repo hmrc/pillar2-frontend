@@ -1,0 +1,70 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.ViewUtils._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import _root_.utils.DateTimeUtils._
+
+@this(govukTable: GovukTable)
+
+@(data: Seq[OutstandingPaymentsTableForActivity], penalties: Seq[OutstandingPaymentsRowForActivity])(implicit messages: Messages)
+
+@if(penalties.nonEmpty) {
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(Text(messages("payments.outstanding.table.heading.description")), classes = "govuk-!-width-one-third"),
+            HeadCell(Text(messages("payments.outstanding.table.heading.chargeAmount")), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
+            HeadCell(Text(messages("payments.outstanding.table.heading.amountDue")), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
+            HeadCell(Text(messages("payments.outstanding.table.heading.dueDate")), classes = "govuk-!-width-one-sixth")
+        )),
+        rows = penalties.map { row =>
+            Seq(
+                TableRow(content = Text(row.description)),
+                TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
+                TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
+                TableRow(content = Text(row.dueDate.toDateFormat))
+            )
+        },
+        caption = Some(messages("payments.outstanding.table.caption")),
+        captionClasses = "govuk-table__caption--m"
+    ))
+}
+
+@data.map { summary =>
+  @govukTable(Table(
+    head = Some(Seq(
+      HeadCell(messages("payments.outstanding.table.heading.description"), classes = "govuk-!-width-one-third"),
+      HeadCell(messages("payments.outstanding.table.heading.chargeAmount"), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
+      HeadCell(messages("payments.outstanding.table.heading.amountDue"), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
+      HeadCell(messages("payments.outstanding.table.heading.dueDate"), classes = "govuk-!-width-one-sixth"),
+    )),
+    rows = summary.rows.map { row =>
+      Seq(
+        TableRow(
+            content = if(row.appealFlag.contains(true)) {
+                HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
+        } else {
+                Text(row.description)
+        }),
+        TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
+        TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
+        TableRow(content = Text(row.dueDate.toDateFormat))
+      )
+    },
+      caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
+      captionClasses = "govuk-table__caption--m"
+  ))
+}

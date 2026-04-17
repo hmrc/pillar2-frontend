@@ -73,8 +73,6 @@ viewAmendSubscriptionFailed.title = Sorry, there is a problem with the service
 viewAmendSubscriptionFailed.heading = Sorry, there is a problem with the service
 viewAmendSubscriptionFailed.message1 = Please try again later.
 viewAmendSubscriptionFailed.link = Return to your account homepage to try again
-###############################################
-inactiveStatusBanner.p1 = Important
 
 ###############################################
 #
@@ -1851,9 +1849,11 @@ btn.waitingRoom.redirect = You will be redirected automatically when the submiss
 payments.outstanding.title = Outstanding payments
 payments.outstanding.amountDue = Amount due: £{0}
 payments.outstanding.p1 = The amount includes all tax liabilities and penalty charges currently due. This may include more than one accounting period.
+payments.outstanding.activity.p1 = The amount includes all liabilities due. This may include more than one accounting period. It also includes any penalties. It does not include any liabilities that are stoodover. It also does not include and late payment interest that has accrued.
 payments.outstanding.p2 = Any payments made before today have reduced the amount due and are not included in this total. You must still pay the amount due.
+payments.outstanding.activity.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due.
 payments.outstanding.agent.p2 = Any payments made before today have reduced the amount due and are not included in this total. The group must still pay the amount due.
-
+payments.outstanding.activity.agent.p2 = Any payments made to your client's account before submitting a tax return have been deducted from the amount due.
 payments.outstanding.warningText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
 payments.outstanding.agent.warningText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
 payments.outstanding.accruedInterest.warningText = Late payment interest accrued: £{0}
@@ -1873,6 +1873,13 @@ payments.outstanding.details.p1 = We have separated any payments due by the asso
 payments.outstanding.details.p2 = An appealed charge is still part of the amount due until it is partly or completely stoodover.
 payments.outstanding.details.nothingDue = No payments due.
 
+payments.outstanding.table.heading.description = Description
+payments.outstanding.table.heading.chargeAmount = Charge amount
+payments.outstanding.table.heading.amountDue = Amount due
+payments.outstanding.table.heading.amount = Amount
+payments.outstanding.table.heading.dueDate = Due date
+payments.outstanding.table.caption = Other Penalties
+
 payments.outstanding.abbreviation.heading = Outstanding payments abbreviations
 payments.outstanding.abbreviation.uktr = UKTR - UK Tax Return
 payments.outstanding.abbreviation.dtt = DTT - Domestic Top-up Tax
@@ -1886,10 +1893,13 @@ payments.outstanding.stoodoverCharges.p1 = Details of appealed charges and other
 payments.outstanding.stoodoverCharges.linkText = View stoodover charges
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
+payments.outstanding.activity.transactionHistory.p2 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
 
 payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
 payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
+payments.outstanding.activity.penaltiesAndCharges.p1 = Find out when HMRC may charge your group penalties and interest.
 payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
+payments.outstanding.activity.penaltiesAndCharges.agent.p1 = Find out when HMRC may charge the group penalties and interest.
 payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
 
 payments.noOutstanding.title = Outstanding payments

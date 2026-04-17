@@ -23,14 +23,19 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.submissionhistory.SubmissionHistoryNoSubmissionsView
+import views.submissionhistory.SubmissionHistoryViewSpec.{orgName, plrRef}
 
 class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
   lazy val page:             SubmissionHistoryNoSubmissionsView = inject[SubmissionHistoryNoSubmissionsView]
-  lazy val organisationView: Document                           = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView:        Document                           = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
-  lazy val pageTitle:        String                             = "Submission history"
-  lazy val bannerClassName:  String                             = "govuk-header__link govuk-header__service-name"
+  lazy val organisationView: Document                           =
+    Jsoup.parse(page(orgName, plrRef, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView: Document =
+    Jsoup.parse(page(orgName, plrRef, isAgent = true)(request, appConfig, messages).toString())
+  lazy val agentViewIdOnly: Document =
+    Jsoup.parse(page("", plrRef, isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle:       String = "Submission history"
+  lazy val bannerClassName: String = "govuk-header__link govuk-header__service-name"
 
   "Submission History with no submission organisation view" should {
     val organisationViewParagraphs: Elements = organisationView.getElementsByTag("p")
@@ -75,6 +80,14 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+    }
+
+    "have correct text for agents at the top of the page" in {
+      agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: $orgName ID: $plrRef"
+    }
+
+    "show only group ID in the caption when the organisation name is empty" in {
+      agentViewIdOnly.getElementsByClass("govuk-caption-m").get(0).text mustBe s"ID: $plrRef"
     }
 
     "have a first paragraph" in {

@@ -1002,6 +1002,121 @@ class AccountActivityResponseSpec extends SpecBase {
     }
   }
 
+  "AccountActivityResponse.toOtherPenaltyItems" should {
+    "filter out charges/penalties with a start and end date" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now,
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "UKTR - DTT",
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = None,
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = Some(BigDecimal(1000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOtherPenaltyItems
+
+      result mustBe empty
+    }
+
+    "filter out charges with no outstanding amounts" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Schedule 36 information notice",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(0)),
+            clearedAmount = Some(BigDecimal(2000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOtherPenaltyItems
+
+      result mustBe empty
+    }
+
+    "collect all charges that satisfy business rules" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Schedule 36 information notice",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(2000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOtherPenaltyItems
+
+      result must have size 1
+    }
+
+    "append accruing interest to ui description when needed" in {
+      val response = AccountActivityResponse(
+        processingDate = LocalDateTime.now(),
+        transactionDetails = Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Debit,
+            transactionDesc = "Schedule 36 information notice",
+            startDate = None,
+            endDate = None,
+            accruedInterest = Some(BigDecimal(350)),
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            originalAmount = BigDecimal(2000),
+            outstandingAmount = Some(BigDecimal(2000)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
+          )
+        )
+      )
+
+      val result = response.toOtherPenaltyItems
+
+      result.head.description mustBe "Schedule 36 information notice accruing interest"
+    }
+
+  }
+
   "AccountActivityResponse.totalAccruedInterest" should {
     "calculate total accrued Interest accurately for relevant transactions" in {
       val accruedInterest = expectedResponse.totalAccruedInterest

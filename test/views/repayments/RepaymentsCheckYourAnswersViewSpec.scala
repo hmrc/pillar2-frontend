@@ -68,14 +68,26 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     ).flatten
   )
 
-  lazy val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
-  lazy val view: Document                       =
-    Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "Check your answers before submitting your repayment request"
+  lazy val page:         RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
+  lazy val pageTitle:    String                         = "Check your answers before submitting your repayment request"
+  lazy val plrReference: String                         = "XMPLR0123456789"
+
+  lazy val view: Document =
+    Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList, isAgent = false, None, None)(request, appConfig, messages).toString())
+
+  lazy val agentView: Document =
+    Jsoup.parse(
+      page(listRefund, listBankAccountDetails, contactDetailsList, isAgent = true, Some(plrReference), Some("orgName"))(request, appConfig, messages)
+        .toString()
+    )
 
   "Repayments Check Your Answers View" should {
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a caption for an agent view" in {
+      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
     }
 
     "have a unique H1 heading" in {
@@ -156,7 +168,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view)
+        ViewScenario("view", view),
+        ViewScenario("agentView", agentView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)
