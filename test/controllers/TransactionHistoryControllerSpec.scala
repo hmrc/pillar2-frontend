@@ -253,7 +253,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
     "redirect to error page if payment history endpoint returns bad result" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
@@ -278,7 +278,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
     "redirect to error page if unable to retrieve relevant information for call to get financials" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.useAccountActivityApi" -> false))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),

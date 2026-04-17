@@ -108,7 +108,6 @@ trait ViewInstances extends StubMessageControllerComponents {
   val paragraphMessageWithLink = new ParagraphMessageWithLink
   val sectionHeader            = new sectionHeader
   val sectionBreak             = new SectionBreak
-  val inactiveStatusBanner     = new InactiveStatusBanner
   val bulletList               = new bulletList
   val card                     = new HomepageCard
   val link                     = new link
