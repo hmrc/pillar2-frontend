@@ -54,6 +54,23 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
   }
 
+  "accept 31/12/2023 as a valid start date because validation is on or after minimum" in {
+
+    val startDate = LocalDate.of(2023, 12, 31)
+    val endDate   = LocalDate.of(2024, 1, 1)
+
+    val data = Map(
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
+      "startDate.month" -> startDate.getMonthValue.toString,
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
+    )
+
+    form.bind(data).errors shouldBe empty
+  }
+
   "throw a form error for a start date that is before a start date boundary" in {
 
     val startDateBoundary      = LocalDate.of(2024, 1, 1)
@@ -73,7 +90,30 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.minusDays(1).toDateFormat))
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
+    )
+  }
+
+  "throw a minimum start date error before 31/12/2023 even when a submitted 2025 period boundary exists" in {
+
+    val startDateBoundary      = LocalDate.of(2026, 1, 1)
+    val accountingPeriodChosen = chosenAccountingPeriod.copy(startDateBoundary = Some(startDateBoundary))
+    val form: Form[AccountingPeriod] = formProvider(accountingPeriodChosen)
+
+    val startDate = LocalDate.of(2023, 12, 30)
+    val endDate   = LocalDate.of(2024, 1, 1)
+
+    val data = Map(
+      "startDate.day"   -> startDate.getDayOfMonth.toString,
+      "startDate.month" -> startDate.getMonthValue.toString,
+      "startDate.year"  -> startDate.getYear.toString,
+      "endDate.day"     -> endDate.getDayOfMonth.toString,
+      "endDate.month"   -> endDate.getMonthValue.toString,
+      "endDate.year"    -> endDate.getYear.toString
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
     )
   }
 
@@ -123,7 +163,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
       FormError(
         "startDate",
         "newAccountingPeriod.error.startDate.boundary",
-        List(startDateBoundary.minusDays(1).toDateFormat)
+        List(startDateBoundary.toDateFormat)
       ),
       FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
     )

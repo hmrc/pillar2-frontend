@@ -26,17 +26,21 @@ object DateTimeUtils {
   val utcZoneId:         ZoneId = ZoneId.of("UTC")
 
   // Patterns
-  private val datePattern:       String = "d MMMM yyyy"
-  private val dateEntryPattern:  String = "d M yyyy"
-  private val dateTimePattern:   String = "d MMMM yyyy, h:mma (zzz)"
-  private val timePattern:       String = "hh:mma (zzz)"
-  private val dateAtTimePattern: String = "d MMMM yyyy 'at' h:mma"
+  private val datePattern:               String = "d MMMM yyyy"
+  private val dateEntryPattern:          String = "d M yyyy"
+  private val dateEntryShortYearPattern: String = "d M yy"
+  private val dateTimePattern:           String = "d MMMM yyyy, h:mma (zzz)"
+  private val timePattern:               String = "hh:mma (zzz)"
+  private val dateAtTimePattern:         String = "d MMMM yyyy 'at' h:mma"
 
   // 3 December 2011
   private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
 
   // 3 12 2011
   private val dateEntryFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateEntryPattern)
+
+  // 3 12 11 (used for new accounting period hint examples to match PIL-2900 / Fran AC)
+  private val dateEntryShortYearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateEntryShortYearPattern)
 
   // 3 December 2011, 10:15am (GMT)
   private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern)
@@ -57,8 +61,9 @@ object DateTimeUtils {
   val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
   extension (localDate: LocalDate) {
-    def toDateFormat:      String = localDate.format(dateFormatter)
-    def toDateEntryFormat: String = localDate.format(dateEntryFormatter)
+    def toDateFormat:               String = localDate.format(dateFormatter)
+    def toDateEntryFormat:          String = localDate.format(dateEntryFormatter)
+    def toDateEntryShortYearFormat: String = localDate.format(dateEntryShortYearFormatter)
   }
 
   extension (zonedDateTime: ZonedDateTime) {
