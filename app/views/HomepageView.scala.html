@@ -168,11 +168,8 @@
              <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
              @maybePaymentBannerScenario.map {
                  case Outstanding => {
-                     <span
-                        class="govuk-tag govuk-tag--red"
-                        aria-label="Outstanding payments"
-                        title="Outstanding payments">
-                       @messages("homepage.payments.tags.outstanding")
+                     <span class="govuk-tag govuk-tag--red" title="Outstanding payments">
+                     @messages("homepage.payments.tags.outstanding")
                      </span>
                  }
                  case Paid => {

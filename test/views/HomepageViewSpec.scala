@@ -590,7 +590,6 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val outstandingTag: Element = statusTags.first()
       outstandingTag.text() mustBe "Outstanding"
-      outstandingTag.attr("aria-label") mustBe "Outstanding payments"
       outstandingTag.attr("title") mustBe "Outstanding payments"
     }
 
