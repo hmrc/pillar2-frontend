@@ -185,7 +185,7 @@ class HomepageViewSpec extends ViewSpecBase {
         paymentsCardLinks.get(1).attr("href") mustBe
           controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCardLinks.get(2).text() mustBe "View stoodover charges"
         paymentsCardLinks.get(2).attr("href") mustBe
           controllers.payments.routes.StoodoverChargesController.onPageLoad.url
 
@@ -513,7 +513,7 @@ class HomepageViewSpec extends ViewSpecBase {
         paymentsCardLinks.get(1).attr("href") mustBe
           controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCardLinks.get(2).text() mustBe "View stoodover charges"
         paymentsCardLinks.get(2).attr("href") mustBe
           controllers.payments.routes.StoodoverChargesController.onPageLoad.url
 
@@ -685,7 +685,7 @@ class HomepageViewSpec extends ViewSpecBase {
         paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe
           controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 
-        paymentsCardLinks.get(2).text() mustBe "Stoodover charges"
+        paymentsCardLinks.get(2).text() mustBe "View stoodover charges"
         paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
           controllers.payments.routes.StoodoverChargesController.onPageLoad.url
 

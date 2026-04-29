@@ -127,7 +127,7 @@
     @if(useAccountActivity) {
         @paragraphBody(messages("payments.outstanding.details.p2"))
         @paragraphMessageWithLink(
-            linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+            linkMessage = messages("homepage.payments.stoodoverCharges.linkText"),
             linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
         )
     }
@@ -161,7 +161,7 @@
                 @h2(messages("payments.stoodoverCharges.title"), size = "m")
                 @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
                 @paragraphMessageWithLink(
-                    linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+                    linkMessage = messages("homepage.payments.stoodoverCharges.linkText"),
                     linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
                 )
             }
