@@ -62,15 +62,18 @@ class AmendAccountingPeriodCYAController @Inject() (
         given Messages = request.messages
         (
           maybeUserAnswers.flatMap(_.get(NewAccountingPeriodPage)),
+          request.subscriptionLocalData.get(SubAccountingPeriodPage),
           request.subscriptionLocalData.accountingPeriods
         ) match {
-          case (Some(newPeriod), Some(allPeriods)) =>
+          case (Some(newPeriod), Some(existingPeriod), Some(allPeriods)) =>
             val affected              = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
             val predicted             = predictMicroPeriods(newPeriod, affected)
             val newDurationText       = AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(newPeriod.startDate, newPeriod.endDate)
             val predictedWithDuration = predicted.map { p =>
               (p, AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(p.startDate, p.endDate))
             }
+            val sameDateEntered: Boolean = (existingPeriod.startDate, existingPeriod.endDate) == (newPeriod.startDate, newPeriod.endDate)
+
             Ok(
               view(
                 newPeriod,
@@ -78,7 +81,8 @@ class AmendAccountingPeriodCYAController @Inject() (
                 predictedWithDuration,
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
-                request.subscriptionLocalData.plrReference
+                request.subscriptionLocalData.plrReference,
+                sameDateEntered
               )
             )
           case _ =>
