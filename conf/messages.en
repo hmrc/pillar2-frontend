@@ -1889,6 +1889,7 @@ payments.outstanding.abbreviation.orngir = ORN/GIR - Overseas Return Notificatio
 payments.outstanding.abbreviation.gaar = GAAR - General Anti Abuse Rule penalty
 
 payments.outstanding.stoodoverCharges.p1 = Details of appealed charges and other standover payments.
+payments.outstanding.stoodoverCharges.linkText = View stoodover charges
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
 payments.outstanding.activity.transactionHistory.p2 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
