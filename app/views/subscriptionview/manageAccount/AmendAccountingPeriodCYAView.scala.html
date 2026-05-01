@@ -28,7 +28,7 @@
     govukButton:      GovukButton
 )
 
-@(newPeriod: AccountingPeriod, newDurationText: String, predictedPeriods: Seq[(AccountingPeriod, String)], isAgent: Boolean, organisationName: Option[String], plrReference: String, sameDateEntered: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(newPeriod: AccountingPeriod, newDurationText: String, predictedPeriods: Seq[(AccountingPeriod, String)], isAgent: Boolean, organisationName: Option[String], plrReference: String, sameDatesEntered: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("amendAccountingPeriodCYA.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -69,8 +69,8 @@
         </div>
 
         @defining(
-            if(sameDateEntered) {
-                Seq(messages("amendAccountingPeriodCYA.sameDateEntered.warning"), messages("amendAccountingPeriodCYA.sameDateEntered.duration", newDurationText))
+            if(sameDatesEntered) {
+                Seq(messages("amendAccountingPeriodCYA.sameDatesEntered.warning"), messages("amendAccountingPeriodCYA.sameDatesEntered.duration", newDurationText))
             } else {
                 Seq(messages("amendAccountingPeriodCYA.warning", newDurationText)) ++
                 predictedPeriods.map { case (period, durationText) =>

@@ -72,7 +72,7 @@ class AmendAccountingPeriodCYAController @Inject() (
             val predictedWithDuration = predicted.map { p =>
               (p, AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(p.startDate, p.endDate))
             }
-            val sameDateEntered: Boolean = (existingPeriod.startDate, existingPeriod.endDate) == (newPeriod.startDate, newPeriod.endDate)
+            val sameDatesEntered: Boolean = (existingPeriod.startDate, existingPeriod.endDate) == (newPeriod.startDate, newPeriod.endDate)
 
             Ok(
               view(
@@ -82,7 +82,7 @@ class AmendAccountingPeriodCYAController @Inject() (
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
                 request.subscriptionLocalData.plrReference,
-                sameDateEntered
+                sameDatesEntered
               )
             )
           case _ =>
