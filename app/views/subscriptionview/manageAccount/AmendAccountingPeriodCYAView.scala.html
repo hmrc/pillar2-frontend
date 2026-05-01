@@ -28,14 +28,16 @@
     govukButton:      GovukButton
 )
 
-@(newPeriod: AccountingPeriod, newDurationText: String, predictedPeriods: Seq[(AccountingPeriod, String)], isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(newPeriod: AccountingPeriod, newDurationText: String, predictedPeriods: Seq[(AccountingPeriod, String)], isAgent: Boolean, organisationName: Option[String], plrReference: String, sameDatesEntered: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("amendAccountingPeriodCYA.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
 
-        @if(organisationName.isDefined) {
-            <h2 class="govuk-caption-m hmrc-caption-m"><span id="section-header"><strong>Group:</strong> @organisationName.get <strong>ID:</strong> @plrReference</span></h2>
+        @if(isAgent && organisationName.isDefined) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName<strong> @{messages("homepage.id")}: </strong>@plrReference</span>
+        } else if(isAgent) {
+            <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
         }
 
         @heading(messages("amendAccountingPeriodCYA.heading"), "govuk-heading-l")
@@ -67,9 +69,13 @@
         </div>
 
         @defining(
-            Seq(messages("amendAccountingPeriodCYA.warning", newDurationText)) ++
-            predictedPeriods.map { case (period, durationText) =>
-                messages("amendAccountingPeriodCYA.predictedPeriod.duration", durationText, period.startDate.toDateFormat, period.endDate.toDateFormat)
+            if(sameDatesEntered) {
+                Seq(messages("amendAccountingPeriodCYA.sameDatesEntered.warning"), messages("amendAccountingPeriodCYA.sameDatesEntered.duration", newDurationText))
+            } else {
+                Seq(messages("amendAccountingPeriodCYA.warning", newDurationText)) ++
+                predictedPeriods.map { case (period, durationText) =>
+                    messages("amendAccountingPeriodCYA.predictedPeriod.duration", durationText, period.startDate.toDateFormat, period.endDate.toDateFormat)
+                }
             }
         ) { warningLines =>
             @govukWarningText(WarningText(
@@ -78,6 +84,13 @@
             ))
         }
 
-        @govukButton(ButtonViewModel(messages("amendAccountingPeriodCYA.confirm")).withAttribute("id" -> "submit"))
+        <div class="govuk-button-group">
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                @messages("amendAccountingPeriodCYA.confirm")
+            </button>
+            <a class="govuk-link" href="@controllers.routes.HomepageController.onPageLoad()">
+                @messages("amendAccountingPeriodCYA.cancel")
+            </a>
+        </div>
     }
 }
