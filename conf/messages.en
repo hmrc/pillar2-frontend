@@ -904,6 +904,7 @@ amendAccountingPeriodCYA.predictedPeriod.duration = This will create an accounti
 amendAccountingPeriodCYA.sameDatesEntered.warning = The dates you entered are the same as the accounting period you requested to change.
 amendAccountingPeriodCYA.sameDatesEntered.duration = Your accounting period will remain as {0}.
 amendAccountingPeriodCYA.confirm = Confirm
+amendAccountingPeriodCYA.cancel = Cancel and return to homepage
 
 ###############################################
 #

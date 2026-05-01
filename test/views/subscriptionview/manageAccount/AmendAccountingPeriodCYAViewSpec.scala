@@ -122,8 +122,13 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
       }
     }
 
-    "have a button" in {
-      view().getElementsByClass("govuk-button").text mustBe "Confirm"
+    "have a button group" in {
+      val buttonGroup = view().getElementsByClass("govuk-button-group").first()
+      buttonGroup.getElementsByClass("govuk-button").text mustBe "Confirm"
+
+      val link = buttonGroup.getElementsByClass("govuk-link").first()
+      link.text mustBe "Cancel and return to homepage"
+      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }
 
     val viewScenarios: Seq[ViewScenario] =
