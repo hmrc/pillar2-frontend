@@ -84,6 +84,13 @@
             ))
         }
 
-        @govukButton(ButtonViewModel(messages("amendAccountingPeriodCYA.confirm")).withAttribute("id" -> "submit"))
+        <div class="govuk-button-group">
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                @messages("amendAccountingPeriodCYA.confirm")
+            </button>
+            <a class="govuk-link" href="@controllers.routes.HomepageController.onPageLoad()">
+                @messages("amendAccountingPeriodCYA.cancel")
+            </a>
+        </div>
     }
 }
