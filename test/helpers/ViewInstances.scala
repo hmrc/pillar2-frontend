@@ -109,7 +109,7 @@ trait ViewInstances extends StubMessageControllerComponents {
   val sectionHeader            = new sectionHeader
   val sectionBreak             = new SectionBreak
   val bulletList               = new bulletList
-  val card                     = new HomepageCard
+  val card                     = new HomepageCard(paragraphMessageWithLink)
   val link                     = new link
   val dynamicNotificationArea  = new DynamicNotificationAreaView(h2, link, paragraphBody, paragraphBodyLink, sectionBreak)
 
