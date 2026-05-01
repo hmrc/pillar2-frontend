@@ -901,8 +901,8 @@ amendAccountingPeriodCYA.duration.days = {0} days
 amendAccountingPeriodCYA.warning = This change will create an accounting period of {0}.
 amendAccountingPeriodCYA.predictedPeriod.title = Period that will be created
 amendAccountingPeriodCYA.predictedPeriod.duration = This will create an accounting period of {0} from {1} to {2}.
-amendAccountingPeriodCYA.sameDateEntered.warning = The dates you entered are the same as the accounting period you requested to change.
-amendAccountingPeriodCYA.sameDateEntered.duration = Your accounting period will remain as {0}.
+amendAccountingPeriodCYA.sameDatesEntered.warning = The dates you entered are the same as the accounting period you requested to change.
+amendAccountingPeriodCYA.sameDatesEntered.duration = Your accounting period will remain as {0}.
 amendAccountingPeriodCYA.confirm = Confirm
 
 ###############################################
