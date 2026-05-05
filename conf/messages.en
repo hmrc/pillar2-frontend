@@ -951,7 +951,7 @@ homepage.payments.title = Payments
 homepage.payments.transactionHistory.linkText = View transaction history
 homepage.payments.outstandingPayments.linkText = View outstanding payments
 homepage.payments.tags.outstanding = Outstanding
-homepage.payments.stoodoverCharges.linkText = Stoodover charges
+homepage.payments.stoodoverCharges.linkText = View stoodover charges
 homepage.payments.repayments.linkText = Request a repayment
 homepage.payments.tags.paid = Paid
 
@@ -969,6 +969,7 @@ homepage.manageAccount.agent.rfm.body = As an agent, you cannot replace a filing
 homepage.manageAccount.btn.linkText = Submit a Below-Threshold Notification
 homepage.manageAccount.btn.body = If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification.
 homepage.manageAccount.agent.btn.body = Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.
+homepage.manageAccount.pillar2Email.p1 = You can contact the Pillar 2 team at
 
 homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
 homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria in the future.

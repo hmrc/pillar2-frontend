@@ -14,14 +14,17 @@
  * limitations under the License.
  *@
 
-@this()
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
+@this(paragraphMessageWithLink: ParagraphMessageWithLink)
 
 @(
   title: String,
   links: Seq[(String, String, Option[String])],
   extraContent: Option[Html] = None,
   cardClass: String = "card-half-width"
-)(implicit messages: Messages)
+)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @isManageAccountCard = @{cardClass == "card-full-width"}
 
@@ -36,5 +39,14 @@
      </li>
     }
    </ul>
+   @if(isManageAccountCard) {
+     <div style="clear: both;">
+       @paragraphMessageWithLink(
+         message1 = Some(messages("homepage.manageAccount.pillar2Email.p1")),
+         linkMessage = appConfig.pillar2mailbox,
+         linkUrl = s"mailto:${appConfig.pillar2mailbox}"
+       )
+     </div>
+   }
   </div>
 </div>
