@@ -35,9 +35,9 @@
     @formHelper(action = controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onSubmit()) {
 
         @if(isAgent && organisationName.isDefined) {
-            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}: </strong>@organisationName<strong> @{messages("homepage.id")}: </strong>@plrReference</span>
+            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName <strong>@{messages("homepage.id")}:</strong> @plrReference</span>
         } else if(isAgent) {
-            <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
+            <span class="govuk-caption-m"><strong>@{messages("homepage.id")}:</strong> @plrReference</span>
         }
 
         @heading(messages("amendAccountingPeriodCYA.heading"), "govuk-heading-l")
