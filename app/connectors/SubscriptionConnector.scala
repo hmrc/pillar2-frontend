@@ -134,7 +134,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == NOT_FOUND => Future.successful(None)
-        case e =>
+        case e                                                        =>
           logger.warn(s"Connection issue when calling read subscription v2 with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)

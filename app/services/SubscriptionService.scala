@@ -69,10 +69,8 @@ class SubscriptionService @Inject() (
     }
 
   def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    if appConfig.amendMultipleAccountingPeriods then
-      subscriptionConnector.readSubscriptionV2(plrReference).map(_.map(_.toSubscriptionData))
-    else
-      subscriptionConnector.readSubscription(plrReference)
+    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference).map(_.map(_.toSubscriptionData))
+    else subscriptionConnector.readSubscription(plrReference)
 
   def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
     maybeReadSubscription(plrReference).flatMap {
