@@ -78,7 +78,7 @@
             )
             .withHint(HintViewModel(
                 content = chosenAccountingPeriod.endDateBoundary.map { boundary =>
-                    messages("newAccountingPeriod.endDate.hint", boundary.plusDays(1).toDateFormat, chosenAccountingPeriod.endDateHintEntryFormat)
+                    messages("newAccountingPeriod.endDate.hint", boundary.toDateFormat, chosenAccountingPeriod.endDateHintEntryFormat)
                 }.getOrElse {
                     messages("newAccountingPeriod.endDate.hintWithoutBoundary", chosenAccountingPeriod.endDateHintEntryFormat)
                 }

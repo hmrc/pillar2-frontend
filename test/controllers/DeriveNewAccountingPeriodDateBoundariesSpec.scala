@@ -24,22 +24,51 @@ import java.time.LocalDate
 
 class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Matchers {
 
-  private def period(year: Int, startAmend: Boolean = true, endAmend: Boolean = true): AccountingPeriodV2 = AccountingPeriodV2(
+  private def period(year: Int, canAmendStart: Boolean = true, canAmendEnd: Boolean = true): AccountingPeriodV2 = AccountingPeriodV2(
     startDate = LocalDate.of(year, 1, 1),
     endDate = LocalDate.of(year, 12, 31),
     dueDate = LocalDate.of(year, 12, 31).plusYears(1),
-    canAmendStartDate = startAmend,
-    canAmendEndDate = endAmend
+    canAmendStartDate = canAmendStart,
+    canAmendEndDate = canAmendEnd
   )
 
-  "DeriveNewAccountingPeriodDateBoundariesSpec" - {
-    "returns the chosen period with no start or end boundary" in {
+  "deriveNewAccountingPeriodDateBoundaries" - {
+
+    "returns no boundaries when no adjacent periods are locked" in {
       val periods = Seq(
-        period(2026),
         period(2025),
         period(2024),
-        period(2023),
-        period(2022)
+        period(2023)
+      )
+
+      val selectedPeriod = period(2024).toAccountingPeriod
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+
+      result.selectedAccountingPeriod mustBe selectedPeriod
+      result.startDateBoundary mustBe None
+      result.endDateBoundary mustBe None
+    }
+
+    "returns a start boundary when the closest previous period is locked" in {
+      val periods = Seq(
+        period(2025),
+        period(2024),
+        period(2023, canAmendStart = false)
+      )
+
+      val selectedPeriod = period(2025).toAccountingPeriod
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+
+      result.selectedAccountingPeriod mustBe selectedPeriod
+      result.startDateBoundary mustBe Some(LocalDate.of(2023, 12, 31))
+      result.endDateBoundary mustBe None
+    }
+
+    "returns an end boundary when the closest next period is locked" in {
+      val periods = Seq(
+        period(2025, canAmendEnd = false),
+        period(2024),
+        period(2023)
       )
 
       val selectedPeriod = period(2023).toAccountingPeriod
@@ -47,92 +76,49 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
 
       result.selectedAccountingPeriod mustBe selectedPeriod
       result.startDateBoundary mustBe None
-      result.endDateBoundary mustBe None
+      result.endDateBoundary mustBe Some(LocalDate.of(2025, 1, 1))
     }
 
-    "returns the chosen period with a start boundary prior to selected period" in {
+    "returns both boundaries when locked periods exist on both sides" in {
       val periods = Seq(
-        period(2026),
+        period(2026, canAmendEnd = false),
         period(2025),
         period(2024),
-        period(2023),
-        period(2022, startAmend = false)
+        period(2023, canAmendStart = false)
       )
 
       val selectedPeriod = period(2024).toAccountingPeriod
       val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
-      result.startDateBoundary mustBe Some(LocalDate.of(2022, 1, 1))
-      result.endDateBoundary mustBe None
+      result.startDateBoundary mustBe Some(LocalDate.of(2023, 12, 31))
+      result.endDateBoundary mustBe Some(LocalDate.of(2026, 1, 1))
     }
 
-    "returns the chosen period with an end boundary beyond selected period" in {
+    "returns the closest locked period boundary when multiple locked periods exist" in {
       val periods = Seq(
-        period(2026, endAmend = false),
-        period(2025),
+        period(2026, canAmendEnd = false),
+        period(2025, canAmendEnd = false),
         period(2024),
-        period(2023),
-        period(2022)
+        period(2023, canAmendStart = false),
+        period(2022, canAmendStart = false)
       )
 
       val selectedPeriod = period(2024).toAccountingPeriod
       val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
       result.selectedAccountingPeriod mustBe selectedPeriod
+      result.startDateBoundary mustBe Some(LocalDate.of(2023, 12, 31))
+      result.endDateBoundary mustBe Some(LocalDate.of(2025, 1, 1))
+    }
+
+    "returns None for both boundaries when selected period is not found" in {
+      val periods        = Seq(period(2025), period(2024))
+      val selectedPeriod = period(2023).toAccountingPeriod
+      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
+
       result.startDateBoundary mustBe None
-      result.endDateBoundary mustBe Some(LocalDate.of(2026, 12, 31))
-    }
-
-    "returns the chosen period with start and end boundaries" in {
-      val periods = Seq(
-        period(2026),
-        period(2025, endAmend = false),
-        period(2024),
-        period(2023, startAmend = false),
-        period(2022)
-      )
-
-      val selectedPeriod = period(2025).toAccountingPeriod
-      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
-
-      result.selectedAccountingPeriod mustBe selectedPeriod
-      result.startDateBoundary mustBe Some(LocalDate.of(2023, 1, 1))
-      result.endDateBoundary mustBe Some(LocalDate.of(2025, 12, 31))
-    }
-
-    "returns the chosen period with start and end boundaries from the selected period" in {
-      val periods = Seq(
-        period(2026, startAmend = false, endAmend = false),
-        period(2025),
-        period(2024),
-        period(2023),
-        period(2022)
-      )
-
-      val selectedPeriod = period(2026).toAccountingPeriod
-      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
-
-      result.selectedAccountingPeriod mustBe selectedPeriod
-      result.startDateBoundary mustBe Some(LocalDate.of(2026, 1, 1))
-      result.endDateBoundary mustBe Some(LocalDate.of(2026, 12, 31))
-    }
-
-    "returns the chosen period with the closest start and end boundary dates" in {
-      val periods = Seq(
-        period(2026, endAmend = false),
-        period(2025, endAmend = false),
-        period(2024),
-        period(2023, startAmend = false),
-        period(2022, startAmend = false)
-      )
-
-      val selectedPeriod = period(2024).toAccountingPeriod
-      val result         = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
-
-      result.selectedAccountingPeriod mustBe selectedPeriod
-      result.startDateBoundary mustBe Some(LocalDate.of(2023, 1, 1))
-      result.endDateBoundary mustBe Some(LocalDate.of(2025, 12, 31))
+      result.endDateBoundary mustBe None
     }
   }
 }
