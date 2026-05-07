@@ -41,7 +41,8 @@ class SubscriptionService @Inject() (
   subscriptionConnector:        SubscriptionConnector,
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
-  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
+  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector,
+  appConfig:                    config.FrontendAppConfig
 )(using ec: ExecutionContext)
     extends Logging {
 
@@ -68,10 +69,13 @@ class SubscriptionService @Inject() (
     }
 
   def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    subscriptionConnector.readSubscription(plrReference)
+    if appConfig.amendMultipleAccountingPeriods then
+      subscriptionConnector.readSubscriptionV2(plrReference).map(_.map(_.toSubscriptionData))
+    else
+      subscriptionConnector.readSubscription(plrReference)
 
   def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
-    subscriptionConnector.readSubscription(plrReference).flatMap {
+    maybeReadSubscription(plrReference).flatMap {
       case Some(subData) => Future.successful(subData)
       case None          => Future.failed(NoResultFound)
     }
@@ -96,7 +100,7 @@ class SubscriptionService @Inject() (
   )(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
     for {
       existingOpt <- subscriptionConnector.getSubscriptionCache(userId)
-      v2          <- subscriptionConnector.readSubscriptionV2(userId, plrReference)
+      v2          <- subscriptionConnector.readAndCacheSubscriptionV2(userId, plrReference)
       fresh  = subscriptionDataV2ToLocalData(plrReference, v2)
       merged = existingOpt match {
                  case Some(existing) =>

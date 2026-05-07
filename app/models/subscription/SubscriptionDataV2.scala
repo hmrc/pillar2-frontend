@@ -27,7 +27,19 @@ final case class SubscriptionDataV2(
   filingMemberDetails:      Option[FilingMemberDetails],
   accountingPeriod:         Seq[AccountingPeriodV2] = Seq.empty,
   accountStatus:            Option[AccountStatus]
-)
+) {
+
+  def toSubscriptionData: SubscriptionData = SubscriptionData(
+    formBundleNumber = formBundleNumber,
+    upeDetails = upeDetails,
+    upeCorrespAddressDetails = upeCorrespAddressDetails,
+    primaryContactDetails = primaryContactDetails,
+    secondaryContactDetails = secondaryContactDetails,
+    filingMemberDetails = filingMemberDetails,
+    accountingPeriod = accountingPeriod.head.toAccountingPeriod,
+    accountStatus = accountStatus
+  )
+}
 
 object SubscriptionDataV2 {
   given format: OFormat[SubscriptionDataV2] = Json.format[SubscriptionDataV2]
