@@ -451,6 +451,59 @@ class SubscriptionServiceSpec extends SpecBase {
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }
       }
+
+      "use v2 read-only endpoint when amendMultipleAccountingPeriods is enabled" in {
+        val v2Period = AccountingPeriodV2(
+          startDate = LocalDate.of(2024, 1, 6),
+          endDate = LocalDate.of(2025, 4, 6),
+          dueDate = LocalDate.of(2024, 4, 6),
+          canAmendStartDate = true,
+          canAmendEndDate = true
+        )
+        val v2Data = SubscriptionDataV2(
+          formBundleNumber = "form bundle",
+          upeDetails = subscriptionData.upeDetails,
+          upeCorrespAddressDetails = subscriptionData.upeCorrespAddressDetails,
+          primaryContactDetails = subscriptionData.primaryContactDetails,
+          secondaryContactDetails = subscriptionData.secondaryContactDetails,
+          filingMemberDetails = subscriptionData.filingMemberDetails,
+          accountingPeriod = Seq(v2Period),
+          accountStatus = subscriptionData.accountStatus
+        )
+
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+            .thenReturn(Future.successful(Some(v2Data)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.maybeReadSubscription(plrReference).futureValue
+
+          result mustBe defined
+          result.get.formBundleNumber mustBe "form bundle"
+          result.get.accountingPeriod.startDate mustBe LocalDate.of(2024, 1, 6)
+          result.get.accountingPeriod.endDate mustBe LocalDate.of(2025, 4, 6)
+        }
+      }
+
+      "return None via v2 when amendMultipleAccountingPeriods is enabled and connector returns None" in {
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.maybeReadSubscription(plrReference).futureValue
+
+          result mustBe None
+        }
+      }
     }
 
     "amendSubscription" when {
@@ -949,7 +1002,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "fetch V2 data from connector, convert to SubscriptionLocalData, save and return it" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
@@ -980,7 +1033,7 @@ class SubscriptionServiceSpec extends SpecBase {
           )
         )
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2DataWithDetails))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.successful(play.api.libs.json.Json.obj()))
@@ -999,7 +1052,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "propagate failure when save fails" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo("id"), eqTo(plrRef))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo("id"), any())(using any()))
             .thenReturn(Future.failed(InternalIssueError))
@@ -1009,9 +1062,9 @@ class SubscriptionServiceSpec extends SpecBase {
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
 
-      "propagate failure when readSubscriptionV2 fails" in
+      "propagate failure when readAndCacheSubscriptionV2 fails" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any(), any())(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(any(), any())(using any(), any()))
             .thenReturn(Future.failed(InternalIssueError))
           when(mockSubscriptionConnector.getSubscriptionCache(eqTo("id"))(using any(), any()))
             .thenReturn(Future.successful(None))

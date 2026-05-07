@@ -178,11 +178,11 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       }
     }
 
-    "readSubscriptionV2" should {
+    "readAndCacheSubscriptionV2" should {
 
       "return SubscriptionDataV2 when backend returns 200 OK" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
-        val result = connector.readSubscriptionV2(id, plrReference).futureValue
+        val result = connector.readAndCacheSubscriptionV2(id, plrReference).futureValue
         result.formBundleNumber mustBe "119000004323"
         result.accountingPeriod must have size 1
         result.accountingPeriod.head.canAmendStartDate mustBe true
@@ -190,27 +190,59 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       "fail with NoResultFound when backend returns 404" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
-        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe models.NoResultFound
+        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe models.NoResultFound
       }
 
       "fail with UnprocessableEntityError when backend returns 422" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe UnprocessableEntityError
+        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe UnprocessableEntityError
       }
 
       "fail with RetryableGatewayError when backend returns 500" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", INTERNAL_SERVER_ERROR, "")
-        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with RetryableGatewayError when backend returns 502" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", BAD_GATEWAY, "")
-        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
+        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with InternalIssueError when backend returns 503" in {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", SERVICE_UNAVAILABLE, "")
-        connector.readSubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
+        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
+      }
+    }
+
+    "readSubscriptionV2 (read-only)" should {
+
+      "return Some(SubscriptionDataV2) when backend returns 200 OK" in {
+        stubGet(s"$readSubscriptionV2Path/$plrReference", OK, v2SuccessWrappedJson)
+        val result = connector.readSubscriptionV2(plrReference).futureValue
+        result mustBe defined
+        result.get.formBundleNumber mustBe "119000004323"
+        result.get.accountingPeriod must have size 1
+        result.get.accountingPeriod.head.canAmendStartDate mustBe true
+      }
+
+      "return None when backend returns 404" in {
+        stubGet(s"$readSubscriptionV2Path/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        connector.readSubscriptionV2(plrReference).futureValue mustBe None
+      }
+
+      "fail with UnprocessableEntityError when backend returns 422" in {
+        stubGet(s"$readSubscriptionV2Path/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe UnprocessableEntityError
+      }
+
+      "fail with RetryableGatewayError when backend returns 500" in {
+        stubGet(s"$readSubscriptionV2Path/$plrReference", INTERNAL_SERVER_ERROR, "")
+        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe RetryableGatewayError
+      }
+
+      "fail with InternalIssueError when backend returns 503" in {
+        stubGet(s"$readSubscriptionV2Path/$plrReference", SERVICE_UNAVAILABLE, "")
+        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe InternalIssueError
       }
     }
 
@@ -305,6 +337,9 @@ object SubscriptionConnectorSpec {
       |  "accountStatus": { "inactive": false }
       |}
       |""".stripMargin
+
+  val v2SuccessWrappedJson: String =
+    s"""{ "success": $v2SuccessJson }"""
 
   private val businessSubscriptionSuccessJson: String =
     """
