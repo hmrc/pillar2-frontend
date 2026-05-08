@@ -25,7 +25,7 @@ import models.registration.*
 import models.rfm.CorporatePosition
 import models.subscription.*
 import org.apache.pekko.Done
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.{never, verify, when}
 import org.scalatest.matchers.should.Matchers.*
 import pages.*
@@ -45,7 +45,28 @@ class SubscriptionServiceSpec extends SpecBase {
     Future.successful(Some(GroupIds(principalGroupIds = Seq("groupID"), delegatedGroupIds = Seq.empty)))
   val mockTaxEnrolmentConnector: TaxEnrolmentConnector = mock[TaxEnrolmentConnector]
 
-  "SubscriptionService" must {
+  ".amendGroupOrContactDetails (v1)" should {
+    "build a v1 AmendSubscription with single accountingPeriod" in {
+      val service = app.injector.instanceOf[SubscriptionService]
+      val result  = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
+
+      result mustBe a[AmendSubscription]
+      result.replaceFilingMember mustBe false
+      result.accountingPeriod.startDate mustBe subscriptionData.accountingPeriod.startDate
+    }
+  }
+
+  ".amendGroupOrContactDetailsV2" should {
+    "build a v2 payload with amendAccountingPeriod = false for contact-only amend" in {
+      val service = app.injector.instanceOf[SubscriptionService]
+      val result  = service.amendGroupOrContactDetailsV2("plr", subscriptionData, emptySubscriptionLocalData)
+
+      result.accountingPeriod.amendAccountingPeriod mustBe false
+      result.replaceFilingMember mustBe false
+    }
+  }
+
+  "SubscriptionService" when {
     "subscribe" when {
       "return a success response with a pillar 2 reference for non uk based upe and fm" in {
         val userAnswer = emptyUserAnswers
@@ -315,10 +336,9 @@ class SubscriptionServiceSpec extends SpecBase {
     "cacheSubscription" when {
       "return SubscriptionData when the connector returns valid data" in {
         val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.cacheSubscription(any[ReadSubscriptionRequestParameters])(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(subscriptionData))
@@ -331,10 +351,9 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "return InternalIssueError when the connector returns an error" in {
         val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.cacheSubscription(any[ReadSubscriptionRequestParameters])(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
@@ -349,12 +368,10 @@ class SubscriptionServiceSpec extends SpecBase {
     "readSubscription" when {
 
       "return SubscriptionData object when the connector returns valid data and transformation is successful" in {
-
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(Some(subscriptionData)))
@@ -366,11 +383,10 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
       "return NoResultFound when the connector returns a 404 response" in {
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
@@ -382,11 +398,8 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
       "handle exceptions thrown by the connector" in {
-
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
 
         running(application) {
@@ -404,11 +417,10 @@ class SubscriptionServiceSpec extends SpecBase {
     "maybeReadSubscription" when {
 
       "return Some(SubscriptionData) when the connector returns valid data" in {
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(Some(subscriptionData)))
@@ -420,11 +432,10 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
       "return None when the connector returns None" in {
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(None))
@@ -436,10 +447,8 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
       "handle exceptions thrown by the connector" in {
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
 
         running(application) {
@@ -472,10 +481,9 @@ class SubscriptionServiceSpec extends SpecBase {
         )
 
         val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
             .thenReturn(Future.successful(Some(v2Data)))
@@ -491,9 +499,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "return None via v2 when amendMultipleAccountingPeriods is enabled and connector returns None" in {
         val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
         running(application) {
           when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
@@ -508,12 +514,10 @@ class SubscriptionServiceSpec extends SpecBase {
 
     "amendSubscription" when {
       "call read subscription and create the required amend object to submit when no secondary contact" in {
-
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any(), any())).thenReturn(Future.successful(Some(subscriptionData)))
           when(mockSubscriptionConnector.amendSubscription(any(), any[AmendSubscription])(using any[HeaderCarrier]))
@@ -524,13 +528,27 @@ class SubscriptionServiceSpec extends SpecBase {
           result mustBe Done
         }
       }
-      "return InternalIssueError when the connector returns None" in {
 
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+      "return NoResultFound when the connector returns None" in {
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
+        running(application) {
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData).failed.futureValue
+
+          result mustBe NoResultFound
+        }
+      }
+
+      "return InternalIssueError when the connector returns an error" in {
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+          .build()
+
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
@@ -540,13 +558,12 @@ class SubscriptionServiceSpec extends SpecBase {
           result mustBe InternalIssueError
         }
       }
-      "handle exceptions thrown by the connector" in {
 
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
+      "handle exceptions thrown by the connector" in {
+        val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
           .build()
+
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
@@ -555,6 +572,51 @@ class SubscriptionServiceSpec extends SpecBase {
           val resultFuture = service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+    }
+
+    ".amendContactOrGroupDetails" when {
+      "amendMultipleAccountingPeriods is enabled" should {
+        "call amendSubscriptionV2 with amendAccountingPeriod = false" in {
+          val v2Period = AccountingPeriodV2(
+            startDate = LocalDate.of(2024, 1, 6),
+            endDate = LocalDate.of(2025, 4, 6),
+            dueDate = LocalDate.of(2024, 4, 6),
+            canAmendStartDate = true,
+            canAmendEndDate = true
+          )
+          val v2Data = SubscriptionDataV2(
+            formBundleNumber = "form bundle",
+            upeDetails = subscriptionData.upeDetails,
+            upeCorrespAddressDetails = subscriptionData.upeCorrespAddressDetails,
+            primaryContactDetails = subscriptionData.primaryContactDetails,
+            secondaryContactDetails = subscriptionData.secondaryContactDetails,
+            filingMemberDetails = subscriptionData.filingMemberDetails,
+            accountingPeriod = Seq(v2Period),
+            accountStatus = subscriptionData.accountStatus
+          )
+
+          val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
+            .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
+            .build()
+
+          running(application) {
+            when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+              .thenReturn(Future.successful(Some(v2Data)))
+            when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[AmendSubscriptionV2])(using any[HeaderCarrier]))
+              .thenReturn(Future.successful(Done))
+
+            val service = application.injector.instanceOf[SubscriptionService]
+
+            service.amendContactOrGroupDetails("id", "plr", emptySubscriptionLocalData).futureValue mustBe Done
+
+            verify(mockSubscriptionConnector).amendSubscriptionV2(
+              eqTo("id"),
+              argThat[AmendSubscriptionV2](_.accountingPeriod.amendAccountingPeriod == false)
+            )(using any[HeaderCarrier])
+            verify(mockSubscriptionConnector, never).amendSubscription(any(), any())(using any[HeaderCarrier])
+          }
         }
       }
     }
@@ -1098,17 +1160,6 @@ class SubscriptionServiceSpec extends SpecBase {
         canAmendEndDate = true
       )
 
-      SubscriptionDataV2(
-        formBundleNumber = "119000004323",
-        upeDetails = UpeDetails(None, None, None, "Org Ltd", LocalDate.of(2024, 1, 31), domesticOnly = true, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("1 High St", None, None, None, None, "GB"),
-        primaryContactDetails = ContactDetailsType("Contact", None, "c@example.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = Seq(updatedV2Period),
-        accountStatus = None
-      )
-
       val application = applicationBuilder()
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
         .build()
@@ -1134,4 +1185,5 @@ class SubscriptionServiceSpec extends SpecBase {
         }
     }
   }
+
 }
