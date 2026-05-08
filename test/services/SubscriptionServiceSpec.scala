@@ -45,30 +45,9 @@ class SubscriptionServiceSpec extends SpecBase {
     Future.successful(Some(GroupIds(principalGroupIds = Seq("groupID"), delegatedGroupIds = Seq.empty)))
   val mockTaxEnrolmentConnector: TaxEnrolmentConnector = mock[TaxEnrolmentConnector]
 
-  ".amendGroupOrContactDetails (v1)" should {
-    "build a v1 AmendSubscription with single accountingPeriod" in {
-      val service = app.injector.instanceOf[SubscriptionService]
-      val result  = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
-
-      result mustBe a[AmendSubscription]
-      result.replaceFilingMember mustBe false
-      result.accountingPeriod.startDate mustBe subscriptionData.accountingPeriod.startDate
-    }
-  }
-
-  ".amendGroupOrContactDetailsV2" should {
-    "build a v2 payload with amendAccountingPeriod = false for contact-only amend" in {
-      val service = app.injector.instanceOf[SubscriptionService]
-      val result  = service.amendGroupOrContactDetailsV2("plr", subscriptionData, emptySubscriptionLocalData)
-
-      result.accountingPeriod.amendAccountingPeriod mustBe false
-      result.replaceFilingMember mustBe false
-    }
-  }
-
   "SubscriptionService" when {
-    "subscribe" when {
-      "return a success response with a pillar 2 reference for non uk based upe and fm" in {
+    "subscribe" must {
+      "return a success response with a Pillar 2 reference for non uk based upe and fm" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(FmRegisteredInUKPage, false)
@@ -97,7 +76,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return a success response with a pillar 2 reference for non uk based upe and no filing member" in {
+      "return a success response with a Pillar 2 reference for non uk based upe and no filing member" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(FmRegisteredInUKPage, false)
@@ -158,7 +137,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return a success response with a pillar 2 reference for uk based upe and filing member" in {
+      "return a success response with a Pillar 2 reference for uk based upe and filing member" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(FmRegisteredInUKPage, true)
@@ -188,7 +167,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return a success response with a pillar 2 reference for uk based upe and no filing member" in {
+      "return a success response with a Pillar 2 reference for uk based upe and no filing member" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(NominateFilingMemberPage, false)
@@ -333,7 +312,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "cacheSubscription" when {
+    "cacheSubscription" must {
       "return SubscriptionData when the connector returns valid data" in {
         val application = applicationBuilder()
           .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
@@ -365,7 +344,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "readSubscription" when {
+    "readSubscription" must {
 
       "return SubscriptionData object when the connector returns valid data and transformation is successful" in {
         val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
@@ -414,7 +393,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "maybeReadSubscription" when {
+    "maybeReadSubscription" must {
 
       "return Some(SubscriptionData) when the connector returns valid data" in {
         val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
@@ -512,7 +491,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "amendSubscription" when {
+    "amendSubscription" must {
       "call read subscription and create the required amend object to submit when no secondary contact" in {
         val application = applicationBuilder(additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
@@ -576,7 +555,28 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    ".amendContactOrGroupDetails" when {
+    "amendGroupOrContactDetails (v1)" must {
+      "build a v1 AmendSubscription with single accountingPeriod" in {
+        val service = app.injector.instanceOf[SubscriptionService]
+        val result  = service.amendGroupOrContactDetails("plr", subscriptionData, emptySubscriptionLocalData)
+
+        result mustBe a[AmendSubscription]
+        result.replaceFilingMember mustBe false
+        result.accountingPeriod.startDate mustBe subscriptionData.accountingPeriod.startDate
+      }
+    }
+
+    ".amendGroupOrContactDetailsV2" must {
+      "build a v2 payload with amendAccountingPeriod = false for contact-only amend" in {
+        val service = app.injector.instanceOf[SubscriptionService]
+        val result  = service.amendGroupOrContactDetailsV2("plr", subscriptionData, emptySubscriptionLocalData)
+
+        result.accountingPeriod.amendAccountingPeriod mustBe false
+        result.replaceFilingMember mustBe false
+      }
+    }
+
+    ".amendContactOrGroupDetails" must {
       "amendMultipleAccountingPeriods is enabled" should {
         "call amendSubscriptionV2 with amendAccountingPeriod = false" in {
           val v2Period = AccountingPeriodV2(
@@ -621,7 +621,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "createAmendObject" when {
+    "createAmendObject" must {
       "create the right object when secondary contact is nominated" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
         val newLocalData = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
@@ -635,7 +635,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "amendFilingMemberDetails" when {
+    "amendFilingMemberDetails" must {
       "return done if the amend subscription is successful and delete userAnswers" in {
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
 
@@ -660,8 +660,8 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "deallocateEnrolment" when {
-      "get old filing member group id from tax enrolment and use that to deallocate pillar 2 enrolment" in {
+    "deallocateEnrolment" must {
+      "get old filing member group id from tax enrolment and use that to deallocate Pillar 2 enrolment" in {
         val application = applicationBuilder().overrides(
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
@@ -698,7 +698,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "allocateEnrolment" when {
+    "allocateEnrolment" must {
       val enrolmentInfo = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("nonUkPostCode", "somePostCode")))
       "return done if tax enrolment has successfully allocated an enrolment to a group" in {
         val application = applicationBuilder().overrides(
@@ -723,7 +723,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "getUltimateParentEnrolmentInformation" when {
+    "getUltimateParentEnrolmentInformation" must {
       "get ultimate parent verifiers from subscription data if ultimate was registered via GRS" in {
         val grsRegisteredSubData = subscriptionData.copy(upeDetails =
           subscriptionData.upeDetails.copy(customerIdentification1 = Some("Crn"), customerIdentification2 = Some("Utr"))
@@ -732,7 +732,8 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.getUltimateParentEnrolmentInformation(grsRegisteredSubData, "plrId", "id")
         result.futureValue mustBe allocateEnrolmentParameters
       }
-      "get ultimate parent verifiers via a call to tax enrolment if no Crn or UTR can be found in subcription data" in {
+
+      "get ultimate parent verifiers via a call to tax enrolment if no Crn or UTR can be found in subscription data" in {
         val knownFactsResponse = Future.successful(
           KnownFactsResponse(enrolments =
             Seq(EnrolmentRequest(identifiers = Seq(Identifier("PLRID", "plrId")), verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))))
@@ -758,13 +759,14 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "createAmendObjectForReplacingFilingMember" when {
+    "createAmendObjectForReplacingFilingMember" must {
       "set ultimate parent as the new filing member if user has chosen corporate position as upe" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
         val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = true), filingMemberDetails = None)
         val result         = service.createAmendObjectForReplacingFilingMember(subscriptionData, replaceFilingMemberData, emptyUserAnswers)
         result.futureValue mustEqual expectedResult
       }
+
       "collate all relevant information for new filing member detail if they are uk based" in {
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true).setOrException(RfmGrsDataPage, rfmGrsData)
         val application =
@@ -785,6 +787,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
         result.futureValue mustEqual expectedResult
       }
+
       "collate all relevant information for new filing member detail and register them if they are not uk based" in {
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, false).setOrException(RfmNameRegistrationPage, "Company")
         val application = applicationBuilder()
@@ -849,6 +852,7 @@ class SubscriptionServiceSpec extends SpecBase {
         result.futureValue mustEqual expectedResult
         verify(mockUserAnswersConnectors).save(eqTo(userAnswers.id), eqTo(userAnswers.data))(using any())
       }
+
       "throw an exception if new fm corporate position is chosen but no RfmUkBasedPage value can be found" in {
         val userAnswers = emptyUserAnswers
           .setOrException(RfmNameRegistrationPage, "Company")
@@ -885,7 +889,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "getCompanyName" when {
+    "getCompanyName" must {
       "return the company name if it is stored in the session" in {
         val companyName = "TestCompany"
         val userAnswers = emptyUserAnswers
@@ -902,6 +906,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
         result shouldEqual Right(companyName)
       }
+
       "return an error redirect if the retrieval of the company name fails" in {
         val userAnswers = emptyUserAnswers
 
@@ -918,7 +923,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "getCompanyNameFromGRS" when {
+    "getCompanyNameFromGRS" must {
       "return the company name if it is stored in the session" in {
         val date        = LocalDate.now()
         val grsResponse = GrsResponse(
@@ -955,6 +960,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
         result shouldEqual Some("ABC Limited")
       }
+
       "return an error redirect if the retrieval of the company name fails" in {
         val grsResponse = GrsResponse(None, None)
 
@@ -974,7 +980,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    "matchingPillar2Records" when {
+    "matchingPillar2Records" must {
       val registrationDate = LocalDate.now()
       "return true if the pillar2 and reg date records in FE and BE database match" in {
         val userAnswers = emptyUserAnswers
@@ -988,6 +994,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.matchingPillar2Records("id", "matchingPillar2Id", registrationDate)
         result.futureValue mustEqual true
       }
+
       "return false if pillar2 records in FE and BE database do not match" in {
         val userAnswers = emptyUserAnswers.setOrException(RfmPillar2ReferencePage, "pillar2Backend")
         val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -998,6 +1005,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.futureValue mustEqual false
       }
+
       "return false if no data can be found in the BE database" in {
         val application = applicationBuilder()
           .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -1007,6 +1015,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.futureValue mustEqual false
       }
+
       "return failed results if call to BE database fails" in {
         val application = applicationBuilder()
           .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -1019,7 +1028,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "readSubscriptionV2AndSave" when {
+    "readSubscriptionV2AndSave" must {
 
       val plrRef = "XEPLR0000000001"
 
@@ -1133,9 +1142,10 @@ class SubscriptionServiceSpec extends SpecBase {
 
           service.readSubscriptionV2AndSave("id", plrRef).failed.futureValue mustBe InternalIssueError
         }
+
     }
 
-    "amendAccountingPeriods" when {
+    "amendAccountingPeriods" must {
 
       val plrRef = "XEPLR0000000001"
 
@@ -1150,14 +1160,6 @@ class SubscriptionServiceSpec extends SpecBase {
       val newPeriod = AccountingPeriod(
         startDate = LocalDate.of(2024, 6, 1),
         endDate = LocalDate.of(2025, 5, 31)
-      )
-
-      val updatedV2Period = AccountingPeriodV2(
-        startDate = LocalDate.of(2024, 6, 1),
-        endDate = LocalDate.of(2025, 5, 31),
-        dueDate = LocalDate.of(2025, 9, 30),
-        canAmendStartDate = true,
-        canAmendEndDate = true
       )
 
       val application = applicationBuilder()
@@ -1184,6 +1186,7 @@ class SubscriptionServiceSpec extends SpecBase {
             .futureValue mustBe UnexpectedResponse
         }
     }
+
   }
 
 }
