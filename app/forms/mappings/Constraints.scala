@@ -146,8 +146,8 @@ trait Constraints {
   protected def optionalStartDateBoundary(minStartDate: Option[LocalDate], errorKey: String): Constraint[LocalDate] =
     Constraint { date =>
       minStartDate match {
-        case Some(minDate) if date.isBefore(minDate) =>
-          Invalid(errorKey, minDate.minusDays(1).toDateFormat)
+        case Some(minDate) if !date.isAfter(minDate) =>
+          Invalid(errorKey, minDate.toDateFormat)
         case _ =>
           Valid
       }
@@ -156,8 +156,8 @@ trait Constraints {
   protected def optionalEndDateBoundary(maxEndDate: Option[LocalDate], errorKey: String): Constraint[LocalDate] =
     Constraint { date =>
       maxEndDate match {
-        case Some(maxDate) if date.isAfter(maxDate) =>
-          Invalid(errorKey, maxDate.plusDays(1).toDateFormat)
+        case Some(maxDate) if !date.isBefore(maxDate) =>
+          Invalid(errorKey, maxDate.toDateFormat)
         case _ =>
           Valid
       }
