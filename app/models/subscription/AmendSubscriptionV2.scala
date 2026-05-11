@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class AmendSubscriptionV2(
+final case class AmendSubscriptionV2(
   replaceFilingMember:      Boolean,
   upeDetails:               UpeDetailsAmend,
   accountingPeriod:         AccountingPeriodAmendV2,
@@ -28,12 +28,6 @@ case class AmendSubscriptionV2(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberAmendDetails]
-)
-
-final case class AccountingPeriodAmendV2(
-  amendAccountingPeriod:     Boolean,
-  originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]] = None,
-  newAccountingPeriod:       Option[NewAccountingPeriod] = None
 )
 
 final case class OriginalAccountingPeriod(
@@ -48,10 +42,6 @@ final case class NewAccountingPeriod(
 
 object AmendSubscriptionV2 {
   given format: OFormat[AmendSubscriptionV2] = Json.format[AmendSubscriptionV2]
-}
-
-object AccountingPeriodAmendV2 {
-  given format: OFormat[AccountingPeriodAmendV2] = Json.format[AccountingPeriodAmendV2]
 }
 
 object OriginalAccountingPeriod {

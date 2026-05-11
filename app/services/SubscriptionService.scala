@@ -156,13 +156,23 @@ class SubscriptionService @Inject() (
       } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate
         .isEqual(sessionRegistrationDate)).getOrElse(false)
     }
+
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(using
     hc: HeaderCarrier
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
-      amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
-      result <- subscriptionConnector.amendSubscription(userId, amendData)
+      result                  <-
+        if appConfig.amendMultipleAccountingPeriods then
+          subscriptionConnector.amendSubscriptionV2(
+            userId,
+            amendGroupOrContactDetailsV2(plrReference, currentSubscriptionData, subscriptionLocalData)
+          )
+        else
+          subscriptionConnector.amendSubscription(
+            userId,
+            amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
+          )
     } yield result
 
   def amendAccountingPeriods(
@@ -230,6 +240,7 @@ class SubscriptionService @Inject() (
       )
     )
   }
+
   private def registerUpe(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
@@ -256,19 +267,11 @@ class SubscriptionService @Inject() (
         }
       }
 
-  def amendGroupOrContactDetails(
+  private[services] def amendGroupOrContactDetails(
     plrReference: String,
     currentData:  SubscriptionData,
     userData:     SubscriptionLocalData
-  ): AmendSubscription = {
-    val address = UpeCorrespAddressDetails(
-      addressLine1 = userData.subRegisteredAddress.addressLine1,
-      addressLine2 = userData.subRegisteredAddress.addressLine2,
-      addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
-      addressLine4 = userData.subRegisteredAddress.addressLine4,
-      postCode = userData.subRegisteredAddress.postalCode,
-      countryCode = userData.subRegisteredAddress.countryCode
-    )
+  ): AmendSubscription =
     AmendSubscription(
       replaceFilingMember = false,
       upeDetails = UpeDetailsAmend(
@@ -284,7 +287,14 @@ class SubscriptionService @Inject() (
         val period = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
         AccountingPeriodAmend(startDate = period.startDate, endDate = period.endDate)
       },
-      upeCorrespAddressDetails = address,
+      upeCorrespAddressDetails = UpeCorrespAddressDetails(
+        addressLine1 = userData.subRegisteredAddress.addressLine1,
+        addressLine2 = userData.subRegisteredAddress.addressLine2,
+        addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
+        addressLine4 = userData.subRegisteredAddress.addressLine4,
+        postCode = userData.subRegisteredAddress.postalCode,
+        countryCode = userData.subRegisteredAddress.countryCode
+      ),
       primaryContactDetails = ContactDetailsType(
         name = userData.subPrimaryContactName,
         phone = userData.subPrimaryCapturePhone,
@@ -307,7 +317,61 @@ class SubscriptionService @Inject() (
         )
       )
     )
-  }
+
+  private[services] def amendGroupOrContactDetailsV2(
+    plrReference: String,
+    currentData:  SubscriptionData,
+    userData:     SubscriptionLocalData
+  ): AmendSubscriptionV2 =
+    AmendSubscriptionV2(
+      replaceFilingMember = false,
+      upeDetails = UpeDetailsAmend(
+        plrReference,
+        customerIdentification1 = currentData.upeDetails.customerIdentification1,
+        customerIdentification2 = currentData.upeDetails.customerIdentification2,
+        organisationName = currentData.upeDetails.organisationName,
+        registrationDate = currentData.upeDetails.registrationDate,
+        domesticOnly = userData.subMneOrDomestic == MneOrDomestic.Uk,
+        filingMember = currentData.upeDetails.filingMember
+      ),
+      // contact/group amend only so not touching the accounting period
+      accountingPeriod = {
+        val accountingPeriod: AccountingPeriod = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
+        AccountingPeriodAmendV2(
+          amendAccountingPeriod = false,
+          originalAccountingPeriods = Some(Seq(OriginalAccountingPeriod(accountingPeriod.startDate, accountingPeriod.endDate))),
+          newAccountingPeriod = None
+        )
+      },
+      upeCorrespAddressDetails = UpeCorrespAddressDetails(
+        addressLine1 = userData.subRegisteredAddress.addressLine1,
+        addressLine2 = userData.subRegisteredAddress.addressLine2,
+        addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
+        addressLine4 = userData.subRegisteredAddress.addressLine4,
+        postCode = userData.subRegisteredAddress.postalCode,
+        countryCode = userData.subRegisteredAddress.countryCode
+      ),
+      primaryContactDetails = ContactDetailsType(
+        name = userData.subPrimaryContactName,
+        phone = userData.subPrimaryCapturePhone,
+        emailAddress = userData.subPrimaryEmail
+      ),
+      secondaryContactDetails =
+        if userData.subAddSecondaryContact then
+          for {
+            name  <- userData.subSecondaryContactName
+            email <- userData.subSecondaryEmail
+          } yield ContactDetailsType(name, userData.subSecondaryCapturePhone, email)
+        else None,
+      filingMemberDetails = currentData.filingMemberDetails.map(details =>
+        FilingMemberAmendDetails(
+          safeId = details.safeId,
+          customerIdentification1 = details.customerIdentification1,
+          customerIdentification2 = details.customerIdentification2,
+          organisationName = details.organisationName
+        )
+      )
+    )
 
   private def setUltimateParentAsNewFilingMember(
     requiredInfo:     NewFilingMemberDetail,
@@ -377,6 +441,7 @@ class SubscriptionService @Inject() (
       secondaryContactDetails = requiredInfo.secondaryContactInformation,
       filingMemberDetails = Some(filingMember)
     )
+
   def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
     for {
       result <- subscriptionConnector.amendSubscription(userId, amendData)
@@ -411,10 +476,10 @@ class SubscriptionService @Inject() (
         subscriptionData.upeDetails.customerIdentification2
           .map { utr =>
             logger.info(s"getUltimateParentEnrolmentInformation utr: - $utr")
-            val enrolementParameter =
+            val enrolmentParameter =
               AllocateEnrolmentParameters(userId = userId, verifiers = Seq(Verifier(UTR.toString, utr), Verifier(CRN.toString, crn)))
-            logger.info(s"getUltimateParentEnrolmentInformation WithId enrolment parameter - ${Json.toJson(enrolementParameter)}")
-            enrolementParameter
+            logger.info(s"getUltimateParentEnrolmentInformation WithId enrolment parameter - ${Json.toJson(enrolmentParameter)}")
+            enrolmentParameter
           }
           .map(Future.successful)
       }
@@ -423,9 +488,9 @@ class SubscriptionService @Inject() (
           .getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts(Pillar2Identifier.toString, pillar2Reference))))
           .map { knownFacts =>
             logger.info(s"getUltimateParentEnrolmentInformation knownFacts: - $knownFacts")
-            val enrolementParameter = AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
-            logger.info(s"getUltimateParentEnrolmentInformation WithoutId enrolment parameter - ${Json.toJson(enrolementParameter)}")
-            enrolementParameter
+            val enrolmentParameter = AllocateEnrolmentParameters(userId = userId, verifiers = knownFacts.enrolments.flatMap(_.verifiers))
+            logger.info(s"getUltimateParentEnrolmentInformation WithoutId enrolment parameter - ${Json.toJson(enrolmentParameter)}")
+            enrolmentParameter
 
           }
       )
