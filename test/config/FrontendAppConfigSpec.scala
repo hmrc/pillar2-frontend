@@ -131,8 +131,8 @@ class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
     }
 
     ".amendMultipleAccountingPeriods" must {
-      "return false by default" in {
-        config.amendMultipleAccountingPeriods mustBe false
+      "return true by default" in {
+        config.amendMultipleAccountingPeriods mustBe true
       }
     }
 
