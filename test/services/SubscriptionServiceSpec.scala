@@ -566,34 +566,36 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
-    ".amendGroupOrContactDetailsV2" must {
+    "amendGroupOrContactDetailsV2" must {
       "build a v2 payload with amendAccountingPeriod = false for contact-only amend" in {
         val service = app.injector.instanceOf[SubscriptionService]
         val result  = service.amendGroupOrContactDetailsV2("plr", subscriptionData, emptySubscriptionLocalData)
 
         result.accountingPeriod.amendAccountingPeriod mustBe false
-        result.replaceFilingMember mustBe false
+        result.accountingPeriod.originalAccountingPeriods mustBe None
+        result.accountingPeriod.newAccountingPeriod mustBe None
       }
     }
 
-    ".amendContactOrGroupDetails" must {
+    "amendContactOrGroupDetails" must {
       "amendMultipleAccountingPeriods is enabled" should {
         "call amendSubscriptionV2 with amendAccountingPeriod = false" in {
-          val v2Period = AccountingPeriodV2(
+          val accountingPeriodV2 = AccountingPeriodV2(
             startDate = LocalDate.of(2024, 1, 6),
             endDate = LocalDate.of(2025, 4, 6),
             dueDate = LocalDate.of(2024, 4, 6),
             canAmendStartDate = true,
             canAmendEndDate = true
           )
-          val v2Data = SubscriptionDataV2(
+
+          val subscriptionDataV2 = SubscriptionDataV2(
             formBundleNumber = "form bundle",
             upeDetails = subscriptionData.upeDetails,
             upeCorrespAddressDetails = subscriptionData.upeCorrespAddressDetails,
             primaryContactDetails = subscriptionData.primaryContactDetails,
             secondaryContactDetails = subscriptionData.secondaryContactDetails,
             filingMemberDetails = subscriptionData.filingMemberDetails,
-            accountingPeriod = Seq(v2Period),
+            accountingPeriod = Seq(accountingPeriodV2),
             accountStatus = subscriptionData.accountStatus
           )
 
@@ -603,7 +605,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
           running(application) {
             when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
-              .thenReturn(Future.successful(Some(v2Data)))
+              .thenReturn(Future.successful(Some(subscriptionDataV2)))
             when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[AmendSubscriptionV2])(using any[HeaderCarrier]))
               .thenReturn(Future.successful(Done))
 
@@ -613,7 +615,11 @@ class SubscriptionServiceSpec extends SpecBase {
 
             verify(mockSubscriptionConnector).amendSubscriptionV2(
               eqTo("id"),
-              argThat[AmendSubscriptionV2](_.accountingPeriod.amendAccountingPeriod == false)
+              argThat[AmendSubscriptionV2] { amendSubscriptionV2 =>
+                amendSubscriptionV2.accountingPeriod.amendAccountingPeriod == false &&
+                amendSubscriptionV2.accountingPeriod.originalAccountingPeriods.isEmpty &&
+                amendSubscriptionV2.accountingPeriod.newAccountingPeriod.isEmpty
+              }
             )(using any[HeaderCarrier])
             verify(mockSubscriptionConnector, never).amendSubscription(any(), any())(using any[HeaderCarrier])
           }
@@ -1173,6 +1179,25 @@ class SubscriptionServiceSpec extends SpecBase {
             .thenReturn(Future.successful(Done))
 
           service.amendAccountingPeriods("id", plrRef, emptySubscriptionLocalData, Seq(affectedPeriod), newPeriod).futureValue mustBe Done
+        }
+
+      "call amendSubscriptionV2 with a valid amend shape and return Done" in
+        running(application) {
+          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[AmendSubscriptionV2])(using any[HeaderCarrier]))
+            .thenReturn(Future.successful(Done))
+
+          service
+            .amendAccountingPeriods("id", plrRef, emptySubscriptionLocalData, Seq(affectedPeriod), newPeriod)
+            .futureValue mustBe Done
+
+          verify(mockSubscriptionConnector).amendSubscriptionV2(
+            eqTo("id"),
+            argThat[AmendSubscriptionV2] { amendSubscriptionV2 =>
+              amendSubscriptionV2.accountingPeriod.amendAccountingPeriod &&
+              amendSubscriptionV2.accountingPeriod.originalAccountingPeriods.exists(_.nonEmpty) &&
+              amendSubscriptionV2.accountingPeriod.newAccountingPeriod.isDefined
+            }
+          )(using any[HeaderCarrier])
         }
 
       "propagate failure when amendSubscriptionV2 fails" in
