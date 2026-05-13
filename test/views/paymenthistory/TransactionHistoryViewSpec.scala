@@ -129,6 +129,11 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have the correct unallocated payment amount shown" in {
       groupView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Unallocated amount: £500"
+      groupView
+        .getElementsByClass("govuk-body")
+        .get(2)
+        .text() mustBe "Unallocated amounts are payments received that have not been allocated to a charge yet." +
+        " If you have made a payment for an exising charge this will usually update over night and you will see it appear in the transaction details."
     }
 
     "display a correct html details section" in {
@@ -223,7 +228,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "show the correct transaction history description" in {
-      groupViewParagraphs.get(2).text mustBe "Find full details of any payments due, including penalties and interest."
+      groupViewParagraphs.get(3).text mustBe "Find full details of any payments due, including penalties and interest."
     }
 
     "show the correct outstanding payments link" in {
