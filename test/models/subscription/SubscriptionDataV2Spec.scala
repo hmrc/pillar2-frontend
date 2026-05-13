@@ -97,5 +97,26 @@ class SubscriptionDataV2Spec extends SpecBase {
       val result  = wrapped.as[SubscriptionSuccessV2]
       result.success.formBundleNumber mustBe "119000004323"
     }
+
+    "toSubscriptionData converts V2 to V1 using the head accounting period" in {
+      val v2 = v2Json.as[SubscriptionDataV2]
+      val v1 = v2.toSubscriptionData
+
+      v1.formBundleNumber mustBe v2.formBundleNumber
+      v1.upeDetails mustBe v2.upeDetails
+      v1.upeCorrespAddressDetails mustBe v2.upeCorrespAddressDetails
+      v1.primaryContactDetails mustBe v2.primaryContactDetails
+      v1.secondaryContactDetails mustBe v2.secondaryContactDetails
+      v1.filingMemberDetails mustBe v2.filingMemberDetails
+      v1.accountStatus mustBe v2.accountStatus
+      v1.accountingPeriod.startDate mustBe LocalDate.of(2024, 1, 6)
+      v1.accountingPeriod.endDate mustBe LocalDate.of(2025, 4, 6)
+      v1.accountingPeriod.dueDate mustBe Some(LocalDate.of(2024, 4, 6))
+    }
+
+    "toSubscriptionData throws when accountingPeriod is empty" in {
+      val v2 = v2Json.as[SubscriptionDataV2].copy(accountingPeriod = Seq.empty)
+      a[NoSuchElementException] must be thrownBy v2.toSubscriptionData
+    }
   }
 }

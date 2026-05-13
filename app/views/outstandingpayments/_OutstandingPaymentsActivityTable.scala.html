@@ -14,8 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.ViewUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.gds.ScrollWrapper
+@import views.ViewUtils._
 @import _root_.utils.DateTimeUtils._
 
 @this(govukTable: GovukTable)
@@ -23,48 +24,54 @@
 @(data: Seq[OutstandingPaymentsTableForActivity], penalties: Seq[OutstandingPaymentsRowForActivity])(implicit messages: Messages)
 
 @if(penalties.nonEmpty) {
-    @govukTable(Table(
-        head = Some(Seq(
-            HeadCell(Text(messages("payments.outstanding.table.heading.description")), classes = "govuk-!-width-one-third"),
-            HeadCell(Text(messages("payments.outstanding.table.heading.chargeAmount")), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
-            HeadCell(Text(messages("payments.outstanding.table.heading.amountDue")), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
-            HeadCell(Text(messages("payments.outstanding.table.heading.dueDate")), classes = "govuk-!-width-one-sixth")
-        )),
-        rows = penalties.map { row =>
-            Seq(
-                TableRow(content = Text(row.description)),
-                TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
-                TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
-                TableRow(content = Text(row.dueDate.toDateFormat))
-            )
-        },
-        caption = Some(messages("payments.outstanding.table.caption")),
-        captionClasses = "govuk-table__caption--m"
-    ))
+    @ScrollWrapper(
+        govukTable(Table(
+            head = Some(Seq(
+                HeadCell(Text(messages("payments.outstanding.table.heading.description")), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),
+                HeadCell(Text(messages("payments.outstanding.table.heading.chargeAmount")), format = Some("numeric"), classes = "govuk-table__header govuk-!-width-one-quarter", attributes = Map("scope" -> "col")),
+                HeadCell(Text(messages("payments.outstanding.table.heading.amountDue")), format = Some("numeric"), classes = "govuk-table__header govuk-!-width-one-quarter", attributes = Map("scope" -> "col")),
+                HeadCell(Text(messages("payments.outstanding.table.heading.dueDate")), classes = "govuk-table__header govuk-!-width-one-sixth", attributes = Map("scope" -> "col"))
+            )),
+            rows = penalties.map { row =>
+                Seq(
+                    TableRow(content = Text(row.description)),
+                    TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
+                    TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
+                    TableRow(content = Text(row.dueDate.toDateFormat))
+                )
+            },
+            caption = Some(messages("payments.outstanding.table.caption")),
+            captionClasses = "govuk-table__caption--m",
+            attributes = Map("style" -> "overflow-wrap: normal;")
+        ))
+    )
 }
 
 @data.map { summary =>
-  @govukTable(Table(
-    head = Some(Seq(
-      HeadCell(messages("payments.outstanding.table.heading.description"), classes = "govuk-!-width-one-third"),
-      HeadCell(messages("payments.outstanding.table.heading.chargeAmount"), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
-      HeadCell(messages("payments.outstanding.table.heading.amountDue"), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
-      HeadCell(messages("payments.outstanding.table.heading.dueDate"), classes = "govuk-!-width-one-sixth"),
-    )),
-    rows = summary.rows.map { row =>
-      Seq(
-        TableRow(
-            content = if(row.appealFlag.contains(true)) {
-                HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
-        } else {
-                Text(row.description)
-        }),
-        TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
-        TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
-        TableRow(content = Text(row.dueDate.toDateFormat))
-      )
-    },
-      caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
-      captionClasses = "govuk-table__caption--m"
-  ))
+  @ScrollWrapper(
+    govukTable(Table(
+      head = Some(Seq(
+        HeadCell(messages("payments.outstanding.table.heading.description"), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),
+        HeadCell(messages("payments.outstanding.table.heading.chargeAmount"), format = Some("numeric"), classes = "govuk-table__header govuk-!-width-one-quarter", attributes = Map("scope" -> "col")),
+        HeadCell(messages("payments.outstanding.table.heading.amountDue"), format = Some("numeric"), classes = "govuk-table__header govuk-!-width-one-quarter", attributes = Map("scope" -> "col")),
+        HeadCell(messages("payments.outstanding.table.heading.dueDate"), classes = "govuk-table__header govuk-!-width-one-sixth", attributes = Map("scope" -> "col")),
+      )),
+      rows = summary.rows.map { row =>
+        Seq(
+          TableRow(
+              content = if(row.appealFlag.contains(true)) {
+                  HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
+          } else {
+                  Text(row.description)
+          }),
+          TableRow(content = Text(formatCurrencyAmount(row.chargeAmount)), format = Some("numeric")),
+          TableRow(content = Text(formatCurrencyAmount(row.outstandingAmount)), format = Some("numeric")),
+          TableRow(content = Text(row.dueDate.toDateFormat))
+        )
+      },
+        caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
+        captionClasses = "govuk-table__caption--m",
+        attributes = Map("style" -> "overflow-wrap: normal;")
+    ))
+  )
 }

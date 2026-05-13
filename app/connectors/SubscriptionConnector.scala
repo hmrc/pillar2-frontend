@@ -97,8 +97,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  /** Read Subscription V2: returns multiple accounting periods with canAmend flags. */
-  def readSubscriptionV2(
+  /** Read and cache Subscription V2: returns multiple accounting periods with canAmend flags, caches the result. */
+  def readAndCacheSubscriptionV2(
     userId:       String,
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV2] = {
@@ -114,6 +114,27 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case notFoundResponse if notFoundResponse.status == NOT_FOUND =>
           Future.failed(NoResultFound)
         case e =>
+          logger.warn(s"Connection issue when calling read subscription v2 with status: ${e.status}")
+          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
+          else Future.failed(InternalIssueError)
+      }
+  }
+
+  /** Read Subscription V2 (no cache). Uses the v2 endpoint that returns multiple accounting periods. */
+  def readSubscriptionV2(
+    plrReference: String
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataV2]] = {
+    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
+    http
+      .get(url"$subscriptionUrl")
+      .execute[HttpResponse]
+      .flatMap {
+        case response if response.status == OK =>
+          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccessV2].success))
+        case response if response.status == UNPROCESSABLE_ENTITY =>
+          Future.failed(UnprocessableEntityError)
+        case notFoundResponse if notFoundResponse.status == NOT_FOUND => Future.successful(None)
+        case e                                                        =>
           logger.warn(s"Connection issue when calling read subscription v2 with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)
