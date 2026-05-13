@@ -133,7 +133,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
         .getElementsByClass("govuk-body")
         .get(2)
         .text() mustBe "Unallocated amounts are payments received that have not been allocated to a charge yet." +
-        " If you have made a payment for an exising charge this will usually update over night and you will see it appear in the transaction details."
+        " If you have made a payment for an existing charge this will usually update over night and you will see it appear in the transaction details."
     }
 
     "display a correct html details section" in {
