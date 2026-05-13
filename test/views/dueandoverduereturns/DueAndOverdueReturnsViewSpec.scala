@@ -77,10 +77,11 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
   def verifyTableHeaders(table: Elements): Unit = {
     val headers: Elements = table.select("th")
-    headers.size() mustBe 3
+    headers.size() mustBe 4
     headers.get(0).text mustBe "Type of return"
     headers.get(1).text mustBe "Due date"
     headers.get(2).text mustBe "Status"
+    headers.get(3).text mustBe "UK Tax Return"
   }
 
   "DueAndOverdueReturnsView" when {
@@ -148,9 +149,10 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         verifyTableHeaders(tables)
 
+        val headerCells: Elements = tables.select("th")
+        headerCells.get(3).text mustBe "UK Tax Return"
         val cells: Elements = tables.select("td")
-        cells.get(0).text mustBe "UK Tax Return"
-        cells.get(1).text mustBe futureDueDate.toDateFormat
+        cells.get(0).text mustBe futureDueDate.toDateFormat
 
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.text mustBe "Due"
@@ -173,9 +175,10 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         verifyTableHeaders(tables)
 
+        val headerCells: Elements = tables.select("th")
+        headerCells.get(3).text mustBe "UK Tax Return"
         val cells: Elements = tables.select("td")
-        cells.get(0).text mustBe "UK Tax Return"
-        cells.get(1).text mustBe pastDueDate.toDateFormat
+        cells.get(0).text mustBe pastDueDate.toDateFormat
 
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.size must be > 0
@@ -195,11 +198,11 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         val tables: Elements = view.select("table.govuk-table")
         tables.size mustBe 1
 
+        val cells: Elements = view.select("th")
+        cells.get(3).text mustBe "UK Tax Return"
+
         val rows: Elements = tables.select("tbody tr")
         rows.size mustBe 1
-
-        val cells: Elements = rows.first().select("td")
-        cells.get(0).text mustBe "UK Tax Return"
       }
     }
 
@@ -232,9 +235,10 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         firstTableRows.size mustBe 1
 
         // Check type of return and due date for first table (historic period)
+        val headerCells: Elements = view.select("th")
+        headerCells.get(3).text mustBe "UK Tax Return"
         val firstTableCells: Elements = firstTableRows.first().select("td")
-        firstTableCells.get(0).text mustBe "UK Tax Return"
-        firstTableCells.get(1).text mustBe pastDueDate.toDateFormat
+        firstTableCells.get(0).text mustBe pastDueDate.toDateFormat
 
         val firstTableStatusTag: Elements = firstTableRows.first().select("td p.govuk-tag")
         firstTableStatusTag.size must be > 0
@@ -244,14 +248,15 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         secondTableRows.size mustBe 2
 
         // Check type of return and due date for second table (current period) - first row
+        val secondTableHeaders: Elements = tables.get(1).select("th")
+        secondTableHeaders.get(3).text mustBe "UK Tax Return"
         val secondTableFirstRowCells: Elements = secondTableRows.get(0).select("td")
-        secondTableFirstRowCells.get(0).text mustBe "UK Tax Return"
-        secondTableFirstRowCells.get(1).text mustBe futureDueDate.toDateFormat
+        secondTableFirstRowCells.get(0).text mustBe futureDueDate.toDateFormat
 
         // Check type of return and due date for second table (current period) - second row
         val secondTableSecondRowCells: Elements = secondTableRows.get(1).select("td")
-        secondTableSecondRowCells.get(0).text mustBe "GloBE Information Return (GIR)"
-        secondTableSecondRowCells.get(1).text mustBe futureDueDate.toDateFormat
+        secondTableHeaders.get(4).text mustBe "GloBE Information Return (GIR)"
+        secondTableSecondRowCells.get(0).text mustBe futureDueDate.toDateFormat
 
         val secondTableStatusTags: Elements = secondTableRows.select("td p.govuk-tag")
         secondTableStatusTags.size mustBe 2
