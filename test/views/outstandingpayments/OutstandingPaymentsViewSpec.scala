@@ -173,13 +173,6 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
-    "display payment button with correct link" in {
-      val button = organisationView.getElementsByClass("govuk-button").first()
-
-      button.text() mustBe "Pay online"
-      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
-    }
-
     "display other ways to pay section" in {
       h2Elements.get(1).text() mustBe "Other ways to pay"
       paragraphs.get(2).text() mustBe "Your Pillar 2 reference: XMPLR0012345678"
@@ -190,6 +183,13 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       howToPayLink.text() mustBe "Find out more about ways to pay (opens in a new page)"
       howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
       howToPayLink.attr("target") mustBe "_blank"
+    }
+
+    "display payment button with correct link" in {
+      val button = organisationView.getElementsByClass("govuk-button").first()
+
+      button.text() mustBe "Pay online"
+      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
     }
 
     "display a payment section that contains" should {
