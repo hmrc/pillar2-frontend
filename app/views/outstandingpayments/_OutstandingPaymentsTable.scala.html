@@ -39,6 +39,7 @@
           TableRow(content = Text(row.dueDate.toDateFormat))
         )
       },
+      firstCellIsHeader = true,
       caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
       captionClasses = "govuk-table__caption--s",
       attributes = Map("style" -> "overflow-wrap: normal;")
