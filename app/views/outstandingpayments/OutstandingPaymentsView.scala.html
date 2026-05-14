@@ -91,11 +91,6 @@
                     ))))
                 }
             }
-            @govukButton(
-                ButtonViewModel(
-                    messages("payments.outstanding.pay.buttonText")
-                ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
-
             @h2(messages("payments.outstanding.otherWaysToPay.heading"), size = "m")
             @paragraphBody(
                 userTypeDependentText(
@@ -114,6 +109,12 @@
                 linkUrl = appConfig.howToPayPillar2TaxesUrl,
                 target = "_blank"
             )
+
+            @govukButton(
+                ButtonViewModel(
+                    messages("payments.outstanding.pay.buttonText")
+                ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
+
             @if(useAccountActivity) {
                 @if(hasOverdueReturnPayment) {
                   @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText", formatAmount(accruedInterest))))
