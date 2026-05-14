@@ -86,6 +86,7 @@
                                 TableRow(content = Text(formatCurrencyAmount(row.stoodoverAmount)), format = Some("numeric"))
                             )
                         },
+                        firstCellIsHeader = true,
                         caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
                         captionClasses = "govuk-table__caption govuk-table__caption--m",
                         attributes = Map("style" -> "overflow-wrap: normal;")
