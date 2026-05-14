@@ -35,6 +35,34 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
   val formProvider = new NewAccountingPeriodFormProvider()
   val form: Form[AccountingPeriod] = formProvider(chosenAccountingPeriod)
 
+  "bind successfully when a valid date is provided" in {
+    val data = Map(
+      "startDate.day"   -> "1",
+      "startDate.month" -> "1",
+      "startDate.year"  -> "2024",
+      "endDate.day"     -> "31",
+      "endDate.month"   -> "12",
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors mustBe empty
+    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
+  }
+
+  "bind successfully when leading/trailing spaces are present in a valid date" in {
+    val data = Map(
+      "startDate.day"   -> " 1 ",
+      "startDate.month" -> " 1 ",
+      "startDate.year"  -> " 2024 ",
+      "endDate.day"     -> " 31 ",
+      "endDate.month"   -> " 12 ",
+      "endDate.year"    -> " 2024 "
+    )
+
+    form.bind(data).errors mustBe empty
+    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
+  }
+
   "throw a form error for a start date before 31/12/2023" in {
 
     val startDate = LocalDate.of(2023, 12, 30)
