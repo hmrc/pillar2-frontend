@@ -16,7 +16,7 @@
 
 package models.subscription
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.*
 
 final case class AccountingPeriodAmendV2(
   amendAccountingPeriod:     Boolean,
@@ -25,5 +25,25 @@ final case class AccountingPeriodAmendV2(
 )
 
 object AccountingPeriodAmendV2 {
-  given format: OFormat[AccountingPeriodAmendV2] = Json.format[AccountingPeriodAmendV2]
+
+  private val macroFormat: OFormat[AccountingPeriodAmendV2] = Json.format[AccountingPeriodAmendV2]
+
+  given format: OFormat[AccountingPeriodAmendV2] = OFormat(
+    Reads { json =>
+      json.validate[AccountingPeriodAmendV2](macroFormat).flatMap { accountingPeriodAmendV2 =>
+        (
+          accountingPeriodAmendV2.amendAccountingPeriod,
+          accountingPeriodAmendV2.originalAccountingPeriods,
+          accountingPeriodAmendV2.newAccountingPeriod
+        ) match {
+          case (true, Some(originalAccPeriods), Some(_)) if originalAccPeriods.nonEmpty => JsSuccess(accountingPeriodAmendV2)
+          case (false, None, None)                                                      => JsSuccess(accountingPeriodAmendV2)
+          case (true, _, _) => JsError("When amendAccountingPeriod is true, both originalAccountingPeriods and newAccountingPeriod must be set")
+          case _            => JsError("When amendAccountingPeriod is false, originalAccountingPeriods and newAccountingPeriod must be None")
+        }
+      }
+    },
+    macroFormat
+  )
+
 }
