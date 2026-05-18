@@ -334,15 +334,11 @@ class SubscriptionService @Inject() (
         domesticOnly = userData.subMneOrDomestic == MneOrDomestic.Uk,
         filingMember = currentData.upeDetails.filingMember
       ),
-      // contact/group amend only so not touching the accounting period
-      accountingPeriod = {
-        val accountingPeriod: AccountingPeriod = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
-        AccountingPeriodAmendV2(
-          amendAccountingPeriod = false,
-          originalAccountingPeriods = Some(Seq(OriginalAccountingPeriod(accountingPeriod.startDate, accountingPeriod.endDate))),
-          newAccountingPeriod = None
-        )
-      },
+      accountingPeriod = AccountingPeriodAmendV2(
+        amendAccountingPeriod = false,
+        originalAccountingPeriods = None,
+        newAccountingPeriod = None
+      ),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
         addressLine1 = userData.subRegisteredAddress.addressLine1,
         addressLine2 = userData.subRegisteredAddress.addressLine2,

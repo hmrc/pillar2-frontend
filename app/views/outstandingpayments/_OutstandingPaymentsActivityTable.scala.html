@@ -40,6 +40,7 @@
                     TableRow(content = Text(row.dueDate.toDateFormat))
                 )
             },
+            firstCellIsHeader = true,
             caption = Some(messages("payments.outstanding.table.caption")),
             captionClasses = "govuk-table__caption--m",
             attributes = Map("style" -> "overflow-wrap: normal;")
@@ -69,6 +70,7 @@
           TableRow(content = Text(row.dueDate.toDateFormat))
         )
       },
+        firstCellIsHeader = true,
         caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
         captionClasses = "govuk-table__caption--m",
         attributes = Map("style" -> "overflow-wrap: normal;")

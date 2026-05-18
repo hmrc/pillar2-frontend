@@ -59,6 +59,7 @@
 
   @if(showUnallocatedPaymentAmount) {
     @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
+    @p(messages("transactionHistory.unallocatedPaymentAmount.description"))
   }
 
   @details(Details(

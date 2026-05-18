@@ -39,7 +39,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val endDate2   = LocalDate.of(2023, 12, 31)
 
       val submission1 = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now, None)
-      val submission2 = Submission(SubmissionType.GIR, ZonedDateTime.now, None)
+      val submission2 = Submission(SubmissionType.GIR_CREATE, ZonedDateTime.now, None)
 
       val obligation1 = Obligation(ObligationType.UKTR, Open, canAmend = true, Seq(submission1, submission2))
       val obligation2 = Obligation(ObligationType.GIR, Fulfilled, canAmend = false, Seq(submission1))

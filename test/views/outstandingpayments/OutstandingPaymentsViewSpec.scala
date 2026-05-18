@@ -221,12 +221,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           headers.get(1).text() mustBe "Charge amount"
           headers.get(2).text() mustBe "Amount due"
           headers.get(3).text() mustBe "Due date"
+          headers.get(4).text() mustBe "UKTR - DTT Appealed"
 
           val rows: Elements = table.getElementsByTag("td")
-          rows.get(0).text() mustBe "UKTR - DTT Appealed"
+          rows.get(0).text() mustBe "£1,000.00"
           rows.get(1).text() mustBe "£1,000.00"
-          rows.get(2).text() mustBe "£1,000.00"
-          rows.get(3).text() mustBe "31 March 2024"
+          rows.get(2).text() mustBe "31 March 2024"
         }
 
         "account activity toggle is false, show correct content" in {
@@ -241,11 +241,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           headers.get(0).text() mustBe "Description"
           headers.get(1).text() mustBe "Amount"
           headers.get(2).text() mustBe "Due date"
+          headers.get(3).text() mustBe "UKTR - DTT"
 
           val rows: Elements = table.getElementsByTag("td")
-          rows.get(0).text() mustBe "UKTR - DTT"
-          rows.get(1).text() mustBe "£1,000.00"
-          rows.get(2).text() mustBe "31 March 2024"
+          rows.get(0).text() mustBe "£1,000.00"
+          rows.get(1).text() mustBe "31 March 2024"
 
           paragraphs.text must not include "An appealed charge is still part of the amount due until it is partly or completely stoodover."
           links.text      must not include "View stoodover charges"
@@ -272,8 +272,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       "display the appeal label when the appeal flag is true" in {
         val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
 
-        val rows: Elements = table.getElementsByTag("td")
-        rows.get(0).text() mustBe "UKTR - DTT Appealed"
+        val headers: Elements = table.getElementsByTag("th")
+        headers.get(4).text() mustBe "UKTR - DTT Appealed"
 
         accountActivityAppealView.getElementsByClass("govuk-tag--red").size mustBe 1
       }
@@ -281,8 +281,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       "not display the appeal label when the appeal flag is false" in {
         val table = accountActivityOrganisationView.getElementsByClass("govuk-table").first()
 
-        val rows: Elements = table.getElementsByTag("td")
-        rows.get(0).text() mustBe "UKTR - DTT"
+        val headers: Elements = table.getElementsByTag("th")
+        headers.get(4).text() mustBe "UKTR - DTT"
 
         accountActivityOrganisationView.getElementsByClass("govuk-tag--red").size mustBe 0
       }

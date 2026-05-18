@@ -59,7 +59,7 @@ case class AccountingPeriodDetails(
       .flatMap(_.submissions)
       .filter(submission =>
         submission.submissionType == UKTR_CREATE
-          || submission.submissionType == SubmissionType.GIR
+          || submission.submissionType == SubmissionType.GIR_CREATE
       )
       .maxByOption(_.receivedDate)
       .exists { submission =>
