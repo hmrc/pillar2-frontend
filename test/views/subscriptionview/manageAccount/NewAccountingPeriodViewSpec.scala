@@ -117,7 +117,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+          .text mustBe s"Enter a date on or after 31 December 2023, for example 16 3 2026"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -146,7 +146,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+            .text mustBe s"Enter a date on or after 31 December 2023, for example 16 3 2026"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
@@ -163,12 +163,63 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
+            .text mustBe s"Enter a date on or after 1 January 2024, for example 16 3 2024"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
+            .text mustBe s"Enter a date before 31 December 2025, for example 15 3 2025"
         }
+      }
+
+      "there is a period before the cutoff date" in {
+        val chosenAccountingPeriod =
+          ChosenAccountingPeriod(
+            selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)),
+            startDateBoundary = None,
+            endDateBoundary = None
+          )
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("startDate-hint")
+          .text mustBe s"Enter a date on or after 31 December 2023, for example 31 12 2023"
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("endDate-hint")
+          .text mustBe s"Enter a date, for example 31 12 2024"
+      }
+
+      "there is a period before the cutoff date with an end boundary" in {
+        val chosenAccountingPeriod =
+          ChosenAccountingPeriod(
+            selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31)),
+            startDateBoundary = None,
+            endDateBoundary = Some(LocalDate.of(2026, 1, 1))
+          )
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("startDate-hint")
+          .text mustBe s"Enter a date on or after 31 December 2023, for example 31 12 2023"
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("endDate-hint")
+          .text mustBe s"Enter a date before 1 January 2026, for example 31 12 2024"
+      }
+
+      "there is a period with a start date before the cutoff but end date after" in {
+        val chosenAccountingPeriod =
+          ChosenAccountingPeriod(
+            selectedAccountingPeriod = AccountingPeriod(LocalDate.of(2022, 1, 1), LocalDate.of(2024, 6, 30)),
+            startDateBoundary = None,
+            endDateBoundary = None
+          )
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("startDate-hint")
+          .text mustBe s"Enter a date on or after 31 December 2023, for example 31 12 2023"
+
+        organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
+          .getElementById("endDate-hint")
+          .text mustBe s"Enter a date, for example 30 6 2024"
       }
 
       "have a 'Continue' button" in {
@@ -213,7 +264,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
         startDateFieldset
           .getElementById("startDate-hint")
-          .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+          .text mustBe s"Enter a date on or after 31 December 2023, for example 16 3 2026"
 
         startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
@@ -242,7 +293,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 30 December 2023, for example 16 3 2026"
+            .text mustBe s"Enter a date on or after 31 December 2023, for example 16 3 2026"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
@@ -259,11 +310,11 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date after 31 December 2023, for example 16 3 2024"
+            .text mustBe s"Enter a date on or after 1 January 2024, for example 16 3 2024"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
-            .text mustBe s"Enter a date before 1 January 2026, for example 15 3 2025"
+            .text mustBe s"Enter a date before 31 December 2025, for example 15 3 2025"
         }
       }
 

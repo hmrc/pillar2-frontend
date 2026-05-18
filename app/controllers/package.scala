@@ -52,24 +52,20 @@ package object controllers {
     val selectedIndex: Int                     = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
 
     val startBoundaryDate =
-      if selectedIndex >= 0 then {
+      if selectedIndex >= 0 then
         sorted
-          .drop(selectedIndex)
+          .drop(selectedIndex + 1)
           .find(period => !period.canAmendStartDate)
-          .map(_.startDate)
-      } else {
-        None
-      }
+          .map(_.endDate)
+      else None
 
     val endBoundaryDate =
-      if selectedIndex >= 0 then {
+      if selectedIndex >= 0 then
         sorted
-          .take(selectedIndex + 1)
+          .take(selectedIndex)
           .findLast(period => !period.canAmendEndDate)
-          .map(_.endDate)
-      } else {
-        None
-      }
+          .map(_.startDate)
+      else None
 
     ChosenAccountingPeriod(selectedAccountingPeriod, startBoundaryDate, endBoundaryDate)
 }
