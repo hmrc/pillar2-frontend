@@ -435,7 +435,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
                 obligation(
                   ObligationType.GIR,
                   ObligationStatus.Fulfilled,
-                  Seq(submission(SubmissionType.GIR, oldSubmissionDate))
+                  Seq(submission(SubmissionType.GIR_CREATE, oldSubmissionDate))
                 )
               )
             )
@@ -481,7 +481,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
                 obligation(
                   ObligationType.GIR,
                   ObligationStatus.Fulfilled,
-                  Seq(submission(SubmissionType.GIR, recentSubmissionDate))
+                  Seq(submission(SubmissionType.GIR_CREATE, recentSubmissionDate))
                 )
               )
             )
@@ -510,7 +510,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
                 obligation(
                   ObligationType.GIR,
                   ObligationStatus.Fulfilled,
-                  Seq(submission(SubmissionType.GIR, recentSubmissionDate))
+                  Seq(submission(SubmissionType.GIR_CREATE, recentSubmissionDate))
                 )
               )
             )

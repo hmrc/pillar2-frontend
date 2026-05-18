@@ -49,7 +49,13 @@ object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionT
   case object BTN extends SubmissionType {
     override val fullName: String = "Below-Threshold Notification"
   }
-  case object GIR extends SubmissionType {
+  case object GIR_CREATE extends SubmissionType {
     override val fullName: String = "GloBE Information Return (GIR)"
+  }
+  case object GIR_AMEND extends SubmissionType {
+    override val fullName: String = "GloBE Information Return (GIR) amendment"
+  }
+  case object GIR_DELETE extends SubmissionType {
+    override val fullName: String = "GloBE Information Return (GIR) deleted"
   }
 }
