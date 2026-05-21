@@ -55,16 +55,26 @@ package object controllers {
       if selectedIndex >= 0 then
         sorted
           .drop(selectedIndex + 1)
-          .find(period => !period.canAmendStartDate)
-          .map(_.endDate)
+          .flatMap { period =>
+            Seq(
+              Option.when(!period.canAmendStartDate)(period.startDate),
+              Option.when(!period.canAmendEndDate)(period.endDate)
+            ).flatten
+          }
+          .maxByOption(identity)
       else None
 
     val endBoundaryDate =
       if selectedIndex >= 0 then
         sorted
           .take(selectedIndex)
-          .findLast(period => !period.canAmendEndDate)
-          .map(_.startDate)
+          .flatMap { period =>
+            Seq(
+              Option.when(!period.canAmendEndDate)(period.endDate),
+              Option.when(!period.canAmendStartDate)(period.startDate)
+            ).flatten
+          }
+          .minByOption(identity)
       else None
 
     ChosenAccountingPeriod(selectedAccountingPeriod, startBoundaryDate, endBoundaryDate)
