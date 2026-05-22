@@ -52,7 +52,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(FmRegisteredInUKPage, false)
           .setOrException(NominateFilingMemberPage, true)
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -81,7 +81,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(FmRegisteredInUKPage, false)
           .setOrException(NominateFilingMemberPage, false)
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -111,7 +111,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(UpeNonUKSafeIDPage, "123123")
           .setOrException(FmNonUKSafeIDPage, "321321")
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -147,7 +147,7 @@ class SubscriptionServiceSpec extends SpecBase {
             UpeRegInformationPage,
             RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
           )
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -175,7 +175,7 @@ class SubscriptionServiceSpec extends SpecBase {
             UpeRegInformationPage,
             RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
           )
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -205,7 +205,7 @@ class SubscriptionServiceSpec extends SpecBase {
             UpeRegInformationPage,
             RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
           )
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -236,7 +236,7 @@ class SubscriptionServiceSpec extends SpecBase {
             UpeRegInformationPage,
             RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
           )
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -267,7 +267,7 @@ class SubscriptionServiceSpec extends SpecBase {
             UpeRegInformationPage,
             RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
           )
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
             bind[RegistrationConnector].toInstance(mockRegistrationConnector),
@@ -282,6 +282,277 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(expectedGroupIdReturned)
           when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.DuplicateSubmissionError
+        }
+      }
+
+      "throw an exception if the upeSafeId is equal to the nfmSafeId" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswer), additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
+          .overrides(
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockRegistrationConnector.registerUltimateParent(any())(using any())).thenReturn(Future.successful("DuplicateID"))
+          when(mockRegistrationConnector.registerFilingMember(any())(using any())).thenReturn(Future.successful("DuplicateID"))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.DuplicateSafeIdError
+        }
+      }
+
+    }
+
+    "subscribeV2" must {
+      "return a success response with a Pillar 2 reference for non uk based upe and fm" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockRegistrationConnector.registerUltimateParent(any())(using any())).thenReturn(Future.successful("upeID"))
+          when(mockRegistrationConnector.registerFilingMember(any())(using any())).thenReturn(Future.successful("fmID"))
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
+      }
+
+      "return a success response with a Pillar 2 reference for non uk based upe and no filing member" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, false)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockRegistrationConnector.registerUltimateParent(any())(using any())).thenReturn(Future.successful("upeID"))
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
+      }
+
+      "return success response and do not call register connector when non uk upe and fm is already set" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(UpeNonUKSafeIDPage, "123123")
+          .setOrException(FmNonUKSafeIDPage, "321321")
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+
+          verify(mockRegistrationConnector, never()).registerUltimateParent(any())(using any())
+          verify(mockRegistrationConnector, never()).registerFilingMember(any())(using any())
+
+          result.futureValue mustBe "ID"
+        }
+      }
+
+      "return a success response with a Pillar 2 reference for uk based upe and filing member" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
+      }
+
+      "return a success response with a Pillar 2 reference for uk based upe and no filing member" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, false)
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.futureValue mustBe "ID"
+        }
+      }
+
+      "throw an exception if subscription fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.failed(models.InternalIssueError))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.successful(Done))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.InternalIssueError
+        }
+      }
+
+      "throw an exception if create enrolment fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.failed(models.InternalIssueError))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.InternalIssueError
+        }
+      }
+
+      "throw an exception if enrolment proxy returns true" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(FmRegisteredInUKPage, true)
+          .setOrException(NominateFilingMemberPage, true)
+          .setOrException(FmSafeIDPage, "fmSafeID")
+          .setOrException(
+            UpeRegInformationPage,
+            RegistrationInfo(crn = "crn", utr = "utr", safeId = "upeSafeID", registrationDate = None, filingMember = None)
+          )
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockSubscriptionConnector.subscribeV2(any())(using any())).thenReturn(Future.successful("ID"))
+          when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any())).thenReturn(expectedGroupIdReturned)
+          when(mockEnrolmentConnector.enrolAndActivate(any())(using any())).thenReturn(Future.failed(models.InternalIssueError))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.DuplicateSubmissionError
         }
@@ -309,7 +580,6 @@ class SubscriptionServiceSpec extends SpecBase {
           result.failed.futureValue mustBe models.DuplicateSafeIdError
         }
       }
-
     }
 
     "cacheSubscription" must {
