@@ -36,8 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
-  private val subscriptionUrl:   String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
-  private val subscriptionUrlV2: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/create-subscription"
+  private val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
   def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(using hc: HeaderCarrier): Future[String] =
     http
@@ -57,28 +56,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           )
           logger.warn(s"Subscription call failed with status ${errorResponse.status}")
 
-          Future.failed(InternalIssueError)
-      }
-
-  def subscribeV2(subscriptionRequestParameters: SubscriptionRequestParameters)(using hc: HeaderCarrier): Future[String] =
-    http
-      .post(url"$subscriptionUrlV2")
-      .withBody(Json.toJson(subscriptionRequestParameters))
-      .execute[HttpResponse]
-      .flatMap {
-        case response if is2xx(response.status) =>
-          logger.info(s"Subscription V2 request is successful with status ${response.status}")
-          response.json.as[SuccessResponse].success.plrReference.toFuture
-        case conflictResponse if conflictResponse.status.equals(CONFLICT) =>
-          Future.failed(DuplicateSubmissionError)
-        case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) =>
-          Future.failed(UnprocessableEntityError)
-        case errorResponse =>
-          logger.debug(
-            s"[Subscription V2 failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
-              s"and fmSafeId ${subscriptionRequestParameters.fmSafeId}"
-          )
-          logger.warn(s"Subscription V2 call failed with status ${errorResponse.status}")
           Future.failed(InternalIssueError)
       }
 
