@@ -846,6 +846,7 @@ newAccountingPeriod.p2 = Accounting periods are usually 12 months, but can be lo
 
 newAccountingPeriod.startDate.heading = Start date
 newAccountingPeriod.startDate.hint = Enter a date on or after {0}, for example {1}
+newAccountingPeriod.startDate.hintWithBoundary = Enter a date after {0}, for example {1}
 newAccountingPeriod.endDate.heading = End date
 newAccountingPeriod.endDate.hint = Enter a date before {0}, for example {1}
 newAccountingPeriod.endDate.hintWithoutBoundary = Enter a date, for example {0}

@@ -163,7 +163,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date on or after 1 January 2024, for example 16 3 2024"
+            .text mustBe s"Enter a date after 1 January 2024, for example 16 3 2024"
 
           organisationView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
@@ -310,7 +310,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("startDate-hint")
-            .text mustBe s"Enter a date on or after 1 January 2024, for example 16 3 2024"
+            .text mustBe s"Enter a date after 1 January 2024, for example 16 3 2024"
 
           agentView(chosenAccountingPeriod = chosenAccountingPeriod)
             .getElementById("endDate-hint")
