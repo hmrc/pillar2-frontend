@@ -56,7 +56,8 @@ object SubmissionHistoryHelper {
             attributes = Map("scope" -> "col")
           )
         )
-      )
+      ),
+      firstCellIsHeader = true
     )
   }
 

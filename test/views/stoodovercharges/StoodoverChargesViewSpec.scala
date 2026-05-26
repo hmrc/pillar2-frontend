@@ -136,9 +136,10 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
       headers.get(0).text() mustBe "Description"
       headers.get(1).text() mustBe "Stoodover amount"
 
+      val headerCells: Elements = table.getElementsByTag("th")
+      headerCells.get(2).text() mustBe "UKTR - DTT"
       val rows: Elements = table.getElementsByTag("td")
-      rows.get(0).text() mustBe "UKTR - DTT"
-      rows.get(1).text() mustBe "£1,000"
+      rows.get(0).text() mustBe "£1,000"
     }
 
     "display 'No stoodover charges' message if no stood overcharges are present" in {
