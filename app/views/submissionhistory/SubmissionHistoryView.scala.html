@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-@import views.html.components.gds.ScrollWrapper
+@import views.html.components.gds.LabelledScrollWrapper
 @import views.html.styles.tableScrollStyles
 @import models.obligationsandsubmissions.AccountingPeriodDetails
 @import views.helpers.SubmissionHistoryHelper
@@ -62,7 +62,7 @@
     <br>
     @tableScrollStyles()
     @for(table <- SubmissionHistoryHelper.generateSubmissionHistoryTable(accountPeriods)) {
-        @ScrollWrapper {
+        @LabelledScrollWrapper(messages("submissionHistory.heading")) {
             @govukTable(table)
         }
     }

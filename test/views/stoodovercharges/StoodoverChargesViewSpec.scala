@@ -142,6 +142,14 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
       rows.get(0).text() mustBe "£1,000"
     }
 
+    "wrap the table with a labelled scrollable region" in {
+      val wrapper = organisationView.selectFirst(".table-scroll-wrapper")
+
+      wrapper.attr("role") mustBe "region"
+      wrapper.attr("tabindex") mustBe "0"
+      wrapper.attr("aria-label") mustBe "Accounting period: 1 April 2023 to 31 March 2024 table"
+    }
+
     "display 'No stoodover charges' message if no stood overcharges are present" in {
       noStoodoverChargesView.getElementsByClass("govuk-body").get(1).text() mustBe "No stoodover charges."
       noStoodoverChargesView.getElementsByClass("govuk-table").size() mustBe 0

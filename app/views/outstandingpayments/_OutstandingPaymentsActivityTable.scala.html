@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components.gds.ScrollWrapper
+@import views.html.components.gds.LabelledScrollWrapper
 @import views.ViewUtils._
 @import _root_.utils.DateTimeUtils._
 
@@ -24,7 +24,7 @@
 @(data: Seq[OutstandingPaymentsTableForActivity], penalties: Seq[OutstandingPaymentsRowForActivity])(implicit messages: Messages)
 
 @if(penalties.nonEmpty) {
-    @ScrollWrapper(
+    @LabelledScrollWrapper(messages("payments.outstanding.table.caption"))(
         govukTable(Table(
             head = Some(Seq(
                 HeadCell(Text(messages("payments.outstanding.table.heading.description")), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),
@@ -49,7 +49,7 @@
 }
 
 @data.map { summary =>
-  @ScrollWrapper(
+  @LabelledScrollWrapper(s"Accounting period: ${messages(summary.accountingPeriod.startDate.toDateFormat)} to ${summary.accountingPeriod.endDate.toDateFormat}")(
     govukTable(Table(
       head = Some(Seq(
         HeadCell(messages("payments.outstanding.table.heading.description"), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),

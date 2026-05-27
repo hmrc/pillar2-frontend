@@ -206,6 +206,14 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       thirdRowCells.get(3).text() mustBe "£-250.00"
     }
 
+    "wrap the table with a labelled scrollable region" in {
+      val wrapper = groupView.selectFirst(".table-scroll-wrapper")
+
+      wrapper.attr("role") mustBe "region"
+      wrapper.attr("tabindex") mustBe "0"
+      wrapper.attr("aria-label") mustBe "Transactions table"
+    }
+
     "have pagination" in {
       val paginationLinks: Elements = groupView.getElementsByClass("govuk-link govuk-pagination__link")
 

@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,8 @@
  * limitations under the License.
  *@
 
-@()
+@(label: String)(content: Html)
 
-<style>
-        .table-scroll-wrapper {
-            overflow-x: auto;
-            width: 100%;
-        }
-
-        .table-scroll-wrapper:focus,
-        .table-scroll-wrapper:focus-visible {
-            outline: 3px solid #ffdd00;
-            outline-offset: 0;
-            padding: 5px;
-        }
-
-        .govuk-table thead th {
-            position: sticky;
-            top: 0;
-            background: #ffffff;
-            z-index: 2;
-            border-bottom: 2px solid #b1b4b6;
-        }
-</style>
+<div class="table-scroll-wrapper" role="region" tabindex="0" aria-label="@label table">
+  @content
+</div>

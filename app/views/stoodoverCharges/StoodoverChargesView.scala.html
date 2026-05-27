@@ -72,7 +72,7 @@
             paragraphBody(messages("payments.stoodoverCharges.details.noStoodoverCharges"), classes = "govuk-body govuk-!-margin-bottom-8 govuk-!-margin-top-7")
         } else {
             data.map { summary =>
-                ScrollWrapper(
+                LabelledScrollWrapper(messages("dueAndOverdueReturns.accountingPeriod", summary.accountingPeriod.startDate.toDateFormat, summary.accountingPeriod.endDate.toDateFormat))(
                     govukTable(Table(
                         head = Some(
                             Seq(
