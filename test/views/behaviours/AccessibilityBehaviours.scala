@@ -58,7 +58,7 @@ trait AccessibilityBehaviours extends AnyWordSpec {
 
           val levels = headings.map(h => h.tagName().drop(1).toInt)
           levels.zip(levels.drop(1)).foreach { case (previous, current) =>
-            (current - previous) must be <= 2
+            (current - previous) must be <= 1
           }
         }
 
