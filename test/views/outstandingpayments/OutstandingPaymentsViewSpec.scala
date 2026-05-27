@@ -140,11 +140,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           .text() must include("Late payment interest accrued: £")
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(5)
+          .get(6)
           .text() mustBe "Late payment interest increases daily. The amount shows the interest accrued up until today."
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(6)
+          .get(7)
           .text mustBe "It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment."
       }
 
@@ -173,23 +173,25 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
+    "display how to pay section" in {
+      h2Elements.get(1).text() mustBe "How to pay"
+      paragraphs.get(2).text() mustBe "You can pay online or make a manual payment."
+      paragraphs.get(3).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+      paragraphs.get(3).select("strong").text() mustBe "XMPLR0012345678"
+      paragraphs.get(4).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
+
+      val howToPayLink = links.get(2)
+
+      howToPayLink.text() mustBe "Find out more about ways to pay (opens in a new tab)"
+      howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      howToPayLink.attr("target") mustBe "_blank"
+    }
+
     "display payment button with correct link" in {
       val button = organisationView.getElementsByClass("govuk-button").first()
 
       button.text() mustBe "Pay online"
       button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
-    }
-
-    "display other ways to pay section" in {
-      h2Elements.get(1).text() mustBe "Other ways to pay"
-      paragraphs.get(2).text() mustBe "Your Pillar 2 reference: XMPLR0012345678"
-      paragraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
-
-      val howToPayLink = links.get(2)
-
-      howToPayLink.text() mustBe "Find out more about ways to pay (opens in a new page)"
-      howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
-      howToPayLink.attr("target") mustBe "_blank"
     }
 
     "display a payment section that contains" should {
@@ -201,8 +203,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         "account activity toggle is true, include stoodover charge content" in {
           val paragraphs = accountActivityOrganisationView.getElementsByClass("govuk-body")
 
-          paragraphs.get(7).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
-          paragraphs.get(8).text() mustBe "An appealed charge is still part of the amount due until it is partly or completely stoodover."
+          paragraphs.get(8).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+          paragraphs.get(9).text() mustBe "An appealed charge is still part of the amount due until it is partly or completely stoodover."
 
           accountActivityOrganisationView.getElementsByClass("govuk-link")
 
@@ -230,7 +232,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         }
 
         "account activity toggle is false, show correct content" in {
-          paragraphs.get(5).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+          paragraphs.get(6).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
 
           val table = organisationView.getElementsByClass("govuk-table").first()
 
@@ -263,7 +265,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
             .toString()
         )
 
-        noPaymentsView.getElementsByClass("govuk-body").get(6).text() mustBe "No payments due."
+        noPaymentsView.getElementsByClass("govuk-body").get(7).text() mustBe "No payments due."
         noPaymentsView.getElementsByClass("govuk-table").size() mustBe 0
       }
     }
@@ -293,7 +295,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         accountActivityOrganisationView.getElementsByTag("h2").get(3).text() mustBe "Stoodover charges"
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(10)
+          .get(11)
           .text() mustBe "Details of appealed charges and other standover payments."
 
         val viewTransactionHistoryLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
@@ -311,7 +313,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display transaction history section" in {
       h2Elements.get(3).text() mustBe "Transaction history"
-      paragraphs.get(6).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+      paragraphs.get(7).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
 
       val viewTransactionHistoryLink = links.get(3)
 
@@ -321,7 +323,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display penalties and charges section" in {
       h2Elements.get(4).text() mustBe "Penalties and interest charges"
-      paragraphs.get(9).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      paragraphs.get(10).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
       val penaltiesLink: Element = links.get(4)
 
@@ -370,10 +372,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
         agentViewParagraphs.get(1).text() mustBe "Any payments made before today have reduced the amount due and are not " +
           "included in this total. The group must still pay the amount due."
-        agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-        agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+        agentViewParagraphs.get(2).text() mustBe "You can pay online or make a manual payment."
+        agentViewParagraphs.get(3).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+        agentViewParagraphs.get(3).select("strong").text() mustBe "XMPLR0012345678"
+        agentViewParagraphs.get(4).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(10).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {

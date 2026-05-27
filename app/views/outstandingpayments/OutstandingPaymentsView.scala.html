@@ -91,29 +91,26 @@
                     ))))
                 }
             }
+            @h2(messages("payments.outstanding.howToPay.heading"), size = "m")
+            @paragraphBody(messages("payments.outstanding.howToPay.p1"))
+            <p class="govuk-body">@messages("payments.outstanding.howToPay.p2") <strong>@plrReference</strong></p>
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.howToPay.p3"),
+                    messages("payments.outstanding.howToPay.agent.p3")
+                )
+            )
+            @paragraphMessageWithLink(
+                linkMessage = messages("payments.outstanding.howToPay.linkText"),
+                linkUrl = appConfig.howToPayPillar2TaxesUrl,
+                target = "_blank"
+            )
+
             @govukButton(
                 ButtonViewModel(
                     messages("payments.outstanding.pay.buttonText")
                 ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
 
-            @h2(messages("payments.outstanding.otherWaysToPay.heading"), size = "m")
-            @paragraphBody(
-                userTypeDependentText(
-                    messages("payments.outstanding.otherWaysToPay.p1", plrReference),
-                    messages("payments.outstanding.otherWaysToPay.agent.p1", plrReference)
-                )
-            )
-            @paragraphBody(
-                userTypeDependentText(
-                    messages("payments.outstanding.otherWaysToPay.p2"),
-                    messages("payments.outstanding.otherWaysToPay.agent.p2")
-                )
-            )
-            @paragraphMessageWithLink(
-                linkMessage = messages("payments.outstanding.otherWaysToPay.linkText"),
-                linkUrl = appConfig.howToPayPillar2TaxesUrl,
-                target = "_blank"
-            )
             @if(useAccountActivity) {
                 @if(hasOverdueReturnPayment) {
                   @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText", formatAmount(accruedInterest))))
