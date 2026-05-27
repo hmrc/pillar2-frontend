@@ -232,7 +232,9 @@ object TransactionHistoryController {
           HeadCell(Text(messages("transactionHistory.amountRepaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
         )
       ),
-      firstCellIsHeader = true
+      firstCellIsHeader = true,
+      caption = Some(messages("transactionHistory.transactions")),
+      captionClasses = "govuk-table__caption--m"
     )
 
   private def createTableRows(history: Transaction, useNewApi: Boolean)(using messages: Messages): Seq[TableRow] = {

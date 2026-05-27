@@ -19,7 +19,7 @@ package views.paymenthistory
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
@@ -44,7 +44,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
         HeadCell(Text("You paid HMRC")),
         HeadCell(Text("HMRC paid you"))
       )
-    )
+    ),
+    caption = Some("Transactions"),
+    captionClasses = "govuk-table__caption--m"
   )
 
   lazy val pagination: Some[Pagination] = Some(
@@ -165,13 +167,12 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       )
     }
 
-    "display transactions heading" in {
-      groupView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
-    }
-
     "have a table" in {
       val tableElements: Elements = groupView.select("table.govuk-table")
       tableElements.size() mustBe 1
+
+      val caption: Element = tableElements.first().getElementsByClass("govuk-table__caption--m").first()
+      caption.text() mustBe "Transactions"
 
       val tableHead: Elements = tableElements.first().getElementsByClass("govuk-table__head")
       val tableHeadColumns = tableHead.first().getElementsByClass("govuk-table__header")
@@ -224,7 +225,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have an 'Outstanding payments' heading" in {
       val h2Elements: Elements = groupView.getElementsByTag("h2")
-      h2Elements.get(2).text() mustBe "Outstanding payments"
+      h2Elements.get(1).text() mustBe "Outstanding payments"
     }
 
     "show the correct transaction history description" in {
