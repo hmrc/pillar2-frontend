@@ -1864,12 +1864,12 @@ payments.outstanding.accruedInterest.description.p1 = Late payment interest incr
 payments.outstanding.accruedInterest.description.p2 = It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment.
 
 payments.outstanding.pay.buttonText = Pay online
-payments.outstanding.otherWaysToPay.heading = Other ways to pay
-payments.outstanding.otherWaysToPay.p1 = Your Pillar 2 reference: {0}
-payments.outstanding.otherWaysToPay.agent.p1 = Pillar 2 reference: {0}
-payments.outstanding.otherWaysToPay.p2 = You’ll need to use this reference if you want to make a manual payment.
-payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this reference if you want to make a manual payment for this group.
-payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay (opens in a new page)
+payments.outstanding.howToPay.heading = How to pay
+payments.outstanding.howToPay.p1 = You can pay online or make a manual payment.
+payments.outstanding.howToPay.p2 = Pillar 2 reference:
+payments.outstanding.howToPay.p3 = You’ll need to use this reference if you want to make a manual payment.
+payments.outstanding.howToPay.agent.p3 = You’ll need to use this reference if you want to make a manual payment for this group.
+payments.outstanding.howToPay.linkText = Find out more about ways to pay (opens in a new tab)
 
 payments.outstanding.details.heading = Details of outstanding payments
 payments.outstanding.details.p1 = We have separated any payments due by the associated accounting period where there is one.
