@@ -52,15 +52,9 @@ class SubscriptionService @Inject() (
       upeSafeId     <- registerUpe(userAnswers)
       latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
       updatedAnswers = latestAnswers.getOrElse(userAnswers)
-      nfmSafeId <- registerNfm(updatedAnswers)
-      _         <- if upeSafeId != nfmSafeId.getOrElse("") then Future.unit else Future.failed(DuplicateSafeIdError)
-      plrRef    <- if appConfig.amendMultipleAccountingPeriods then {
-                  logger.info("createSubscription - using V2 path")
-                  subscriptionConnector.subscribeV2(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
-                } else {
-                  logger.info("createSubscription - using V1 path")
-                  subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
-                }
+      nfmSafeId       <- registerNfm(updatedAnswers)
+      _               <- if upeSafeId != nfmSafeId.getOrElse("") then Future.unit else Future.failed(DuplicateSafeIdError)
+      plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
       enrolmentExists <- enrolmentExists(plrRef)
       _               <- if !enrolmentExists then Future.unit else Future.failed(DuplicateSubmissionError)
       enrolmentInfo = updatedAnswers.createEnrolmentInfo(plrRef)
