@@ -112,13 +112,13 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display total amount due correctly" in {
-      organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Amount due: £1,000.00"
+      paragraphs.get(0).text() mustBe "Amount due: £1,000.00"
     }
 
-    "display the leading paragraphs correctly" in {
-      paragraphs.get(0).text() mustBe "The amount includes all tax liabilities and penalty charges currently due. " +
+    "display outstanding payment breakdown paragraphs" in {
+      paragraphs.get(1).text() mustBe "The amount includes all tax liabilities and penalty charges currently due. " +
         "This may include more than one accounting period."
-      paragraphs.get(1).text() mustBe "Any payments made before today have reduced the amount due and are not " +
+      paragraphs.get(2).text() mustBe "Any payments made before today have reduced the amount due and are not " +
         "included in this total. You must still pay the amount due."
     }
 
@@ -140,11 +140,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           .text() must include("Late payment interest accrued: £")
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(6)
+          .get(7)
           .text() mustBe "Late payment interest increases daily. The amount shows the interest accrued up until today."
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(7)
+          .get(8)
           .text mustBe "It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment."
       }
 
@@ -174,11 +174,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display how to pay section" in {
-      h2Elements.get(1).text() mustBe "How to pay"
-      paragraphs.get(2).text() mustBe "You can pay online or make a manual payment."
-      paragraphs.get(3).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-      paragraphs.get(3).select("strong").text() mustBe "XMPLR0012345678"
-      paragraphs.get(4).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
+      h2Elements.get(0).text() mustBe "How to pay"
+      paragraphs.get(3).text() mustBe "You can pay online or make a manual payment."
+      paragraphs.get(4).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+      paragraphs.get(4).select("strong").text() mustBe "XMPLR0012345678"
+      paragraphs.get(5).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
 
       val howToPayLink = links.get(2)
 
@@ -196,15 +196,15 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display a payment section that contains" should {
       "a heading" in {
-        h2Elements.get(2).text() mustBe "Details of outstanding payments"
+        h2Elements.get(1).text() mustBe "Details of outstanding payments"
       }
 
       "table if there are outstanding payments" when {
         "account activity toggle is true, include stoodover charge content" in {
           val paragraphs = accountActivityOrganisationView.getElementsByClass("govuk-body")
 
-          paragraphs.get(8).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
-          paragraphs.get(9).text() mustBe "An appealed charge is still part of the amount due until it is partly or completely stoodover."
+          paragraphs.get(9).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+          paragraphs.get(10).text() mustBe "An appealed charge is still part of the amount due until it is partly or completely stoodover."
 
           accountActivityOrganisationView.getElementsByClass("govuk-link")
 
@@ -232,7 +232,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         }
 
         "account activity toggle is false, show correct content" in {
-          paragraphs.get(6).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
+          paragraphs.get(7).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
 
           val table = organisationView.getElementsByClass("govuk-table").first()
 
@@ -265,7 +265,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
             .toString()
         )
 
-        noPaymentsView.getElementsByClass("govuk-body").get(7).text() mustBe "No payments due."
+        noPaymentsView.getElementsByClass("govuk-body").get(8).text() mustBe "No payments due."
         noPaymentsView.getElementsByClass("govuk-table").size() mustBe 0
       }
     }
@@ -292,10 +292,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "The stoodover charges section" must {
       "be displayed when account activity toggle is true" in {
-        accountActivityOrganisationView.getElementsByTag("h2").get(3).text() mustBe "Stoodover charges"
+        accountActivityOrganisationView.getElementsByTag("h2").get(2).text() mustBe "Stoodover charges"
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
-          .get(11)
+          .get(12)
           .text() mustBe "Details of appealed charges and other standover payments."
 
         val viewTransactionHistoryLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
@@ -312,8 +312,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display transaction history section" in {
-      h2Elements.get(3).text() mustBe "Transaction history"
-      paragraphs.get(7).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+      h2Elements.get(2).text() mustBe "Transaction history"
+      paragraphs.get(8).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
 
       val viewTransactionHistoryLink = links.get(3)
 
@@ -322,8 +322,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display penalties and charges section" in {
-      h2Elements.get(4).text() mustBe "Penalties and interest charges"
-      paragraphs.get(10).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      h2Elements.get(3).text() mustBe "Penalties and interest charges"
+      paragraphs.get(11).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
       val penaltiesLink: Element = links.get(4)
 
@@ -370,14 +370,14 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       "should display agent-specific paragraphs" in {
         val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-        agentViewParagraphs.get(1).text() mustBe "Any payments made before today have reduced the amount due and are not " +
+        agentViewParagraphs.get(2).text() mustBe "Any payments made before today have reduced the amount due and are not " +
           "included in this total. The group must still pay the amount due."
-        agentViewParagraphs.get(2).text() mustBe "You can pay online or make a manual payment."
-        agentViewParagraphs.get(3).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-        agentViewParagraphs.get(3).select("strong").text() mustBe "XMPLR0012345678"
-        agentViewParagraphs.get(4).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+        agentViewParagraphs.get(3).text() mustBe "You can pay online or make a manual payment."
+        agentViewParagraphs.get(4).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+        agentViewParagraphs.get(4).select("strong").text() mustBe "XMPLR0012345678"
+        agentViewParagraphs.get(5).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(10).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(11).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {

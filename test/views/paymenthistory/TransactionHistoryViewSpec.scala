@@ -128,10 +128,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have the correct unallocated payment amount shown" in {
-      groupView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Unallocated amount: £500"
-      groupView
-        .getElementsByClass("govuk-body")
-        .get(2)
+      groupViewParagraphs.get(2).text() mustBe "Unallocated amount: £500"
+      groupViewParagraphs
+        .get(3)
         .text() mustBe "Unallocated amounts are payments received that have not been allocated to a charge yet." +
         " If you have made a payment for an existing charge this will usually update over night and you will see it appear in the transaction details."
     }
@@ -166,7 +165,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "display transactions heading" in {
-      groupView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
+      groupView.getElementsByClass("govuk-heading-m").get(0).text() mustBe "Transactions"
     }
 
     "have a table" in {
@@ -224,11 +223,11 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have an 'Outstanding payments' heading" in {
       val h2Elements: Elements = groupView.getElementsByTag("h2")
-      h2Elements.get(2).text() mustBe "Outstanding payments"
+      h2Elements.get(1).text() mustBe "Outstanding payments"
     }
 
     "show the correct transaction history description" in {
-      groupViewParagraphs.get(3).text mustBe "Find full details of any payments due, including penalties and interest."
+      groupViewParagraphs.get(4).text mustBe "Find full details of any payments due, including penalties and interest."
     }
 
     "show the correct outstanding payments link" in {

@@ -58,7 +58,9 @@
   @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
 
   @if(showUnallocatedPaymentAmount) {
-    @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
+      @messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount))
+    </p>
     @p(messages("transactionHistory.unallocatedPaymentAmount.description"))
   }
 
