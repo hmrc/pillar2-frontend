@@ -164,7 +164,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 27 May 2019 to 27 May 2026 table"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
       }
     }
 
@@ -199,7 +199,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 27 May 2019 to 27 May 2026 table"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
       }
     }
 
@@ -226,7 +226,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 27 May 2019 to 27 May 2026 table"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
       }
     }
 
