@@ -16,6 +16,7 @@
 
 package models.subscription
 
+import models.subscription.ChosenAccountingPeriod.cutoff
 import utils.Constants.Pillar2MinStartDate
 import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
 
@@ -28,13 +29,20 @@ case class ChosenAccountingPeriod(
 ) {
   override def toString: String = s"${selectedAccountingPeriod.startDate.toDateFormat} to ${selectedAccountingPeriod.endDate.toDateFormat}"
 
-  def startBoundaryMinusOneDay: LocalDate = startDateBoundary match {
-    case Some(date) => date.minusDays(1)
-    case _          => Pillar2MinStartDate.minusDays(1)
-  }
+  def startBoundaryHintFormat: String = startDateBoundary
+    .map(date => if date.isBefore(Pillar2MinStartDate) then Pillar2MinStartDate else date)
+    .map(_.toDateFormat)
+    .getOrElse(Pillar2MinStartDate.toDateFormat)
 
-  def startBoundaryHintFormat: String = startBoundaryMinusOneDay.toDateFormat
+  def startDateHintEntryFormat: String =
+    if selectedAccountingPeriod.startDate.isBefore(cutoff) then cutoff.toDateEntryFormat
+    else selectedAccountingPeriod.startDate.toDateEntryFormat
 
-  def startDateHintEntryFormat: String = selectedAccountingPeriod.startDate.toDateEntryFormat
-  def endDateHintEntryFormat:   String = selectedAccountingPeriod.endDate.toDateEntryFormat
+  def endDateHintEntryFormat: String =
+    if selectedAccountingPeriod.endDate.isBefore(cutoff) then cutoff.plusYears(1).toDateEntryFormat
+    else selectedAccountingPeriod.endDate.toDateEntryFormat
+}
+
+object ChosenAccountingPeriod {
+  val cutoff: LocalDate = LocalDate.of(2023, 12, 31)
 }

@@ -63,12 +63,18 @@
                 legend = LegendViewModel(messages("newAccountingPeriod.startDate.heading")).asPageHeading1(Small, headingLevel = Some("h2"))
             )
             .withHint(HintViewModel(content = Text(
-                messages(
-                    "newAccountingPeriod.startDate.hint",
-                    chosenAccountingPeriod.startBoundaryHintFormat,
-                    chosenAccountingPeriod.startDateHintEntryFormat)
-                )
-            ))
+                chosenAccountingPeriod.startDateBoundary.map { _ =>
+                    messages(
+                        "newAccountingPeriod.startDate.hintWithBoundary",
+                        chosenAccountingPeriod.startBoundaryHintFormat,
+                        chosenAccountingPeriod.startDateHintEntryFormat)
+                }.getOrElse {
+                    messages(
+                        "newAccountingPeriod.startDate.hint",
+                        chosenAccountingPeriod.startBoundaryHintFormat,
+                        chosenAccountingPeriod.startDateHintEntryFormat)
+                }
+            )))
         )
 
         @govukDateInput(
@@ -78,7 +84,7 @@
             )
             .withHint(HintViewModel(
                 content = chosenAccountingPeriod.endDateBoundary.map { boundary =>
-                    messages("newAccountingPeriod.endDate.hint", boundary.plusDays(1).toDateFormat, chosenAccountingPeriod.endDateHintEntryFormat)
+                    messages("newAccountingPeriod.endDate.hint", boundary.toDateFormat, chosenAccountingPeriod.endDateHintEntryFormat)
                 }.getOrElse {
                     messages("newAccountingPeriod.endDate.hintWithoutBoundary", chosenAccountingPeriod.endDateHintEntryFormat)
                 }
