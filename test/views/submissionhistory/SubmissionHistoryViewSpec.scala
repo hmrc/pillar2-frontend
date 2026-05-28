@@ -110,6 +110,14 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       }
     }
 
+    "wrap the table with a labelled scrollable region" in {
+      val wrapper = organisationView.selectFirst(".table-scroll-wrapper")
+
+      wrapper.attr("role") mustBe "region"
+      wrapper.attr("tabindex") mustBe "0"
+      wrapper.attr("aria-label") mustBe "Submission history table"
+    }
+
     "have a sub heading" in {
       organisationView.getElementsByTag("h2").first().text mustBe "Due and overdue returns"
     }

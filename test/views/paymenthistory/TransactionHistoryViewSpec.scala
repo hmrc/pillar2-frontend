@@ -19,7 +19,7 @@ package views.paymenthistory
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
@@ -44,7 +44,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
         HeadCell(Text("You paid HMRC")),
         HeadCell(Text("HMRC paid you"))
       )
-    )
+    ),
+    caption = Some("Transactions"),
+    captionClasses = "govuk-table__caption--m"
   )
 
   lazy val pagination: Some[Pagination] = Some(
@@ -165,13 +167,12 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       )
     }
 
-    "display transactions heading" in {
-      groupView.getElementsByClass("govuk-heading-m").get(1).text() mustBe "Transactions"
-    }
-
     "have a table" in {
       val tableElements: Elements = groupView.select("table.govuk-table")
       tableElements.size() mustBe 1
+
+      val caption: Element = tableElements.first().getElementsByClass("govuk-table__caption--m").first()
+      caption.text() mustBe "Transactions"
 
       val tableHead: Elements = tableElements.first().getElementsByClass("govuk-table__head")
       val tableHeadColumns = tableHead.first().getElementsByClass("govuk-table__header")
@@ -205,6 +206,14 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       thirdRowCells.get(3).text() mustBe "£-250.00"
     }
 
+    "wrap the table with a labelled scrollable region" in {
+      val wrapper = groupView.selectFirst(".table-scroll-wrapper")
+
+      wrapper.attr("role") mustBe "region"
+      wrapper.attr("tabindex") mustBe "0"
+      wrapper.attr("aria-label") mustBe "Transactions table"
+    }
+
     "have pagination" in {
       val paginationLinks: Elements = groupView.getElementsByClass("govuk-link govuk-pagination__link")
 
@@ -224,7 +233,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have an 'Outstanding payments' heading" in {
       val h2Elements: Elements = groupView.getElementsByTag("h2")
-      h2Elements.get(2).text() mustBe "Outstanding payments"
+      h2Elements.get(1).text() mustBe "Outstanding payments"
     }
 
     "show the correct transaction history description" in {
