@@ -85,7 +85,7 @@
                             period.endDate.toDateFormat)
                     </h2>
     
-                    @ScrollWrapper {
+                    @LabelledScrollWrapper(messages("dueAndOverdueReturns.accountingPeriod", period.startDate.toDateFormat, period.endDate.toDateFormat)) {
                     @govukTable(Table(
                         head = Some(Seq(
                             HeadCell(content = Text(messages("dueAndOverdueReturns.table.returnType"))),

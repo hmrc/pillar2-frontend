@@ -158,6 +158,14 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         statusTag.text mustBe "Due"
         statusTag.attr("class") mustBe "govuk-tag govuk-tag--blue"
       }
+
+      "wrap the table with a labelled scrollable region" in {
+        val wrapper = view.selectFirst(".table-scroll-wrapper")
+
+        wrapper.attr("role") mustBe "region"
+        wrapper.attr("tabindex") mustBe "0"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
+      }
     }
 
     "there are overdue returns" must {
@@ -185,6 +193,14 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         statusTag.text mustBe "Overdue"
         statusTag.attr("class") mustBe "govuk-tag govuk-tag--red"
       }
+
+      "wrap the table with a labelled scrollable region" in {
+        val wrapper = view.selectFirst(".table-scroll-wrapper")
+
+        wrapper.attr("role") mustBe "region"
+        wrapper.attr("tabindex") mustBe "0"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
+      }
     }
 
     "there is a mix of due and fulfilled returns" must {
@@ -203,6 +219,14 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         val rows: Elements = tables.select("tbody tr")
         rows.size mustBe 1
+      }
+
+      "wrap the table with a labelled scrollable region" in {
+        val wrapper = view.selectFirst(".table-scroll-wrapper")
+
+        wrapper.attr("role") mustBe "region"
+        wrapper.attr("tabindex") mustBe "0"
+        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
       }
     }
 
@@ -264,6 +288,14 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         secondTableStatusTags.get(0).attr("class") mustBe "govuk-tag govuk-tag--blue"
         secondTableStatusTags.get(1).text mustBe "Due"
         secondTableStatusTags.get(1).attr("class") mustBe "govuk-tag govuk-tag--blue"
+      }
+
+      "wrap the table with a labelled scrollable region" in {
+        val wrapper = view.selectFirst(".table-scroll-wrapper")
+
+        wrapper.attr("role") mustBe "region"
+        wrapper.attr("tabindex") mustBe "0"
+        wrapper.attr("aria-label") mustBe "Accounting period: 1 January 2025 to 31 December 2025 table"
       }
 
       "show the submission history description" in {

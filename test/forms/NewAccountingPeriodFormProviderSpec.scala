@@ -101,7 +101,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.minusDays(1).toDateFormat))
+      FormError("startDate", "newAccountingPeriod.error.startDate.boundary", List(startDateBoundary.toDateFormat))
     )
   }
 
@@ -124,7 +124,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
+      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.toDateFormat))
     )
   }
 
@@ -151,9 +151,9 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
       FormError(
         "startDate",
         "newAccountingPeriod.error.startDate.boundary",
-        List(startDateBoundary.minusDays(1).toDateFormat)
+        List(startDateBoundary.toDateFormat)
       ),
-      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.plusDays(1).toDateFormat))
+      FormError("endDate", "newAccountingPeriod.error.endDate.boundary", List(endDateBoundary.toDateFormat))
     )
   }
 

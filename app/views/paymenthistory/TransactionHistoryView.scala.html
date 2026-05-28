@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 @import views.html.paymenthistory.styles.tableScrollStyles
-@import views.html.components.gds.ScrollWrapper
+@import views.html.components.gds.LabelledScrollWrapper
 
 @this(
         layout: templates.Layout,
@@ -81,9 +81,7 @@
       ))
   ))
 
-  @h2(messages("transactionHistory.transactions"), size = "m")
-
-  @ScrollWrapper {
+  @LabelledScrollWrapper(messages("transactionHistory.transactions")) {
     @govukTable(transactionHistoryTable)
   }
 
