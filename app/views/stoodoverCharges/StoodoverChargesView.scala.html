@@ -45,7 +45,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @h1(messages("payments.stoodoverCharges.title"), classes = "govuk-heading-l")
-            @h2(messages("payments.stoodoverCharges.stoodoverTotal", formatAmount(stoodoverTotal)), size = "m")
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
+              @messages("payments.stoodoverCharges.stoodoverTotal", formatAmount(stoodoverTotal))
+            </p>
             @h2(messages("payments.stoodoverCharges.details.heading"), size = "m")
             @paragraphBody(messages("payments.stoodoverCharges.p1"))
         </div>
