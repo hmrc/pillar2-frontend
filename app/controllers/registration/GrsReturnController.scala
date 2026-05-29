@@ -25,7 +25,7 @@ import services.GrsReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.{Inject, Named, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class GrsReturnController @Inject() (
@@ -35,8 +35,7 @@ class GrsReturnController @Inject() (
   requireData:                         DataRequiredAction,
   val controllerComponents:            MessagesControllerComponents,
   grsReturnService:                    GrsReturnService
-)(using ec: ExecutionContext)
-    extends FrontendBaseController
+) extends FrontendBaseController
     with Logging {
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>

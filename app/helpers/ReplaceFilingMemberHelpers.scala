@@ -134,6 +134,7 @@ trait ReplaceFilingMemberHelpers {
     get(RfmCorporatePositionPage) match {
       case Some(CorporatePosition.Upe)    => None
       case Some(CorporatePosition.NewNfm) => get(RfmUkBasedPage)
+      case None                           => None
     }
 
   private def getNameRegistration: Option[String] =
