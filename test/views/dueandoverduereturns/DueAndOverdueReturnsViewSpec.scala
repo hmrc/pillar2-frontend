@@ -164,7 +164,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
+        wrapper.attr("aria-label") mustBe s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat} table"
       }
     }
 
@@ -199,7 +199,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
+        wrapper.attr("aria-label") mustBe s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat} table"
       }
     }
 
@@ -226,7 +226,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         wrapper.attr("role") mustBe "region"
         wrapper.attr("tabindex") mustBe "0"
-        wrapper.attr("aria-label") mustBe "Accounting period: 28 May 2019 to 28 May 2026 table"
+        wrapper.attr("aria-label") mustBe s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat} table"
       }
     }
 
