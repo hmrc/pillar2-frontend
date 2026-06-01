@@ -29,24 +29,22 @@ final case class SubscriptionDataV2(
   accountStatus:            Option[AccountStatus]
 ) {
 
-  def toSubscriptionData: SubscriptionData = SubscriptionData(
-    formBundleNumber = formBundleNumber,
-    upeDetails = upeDetails,
-    upeCorrespAddressDetails = upeCorrespAddressDetails,
-    primaryContactDetails = primaryContactDetails,
-    secondaryContactDetails = secondaryContactDetails,
-    filingMemberDetails = filingMemberDetails,
-    accountingPeriod = accountingPeriod.head.toAccountingPeriod,
-    accountStatus = accountStatus
-  )
+  def toSubscriptionData: Option[SubscriptionData] =
+    accountingPeriod.headOption.map { accountingPeriodV2 =>
+      SubscriptionData(
+        formBundleNumber = formBundleNumber,
+        upeDetails = upeDetails,
+        upeCorrespAddressDetails = upeCorrespAddressDetails,
+        primaryContactDetails = primaryContactDetails,
+        secondaryContactDetails = secondaryContactDetails,
+        filingMemberDetails = filingMemberDetails,
+        accountingPeriod = accountingPeriodV2.toAccountingPeriod,
+        accountStatus = accountStatus
+      )
+    }
+
 }
 
 object SubscriptionDataV2 {
   given format: OFormat[SubscriptionDataV2] = Json.format[SubscriptionDataV2]
-}
-
-final case class SubscriptionSuccessV2(success: SubscriptionDataV2)
-
-object SubscriptionSuccessV2 {
-  given format: OFormat[SubscriptionSuccessV2] = Json.format[SubscriptionSuccessV2]
 }

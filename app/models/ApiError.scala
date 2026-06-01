@@ -17,15 +17,17 @@
 package models
 
 sealed trait ApiError extends Throwable
+
 case object RetryableGatewayError extends ApiError {
   val retryableStatuses:   Set[Int] = Set(500, 502)
   override def getMessage: String   = "Retryable gateway error (502/500)"
 }
+
+case object DuplicateSafeIdError extends ApiError
+case object DuplicateSubmissionError extends ApiError
 case object InternalIssueError extends ApiError
+case object MissingReferenceNumberError extends ApiError
 case object NoResultFound extends ApiError
 case object UnexpectedResponse extends ApiError
 case object UnexpectedJsResult extends ApiError
-case object DuplicateSubmissionError extends ApiError
 case object UnprocessableEntityError extends ApiError
-case object DuplicateSafeIdError extends ApiError
-case object MissingReferenceNumberError extends ApiError

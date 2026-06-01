@@ -62,6 +62,12 @@ class SubscriptionService @Inject() (
     } yield plrRef
   }
 
+  def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
+    maybeReadSubscription(plrReference).flatMap {
+      case Some(subData) => Future.successful(subData)
+      case None          => Future.failed(NoResultFound)
+    }
+
   private def enrolmentExists(plrReference: String)(using hc: HeaderCarrier): Future[Boolean] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
       case Some(_) => true
@@ -69,14 +75,8 @@ class SubscriptionService @Inject() (
     }
 
   def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference).map(_.map(_.toSubscriptionData))
+    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference).map(_.flatMap(_.toSubscriptionData))
     else subscriptionConnector.readSubscription(plrReference)
-
-  def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
-    maybeReadSubscription(plrReference).flatMap {
-      case Some(subData) => Future.successful(subData)
-      case None          => Future.failed(NoResultFound)
-    }
 
   def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.cacheSubscription(parameters)
@@ -284,7 +284,7 @@ class SubscriptionService @Inject() (
         filingMember = currentData.upeDetails.filingMember
       ),
       accountingPeriod = {
-        val period = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
+        val period: AccountingPeriod = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
         AccountingPeriodAmend(startDate = period.startDate, endDate = period.endDate)
       },
       upeCorrespAddressDetails = UpeCorrespAddressDetails(

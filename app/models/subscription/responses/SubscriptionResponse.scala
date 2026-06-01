@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription
+package models.subscription.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionData(
-  formBundleNumber:         String,
-  upeDetails:               UpeDetails,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         AccountingPeriod,
-  accountStatus:            Option[AccountStatus]
+import java.time.LocalDateTime
+
+final case class SubscriptionResponse(
+  plrReference:     String,
+  formBundleNumber: String,
+  processingDate:   LocalDateTime
 )
 
-object SubscriptionData {
-  given format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
+object SubscriptionResponse {
+  given format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
 }

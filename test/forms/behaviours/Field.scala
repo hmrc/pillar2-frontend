@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package forms.behaviours
 
-case class Field(name: String, errorKeys: Map[ErrorType, String])
+case class Field(
+  name:      String,
+  errorKeys: Map[ErrorType, String]
+)
 
 object Field {
-
-  def apply(name: String, errors: (ErrorType, String)*): Field =
-    Field(name, errors.toMap)
+  def apply(name: String, errors: (ErrorType, String)*): Field = Field(name, errors.toMap)
 }
 
 sealed trait ErrorType

@@ -17,106 +17,158 @@
 package models.subscription
 
 import base.SpecBase
-import play.api.libs.json.Json
+import fixtures.SubscriptionFixtures
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
-class SubscriptionDataV2Spec extends SpecBase {
-
-  private val v2Json = Json.parse("""
-    {
-      "formBundleNumber": "119000004323",
-      "upeDetails": {
-        "safeId": null,
-        "customerIdentification1": "12345678",
-        "customerIdentification2": "12345678",
-        "organisationName": "UK Only Organisation Ltd",
-        "registrationDate": "2024-01-31",
-        "domesticOnly": true,
-        "filingMember": false
-      },
-      "upeCorrespAddressDetails": {
-        "addressLine1": "1 High Street",
-        "addressLine2": "Egham",
-        "addressLine3": "Wycombe",
-        "addressLine4": "Surrey",
-        "postCode": "HP13 6TT",
-        "countryCode": "GB"
-      },
-      "primaryContactDetails": {
-        "name": "Primary Contact",
-        "telephone": "0115 9700 700",
-        "emailAddress": "primary.contact@example.com"
-      },
-      "secondaryContactDetails": null,
-      "filingMemberDetails": null,
-      "accountingPeriod": [
-        {
-          "startDate": "2024-01-06",
-          "endDate":   "2025-04-06",
-          "dueDate":   "2024-04-06",
-          "canAmendStartDate": true,
-          "canAmendEndDate":   true
-        }
-      ],
-      "accountStatus": { "inactive": false }
-    }
-  """)
+class SubscriptionDataV2Spec extends SpecBase with SubscriptionFixtures {
 
   "SubscriptionDataV2" must {
-    "deserialise from a valid V2 JSON payload" in {
-      val result = v2Json.as[SubscriptionDataV2]
-      result.formBundleNumber mustBe "119000004323"
-      result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
-      result.upeDetails.domesticOnly mustBe true
-      result.accountingPeriod must have size 1
-      result.accountingPeriod.head.startDate mustBe LocalDate.of(2024, 1, 6)
-      result.accountingPeriod.head.canAmendStartDate mustBe true
+
+    "successfully deserialise" when {
+
+      "given valid V2 payload with one accounting period" in {
+        val result = subscriptionDataV2Json.validate[SubscriptionDataV2]
+
+        result mustBe a[JsSuccess[_]]
+
+        val subscriptionDataV2 = result.get
+
+        subscriptionDataV2.formBundleNumber mustBe "119000004323"
+        subscriptionDataV2.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
+        subscriptionDataV2.upeDetails.domesticOnly mustBe true
+        subscriptionDataV2.accountingPeriod mustBe a[Seq[AccountingPeriodV2]]
+        subscriptionDataV2.accountingPeriod must have size 1
+        subscriptionDataV2.accountingPeriod.head.startDate mustBe LocalDate.of(2024, 1, 6)
+        subscriptionDataV2.accountingPeriod.head.endDate mustBe LocalDate.of(2025, 4, 6)
+        subscriptionDataV2.accountingPeriod.head.dueDate mustBe LocalDate.of(2025, 4, 6)
+        subscriptionDataV2.accountingPeriod.head.canAmendStartDate mustBe true
+        subscriptionDataV2.accountingPeriod.head.canAmendEndDate mustBe true
+      }
+
+      "given valid V2 payload with an empty accountingPeriod array" in {
+        val emptyAccountingPeriodsArrayJson = subscriptionDataV2Json.as[JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
+        val result                          = emptyAccountingPeriodsArrayJson.validate[SubscriptionDataV2]
+
+        result mustBe a[JsSuccess[_]]
+        result.get.accountingPeriod mustBe Seq.empty
+      }
+
+      "given valid V2 payload with accountingPeriod absent and defaulting to Seq.empty" in {
+        val noPeriodsJson = subscriptionDataV2Json.as[JsObject] - "accountingPeriod"
+        val result        = noPeriodsJson.validate[SubscriptionDataV2]
+
+        result mustBe a[JsSuccess[_]]
+        result.get.accountingPeriod mustBe Seq.empty
+        result.get.formBundleNumber mustBe "119000004323"
+      }
+
+      "given valid V2 payload with multiple accounting periods" in {
+        val testAccountingPeriod          = (subscriptionDataV2Json \ "accountingPeriod").as[JsArray].value.head
+        val multipleAccountingPeriodsJson = subscriptionDataV2Json.as[JsObject] ++ Json.obj(
+          "accountingPeriod" -> Json.arr(testAccountingPeriod, testAccountingPeriod, testAccountingPeriod)
+        )
+        val result = multipleAccountingPeriodsJson.validate[SubscriptionDataV2]
+
+        result mustBe a[JsSuccess[_]]
+        result.get.accountingPeriod must have size 3
+      }
+
     }
 
-    "round-trip serialise/deserialise" in {
-      val model = v2Json.as[SubscriptionDataV2]
-      Json.toJson(model).as[SubscriptionDataV2] mustBe model
+    "fail to deserialise" when {
+      "given V2 payload with missing mandatory fields" in {
+        val jsonMissingMandatoryField = subscriptionDataV2Json.as[JsObject] - "formBundleNumber"
+        val result                    = jsonMissingMandatoryField.validate[SubscriptionDataV2]
+
+        result mustBe a[JsError]
+      }
+
+      "given V2 payload with JsObject accountingPeriod (V1 shape)" in {
+        val v2JsonWithV1AccountingPeriod = misshapedSubscriptionDataV2Json.as[JsObject]
+        val result                       = v2JsonWithV1AccountingPeriod.validate[SubscriptionDataV2]
+
+        result mustBe a[JsError]
+      }
     }
 
-    "deserialise with empty accountingPeriod array" in {
-      val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
-      val result        = noPeriodsJson.as[SubscriptionDataV2]
-      result.accountingPeriod mustBe empty
+    "successfully serialise and deserialise (round-trip)" when {
+      "given a valid model instance" in {
+        val model: SubscriptionDataV2 = subscriptionDataV2Json.as[SubscriptionDataV2]
+        Json.toJson(model).as[SubscriptionDataV2] mustBe model
+      }
+
+      "given a model with no accounting periods" in {
+        val model = subscriptionDataV2Json
+          .as[SubscriptionDataV2]
+          .copy(accountingPeriod = Seq.empty)
+
+        Json.toJson(model).as[SubscriptionDataV2] mustBe model
+      }
+    }
+  }
+
+  "SubscriptionDataV2.toSubscriptionData" must {
+    "return Some(SubscriptionData)" when {
+      "given a V2 model with one accounting period" in {
+        val v2: SubscriptionDataV2 = subscriptionDataV2Json.as[SubscriptionDataV2]
+        val v1: SubscriptionData   = v2.toSubscriptionData.value
+
+        v1.formBundleNumber mustBe v2.formBundleNumber
+        v1.upeDetails mustBe v2.upeDetails
+        v1.upeCorrespAddressDetails mustBe v2.upeCorrespAddressDetails
+        v1.primaryContactDetails mustBe v2.primaryContactDetails
+        v1.secondaryContactDetails mustBe v2.secondaryContactDetails
+        v1.filingMemberDetails mustBe v2.filingMemberDetails
+        v1.accountStatus mustBe v2.accountStatus
+        v1.accountingPeriod mustBe v2.accountingPeriod.head.toAccountingPeriod
+        v1.accountingPeriod.startDate mustBe LocalDate.of(2024, 1, 6)
+        v1.accountingPeriod.endDate mustBe LocalDate.of(2025, 4, 6)
+        v1.accountingPeriod.dueDate mustBe Some(LocalDate.of(2025, 4, 6))
+      }
+
+      "given a V2 model with multiple accounting periods (V1 uses only the first one)" in {
+        val firstAccountingPeriod: AccountingPeriodV2 = AccountingPeriodV2(
+          startDate = LocalDate.of(2024, 1, 1),
+          endDate = LocalDate.of(2024, 12, 31),
+          dueDate = LocalDate.of(2025, 1, 31),
+          canAmendStartDate = true,
+          canAmendEndDate = true
+        )
+
+        val secondAccountingPeriod = firstAccountingPeriod.copy(
+          startDate = LocalDate.of(2025, 1, 1)
+        )
+
+        val v2: SubscriptionDataV2 = subscriptionDataV2Json
+          .as[SubscriptionDataV2]
+          .copy(accountingPeriod = Seq(firstAccountingPeriod, secondAccountingPeriod))
+
+        val v1: SubscriptionData = v2.toSubscriptionData.value
+
+        v1.accountingPeriod mustBe v2.accountingPeriod.head.toAccountingPeriod
+      }
     }
 
-    "deserialise with accountingPeriod absent from JSON and default to Seq.empty" in {
-      val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
-      val result        = noPeriodsJson.as[SubscriptionDataV2]
-      result.accountingPeriod mustBe Seq.empty
-      result.formBundleNumber mustBe "119000004323"
+    "return None" when {
+      "given a V2 model with an empty accountingPeriod" in {
+        val v2: SubscriptionDataV2 = subscriptionDataV2Json.as[SubscriptionDataV2].copy(accountingPeriod = Seq.empty)
+        v2.toSubscriptionData mustBe None
+      }
     }
+  }
+}
 
-    "SubscriptionSuccessV2 wraps SubscriptionDataV2" in {
-      val wrapped = Json.obj("success" -> v2Json)
+/*
+
+  "SubscriptionSuccessV2" must {
+
+    "SubscriptionSuccessV2 wrap SubscriptionDataV2" in {
+      val wrapped = Json.obj("success" -> subscriptionDataV2Json)
       val result  = wrapped.as[SubscriptionSuccessV2]
       result.success.formBundleNumber mustBe "119000004323"
     }
 
-    "toSubscriptionData converts V2 to V1 using the head accounting period" in {
-      val v2 = v2Json.as[SubscriptionDataV2]
-      val v1 = v2.toSubscriptionData
-
-      v1.formBundleNumber mustBe v2.formBundleNumber
-      v1.upeDetails mustBe v2.upeDetails
-      v1.upeCorrespAddressDetails mustBe v2.upeCorrespAddressDetails
-      v1.primaryContactDetails mustBe v2.primaryContactDetails
-      v1.secondaryContactDetails mustBe v2.secondaryContactDetails
-      v1.filingMemberDetails mustBe v2.filingMemberDetails
-      v1.accountStatus mustBe v2.accountStatus
-      v1.accountingPeriod.startDate mustBe LocalDate.of(2024, 1, 6)
-      v1.accountingPeriod.endDate mustBe LocalDate.of(2025, 4, 6)
-      v1.accountingPeriod.dueDate mustBe Some(LocalDate.of(2024, 4, 6))
-    }
-
-    "toSubscriptionData throws when accountingPeriod is empty" in {
-      val v2 = v2Json.as[SubscriptionDataV2].copy(accountingPeriod = Seq.empty)
-      a[NoSuchElementException] must be thrownBy v2.toSubscriptionData
-    }
   }
-}
+ */
