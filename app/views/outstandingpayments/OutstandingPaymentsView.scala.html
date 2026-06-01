@@ -69,7 +69,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @h1(messages("payments.outstanding.title"))
-            @h2(messages("payments.outstanding.amountDue", formatAmount(amountDue)), size = "m")
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
+              @messages("payments.outstanding.amountDue", formatAmount(amountDue))
+            </p>
             @if(useAccountActivity) {
               @paragraphBody(messages("payments.outstanding.activity.p1"))
                 @paragraphBody(userTypeDependentText(

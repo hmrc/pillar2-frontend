@@ -86,16 +86,16 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
       agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
-    "display stoodover total subheading" in {
-      h2Elements.first().text() mustBe "Stoodover total: £1,000"
+    "display stoodover total content" in {
+      paragraphs.get(0).text() mustBe "Stoodover total: £1,000"
     }
 
     "display details of stoodover charges subheading" in {
-      h2Elements.get(1).text() mustBe "Details of stoodover charges"
+      h2Elements.get(0).text() mustBe "Details of stoodover charges"
     }
 
-    "display the leading paragraph" in {
-      paragraphs.get(0).text() mustBe "We have separated the charges by accounting period."
+    "display separated charges by accounting period paragraph" in {
+      paragraphs.get(1).text() mustBe "We have separated the charges by accounting period."
     }
 
     "display a correct html details section" in {
@@ -151,14 +151,14 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
     }
 
     "display 'No stoodover charges' message if no stood overcharges are present" in {
-      noStoodoverChargesView.getElementsByClass("govuk-body").get(1).text() mustBe "No stoodover charges."
+      noStoodoverChargesView.getElementsByClass("govuk-body").get(2).text() mustBe "No stoodover charges."
       noStoodoverChargesView.getElementsByClass("govuk-table").size() mustBe 0
     }
   }
 
   "display outstanding payments section" in {
-    h2Elements.get(2).text() mustBe "Outstanding payments"
-    paragraphs.get(1).text() mustBe "Find full details of any payments due, including penalties and interest."
+    h2Elements.get(1).text() mustBe "Outstanding payments"
+    paragraphs.get(2).text() mustBe "Find full details of any payments due, including penalties and interest."
 
     val viewOutstandingPaymentsLink = links.get(2)
 
@@ -167,8 +167,8 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
   }
 
   "display transaction history section" in {
-    h2Elements.get(3).text() mustBe "Transaction history"
-    paragraphs.get(3).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+    h2Elements.get(2).text() mustBe "Transaction history"
+    paragraphs.get(4).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
 
     val viewTransactionHistoryLink = links.get(3)
 
