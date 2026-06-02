@@ -37,7 +37,6 @@ object ContactDetailSection extends Section {
       case (RowStatus.InProgress, RowStatus.Completed, RowStatus.Completed) => SectionStatus.Completed
       case (RowStatus.Completed, RowStatus.Completed, status)               => toStatus(status)
       case (_, _, status)                                                   => toStatus(status)
-      case _                                                                => SectionStatus.CannotStart
     }
 
   override def prerequisiteSections(answers: UserAnswers): Set[Section] =

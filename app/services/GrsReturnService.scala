@@ -47,18 +47,21 @@ class GrsReturnService @Inject() (
     entityType match {
       case EntityType.UkLimitedCompany            => upeLimited(userAnswers, journeyId)
       case EntityType.LimitedLiabilityPartnership => upePartnership(userAnswers, journeyId)
+      case _                                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   def continueFm(journeyId: String, entityType: EntityType, userAnswers: models.UserAnswers)(using hc: HeaderCarrier): Future[Result] =
     entityType match {
       case EntityType.UkLimitedCompany            => fmLimited(userAnswers, journeyId)
       case EntityType.LimitedLiabilityPartnership => fmPartnership(userAnswers, journeyId)
+      case _                                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   def continueRfm(journeyId: String, entityType: EntityType, userAnswers: models.UserAnswers)(using hc: HeaderCarrier): Future[Result] =
     entityType match {
       case EntityType.UkLimitedCompany            => rfmLimited(userAnswers, journeyId)
       case EntityType.LimitedLiabilityPartnership => rfmPartnership(userAnswers, journeyId)
+      case _                                      => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   private def upeLimited(userAnswers: models.UserAnswers, journeyId: String)(using hc: HeaderCarrier): Future[Result] =

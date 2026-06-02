@@ -157,8 +157,6 @@ class BarsService @Inject() (
           organisationName,
           form
         )
-
-      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
   }
 

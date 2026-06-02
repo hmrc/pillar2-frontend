@@ -35,7 +35,6 @@ import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
-import java.time.Clock
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
@@ -49,7 +48,7 @@ class CheckYourAnswersController @Inject() (
   sessionRepository:                SessionRepository,
   view:                             CheckYourAnswersView,
   countryOptions:                   CountryOptions
-)(using ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

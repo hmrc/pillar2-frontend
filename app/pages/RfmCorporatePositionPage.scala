@@ -49,5 +49,8 @@ case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
               )
             )
           )
+
+      case None =>
+        super.cleanup(value, userAnswers)
     }
 }
