@@ -42,7 +42,7 @@ class SubscriptionDataV2Spec extends SpecBase with SubscriptionFixtures {
         subscriptionDataV2.accountingPeriod must have size 1
         subscriptionDataV2.accountingPeriod.head.startDate mustBe LocalDate.of(2024, 1, 6)
         subscriptionDataV2.accountingPeriod.head.endDate mustBe LocalDate.of(2025, 4, 6)
-        subscriptionDataV2.accountingPeriod.head.dueDate mustBe LocalDate.of(2025, 4, 6)
+        subscriptionDataV2.accountingPeriod.head.dueDate mustBe Some(LocalDate.of(2025, 4, 6))
         subscriptionDataV2.accountingPeriod.head.canAmendStartDate mustBe true
         subscriptionDataV2.accountingPeriod.head.canAmendEndDate mustBe true
       }
@@ -132,7 +132,7 @@ class SubscriptionDataV2Spec extends SpecBase with SubscriptionFixtures {
         val firstAccountingPeriod: AccountingPeriodV2 = AccountingPeriodV2(
           startDate = LocalDate.of(2024, 1, 1),
           endDate = LocalDate.of(2024, 12, 31),
-          dueDate = LocalDate.of(2025, 1, 31),
+          dueDate = Some(LocalDate.of(2025, 1, 31)),
           canAmendStartDate = true,
           canAmendEndDate = true
         )

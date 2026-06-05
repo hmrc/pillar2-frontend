@@ -16,6 +16,4 @@
 
 package models.subscription
 
-class SubscriptionDataAmendV2Spec {
-
-}
+class SubscriptionDataAmendV2Spec {}

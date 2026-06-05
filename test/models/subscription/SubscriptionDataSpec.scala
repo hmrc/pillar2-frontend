@@ -55,14 +55,14 @@ class SubscriptionDataSpec extends SpecBase with SubscriptionFixtures {
 
       "given V1 payload with missing accountingPeriod field" in {
         val jsonMissingAccountingPeriodField = subscriptionDataV1Json.as[JsObject] - "accountingPeriod"
-        val result = jsonMissingAccountingPeriodField.validate[SubscriptionData]
+        val result                           = jsonMissingAccountingPeriodField.validate[SubscriptionData]
 
         result mustBe a[JsError]
       }
 
       "given valid V1 payload with an accountingPeriod array" in {
         val emptyAccountingPeriodsObjectJson = subscriptionDataV1Json.as[JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
-        val result                          = emptyAccountingPeriodsObjectJson.validate[SubscriptionData]
+        val result                           = emptyAccountingPeriodsObjectJson.validate[SubscriptionData]
 
         result mustBe a[JsError]
       }

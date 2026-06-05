@@ -444,7 +444,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val v2Period = AccountingPeriodV2(
           startDate = LocalDate.of(2024, 1, 6),
           endDate = LocalDate.of(2025, 4, 6),
-          dueDate = LocalDate.of(2024, 4, 6),
+          dueDate = Some(LocalDate.of(2024, 4, 6)),
           canAmendStartDate = true,
           canAmendEndDate = true
         )
@@ -583,7 +583,7 @@ class SubscriptionServiceSpec extends SpecBase {
           val accountingPeriodV2 = AccountingPeriodV2(
             startDate = LocalDate.of(2024, 1, 6),
             endDate = LocalDate.of(2025, 4, 6),
-            dueDate = LocalDate.of(2024, 4, 6),
+            dueDate = Some(LocalDate.of(2024, 4, 6)),
             canAmendStartDate = true,
             canAmendEndDate = true
           )
@@ -1041,7 +1041,7 @@ class SubscriptionServiceSpec extends SpecBase {
       val v2Period = models.subscription.AccountingPeriodV2(
         startDate = LocalDate.of(2024, 1, 6),
         endDate = LocalDate.of(2025, 4, 6),
-        dueDate = LocalDate.of(2024, 4, 6),
+        dueDate = Some(LocalDate.of(2024, 4, 6)),
         canAmendStartDate = true,
         canAmendEndDate = true
       )
@@ -1158,7 +1158,7 @@ class SubscriptionServiceSpec extends SpecBase {
       val affectedPeriod = AccountingPeriodV2(
         startDate = LocalDate.of(2024, 1, 1),
         endDate = LocalDate.of(2024, 12, 31),
-        dueDate = LocalDate.of(2025, 3, 31),
+        dueDate = Some(LocalDate.of(2025, 3, 31)),
         canAmendStartDate = true,
         canAmendEndDate = true
       )

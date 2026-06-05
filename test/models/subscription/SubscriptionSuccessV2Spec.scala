@@ -34,7 +34,7 @@ class SubscriptionSuccessV2Spec extends SpecBase with SubscriptionFixtures {
     "fail to deserialise" when {
       "given V1 payload with missing the 'success' field" in {
         val jsonMissingSuccessField = subscriptionSuccessV2Json.as[JsObject] - "success"
-        val result = jsonMissingSuccessField.validate[SubscriptionSuccessV2]
+        val result                  = jsonMissingSuccessField.validate[SubscriptionSuccessV2]
 
         result mustBe a[JsError]
       }
