@@ -27,7 +27,7 @@ class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Match
   private def period(year: Int, canAmendStart: Boolean = true, canAmendEnd: Boolean = true): AccountingPeriodV2 = AccountingPeriodV2(
     startDate = LocalDate.of(year, 1, 1),
     endDate = LocalDate.of(year, 12, 31),
-    dueDate = LocalDate.of(year, 12, 31).plusYears(1),
+    dueDate = Some(LocalDate.of(year, 12, 31).plusYears(1)),
     canAmendStartDate = canAmendStart,
     canAmendEndDate = canAmendEnd
   )

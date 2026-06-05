@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription
+package models.subscription.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
-final case class AccountingPeriodV2(
-  startDate:         LocalDate,
-  endDate:           LocalDate,
-  dueDate:           Option[LocalDate] = None, // FIXME: this was `LocalDate`
-  canAmendStartDate: Boolean,
-  canAmendEndDate:   Boolean
-) {
+final case class SubscriptionResponse(
+  plrReference:     String,
+  formBundleNumber: String,
+  processingDate:   LocalDateTime
+)
 
-  def toAccountingPeriod: AccountingPeriod =
-    AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = dueDate)
-}
-
-object AccountingPeriodV2 {
-  given format: OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+object SubscriptionResponse {
+  given format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
 }

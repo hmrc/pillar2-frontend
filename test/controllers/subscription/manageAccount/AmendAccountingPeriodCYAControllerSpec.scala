@@ -43,14 +43,14 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
     AccountingPeriodV2(
       LocalDate.of(2021, 9, 28),
       LocalDate.of(2022, 9, 27),
-      LocalDate.of(2022, 12, 31),
+      dueDate = Some(LocalDate.of(2022, 12, 31)),
       canAmendStartDate = false,
       canAmendEndDate = true
     ),
     AccountingPeriodV2(
       LocalDate.of(2022, 9, 28),
       LocalDate.of(2023, 9, 27),
-      LocalDate.of(2023, 12, 31),
+      dueDate = Some(LocalDate.of(2023, 12, 31)),
       canAmendStartDate = true,
       canAmendEndDate = true
     )
@@ -129,7 +129,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
       val existingPeriod = AccountingPeriodV2(
         startDate = todayDate.minusMonths(4),
         endDate = todayDate.minusMonths(2),
-        dueDate = todayDate.plusMonths(1),
+        dueDate = Some(todayDate.plusMonths(1)),
         canAmendStartDate = false,
         canAmendEndDate = true
       )

@@ -25,7 +25,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
   private val start = LocalDate.of(2024, 1, 1)
   private val end   = LocalDate.of(2024, 12, 31)
-  private val due   = LocalDate.of(2025, 3, 31)
+  private val due   = Some(LocalDate.of(2025, 3, 31))
 
   "AccountingPeriodV2" when {
 
@@ -35,7 +35,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
         val result = period.toAccountingPeriod
         result.startDate mustBe start
         result.endDate mustBe end
-        result.dueDate mustBe Some(due)
+        result.dueDate mustBe due
       }
     }
 

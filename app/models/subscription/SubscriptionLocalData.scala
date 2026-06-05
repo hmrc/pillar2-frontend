@@ -49,6 +49,7 @@ case class SubscriptionLocalData(
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)
+
   def get[A](page: Gettable[A])(using rds: Reads[A]): Option[A] =
     Reads.optionNoError(using Reads.at(page.path)).reads(jsObj).getOrElse(None)
 
@@ -62,11 +63,13 @@ case class SubscriptionLocalData(
 
     updatedData.map(_.as[SubscriptionLocalData])
   }
+
   def setOrException[A](page: QuestionPage[A], value: A)(using writes: Writes[A]): SubscriptionLocalData =
     set(page, value) match {
       case Success(ua) => ua
       case Failure(ex) => throw ex
     }
+
   def remove[A](page: Settable[A]): Try[SubscriptionLocalData] = {
     val updatedData = jsObj.removeObject(page.path) match {
       case JsSuccess(jsValue, _) =>

@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.SubscriptionConnectorSpec.*
 import models.UnprocessableEntityError
 import models.subscription.*
+import models.subscription.responses.*
 import models.{InternalIssueError, RetryableGatewayError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
