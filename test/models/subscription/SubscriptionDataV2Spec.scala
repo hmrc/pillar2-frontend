@@ -69,9 +69,10 @@ class SubscriptionDataV2Spec extends SpecBase {
       result.formBundleNumber mustBe "119000004323"
       result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
       result.upeDetails.domesticOnly mustBe true
-      result.accountingPeriod must have size 1
-      result.accountingPeriod.head.startDate mustBe LocalDate.of(2024, 1, 6)
-      result.accountingPeriod.head.canAmendStartDate mustBe true
+      result.accountingPeriod mustBe defined
+      result.accountingPeriod.value must have size 1
+      result.accountingPeriod.value.head.startDate mustBe LocalDate.of(2024, 1, 6)
+      result.accountingPeriod.value.head.canAmendStartDate mustBe true
     }
 
     "round-trip serialise/deserialise" in {
@@ -82,13 +83,13 @@ class SubscriptionDataV2Spec extends SpecBase {
     "deserialise with empty accountingPeriod array" in {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
       val result        = noPeriodsJson.as[SubscriptionDataV2]
-      result.accountingPeriod mustBe empty
+      result.accountingPeriod.value mustBe empty
     }
 
-    "deserialise with accountingPeriod absent from JSON and default to Seq.empty" in {
+    "deserialise with accountingPeriod absent from JSON and default to None" in {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
       val result        = noPeriodsJson.as[SubscriptionDataV2]
-      result.accountingPeriod mustBe Seq.empty
+      result.accountingPeriod mustBe None
       result.formBundleNumber mustBe "119000004323"
     }
 
@@ -115,7 +116,7 @@ class SubscriptionDataV2Spec extends SpecBase {
     }
 
     "toSubscriptionData throws when accountingPeriod is empty" in {
-      val v2 = v2Json.as[SubscriptionDataV2].copy(accountingPeriod = Seq.empty)
+      val v2 = v2Json.as[SubscriptionDataV2].copy(accountingPeriod = None)
       a[NoSuchElementException] must be thrownBy v2.toSubscriptionData
     }
   }

@@ -23,13 +23,13 @@ import java.time.LocalDate
 final case class AccountingPeriodV2(
   startDate:         LocalDate,
   endDate:           LocalDate,
-  dueDate:           LocalDate,
+  dueDate:           Option[LocalDate] = None,
   canAmendStartDate: Boolean,
   canAmendEndDate:   Boolean
 ) {
 
   def toAccountingPeriod: AccountingPeriod =
-    AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = Some(dueDate))
+    AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = dueDate)
 }
 
 object AccountingPeriodV2 {

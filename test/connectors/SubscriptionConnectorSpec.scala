@@ -19,9 +19,8 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.SubscriptionConnectorSpec.*
-import models.UnprocessableEntityError
+import models.*
 import models.subscription.*
-import models.{InternalIssueError, RetryableGatewayError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
@@ -184,8 +183,9 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         stubGet(s"$readSubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
         val result = connector.readAndCacheSubscriptionV2(id, plrReference).futureValue
         result.formBundleNumber mustBe "119000004323"
-        result.accountingPeriod must have size 1
-        result.accountingPeriod.head.canAmendStartDate mustBe true
+        result.accountingPeriod mustBe defined
+        result.accountingPeriod.value must have size 1
+        result.accountingPeriod.value.head.canAmendStartDate mustBe true
       }
 
       "fail with NoResultFound when backend returns 404" in {
@@ -221,8 +221,9 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.readSubscriptionV2(plrReference).futureValue
         result mustBe defined
         result.get.formBundleNumber mustBe "119000004323"
-        result.get.accountingPeriod must have size 1
-        result.get.accountingPeriod.head.canAmendStartDate mustBe true
+        result.get.accountingPeriod mustBe defined
+        result.get.accountingPeriod.value must have size 1
+        result.get.accountingPeriod.value.head.canAmendStartDate mustBe true
       }
 
       "return None when backend returns 404" in {

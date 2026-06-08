@@ -41,7 +41,7 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
   private val amendablePeriod = AccountingPeriodV2(
     startDate = LocalDate.of(2025, 7, 18),
     endDate = LocalDate.of(2025, 12, 31),
-    dueDate = LocalDate.of(2026, 3, 31),
+    dueDate = Some(LocalDate.of(2026, 3, 31)),
     canAmendStartDate = true,
     canAmendEndDate = true
   )
