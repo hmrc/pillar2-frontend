@@ -36,7 +36,7 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
     AccountingPeriodV2(
       LocalDate.of(2025, 1, 1),
       LocalDate.of(2025, 12, 31),
-      LocalDate.of(2026, 3, 31),
+      Some(LocalDate.of(2026, 3, 31)),
       canAmendStartDate = true,
       canAmendEndDate = true
     )
@@ -46,21 +46,21 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
     AccountingPeriodV2(
       LocalDate.of(2025, 1, 1),
       LocalDate.of(2025, 12, 31),
-      LocalDate.of(2026, 3, 31),
+      Some(LocalDate.of(2026, 3, 31)),
       canAmendStartDate = true,
       canAmendEndDate = true
     ),
     AccountingPeriodV2(
       LocalDate.of(2026, 1, 2),
       LocalDate.of(2026, 12, 31),
-      LocalDate.of(2027, 3, 31),
+      Some(LocalDate.of(2027, 3, 31)),
       canAmendStartDate = true,
       canAmendEndDate = true
     ),
     AccountingPeriodV2(
       LocalDate.of(2026, 1, 1),
       LocalDate.of(2026, 1, 1),
-      LocalDate.of(2026, 3, 31),
+      Some(LocalDate.of(2026, 3, 31)),
       canAmendStartDate = true,
       canAmendEndDate = true
     )
@@ -127,7 +127,7 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
         AccountingPeriodV2(
           LocalDate.of(2026, 1, 1),
           LocalDate.of(2026, 12, 31),
-          LocalDate.of(2027, 3, 31),
+          Some(LocalDate.of(2027, 3, 31)),
           canAmendStartDate = true,
           canAmendEndDate = true
         )

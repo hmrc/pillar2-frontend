@@ -25,7 +25,7 @@ final case class SubscriptionDataV2(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         Seq[AccountingPeriodV2] = Seq.empty,
+  accountingPeriod:         Option[Seq[AccountingPeriodV2]] = None,
   accountStatus:            Option[AccountStatus]
 ) {
 
@@ -36,7 +36,10 @@ final case class SubscriptionDataV2(
     primaryContactDetails = primaryContactDetails,
     secondaryContactDetails = secondaryContactDetails,
     filingMemberDetails = filingMemberDetails,
-    accountingPeriod = accountingPeriod.head.toAccountingPeriod,
+    accountingPeriod = accountingPeriod
+      .flatMap(_.headOption)
+      .map(_.toAccountingPeriod)
+      .getOrElse(throw new NoSuchElementException("Missing accounting period")),
     accountStatus = accountStatus
   )
 }

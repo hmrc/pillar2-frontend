@@ -46,7 +46,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
   private val amendablePeriod = AccountingPeriodV2(
     startDate = LocalDate.of(2025, 1, 1),
     endDate = LocalDate.of(2025, 12, 31),
-    dueDate = LocalDate.of(2026, 3, 31),
+    dueDate = Some(LocalDate.of(2026, 3, 31)),
     canAmendStartDate = true,
     canAmendEndDate = true
   )
@@ -54,7 +54,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
   private val microPeriod = AccountingPeriodV2(
     startDate = LocalDate.of(2024, 4, 1),
     endDate = LocalDate.of(2024, 9, 30),
-    dueDate = LocalDate.of(2024, 12, 31),
+    dueDate = Some(LocalDate.of(2024, 12, 31)),
     canAmendStartDate = true,
     canAmendEndDate = true
   )

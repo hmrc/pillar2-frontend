@@ -137,7 +137,7 @@ class SubscriptionService @Inject() (
       ),
       accountStatus = v2.accountStatus,
       organisationName = Some(v2.upeDetails.organisationName),
-      accountingPeriods = Some(v2.accountingPeriod),
+      accountingPeriods = v2.accountingPeriod,
       registrationDate = Some(v2.upeDetails.registrationDate),
       upeCustomerIdentification1 = v2.upeDetails.customerIdentification1,
       upeCustomerIdentification2 = v2.upeDetails.customerIdentification2,

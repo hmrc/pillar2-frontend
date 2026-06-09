@@ -31,7 +31,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
     "toAccountingPeriod" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
-        val period = AccountingPeriodV2(start, end, due, canAmendStartDate = true, canAmendEndDate = true)
+        val period = AccountingPeriodV2(start, end, Some(due), canAmendStartDate = true, canAmendEndDate = true)
         val result = period.toAccountingPeriod
         result.startDate mustBe start
         result.endDate mustBe end
@@ -41,7 +41,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
     "JSON format" must {
       "serialise and deserialise correctly" in {
-        val period = AccountingPeriodV2(start, end, due, canAmendStartDate = true, canAmendEndDate = false)
+        val period = AccountingPeriodV2(start, end, Some(due), canAmendStartDate = true, canAmendEndDate = false)
         val json   = Json.toJson(period)
         json.as[AccountingPeriodV2] mustBe period
       }
@@ -59,7 +59,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
         val result = json.as[AccountingPeriodV2]
         result.startDate mustBe start
         result.endDate mustBe end
-        result.dueDate mustBe due
+        result.dueDate mustBe Some(due)
         result.canAmendStartDate mustBe true
         result.canAmendEndDate mustBe false
       }
