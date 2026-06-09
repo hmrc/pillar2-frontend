@@ -66,7 +66,11 @@ class AmendAccountingPeriodCYAController @Inject() (
           request.subscriptionLocalData.accountingPeriods
         ) match {
           case (Some(newPeriod), Some(existingPeriod), Some(allPeriods)) =>
-            val affected              = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
+            val affected = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods) match {
+              case empty if empty.isEmpty =>
+                allPeriods.find(p => p.startDate == existingPeriod.startDate && p.endDate == existingPeriod.endDate).toSeq
+              case nonEmpty => nonEmpty
+            }
             val predicted             = predictMicroPeriods(newPeriod, affected)
             val newDurationText       = AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(newPeriod.startDate, newPeriod.endDate)
             val predictedWithDuration = predicted.map { p =>
@@ -130,7 +134,11 @@ class AmendAccountingPeriodCYAController @Inject() (
     allPeriods:       Seq[AccountingPeriodV2],
     newPeriod:        AccountingPeriod
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val affected = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
+    val existingPeriod = subscriptionData.subAccountingPeriod
+    val affected       = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods) match {
+      case empty if empty.isEmpty => allPeriods.find(p => existingPeriod.exists(e => p.startDate == e.startDate && p.endDate == e.endDate)).toSeq
+      case nonEmpty               => nonEmpty
+    }
 
     val result = for {
       userAnswers     <- OptionT.liftF(sessionRepository.get(userId))
