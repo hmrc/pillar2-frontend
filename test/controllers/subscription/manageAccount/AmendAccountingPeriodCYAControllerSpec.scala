@@ -95,7 +95,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
       }
     }
 
-    "renders CYA page with new period, duration and predicted micro-period" in {
+    "renders CYA page with new period and no predicted micro-periods when no surrounding APs exist" in {
       val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriod)
       val application = buildApp(userAnswers = Some(ua))
       running(application) {
@@ -106,7 +106,57 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
         body must include(messages(application)("amendAccountingPeriodCYA.newPeriod.title"))
         body must include("1 year and 6 days")
-        body must include("11 months and 24 days")
+        body must not include "This will create an accounting period of"
+      }
+    }
+
+    "renders CYA page with predicted gapBefore when prior AP exists and new start is after earliest start" in {
+      val priorAP = AccountingPeriodV2(
+        LocalDate.of(2020, 9, 28),
+        LocalDate.of(2021, 9, 27),
+        Some(LocalDate.of(2021, 12, 31)),
+        canAmendStartDate = false,
+        canAmendEndDate = true
+      )
+      val periodsWithPrior    = priorAP +: allPeriods
+      val newPeriodLaterStart = AccountingPeriod(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 10, 3))
+      val ua                  = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriodLaterStart)
+      val application         = buildApp(
+        userAnswers = Some(ua),
+        localData = Some(emptySubscriptionLocalData.copy(accountingPeriods = Some(periodsWithPrior)))
+      )
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad().url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        val body = contentAsString(result)
+        body must include("This will create an accounting period of")
+        body must include("3 months and 4 days")
+      }
+    }
+
+    "renders CYA page with predicted gapAfter when next AP exists and new end is before latest end" in {
+      val nextAP = AccountingPeriodV2(
+        LocalDate.of(2023, 9, 28),
+        LocalDate.of(2024, 9, 27),
+        Some(LocalDate.of(2024, 12, 31)),
+        canAmendStartDate = true,
+        canAmendEndDate = true
+      )
+      val periodsWithNext             = allPeriods :+ nextAP
+      val newPeriodWithEarlierEndDate = AccountingPeriod(LocalDate.of(2022, 9, 28), LocalDate.of(2023, 6, 30))
+      val ua                          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newPeriodWithEarlierEndDate)
+      val application                 = buildApp(
+        userAnswers = Some(ua),
+        localData = Some(emptySubscriptionLocalData.copy(accountingPeriods = Some(periodsWithNext)))
+      )
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad().url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        val body = contentAsString(result)
+        body must include("This will create an accounting period of")
+        body must include("2 months and 27 days")
       }
     }
 

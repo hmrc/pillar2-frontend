@@ -67,7 +67,7 @@ class AmendAccountingPeriodCYAController @Inject() (
         ) match {
           case (Some(newPeriod), Some(existingPeriod), Some(allPeriods)) =>
             val affected              = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
-            val predicted             = predictMicroPeriods(newPeriod, affected)
+            val predicted             = predictMicroPeriods(newPeriod, affected, allPeriods)
             val newDurationText       = AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(newPeriod.startDate, newPeriod.endDate)
             val predictedWithDuration = predicted.map { p =>
               (p, AmendAccountingPeriodDurationFormatter.formatInclusivePeriod(p.startDate, p.endDate))
@@ -201,8 +201,9 @@ class AmendAccountingPeriodCYAController @Inject() (
     allPeriods.filter(p => !p.startDate.isAfter(newEnd) && !p.endDate.isBefore(newStart))
 
   private def predictMicroPeriods(
-    newPeriod: AccountingPeriod,
-    affected:  Seq[AccountingPeriodV2]
+    newPeriod:  AccountingPeriod,
+    affected:   Seq[AccountingPeriodV2],
+    allPeriods: Seq[AccountingPeriodV2]
   ): Seq[AccountingPeriod] =
     if affected.isEmpty then Seq.empty
     else {
@@ -210,12 +211,15 @@ class AmendAccountingPeriodCYAController @Inject() (
       val latestEnd     = affected.map(_.endDate).max
       val today         = DateTimeUtils.today
 
+      val hasPriorAP = allPeriods.exists(_.endDate.isBefore(earliestStart))
+      val hasNextAP  = allPeriods.exists(_.startDate.isAfter(latestEnd))
+
       val gapBefore: Option[AccountingPeriod] =
-        if newPeriod.startDate.isAfter(earliestStart) then Some(AccountingPeriod(earliestStart, newPeriod.startDate.minusDays(1)))
+        if hasPriorAP && newPeriod.startDate.isAfter(earliestStart) then Some(AccountingPeriod(earliestStart, newPeriod.startDate.minusDays(1)))
         else None
 
       val gapAfter: Option[AccountingPeriod] =
-        if newPeriod.endDate.isBefore(latestEnd) then Some(AccountingPeriod(newPeriod.endDate.plusDays(1), latestEnd))
+        if hasNextAP && newPeriod.endDate.isBefore(latestEnd) then Some(AccountingPeriod(newPeriod.endDate.plusDays(1), latestEnd))
         else None
 
       val openEnded: Seq[AccountingPeriod] =
