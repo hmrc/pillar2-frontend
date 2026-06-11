@@ -162,14 +162,12 @@ class SubscriptionService @Inject() (
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
-      result                  <- currentSubscriptionData match {
-                  case v1: SubscriptionDataV1 =>
-                    if appConfig.amendMultipleAccountingPeriods then
-                      subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v1, subscriptionLocalData))
-                    else subscriptionConnector.amendSubscription(userId, amendGroupOrContactDetails(plrReference, v1, subscriptionLocalData))
-                  case v2: SubscriptionDataV2 =>
-                    subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v2, subscriptionLocalData))
-                }
+      result <- currentSubscriptionData match {
+        case v1: SubscriptionDataV1 =>
+          subscriptionConnector.amendSubscription(userId, amendGroupOrContactDetails(plrReference, v1, subscriptionLocalData))
+        case v2: SubscriptionDataV2 =>
+          subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v2, subscriptionLocalData))
+      }
     } yield result
 
   def amendAccountingPeriods(
