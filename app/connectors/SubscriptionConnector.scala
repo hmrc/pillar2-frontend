@@ -61,14 +61,14 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def cacheSubscription(
     readSubscriptionParameter: ReadSubscriptionRequestParameters
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV1] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
       .get(url"$subscriptionUrl")
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionData])
+          Future.successful(Json.parse(response.body).as[SubscriptionDataV1])
         case e =>
           logger.warn(s"Connection issue when calling cache subscription with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
@@ -78,7 +78,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscription(
     plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataV1]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http

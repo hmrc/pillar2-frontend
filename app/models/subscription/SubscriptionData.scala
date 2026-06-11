@@ -18,7 +18,17 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionData(
+sealed trait SubscriptionData {
+  def upeDetails:               UpeDetails
+  def filingMemberDetails:      Option[FilingMemberDetails]
+  def upeCorrespAddressDetails: UpeCorrespAddressDetails
+  def primaryContactDetails:    ContactDetailsType
+  def secondaryContactDetails:  Option[ContactDetailsType]
+  def formBundleNumber:         String
+  def accountStatus:            Option[AccountStatus]
+}
+
+final case class SubscriptionDataV1(
   formBundleNumber:         String,
   upeDetails:               UpeDetails,
   upeCorrespAddressDetails: UpeCorrespAddressDetails,
@@ -27,16 +37,35 @@ final case class SubscriptionData(
   filingMemberDetails:      Option[FilingMemberDetails],
   accountingPeriod:         AccountingPeriod,
   accountStatus:            Option[AccountStatus]
-)
+) extends SubscriptionData
 
-object SubscriptionData {
-
-  given format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
+object SubscriptionDataV1 {
+  given format: OFormat[SubscriptionDataV1] = Json.format[SubscriptionDataV1]
 }
 
-final case class SubscriptionSuccess(success: SubscriptionData)
+final case class SubscriptionSuccess(success: SubscriptionDataV1)
 
 object SubscriptionSuccess {
-
   given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+}
+
+final case class SubscriptionDataV2(
+  formBundleNumber:         String,
+  upeDetails:               UpeDetails,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberDetails],
+  accountingPeriod:         Option[Seq[AccountingPeriodV2]] = None,
+  accountStatus:            Option[AccountStatus]
+) extends SubscriptionData
+
+object SubscriptionDataV2 {
+  given format: OFormat[SubscriptionDataV2] = Json.format[SubscriptionDataV2]
+}
+
+final case class SubscriptionSuccessV2(success: SubscriptionDataV2)
+
+object SubscriptionSuccessV2 {
+  given format: OFormat[SubscriptionSuccessV2] = Json.format[SubscriptionSuccessV2]
 }

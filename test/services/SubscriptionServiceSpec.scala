@@ -471,8 +471,14 @@ class SubscriptionServiceSpec extends SpecBase {
 
           result mustBe defined
           result.get.formBundleNumber mustBe "form bundle"
-          result.get.accountingPeriod.startDate mustBe LocalDate.of(2024, 1, 6)
-          result.get.accountingPeriod.endDate mustBe LocalDate.of(2025, 4, 6)
+          result mustBe defined
+          result.get match {
+            case v2: SubscriptionDataV2 =>
+              v2.accountingPeriod.flatMap(_.headOption).value.startDate mustBe LocalDate.of(2024, 1, 6)
+              v2.accountingPeriod.flatMap(_.headOption).value.endDate mustBe LocalDate.of(2025, 4, 6)
+            case _ => fail("Expected SubscriptionDataV2")
+          }
+          result.get.formBundleNumber mustBe "form bundle"
         }
       }
 

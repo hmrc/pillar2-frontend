@@ -40,7 +40,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     .build()
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-  private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
+  private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionDataV1]
   val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
   "SubscriptionConnector" must {
     "subscribe" should {

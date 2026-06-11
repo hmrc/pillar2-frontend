@@ -24,7 +24,6 @@ import models.*
 import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.subscription.*
-import models.subscription.{SubscriptionData, UpeDetails}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -43,7 +42,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
   "OutstandingPaymentsController" should {
     "return OK and display the correct view for a GET with outstanding payments" in {
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -91,7 +90,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     }
 
     "return Ok and display correct view for a GET with outstanding payments that existed before company registration date" in {
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -139,7 +138,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery when service call fails" in {
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -174,7 +173,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     }
 
     "return OK and show 'No payments due' when Financial Data contains no outstanding charges" in {
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -235,7 +234,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         )
       )
 
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -280,7 +279,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         transactionDetails = Seq.empty
       )
 
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
@@ -319,7 +318,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     }
 
     "return OK and show 'No payments due' when feature flag is enabled and NoResultFound is returned" in {
-      val subscriptionData = SubscriptionData(
+      val subscriptionData = SubscriptionDataV1(
         formBundleNumber = "form bundle",
         upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
         upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),

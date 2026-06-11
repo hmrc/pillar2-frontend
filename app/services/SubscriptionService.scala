@@ -69,16 +69,16 @@ class SubscriptionService @Inject() (
     }
 
   def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference).map(_.map(_.toSubscriptionData))
+    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference)
     else subscriptionConnector.readSubscription(plrReference)
 
   def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
     maybeReadSubscription(plrReference).flatMap {
-      case Some(subData) => Future.successful(subData)
-      case None          => Future.failed(NoResultFound)
+      case Some(sub) => Future.successful(sub)
+      case None      => Future.failed(NoResultFound)
     }
 
-  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionData] =
+  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
     subscriptionConnector.cacheSubscription(parameters)
 
   def getSubscriptionCache(userId: String)(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
@@ -162,17 +162,14 @@ class SubscriptionService @Inject() (
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
-      result                  <-
-        if appConfig.amendMultipleAccountingPeriods then
-          subscriptionConnector.amendSubscriptionV2(
-            userId,
-            amendGroupOrContactDetailsV2(plrReference, currentSubscriptionData, subscriptionLocalData)
-          )
-        else
-          subscriptionConnector.amendSubscription(
-            userId,
-            amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
-          )
+      result                  <- currentSubscriptionData match {
+                  case v1: SubscriptionDataV1 =>
+                    if appConfig.amendMultipleAccountingPeriods then
+                      subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v1, subscriptionLocalData))
+                    else subscriptionConnector.amendSubscription(userId, amendGroupOrContactDetails(plrReference, v1, subscriptionLocalData))
+                  case v2: SubscriptionDataV2 =>
+                    subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v2, subscriptionLocalData))
+                }
     } yield result
 
   def amendAccountingPeriods(
@@ -269,7 +266,7 @@ class SubscriptionService @Inject() (
 
   private[services] def amendGroupOrContactDetails(
     plrReference: String,
-    currentData:  SubscriptionData,
+    currentData:  SubscriptionDataV1,
     userData:     SubscriptionLocalData
   ): AmendSubscription =
     AmendSubscription(
@@ -371,7 +368,7 @@ class SubscriptionService @Inject() (
 
   private def setUltimateParentAsNewFilingMember(
     requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionData
+    subscriptionData: SubscriptionDataV1
   ): AmendSubscription =
     AmendSubscription(
       replaceFilingMember = true,
@@ -405,7 +402,7 @@ class SubscriptionService @Inject() (
 
   private def replaceOldFilingMember(
     requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionData,
+    subscriptionData: SubscriptionDataV1,
     filingMember:     FilingMemberAmendDetails
   ): AmendSubscription =
     AmendSubscription(
@@ -530,18 +527,23 @@ class SubscriptionService @Inject() (
     filingMemberDetail: NewFilingMemberDetail,
     userAnswers:        UserAnswers
   )(using hc: HeaderCarrier): Future[AmendSubscription] =
-    if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
-      logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
-      setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
-    } else {
-      logger.info("createAmendObjectForReplacingFilingMember - call replaceOldFilingMember")
-      getNewFilingMemberDetails(userAnswers).map(newFilingMember =>
-        replaceOldFilingMember(
-          requiredInfo = filingMemberDetail,
-          subscriptionData = subscriptionData,
-          filingMember = newFilingMember
-        )
-      )
+    subscriptionData match {
+      case v1: SubscriptionDataV1 =>
+        if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
+          logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
+          setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = v1).toFuture
+        } else {
+          logger.info("createAmendObjectForReplacingFilingMember - call replaceOldFilingMember")
+          getNewFilingMemberDetails(userAnswers).map(newFilingMember =>
+            replaceOldFilingMember(
+              requiredInfo = filingMemberDetail,
+              subscriptionData = v1,
+              filingMember = newFilingMember
+            )
+          )
+        }
+      case _: SubscriptionDataV2 =>
+        Future.failed(new UnsupportedOperationException("RFM amendment not supported for V2 subscription data"))
     }
 
   def getCompanyNameFromGRS(grsResponse: GrsResponse): Option[String] =

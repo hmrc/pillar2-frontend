@@ -81,7 +81,7 @@ trait SubscriptionLocalDataFixture {
     organisationName = Some("ABC Intl")
   )
 
-  val subscriptionData: SubscriptionData = SubscriptionData(
+  val subscriptionData: SubscriptionDataV1 = SubscriptionDataV1(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
