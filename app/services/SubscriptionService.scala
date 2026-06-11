@@ -74,7 +74,7 @@ class SubscriptionService @Inject() (
 
   def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
     maybeReadSubscription(plrReference).flatMap {
-      case Some(sub) => Future.successful(sub)
+      case Some(subData) => Future.successful(subData)
       case None      => Future.failed(NoResultFound)
     }
 
