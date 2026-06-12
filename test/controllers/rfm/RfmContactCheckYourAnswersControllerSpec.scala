@@ -509,7 +509,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
@@ -553,7 +553,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
@@ -594,7 +594,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
@@ -639,7 +639,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
@@ -680,7 +680,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
           Future.successful(true)
@@ -714,7 +714,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.rfmReadSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()

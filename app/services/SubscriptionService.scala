@@ -78,6 +78,12 @@ class SubscriptionService @Inject() (
       case None          => Future.failed(NoResultFound)
     }
 
+  def rfmReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
+    subscriptionConnector.readSubscription(plrReference).flatMap {
+      case Some(sub) => Future.successful(sub)
+      case None      => Future.failed(NoResultFound)
+    }
+
   def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
     subscriptionConnector.cacheSubscription(parameters)
 
