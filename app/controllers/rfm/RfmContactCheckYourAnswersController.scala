@@ -101,7 +101,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-        subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
+        subscriptionData           <- liftF(subscriptionService.rfmReadSubscription(newFilingMemberInformation.plrReference))
         amendData                  <-
           liftF(
             subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
