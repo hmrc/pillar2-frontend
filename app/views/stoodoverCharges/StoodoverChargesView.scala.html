@@ -78,8 +78,8 @@
                     govukTable(Table(
                         head = Some(
                             Seq(
-                                HeadCell(Text("Description"), classes = "govuk-table__header govuk-!-width-one-half", attributes = Map("scope" -> "col")),
-                                HeadCell(Text("Stoodover amount"), format = Some("numeric"), classes = "govuk-table__header govuk-table__header--numeric", attributes = Map("scope" -> "col")),
+                                HeadCell(Text("Description"), classes = "govuk-table__header govuk-!-width-one-half"),
+                                HeadCell(Text("Stoodover amount"), format = Some("numeric"), classes = "govuk-table__header govuk-table__header--numeric"),
                             )
                         ),
                         rows =  summary.rows.map { row =>
