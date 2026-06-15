@@ -885,6 +885,7 @@ newAccountingPeriod.error.endDate.dayYear.invalid = End date must be a real date
 newAccountingPeriod.error.endDate.day.length = End date must be a real date
 newAccountingPeriod.error.endDate.month.length = End date must be a real date
 newAccountingPeriod.error.endDate.year.length = End date must be a real date
+newAccountingPeriod.error.overlap = The start or end date must be within the date range of the period you are changing
 newAccountingPeriod.change.hidden = the dates of the group’s new accounting period
 
 amendAccountingPeriodCYA.title = Confirm new accounting period

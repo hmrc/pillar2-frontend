@@ -27,7 +27,7 @@ import java.time.LocalDate
 class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
   val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(
-    AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1), None),
+    AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31), None),
     None,
     None
   )
@@ -78,7 +78,8 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
+      FormError("startDate", "newAccountingPeriod.error.startDate.dayMonthYear.minimum"),
+      FormError("endDate", "newAccountingPeriod.error.overlap")
     )
   }
 
@@ -158,6 +159,12 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
   }
 
   "throw a form error for an start date after the end date" in {
+    val chosenAP = ChosenAccountingPeriod(
+      AccountingPeriod(LocalDate.of(2026, 1, 1), LocalDate.of(2027, 12, 31), None),
+      None,
+      None
+    )
+    val form: Form[AccountingPeriod] = formProvider(chosenAP)
 
     val endDate   = LocalDate.of(2026, 11, 1)
     val startDate = endDate.plusDays(1)
@@ -628,6 +635,50 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     form.bind(data).errors shouldEqual Seq(
       FormError("startDate", "newAccountingPeriod.error.startDate.required", Seq("day")),
       FormError("endDate", "newAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error when new start date is after the chosen accounting period end date" in {
+    val chosenAP = ChosenAccountingPeriod(
+      AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), None),
+      None,
+      None
+    )
+    val form: Form[AccountingPeriod] = formProvider(chosenAP)
+
+    val data = Map(
+      "startDate.day"   -> "1",
+      "startDate.month" -> "1",
+      "startDate.year"  -> "2026",
+      "endDate.day"     -> "31",
+      "endDate.month"   -> "12",
+      "endDate.year"    -> "2026"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "newAccountingPeriod.error.overlap")
+    )
+  }
+
+  "throw a form error when new end date is before the chosen accounting period start date" in {
+    val chosenAP = ChosenAccountingPeriod(
+      AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), None),
+      None,
+      None
+    )
+    val form: Form[AccountingPeriod] = formProvider(chosenAP)
+
+    val data = Map(
+      "startDate.day"   -> "1",
+      "startDate.month" -> "1",
+      "startDate.year"  -> "2024",
+      "endDate.day"     -> "31",
+      "endDate.month"   -> "12",
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("endDate", "newAccountingPeriod.error.overlap")
     )
   }
 }
