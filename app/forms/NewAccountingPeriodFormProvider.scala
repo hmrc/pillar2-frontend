@@ -54,7 +54,8 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
               case None =>
                 minDate(Pillar2MinStartDate, "newAccountingPeriod.error.startDate.dayMonthYear.minimum")
             }
-          ),
+          )
+          .verifying("newAccountingPeriod.error.overlap", date => !date.isAfter(chosenAccountingPeriod.selectedAccountingPeriod.endDate)),
         "endDate" -> localDate(
           invalidKey = "newAccountingPeriod.error.endDate.format",
           allRequiredKey = "newAccountingPeriod.error.endDate.required.all",
@@ -69,6 +70,7 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
           messageKeyPart = "newAccountingPeriod",
           validateMonthInStringFormat = Some(true)
         ).verifying(optionalEndDateBoundary(chosenAccountingPeriod.endDateBoundary, "newAccountingPeriod.error.endDate.boundary"))
+          .verifying("newAccountingPeriod.error.overlap", date => !date.isBefore(chosenAccountingPeriod.selectedAccountingPeriod.startDate))
       )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
         Some((accountingPeriod.startDate, accountingPeriod.endDate))
       )
