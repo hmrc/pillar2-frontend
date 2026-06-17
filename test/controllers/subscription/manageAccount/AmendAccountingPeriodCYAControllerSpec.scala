@@ -41,18 +41,18 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
   private val allPeriods: Seq[AccountingPeriodV2] = Seq(
     AccountingPeriodV2(
-      LocalDate.of(2021, 9, 28),
-      LocalDate.of(2022, 9, 27),
-      Some(LocalDate.of(2022, 12, 31)),
-      canAmendStartDate = false,
-      canAmendEndDate = true
+      startDate = Some(LocalDate.of(2021, 9, 28)),
+      endDate = Some(LocalDate.of(2022, 9, 27)),
+      dueDate = Some(LocalDate.of(2022, 12, 31)),
+      canAmendStartDate = Some(false),
+      canAmendEndDate = Some(true)
     ),
     AccountingPeriodV2(
-      LocalDate.of(2022, 9, 28),
-      LocalDate.of(2023, 9, 27),
-      Some(LocalDate.of(2023, 12, 31)),
-      canAmendStartDate = true,
-      canAmendEndDate = true
+      startDate = Some(LocalDate.of(2022, 9, 28)),
+      endDate = Some(LocalDate.of(2023, 9, 27)),
+      dueDate = Some(LocalDate.of(2023, 12, 31)),
+      canAmendStartDate = Some(true),
+      canAmendEndDate = Some(true)
     )
   )
 
@@ -112,11 +112,11 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
     "renders CYA page with predicted gapBefore when prior AP exists and new start is after earliest start" in {
       val priorAP = AccountingPeriodV2(
-        LocalDate.of(2020, 9, 28),
-        LocalDate.of(2021, 9, 27),
-        Some(LocalDate.of(2021, 12, 31)),
-        canAmendStartDate = false,
-        canAmendEndDate = true
+        startDate = Some(LocalDate.of(2020, 9, 28)),
+        endDate = Some(LocalDate.of(2021, 9, 27)),
+        dueDate = Some(LocalDate.of(2021, 12, 31)),
+        canAmendStartDate = Some(false),
+        canAmendEndDate = Some(true)
       )
       val periodsWithPrior    = priorAP +: allPeriods
       val newPeriodLaterStart = AccountingPeriod(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 10, 3))
@@ -137,11 +137,11 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
     "renders CYA page with predicted gapAfter when next AP exists and new end is before latest end" in {
       val nextAP = AccountingPeriodV2(
-        LocalDate.of(2023, 9, 28),
-        LocalDate.of(2024, 9, 27),
-        Some(LocalDate.of(2024, 12, 31)),
-        canAmendStartDate = true,
-        canAmendEndDate = true
+        startDate = Some(LocalDate.of(2023, 9, 28)),
+        endDate = Some(LocalDate.of(2024, 9, 27)),
+        dueDate = Some(LocalDate.of(2024, 12, 31)),
+        canAmendStartDate = Some(true),
+        canAmendEndDate = Some(true)
       )
       val periodsWithNext             = allPeriods :+ nextAP
       val newPeriodWithEarlierEndDate = AccountingPeriod(LocalDate.of(2022, 9, 28), LocalDate.of(2023, 6, 30))
@@ -177,11 +177,11 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
     "renders full 12 month open-ended period that covers today" in {
       val todayDate      = today
       val existingPeriod = AccountingPeriodV2(
-        startDate = todayDate.minusMonths(4),
-        endDate = todayDate.minusMonths(2),
+        startDate = Some(todayDate.minusMonths(4)),
+        endDate = Some(todayDate.minusMonths(2)),
         dueDate = Some(todayDate.plusMonths(1)),
-        canAmendStartDate = false,
-        canAmendEndDate = true
+        canAmendStartDate = Some(false),
+        canAmendEndDate = Some(true)
       )
       val newOpenEndedPeriod     = AccountingPeriod(startDate = todayDate.minusMonths(3), endDate = todayDate.minusDays(10))
       val expectedOpenEndedStart = newOpenEndedPeriod.endDate.plusDays(1)

@@ -442,11 +442,11 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "use v2 read-only endpoint when amendMultipleAccountingPeriods is enabled" in {
         val v2Period = AccountingPeriodV2(
-          startDate = LocalDate.of(2024, 1, 6),
-          endDate = LocalDate.of(2025, 4, 6),
+          startDate = Some(LocalDate.of(2024, 1, 6)),
+          endDate = Some(LocalDate.of(2025, 4, 6)),
           dueDate = Some(LocalDate.of(2024, 4, 6)),
-          canAmendStartDate = true,
-          canAmendEndDate = true
+          canAmendStartDate = Some(true),
+          canAmendEndDate = Some(true)
         )
         val v2Data = SubscriptionDataV2(
           formBundleNumber = "form bundle",
@@ -474,8 +474,8 @@ class SubscriptionServiceSpec extends SpecBase {
           result mustBe defined
           result.get match {
             case v2: SubscriptionDataV2 =>
-              v2.accountingPeriod.flatMap(_.headOption).value.startDate mustBe LocalDate.of(2024, 1, 6)
-              v2.accountingPeriod.flatMap(_.headOption).value.endDate mustBe LocalDate.of(2025, 4, 6)
+              v2.accountingPeriod.flatMap(_.headOption).value.startDate mustBe Some(LocalDate.of(2024, 1, 6))
+              v2.accountingPeriod.flatMap(_.headOption).value.endDate mustBe Some(LocalDate.of(2025, 4, 6))
             case _ => fail("Expected SubscriptionDataV2")
           }
           result.get.formBundleNumber mustBe "form bundle"
@@ -587,11 +587,11 @@ class SubscriptionServiceSpec extends SpecBase {
       "amendMultipleAccountingPeriods is enabled" should {
         "call amendSubscriptionV2 with amendAccountingPeriod = false" in {
           val accountingPeriodV2 = AccountingPeriodV2(
-            startDate = LocalDate.of(2024, 1, 6),
-            endDate = LocalDate.of(2025, 4, 6),
+            startDate = Some(LocalDate.of(2024, 1, 6)),
+            endDate = Some(LocalDate.of(2025, 4, 6)),
             dueDate = Some(LocalDate.of(2024, 4, 6)),
-            canAmendStartDate = true,
-            canAmendEndDate = true
+            canAmendStartDate = Some(true),
+            canAmendEndDate = Some(true)
           )
 
           val subscriptionDataV2 = SubscriptionDataV2(
@@ -1045,11 +1045,11 @@ class SubscriptionServiceSpec extends SpecBase {
       val plrRef = "XEPLR0000000001"
 
       val v2Period = models.subscription.AccountingPeriodV2(
-        startDate = LocalDate.of(2024, 1, 6),
-        endDate = LocalDate.of(2025, 4, 6),
+        startDate = Some(LocalDate.of(2024, 1, 6)),
+        endDate = Some(LocalDate.of(2025, 4, 6)),
         dueDate = Some(LocalDate.of(2024, 4, 6)),
-        canAmendStartDate = true,
-        canAmendEndDate = true
+        canAmendStartDate = Some(true),
+        canAmendEndDate = Some(true)
       )
 
       val v2Data = models.subscription.SubscriptionDataV2(
@@ -1162,11 +1162,11 @@ class SubscriptionServiceSpec extends SpecBase {
       val plrRef = "XEPLR0000000001"
 
       val affectedPeriod = AccountingPeriodV2(
-        startDate = LocalDate.of(2024, 1, 1),
-        endDate = LocalDate.of(2024, 12, 31),
+        startDate = Some(LocalDate.of(2024, 1, 1)),
+        endDate = Some(LocalDate.of(2024, 12, 31)),
         dueDate = Some(LocalDate.of(2025, 3, 31)),
-        canAmendStartDate = true,
-        canAmendEndDate = true
+        canAmendStartDate = Some(true),
+        canAmendEndDate = Some(true)
       )
 
       val newPeriod = AccountingPeriod(

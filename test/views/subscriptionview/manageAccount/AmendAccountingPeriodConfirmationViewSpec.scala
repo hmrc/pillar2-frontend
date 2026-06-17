@@ -36,28 +36,28 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
 
   val singleNewPeriod: Seq[AccountingPeriodV2] = Seq(
     AccountingPeriodV2(
-      LocalDate.of(2026, 1, 1),
-      LocalDate.of(2026, 12, 31),
-      Some(LocalDate.of(2027, 3, 31)),
-      canAmendStartDate = true,
-      canAmendEndDate = true
+      startDate = Some(LocalDate.of(2026, 1, 1)),
+      endDate = Some(LocalDate.of(2026, 12, 31)),
+      dueDate = Some(LocalDate.of(2027, 3, 31)),
+      canAmendStartDate = Some(true),
+      canAmendEndDate = Some(true)
     )
   )
 
   val multipleNewPeriods: Seq[AccountingPeriodV2] = Seq(
     AccountingPeriodV2(
-      LocalDate.of(2026, 1, 1),
-      LocalDate.of(2026, 12, 31),
-      Some(LocalDate.of(2027, 3, 31)),
-      canAmendStartDate = true,
-      canAmendEndDate = true
+      startDate = Some(LocalDate.of(2026, 1, 1)),
+      endDate = Some(LocalDate.of(2026, 12, 31)),
+      dueDate = Some(LocalDate.of(2027, 3, 31)),
+      canAmendStartDate = Some(true),
+      canAmendEndDate = Some(true)
     ),
     AccountingPeriodV2(
-      LocalDate.of(2025, 7, 1),
-      LocalDate.of(2025, 12, 31),
-      Some(LocalDate.of(2026, 3, 31)),
-      canAmendStartDate = true,
-      canAmendEndDate = true
+      startDate = Some(LocalDate.of(2025, 7, 1)),
+      endDate = Some(LocalDate.of(2025, 12, 31)),
+      dueDate = Some(LocalDate.of(2026, 3, 31)),
+      canAmendStartDate = Some(true),
+      canAmendEndDate = Some(true)
     )
   )
 

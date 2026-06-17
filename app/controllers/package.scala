@@ -48,8 +48,8 @@ package object controllers {
     accountingPeriods:        Seq[AccountingPeriodV2],
     selectedAccountingPeriod: AccountingPeriod
   ): ChosenAccountingPeriod =
-    val sorted:        Seq[AccountingPeriodV2] = accountingPeriods.sortBy(_.endDate)(Ordering[LocalDate].reverse)
-    val selectedIndex: Int                     = sorted.indexWhere(_.startDate == selectedAccountingPeriod.startDate)
+    val sorted:        Seq[AccountingPeriodV2] = accountingPeriods.sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
+    val selectedIndex: Int                     = sorted.indexWhere(_.startDate.contains(selectedAccountingPeriod.startDate))
 
     val startBoundaryDate =
       if selectedIndex >= 0 then
@@ -57,8 +57,8 @@ package object controllers {
           .drop(selectedIndex + 1)
           .flatMap { period =>
             Seq(
-              Option.when(!period.canAmendStartDate)(period.startDate),
-              Option.when(!period.canAmendEndDate)(period.endDate)
+              Option.when(!period.canAmendStartDate.getOrElse(false))(period.startDate).flatten,
+              Option.when(!period.canAmendEndDate.getOrElse(false))(period.endDate).flatten
             ).flatten
           }
           .maxByOption(identity)
@@ -70,8 +70,8 @@ package object controllers {
           .take(selectedIndex)
           .flatMap { period =>
             Seq(
-              Option.when(!period.canAmendEndDate)(period.endDate),
-              Option.when(!period.canAmendStartDate)(period.startDate)
+              Option.when(!period.canAmendEndDate.getOrElse(false))(period.endDate).flatten,
+              Option.when(!period.canAmendStartDate.getOrElse(false))(period.startDate).flatten
             ).flatten
           }
           .minByOption(identity)

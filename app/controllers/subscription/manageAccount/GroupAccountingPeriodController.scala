@@ -74,8 +74,8 @@ class GroupAccountingPeriodController @Inject() (
               withUpdatedPeriods = oldPeriod.fold(updatedAnswers) { old =>
                                      val updatedPeriods = updatedAnswers.accountingPeriods.map { periods =>
                                        periods.map { p =>
-                                         if p.startDate == old.startDate && p.endDate == old.endDate then
-                                           p.copy(startDate = value.startDate, endDate = value.endDate)
+                                         if p.startDate.contains(old.startDate) && p.endDate.contains(old.endDate) then
+                                           p.copy(startDate = Some(value.startDate), endDate = Some(value.endDate))
                                          else p
                                        }
                                      }

@@ -214,7 +214,8 @@ class SubscriptionService @Inject() (
       ),
       accountingPeriod = AccountingPeriodAmendV2(
         amendAccountingPeriod = true,
-        originalAccountingPeriods = Some(affectedPeriods.map(p => OriginalAccountingPeriod(p.startDate, p.endDate))),
+        originalAccountingPeriods =
+          Some(affectedPeriods.map(p => OriginalAccountingPeriod(p.startDate.getOrElse(LocalDate.now), p.endDate.getOrElse(LocalDate.now)))),
         newAccountingPeriod = Some(NewAccountingPeriod(newPeriod.startDate, newPeriod.endDate))
       ),
       upeCorrespAddressDetails = address,

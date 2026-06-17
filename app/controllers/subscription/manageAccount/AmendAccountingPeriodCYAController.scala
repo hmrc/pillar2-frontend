@@ -198,7 +198,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     newEnd:     LocalDate,
     allPeriods: Seq[AccountingPeriodV2]
   ): Seq[AccountingPeriodV2] =
-    allPeriods.filter(p => !p.startDate.isAfter(newEnd) && !p.endDate.isBefore(newStart))
+    allPeriods.filter(p => !p.startDate.getOrElse(LocalDate.now).isAfter(newEnd) && !p.endDate.getOrElse(LocalDate.now).isBefore(newStart))
 
   private def predictMicroPeriods(
     newPeriod:  AccountingPeriod,
@@ -211,19 +211,21 @@ class AmendAccountingPeriodCYAController @Inject() (
       val latestEnd     = affected.map(_.endDate).max
       val today         = DateTimeUtils.today
 
-      val hasPriorAP = allPeriods.exists(_.endDate.isBefore(earliestStart))
-      val hasNextAP  = allPeriods.exists(_.startDate.isAfter(latestEnd))
+      val hasPriorAP = allPeriods.exists(_.endDate.getOrElse(LocalDate.now).isBefore(earliestStart.getOrElse(LocalDate.now)))
+      val hasNextAP  = allPeriods.exists(_.startDate.getOrElse(LocalDate.now).isAfter(latestEnd.getOrElse(LocalDate.now)))
 
       val gapBefore: Option[AccountingPeriod] =
-        if hasPriorAP && newPeriod.startDate.isAfter(earliestStart) then Some(AccountingPeriod(earliestStart, newPeriod.startDate.minusDays(1)))
+        if hasPriorAP && newPeriod.startDate.isAfter(earliestStart.getOrElse(LocalDate.now)) then
+          Some(AccountingPeriod(earliestStart.getOrElse(LocalDate.now), newPeriod.startDate.minusDays(1)))
         else None
 
       val gapAfter: Option[AccountingPeriod] =
-        if hasNextAP && newPeriod.endDate.isBefore(latestEnd) then Some(AccountingPeriod(newPeriod.endDate.plusDays(1), latestEnd))
+        if hasNextAP && newPeriod.endDate.isBefore(latestEnd.getOrElse(LocalDate.now)) then
+          Some(AccountingPeriod(newPeriod.endDate.plusDays(1), latestEnd.getOrElse(LocalDate.now)))
         else None
 
       val openEnded: Seq[AccountingPeriod] =
-        if newPeriod.endDate.isAfter(latestEnd) then generateOpenEndedPeriods(newPeriod.endDate.plusDays(1), today)
+        if newPeriod.endDate.isAfter(latestEnd.getOrElse(LocalDate.now)) then generateOpenEndedPeriods(newPeriod.endDate.plusDays(1), today)
         else Seq.empty
 
       gapBefore.toSeq ++ gapAfter.toSeq ++ openEnded
@@ -237,5 +239,4 @@ class AmendAccountingPeriodCYAController @Inject() (
           (AccountingPeriod(cur, periodEnd), periodEnd.plusDays(1))
         }
       }
-      .toSeq
 }
