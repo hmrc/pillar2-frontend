@@ -234,7 +234,8 @@ object TransactionHistoryController {
       ),
       firstCellIsHeader = true,
       caption = Some(messages("transactionHistory.transactions")),
-      captionClasses = "govuk-table__caption--m"
+      captionClasses = "govuk-table__caption--m",
+      attributes = Map("style" -> "overflow-wrap: normal;")
     )
 
   private def createTableRows(history: Transaction, useNewApi: Boolean)(using messages: Messages): Seq[TableRow] = {

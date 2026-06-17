@@ -18,7 +18,6 @@
 @import utils.DateTimeUtils._
 @import views.ViewUtils._
 @import views.html.components.gds._
-@import views.html.styles.tableScrollStyles
 @import views.html.templates.Layout
 
 @this(
@@ -35,8 +34,6 @@
 @(plrReference: String, data: Seq[StoodoverChargesTable], stoodoverTotal: BigDecimal, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
 @layout(pageTitle = titleNoForm(messages("payments.stoodoverCharges.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
-
-    @tableScrollStyles()
 
     @if(isAgent) {
         <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>

@@ -47,17 +47,17 @@ object SubmissionHistoryHelper {
         Seq(
           HeadCell(
             Text(messages("submissionHistory.typeOfReturn")),
-            classes = "govuk-table__header govuk-!-width-two-thirds",
-            attributes = Map("scope" -> "col")
+            classes = "govuk-table__header govuk-!-width-two-thirds"
           ),
           HeadCell(
             Text(messages("submissionHistory.submissionDate")),
-            classes = "govuk-table__header govuk-!-width-two-thirds",
-            attributes = Map("scope" -> "col")
+            classes = "govuk-table__header govuk-!-width-two-thirds"
           )
         )
       ),
-      firstCellIsHeader = true
+      firstCellIsHeader = true,
+      captionClasses = "govuk-table__caption govuk-table__caption--m",
+      attributes = Map("style" -> "overflow-wrap: normal;")
     )
   }
 

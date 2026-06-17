@@ -1,0 +1,13 @@
+
+.table-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.govuk-table thead th {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 2;
+    border-bottom: 2px solid #b1b4b6;
+}
