@@ -655,20 +655,20 @@ class SubscriptionServiceSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
-        when(mockSubscriptionConnector.amendSubscription(any(), any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionConnector.amendSubscriptionV2(any(), any())(using any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
-        service.amendFilingMemberDetails("id", amendData).futureValue mustEqual Done
+        service.amendFilingMemberDetails("id", amendSubscriptionDataV2).futureValue mustEqual Done
       }
 
       "return failure if amend subscription fails" in {
         val application = applicationBuilder().overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
-        when(mockSubscriptionConnector.amendSubscription(any(), any())(using any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionConnector.amendSubscriptionV2(any(), any())(using any())).thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
-        service.amendFilingMemberDetails("id", amendData).failed.futureValue mustEqual InternalIssueError
+        service.amendFilingMemberDetails("id", amendSubscriptionDataV2).failed.futureValue mustEqual InternalIssueError
       }
     }
 
@@ -774,8 +774,13 @@ class SubscriptionServiceSpec extends SpecBase {
     "createAmendObjectForReplacingFilingMember" must {
       "set ultimate parent as the new filing member if user has chosen corporate position as upe" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
-        val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = true), filingMemberDetails = None)
-        val result         = service.createAmendObjectForReplacingFilingMember(subscriptionData, replaceFilingMemberData, emptyUserAnswers)
+        val expectedResult =
+          amendSubscriptionDataV2.copy(
+            upeDetails = amendSubscriptionDataV2.upeDetails.copy(filingMember = true),
+            accountingPeriod = AccountingPeriodAmendV2(false, None, None),
+            filingMemberDetails = None
+          )
+        val result = service.createAmendObjectForReplacingFilingMember(subscriptionDataV2, replaceFilingMemberData, emptyUserAnswers)
         result.futureValue mustEqual expectedResult
       }
 
@@ -791,9 +796,12 @@ class SubscriptionServiceSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         when(mockRegistrationConnector.registerNewFilingMember(any())(using any())).thenReturn(Future.successful("someSafeId"))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = false))
-        val result         = service.createAmendObjectForReplacingFilingMember(
-          subscriptionData,
+        val expectedResult = amendSubscriptionDataV2.copy(
+          upeDetails = amendSubscriptionDataV2.upeDetails.copy(filingMember = false),
+          accountingPeriod = AccountingPeriodAmendV2(false, None, None)
+        )
+        val result = service.createAmendObjectForReplacingFilingMember(
+          subscriptionDataV2,
           replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
           userAnswers
         )
@@ -811,8 +819,8 @@ class SubscriptionServiceSpec extends SpecBase {
         when(mockRegistrationConnector.registerNewFilingMember(any())(using any())).thenReturn(Future.successful("someSafeId"))
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val expectedResult = amendData.copy(
-          upeDetails = amendData.upeDetails.copy(filingMember = false),
+        val expectedResult = amendSubscriptionDataV2.copy(
+          upeDetails = amendSubscriptionDataV2.upeDetails.copy(filingMember = false),
           filingMemberDetails = Some(
             FilingMemberAmendDetails(
               addNewFilingMember = true,
@@ -821,10 +829,11 @@ class SubscriptionServiceSpec extends SpecBase {
               customerIdentification2 = None,
               organisationName = "Company"
             )
-          )
+          ),
+          accountingPeriod = AccountingPeriodAmendV2(false, None, None)
         )
         val result = service.createAmendObjectForReplacingFilingMember(
-          subscriptionData,
+          subscriptionDataV2,
           replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
           userAnswers
         )
@@ -844,8 +853,8 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val expectedResult = amendData.copy(
-          upeDetails = amendData.upeDetails.copy(filingMember = false),
+        val expectedResult = amendSubscriptionDataV2.copy(
+          upeDetails = amendSubscriptionDataV2.upeDetails.copy(filingMember = false),
           filingMemberDetails = Some(
             FilingMemberAmendDetails(
               addNewFilingMember = true,
@@ -854,7 +863,8 @@ class SubscriptionServiceSpec extends SpecBase {
               customerIdentification2 = None,
               organisationName = "Company"
             )
-          )
+          ),
+          accountingPeriod = AccountingPeriodAmendV2(false, None, None)
         )
         val result = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,

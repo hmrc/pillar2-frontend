@@ -31,6 +31,7 @@ import viewmodels.govuk.summarylist.SummaryListViewModel
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
+
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val upeDetailsAmend          =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
@@ -42,6 +43,18 @@ trait SubscriptionLocalDataFixture {
     customerIdentification2 = Some("UTR"),
     organisationName = "Company"
   )
+
+  val originalAccountingPeriod: OriginalAccountingPeriod =
+    OriginalAccountingPeriod(
+      taxObligationStartDate = LocalDate.of(2024, 1, 1),
+      taxObligationEndDate = LocalDate.of(2024, 12, 31)
+    )
+
+  val newAccountingPeriod: NewAccountingPeriod =
+    NewAccountingPeriod(
+      updateObligationStartDate = LocalDate.of(2025, 1, 1),
+      updateObligationEndDate = LocalDate.of(2025, 12, 31)
+    )
 
   lazy val currentDate: LocalDate = LocalDate.of(2025, 7, 18)
 
@@ -92,20 +105,49 @@ trait SubscriptionLocalDataFixture {
     accountStatus = Some(ActiveAccount)
   )
 
+  val subscriptionDataV2: SubscriptionDataV2 = SubscriptionDataV2(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = upeCorrespondenceAddress,
+    primaryContactDetails = contactDetails,
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = Some(
+      Seq(
+        AccountingPeriodV2(
+          startDate = None,
+          endDate = None,
+          dueDate = None,
+          canAmendStartDate = Some(false),
+          canAmendEndDate = Some(false)
+        )
+      )
+    ),
+    accountStatus = Some(ActiveAccount)
+  )
+
   val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
     userId = "id",
     verifiers = Seq(Verifier("CTUTR", "Utr"), Verifier("CRN", "Crn"))
   )
 
-  val amendData: AmendSubscription = AmendSubscription(
+  val accountingPeriodAmendV2: AccountingPeriodAmendV2 =
+    AccountingPeriodAmendV2(
+      amendAccountingPeriod = true,
+      originalAccountingPeriods = Some(Seq(originalAccountingPeriod)),
+      newAccountingPeriod = Some(newAccountingPeriod)
+    )
+
+  val amendSubscriptionDataV2: AmendSubscriptionV2 = AmendSubscriptionV2(
     replaceFilingMember = true,
     upeDetails = upeDetailsAmend,
-    accountingPeriod = AccountingPeriodAmend(currentDate, currentDate.plusYears(1)),
+    accountingPeriod = accountingPeriodAmendV2,
     upeCorrespAddressDetails = upeCorrespondenceAddress,
     primaryContactDetails = contactDetails,
     secondaryContactDetails = Some(contactDetails),
     filingMemberDetails = Some(filingMemberAmendDetails)
   )
+
   val replaceFilingMemberData: NewFilingMemberDetail = NewFilingMemberDetail(
     securityAnswerUserReference = "plrReference",
     securityAnswerRegistrationDate = LocalDate.of(2024, 12, 31),

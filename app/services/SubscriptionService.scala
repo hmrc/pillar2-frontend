@@ -78,12 +78,6 @@ class SubscriptionService @Inject() (
       case None          => Future.failed(NoResultFound)
     }
 
-  def rfmReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
-    subscriptionConnector.readSubscription(plrReference).flatMap {
-      case Some(sub) => Future.successful(sub)
-      case None      => Future.failed(NoResultFound)
-    }
-
   def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
     subscriptionConnector.cacheSubscription(parameters)
 
@@ -373,9 +367,9 @@ class SubscriptionService @Inject() (
 
   private def setUltimateParentAsNewFilingMember(
     requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionDataV1
-  ): AmendSubscription =
-    AmendSubscription(
+    subscriptionData: SubscriptionData
+  ): AmendSubscriptionV2 =
+    AmendSubscriptionV2(
       replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
@@ -386,8 +380,7 @@ class SubscriptionService @Inject() (
         domesticOnly = subscriptionData.upeDetails.domesticOnly,
         filingMember = true
       ),
-      accountingPeriod =
-        AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
+      accountingPeriod = AccountingPeriodAmendV2(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
         requiredInfo.contactAddress.addressLine1,
         requiredInfo.contactAddress.addressLine2,
@@ -407,10 +400,10 @@ class SubscriptionService @Inject() (
 
   private def replaceOldFilingMember(
     requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionDataV1,
+    subscriptionData: SubscriptionData,
     filingMember:     FilingMemberAmendDetails
-  ): AmendSubscription =
-    AmendSubscription(
+  ): AmendSubscriptionV2 =
+    AmendSubscriptionV2(
       replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
@@ -421,8 +414,7 @@ class SubscriptionService @Inject() (
         domesticOnly = subscriptionData.upeDetails.domesticOnly,
         filingMember = false
       ),
-      accountingPeriod =
-        AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
+      accountingPeriod = AccountingPeriodAmendV2(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
         requiredInfo.contactAddress.addressLine1,
         requiredInfo.contactAddress.addressLine2,
@@ -440,10 +432,8 @@ class SubscriptionService @Inject() (
       filingMemberDetails = Some(filingMember)
     )
 
-  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
-    for {
-      result <- subscriptionConnector.amendSubscription(userId, amendData)
-    } yield result
+  def amendFilingMemberDetails(userId: String, amendData: AmendSubscriptionV2)(using hc: HeaderCarrier): Future[Done] =
+    subscriptionConnector.amendSubscriptionV2(userId, amendData)
 
   private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     for {
@@ -531,24 +521,19 @@ class SubscriptionService @Inject() (
     subscriptionData:   SubscriptionData,
     filingMemberDetail: NewFilingMemberDetail,
     userAnswers:        UserAnswers
-  )(using hc: HeaderCarrier): Future[AmendSubscription] =
-    subscriptionData match {
-      case v1: SubscriptionDataV1 =>
-        if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
-          logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
-          setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = v1).toFuture
-        } else {
-          logger.info("createAmendObjectForReplacingFilingMember - call replaceOldFilingMember")
-          getNewFilingMemberDetails(userAnswers).map(newFilingMember =>
-            replaceOldFilingMember(
-              requiredInfo = filingMemberDetail,
-              subscriptionData = v1,
-              filingMember = newFilingMember
-            )
-          )
-        }
-      case _: SubscriptionDataV2 =>
-        Future.failed(new UnsupportedOperationException("RFM amendment not supported for V2 subscription data"))
+  )(using hc: HeaderCarrier): Future[AmendSubscriptionV2] =
+    if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
+      logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
+      setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
+    } else {
+      logger.info("createAmendObjectForReplacingFilingMember - call replaceOldFilingMember")
+      getNewFilingMemberDetails(userAnswers).map(newFilingMember =>
+        replaceOldFilingMember(
+          requiredInfo = filingMemberDetail,
+          subscriptionData = subscriptionData,
+          filingMember = newFilingMember
+        )
+      )
     }
 
   def getCompanyNameFromGRS(grsResponse: GrsResponse): Option[String] =
