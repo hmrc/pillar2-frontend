@@ -226,10 +226,10 @@ object TransactionHistoryController {
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("transactionHistory.date")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.description")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.amountRepaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
+          HeadCell(Text(messages("transactionHistory.date"))),
+          HeadCell(Text(messages("transactionHistory.description"))),
+          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric"),
+          HeadCell(Text(messages("transactionHistory.amountRepaid")), classes = "govuk-table__header--numeric")
         )
       ),
       firstCellIsHeader = true,
