@@ -325,26 +325,44 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       import models.subscription.AccountingPeriodV2
       import play.api.inject.bind
 
-      val originalStart = LocalDate.of(2024, 1, 1)
-      val originalEnd   = LocalDate.of(2024, 12, 31)
-      val newStart      = LocalDate.of(2024, 2, 1)
-      val newEnd        = LocalDate.of(2024, 11, 30)
+      val originalStart = Some(LocalDate.of(2024, 1, 1))
+      val originalEnd   = Some(LocalDate.of(2024, 12, 31))
+      val newStart      = Some(LocalDate.of(2024, 2, 1))
+      val newEnd        = Some(LocalDate.of(2024, 11, 30))
 
-      val period1 = AccountingPeriodV2(originalStart, originalEnd, Some(LocalDate.of(2025, 3, 31)), canAmendStartDate = true, canAmendEndDate = true)
+      val period1 = AccountingPeriodV2(
+        originalStart,
+        originalEnd,
+        dueDate = Some(LocalDate.of(2025, 3, 31)),
+        canAmendStartDate = Some(true),
+        canAmendEndDate = Some(true)
+      )
       val period2 = AccountingPeriodV2(
-        LocalDate.of(2023, 1, 1),
-        LocalDate.of(2023, 12, 31),
-        Some(LocalDate.of(2024, 3, 31)),
-        canAmendStartDate = true,
-        canAmendEndDate = true
+        startDate = Some(LocalDate.of(2023, 1, 1)),
+        endDate = Some(LocalDate.of(2023, 12, 31)),
+        dueDate = Some(LocalDate.of(2024, 3, 31)),
+        canAmendStartDate = Some(true),
+        canAmendEndDate = Some(true)
       )
 
       val localDataWithOldPeriod = emptySubscriptionLocalData
         .copy(accountingPeriods = Some(Seq(period1, period2)))
-        .setOrException(SubAccountingPeriodPage, AccountingPeriod(originalStart, originalEnd))
+        .setOrException(
+          SubAccountingPeriodPage,
+          AccountingPeriod(
+            originalStart.getOrElse(LocalDate.now),
+            originalEnd.getOrElse(LocalDate.now)
+          )
+        )
 
       val expectedUpdated = localDataWithOldPeriod
-        .setOrException(SubAccountingPeriodPage, AccountingPeriod(newStart, newEnd))
+        .setOrException(
+          SubAccountingPeriodPage,
+          AccountingPeriod(
+            newStart.getOrElse(LocalDate.now),
+            newEnd.getOrElse(LocalDate.now)
+          )
+        )
         .copy(accountingPeriods = Some(Seq(period1.copy(startDate = newStart, endDate = newEnd), period2)))
 
       val expectedNextPage = Call(GET, "/next")

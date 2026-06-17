@@ -71,8 +71,8 @@ class SubscriptionDataV2Spec extends SpecBase {
       result.upeDetails.domesticOnly mustBe true
       result.accountingPeriod mustBe defined
       result.accountingPeriod.value must have size 1
-      result.accountingPeriod.value.head.startDate mustBe LocalDate.of(2024, 1, 6)
-      result.accountingPeriod.value.head.canAmendStartDate mustBe true
+      result.accountingPeriod.value.head.startDate mustBe Some(LocalDate.of(2024, 1, 6))
+      result.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
     }
 
     "round-trip serialise/deserialise" in {

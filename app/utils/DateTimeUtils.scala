@@ -61,6 +61,10 @@ object DateTimeUtils {
     def toDateEntryFormat: String = localDate.format(dateEntryFormatter)
   }
 
+  extension (localDate: Option[LocalDate]) {
+    def toDateFormat: String = localDate.getOrElse(LocalDate.now).format(dateFormatter)
+  }
+
   extension (zonedDateTime: ZonedDateTime) {
     def toDateFormat:        String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateFormatter)
     def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)

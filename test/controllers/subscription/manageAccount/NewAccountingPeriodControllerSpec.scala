@@ -39,11 +39,11 @@ class NewAccountingPeriodControllerSpec extends SpecBase with Generators {
   val plrReference: String    = "XMPLR0123456789"
 
   private val amendablePeriod = AccountingPeriodV2(
-    startDate = LocalDate.of(2025, 7, 18),
-    endDate = LocalDate.of(2025, 12, 31),
+    startDate = Some(LocalDate.of(2025, 7, 18)),
+    endDate = Some(LocalDate.of(2025, 12, 31)),
     dueDate = Some(LocalDate.of(2026, 3, 31)),
-    canAmendStartDate = true,
-    canAmendEndDate = true
+    canAmendStartDate = Some(true),
+    canAmendEndDate = Some(true)
   )
 
   val chosenAccountingPeriod: ChosenAccountingPeriod = ChosenAccountingPeriod(

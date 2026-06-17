@@ -44,19 +44,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
   private val amendablePeriod = AccountingPeriodV2(
-    startDate = LocalDate.of(2025, 1, 1),
-    endDate = LocalDate.of(2025, 12, 31),
+    startDate = Some(LocalDate.of(2025, 1, 1)),
+    endDate = Some(LocalDate.of(2025, 12, 31)),
     dueDate = Some(LocalDate.of(2026, 3, 31)),
-    canAmendStartDate = true,
-    canAmendEndDate = true
+    canAmendStartDate = Some(true),
+    canAmendEndDate = Some(true)
   )
 
   private val microPeriod = AccountingPeriodV2(
-    startDate = LocalDate.of(2024, 4, 1),
-    endDate = LocalDate.of(2024, 9, 30),
+    startDate = Some(LocalDate.of(2024, 4, 1)),
+    endDate = Some(LocalDate.of(2024, 9, 30)),
     dueDate = Some(LocalDate.of(2024, 12, 31)),
-    canAmendStartDate = true,
-    canAmendEndDate = true
+    canAmendStartDate = Some(true),
+    canAmendEndDate = Some(true)
   )
 
   private val localDataWithPeriods: SubscriptionLocalData =
