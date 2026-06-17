@@ -44,6 +44,7 @@ import viewmodels.checkAnswers.manageAccount.*
 import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.manageAccount.{ManageGroupDetailsCheckYourAnswersView, ManageGroupDetailsMultiPeriodView}
 
+import java.time.LocalDate
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -94,15 +95,15 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                   given msgs: play.api.i18n.Messages = request.messages
                   val amendablePeriods = local.accountingPeriods
                     .getOrElse(Seq.empty)
-                    .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
+                    .sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
                   val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
                     val title =
                       if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
                       else msgs("manageGroupDetails.multiPeriod.previousPeriod")
                     (
                       title,
-                      p.startDate.toDateFormat,
-                      p.endDate.toDateFormat,
+                      p.startDate.getOrElse(LocalDate.now).toDateFormat,
+                      p.endDate.getOrElse(LocalDate.now).toDateFormat,
                       Some(
                         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
                           .selectPeriod(displayIdx)
@@ -156,7 +157,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     (identify andThen getData andThen requireData).async { request =>
       given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       val periods = request.subscriptionLocalData.accountingPeriods.getOrElse(Seq.empty)
-      val sorted  = periods.sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
+      val sorted  = periods.sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
       sorted.lift(index) match {
         case Some(period) =>
           val updated = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match {

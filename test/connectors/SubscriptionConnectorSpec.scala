@@ -185,7 +185,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result.formBundleNumber mustBe "119000004323"
         result.accountingPeriod mustBe defined
         result.accountingPeriod.value must have size 1
-        result.accountingPeriod.value.head.canAmendStartDate mustBe true
+        result.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
       }
 
       "fail with NoResultFound when backend returns 404" in {
@@ -223,7 +223,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         result.get.formBundleNumber mustBe "119000004323"
         result.get.accountingPeriod mustBe defined
         result.get.accountingPeriod.value must have size 1
-        result.get.accountingPeriod.value.head.canAmendStartDate mustBe true
+        result.get.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
       }
 
       "return None when backend returns 404" in {

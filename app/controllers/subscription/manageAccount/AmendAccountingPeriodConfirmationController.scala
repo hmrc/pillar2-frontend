@@ -26,6 +26,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodConfirmationView
 
+import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.ExecutionContext
 
@@ -77,6 +78,6 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     val originalSet = original.map(p => (p.startDate, p.endDate)).toSet
     updated
       .filterNot(p => originalSet.contains((p.startDate, p.endDate)))
-      .sortBy(_.endDate)(Ordering[java.time.LocalDate].reverse)
+      .sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
   }
 }

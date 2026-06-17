@@ -25,11 +25,11 @@ import java.time.LocalDate
 class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Matchers {
 
   private def period(year: Int, canAmendStart: Boolean = true, canAmendEnd: Boolean = true): AccountingPeriodV2 = AccountingPeriodV2(
-    startDate = LocalDate.of(year, 1, 1),
-    endDate = LocalDate.of(year, 12, 31),
+    startDate = Some(LocalDate.of(year, 1, 1)),
+    endDate = Some(LocalDate.of(year, 12, 31)),
     dueDate = Some(LocalDate.of(year, 12, 31).plusYears(1)),
-    canAmendStartDate = canAmendStart,
-    canAmendEndDate = canAmendEnd
+    canAmendStartDate = Some(canAmendStart),
+    canAmendEndDate = Some(canAmendEnd)
   )
 
   "deriveNewAccountingPeriodDateBoundaries" - {

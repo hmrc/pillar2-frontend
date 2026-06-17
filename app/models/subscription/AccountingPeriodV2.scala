@@ -21,15 +21,15 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 final case class AccountingPeriodV2(
-  startDate:         LocalDate,
-  endDate:           LocalDate,
+  startDate:         Option[LocalDate] = None,
+  endDate:           Option[LocalDate] = None,
   dueDate:           Option[LocalDate] = None,
-  canAmendStartDate: Boolean,
-  canAmendEndDate:   Boolean
+  canAmendStartDate: Option[Boolean] = Some(false),
+  canAmendEndDate:   Option[Boolean] = Some(false)
 ) {
 
   def toAccountingPeriod: AccountingPeriod =
-    AccountingPeriod(startDate = startDate, endDate = endDate, dueDate = dueDate)
+    AccountingPeriod(startDate = startDate.getOrElse(LocalDate.now), endDate = endDate.getOrElse(LocalDate.now), dueDate = dueDate)
 }
 
 object AccountingPeriodV2 {

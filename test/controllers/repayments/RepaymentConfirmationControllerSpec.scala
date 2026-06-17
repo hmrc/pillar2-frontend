@@ -87,11 +87,11 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
           accountingPeriod = Some(
             Seq(
               AccountingPeriodV2(
-                startDate = LocalDate.of(2024, 1, 6),
-                endDate = LocalDate.of(2025, 4, 6),
+                startDate = Some(LocalDate.of(2024, 1, 6)),
+                endDate = Some(LocalDate.of(2025, 4, 6)),
                 dueDate = Some(LocalDate.of(2024, 4, 6)),
-                canAmendStartDate = true,
-                canAmendEndDate = true
+                canAmendStartDate = Some(true),
+                canAmendEndDate = Some(true)
               )
             )
           ),
