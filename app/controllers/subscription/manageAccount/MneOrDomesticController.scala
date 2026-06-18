@@ -30,6 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.*
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
@@ -43,6 +44,7 @@ class MneOrDomesticController @Inject() (
   subscriptionDataRequiredAction:                 SubscriptionDataRequiredAction,
   navigator:                                      AmendSubscriptionNavigator,
   mneOrDomesticFormProvider:                      MneOrDomesticFormProvider,
+  subscriptionService:                            SubscriptionService,
   val controllerComponents:                       MessagesControllerComponents,
   mneOrDomesticView:                              MneOrDomesticView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
@@ -76,8 +78,8 @@ class MneOrDomesticController @Inject() (
                 logger.info(s"Allowed entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
                 for {
                   updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, newMneOrDomesticValue))
-                  _ = logger.info(s"[MneOrDomesticController][onSubmit] updatedAnswers: ${Json.toJson(updatedAnswers)}")
-                  _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                  _              <- subscriptionService.amendContactOrGroupDetails(request.userId, updatedAnswers.plrReference, updatedAnswers)
                 } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
               case EntityLocationChangeBlocked =>
                 logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
