@@ -22,6 +22,7 @@ import controllers.actions.TestAuthRetrievals.~
 import forms.MneOrDomesticFormProvider
 import models.MneOrDomestic
 import navigation.AmendSubscriptionNavigator
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{never, verify, when}
 import pages.SubMneOrDomesticPage
@@ -31,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -112,6 +114,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -119,7 +122,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -141,6 +145,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -148,7 +153,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -170,6 +176,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -177,7 +184,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -291,6 +299,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -298,7 +307,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -322,6 +332,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -329,7 +340,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -353,6 +365,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -360,7 +373,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(previousData))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
         )
         .build()
 
@@ -414,6 +428,8 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier])).thenReturn(Future.successful(Done))
+      when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(None))
 
       val userAnswers         = emptySubscriptionLocalData
       val expectedUserAnswers = userAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -422,6 +438,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
