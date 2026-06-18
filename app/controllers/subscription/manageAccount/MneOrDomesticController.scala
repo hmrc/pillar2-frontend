@@ -78,8 +78,8 @@ class MneOrDomesticController @Inject() (
                 logger.info(s"Allowed entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
                 for {
                   updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, newMneOrDomesticValue))
-                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
                   _              <- subscriptionService.amendContactOrGroupDetails(request.userId, updatedAnswers.plrReference, updatedAnswers)
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
                 } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
               case EntityLocationChangeBlocked =>
                 logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
