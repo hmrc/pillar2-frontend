@@ -56,8 +56,7 @@ object SubmissionHistoryHelper {
         )
       ),
       firstCellIsHeader = true,
-      captionClasses = "govuk-table__caption govuk-table__caption--m",
-      attributes = Map("style" -> "overflow-wrap: normal;")
+      captionClasses = "govuk-table__caption govuk-table__caption--m"
     )
   }
 
