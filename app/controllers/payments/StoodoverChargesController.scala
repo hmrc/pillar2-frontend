@@ -58,7 +58,7 @@ class StoodoverChargesController @Inject() (
   ): Future[AccountActivityResponse] =
     accountActivityConnector
       .retrieveAccountActivity(plrReference, dateFrom, dateTo)
-      .recover { case NoResultFound => AccountActivityResponse(LocalDateTime.now, Seq.empty) }
+      .recover { case NoResultFound => AccountActivityResponse(LocalDateTime.now, None) }
 
   private def toTablesFromAccountActivity(accountActivitySummaries: Seq[StoodoverChargeSummary]): Seq[StoodoverChargesTable] =
     accountActivitySummaries.map { summary =>

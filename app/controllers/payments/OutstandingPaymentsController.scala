@@ -110,7 +110,7 @@ class OutstandingPaymentsController @Inject() (
       accountActivityConnector
         .retrieveAccountActivity(plrReference, dateFrom, dateTo)
         .map(response => Left(response))
-        .recover { case NoResultFound => Left(AccountActivityResponse(LocalDateTime.now, Seq.empty)) }
+        .recover { case NoResultFound => Left(AccountActivityResponse(LocalDateTime.now, None)) }
     else
       financialDataService
         .retrieveFinancialData(plrReference, dateFrom, dateTo)
