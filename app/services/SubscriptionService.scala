@@ -445,10 +445,10 @@ class SubscriptionService @Inject() (
   def deallocateEnrolment(plrReference: String)(using hc: HeaderCarrier): Future[Done] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
       case Some(groupIds) =>
-        logger.info(s"deallocateEnrolment groupIds: - $groupIds")
+        logger.info(s"deallocateEnrolment - revoking enrolment for $plrReference, groups: $groupIds")
         enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds.head, plrReference = plrReference)
-      case error =>
-        logger.warn(s"deallocateEnrolment error: - $error")
+      case None =>
+        logger.warn(s"deallocateEnrolment - no groups returned for $plrReference; cannot deallocate")
         Future.failed(InternalIssueError)
     }
 
