@@ -19,7 +19,6 @@
 @import models.obligationsandsubmissions._
 @import views.html.templates.Layout
 @import views.ViewUtils._
-@import views.html.styles.tableScrollStyles
 @import views.html.components.gds._
 @import java.time.LocalDate
 
@@ -45,7 +44,6 @@
 @submissionHistoryUrl = @{controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url}
 
 @layout(pageTitle = titleNoForm(messages("dueAndOverdueReturns.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
-    @tableScrollStyles()
 
         @if(agentView && organisationName.isDefined) {
             <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName <strong>@{messages("homepage.id")}:</strong> @plrReference</span>
