@@ -72,15 +72,13 @@
             if(sameDatesEntered) {
                 Seq(messages("amendAccountingPeriodCYA.sameDatesEntered.warning"), messages("amendAccountingPeriodCYA.sameDatesEntered.duration", newDurationText))
             } else {
-                val agentOrGroupKey = if(isAgent) "amendAccountingPeriodCYA.predictedPeriod.agent.gap" else "amendAccountingPeriodCYA.predictedPeriod.gap"
+                val agentOrGroupPrefix = if(isAgent) "amendAccountingPeriodCYA.predictedPeriod.agent.duration" else "amendAccountingPeriodCYA.predictedPeriod.duration"
 
                 predictedPeriods.toList match {
                     case List((_, duration)) =>
-                        Seq(messages(agentOrGroupKey)) ++
-                        Seq(messages("amendAccountingPeriodCYA.predictedPeriod.duration.one", duration))
+                        Seq(messages(s"$agentOrGroupPrefix.one", duration))
                     case List((_, firstDuration), (_, secondDuration)) =>
-                        Seq(messages(agentOrGroupKey)) ++
-                        Seq(messages("amendAccountingPeriodCYA.predictedPeriod.duration.two", firstDuration, secondDuration))
+                        Seq(messages(s"$agentOrGroupPrefix.two", firstDuration, secondDuration))
                     case _ => Seq(messages("amendAccountingPeriodCYA.warning", newDurationText))
                 }
             }
