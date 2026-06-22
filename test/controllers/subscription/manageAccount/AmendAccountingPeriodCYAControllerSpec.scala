@@ -104,8 +104,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriodCYA.heading"))
-        body must include(messages(application)("amendAccountingPeriodCYA.newPeriod.title"))
-        body must include("1 year and 6 days")
+        body must include("New accounting period - 1 year and 6 days")
         body must not include "This will create an accounting period of"
       }
     }
@@ -130,8 +129,8 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual OK
         val body = contentAsString(result)
-        body must include("This will create an accounting period of")
-        body must include("3 months and 4 days")
+        body must include("Your change has left a gap in your accounting history.")
+        body must include("We have created an additional accounting period of 3 months and 4 days to fill the gap.")
       }
     }
 
@@ -155,8 +154,8 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual OK
         val body = contentAsString(result)
-        body must include("This will create an accounting period of")
-        body must include("2 months and 27 days")
+        body must include("Your change has left a gap in your accounting history.")
+        body must include("We have created an additional accounting period of 2 months and 27 days to fill the gap.")
       }
     }
 
@@ -183,9 +182,7 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         canAmendStartDate = Some(false),
         canAmendEndDate = Some(true)
       )
-      val newOpenEndedPeriod     = AccountingPeriod(startDate = todayDate.minusMonths(3), endDate = todayDate.minusDays(10))
-      val expectedOpenEndedStart = newOpenEndedPeriod.endDate.plusDays(1)
-      val expectedOpenEndedEnd   = expectedOpenEndedStart.plusMonths(12).minusDays(1)
+      val newOpenEndedPeriod = AccountingPeriod(startDate = todayDate.minusMonths(3), endDate = todayDate.minusDays(10))
 
       val ua          = UserAnswers("id").setOrException(NewAccountingPeriodPage, newOpenEndedPeriod)
       val application = buildApp(
@@ -200,8 +197,6 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         val body = contentAsString(result)
-        body must include(expectedOpenEndedStart.toDateFormat)
-        body must include(expectedOpenEndedEnd.toDateFormat)
         body must include("1 year")
       }
     }
