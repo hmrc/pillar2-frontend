@@ -80,7 +80,7 @@ object FinancialDataService extends Logging {
     }
 
   def parseAccountActivityResponse(response: AccountActivityResponse): AccountActivityData = AccountActivityData {
-    response.transactionDetails.filter { tx =>
+    response.transactionDetails.getOrElse(Seq.empty).filter { tx =>
       tx.transactionType match {
         case TransactionType.Debit   => tx.outstandingAmount.exists(_ > 0)
         case TransactionType.Payment => true

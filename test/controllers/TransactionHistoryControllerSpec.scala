@@ -82,59 +82,61 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
   val accountActivityResponse: AccountActivityResponse = AccountActivityResponse(
     processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
-    transactionDetails = Seq(
-      // Payment transaction (charge allocation, no repayment)
-      AccountActivityTransaction(
-        transactionType = TransactionType.Payment,
-        transactionDesc = "Pillar 2 Payment on Account",
-        startDate = None,
-        endDate = None,
-        accruedInterest = None,
-        chargeRefNo = None,
-        transactionDate = LocalDate.of(2024, 12, 1),
-        dueDate = None,
-        originalAmount = BigDecimal(100),
-        outstandingAmount = None,
-        clearedAmount = Some(BigDecimal(100)),
-        standOverAmount = None,
-        appealFlag = None,
-        clearingDetails = Some(
-          Seq(
-            AccountActivityClearance(
-              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
-              chargeRefNo = Some("X123456789012"),
-              dueDate = None,
-              amount = BigDecimal(100),
-              clearingDate = LocalDate.of(2024, 12, 1),
-              clearingReason = Some("Allocated to Charge")
+    transactionDetails = Some(
+      Seq(
+        // Payment transaction (charge allocation, no repayment)
+        AccountActivityTransaction(
+          transactionType = TransactionType.Payment,
+          transactionDesc = "Pillar 2 Payment on Account",
+          startDate = None,
+          endDate = None,
+          accruedInterest = None,
+          chargeRefNo = None,
+          transactionDate = LocalDate.of(2024, 12, 1),
+          dueDate = None,
+          originalAmount = BigDecimal(100),
+          outstandingAmount = None,
+          clearedAmount = Some(BigDecimal(100)),
+          standOverAmount = None,
+          appealFlag = None,
+          clearingDetails = Some(
+            Seq(
+              AccountActivityClearance(
+                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                chargeRefNo = Some("X123456789012"),
+                dueDate = None,
+                amount = BigDecimal(100),
+                clearingDate = LocalDate.of(2024, 12, 1),
+                clearingReason = Some("Allocated to Charge")
+              )
             )
           )
-        )
-      ),
-      // Repayment transaction
-      AccountActivityTransaction(
-        transactionType = TransactionType.Payment,
-        transactionDesc = "Pillar 2 Payment on Account",
-        startDate = None,
-        endDate = None,
-        accruedInterest = None,
-        chargeRefNo = None,
-        transactionDate = LocalDate.of(2025, 1, 15),
-        dueDate = None,
-        originalAmount = BigDecimal(50),
-        outstandingAmount = None,
-        clearedAmount = Some(BigDecimal(50)),
-        standOverAmount = None,
-        appealFlag = None,
-        clearingDetails = Some(
-          Seq(
-            AccountActivityClearance(
-              transactionDesc = "Repayment to taxpayer",
-              chargeRefNo = None,
-              dueDate = None,
-              amount = BigDecimal(50),
-              clearingDate = LocalDate.of(2025, 1, 31),
-              clearingReason = Some("Outgoing payment - Paid")
+        ),
+        // Repayment transaction
+        AccountActivityTransaction(
+          transactionType = TransactionType.Payment,
+          transactionDesc = "Pillar 2 Payment on Account",
+          startDate = None,
+          endDate = None,
+          accruedInterest = None,
+          chargeRefNo = None,
+          transactionDate = LocalDate.of(2025, 1, 15),
+          dueDate = None,
+          originalAmount = BigDecimal(50),
+          outstandingAmount = None,
+          clearedAmount = Some(BigDecimal(50)),
+          standOverAmount = None,
+          appealFlag = None,
+          clearingDetails = Some(
+            Seq(
+              AccountActivityClearance(
+                transactionDesc = "Repayment to taxpayer",
+                chargeRefNo = None,
+                dueDate = None,
+                amount = BigDecimal(50),
+                clearingDate = LocalDate.of(2025, 1, 31),
+                clearingReason = Some("Outgoing payment - Paid")
+              )
             )
           )
         )
@@ -516,22 +518,24 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     "redirect to no transaction history page when using account activity API and no payment/repayment transactions are returned" in {
       val debitOnlyAccountActivityResponse = AccountActivityResponse(
         processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
-        transactionDetails = Seq(
-          AccountActivityTransaction(
-            transactionType = TransactionType.Debit,
-            transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
-            startDate = Some(LocalDate.of(2024, 1, 1)),
-            endDate = Some(LocalDate.of(2024, 12, 31)),
-            accruedInterest = None,
-            chargeRefNo = Some("X123456789012"),
-            transactionDate = LocalDate.of(2025, 2, 15),
-            dueDate = Some(LocalDate.of(2025, 12, 31)),
-            originalAmount = BigDecimal(2000),
-            outstandingAmount = Some(BigDecimal(1000)),
-            clearedAmount = None,
-            standOverAmount = None,
-            appealFlag = None,
-            clearingDetails = None
+        transactionDetails = Some(
+          Seq(
+            AccountActivityTransaction(
+              transactionType = TransactionType.Debit,
+              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+              startDate = Some(LocalDate.of(2024, 1, 1)),
+              endDate = Some(LocalDate.of(2024, 12, 31)),
+              accruedInterest = None,
+              chargeRefNo = Some("X123456789012"),
+              transactionDate = LocalDate.of(2025, 2, 15),
+              dueDate = Some(LocalDate.of(2025, 12, 31)),
+              originalAmount = BigDecimal(2000),
+              outstandingAmount = Some(BigDecimal(1000)),
+              clearedAmount = None,
+              standOverAmount = None,
+              appealFlag = None,
+              clearingDetails = None
+            )
           )
         )
       )

@@ -214,22 +214,24 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     "return OK and display Outstanding Payments view when feature flag is enabled and outstanding payments exist" in {
       val accountActivityResponse = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
-        transactionDetails = Seq(
-          AccountActivityTransaction(
-            transactionType = TransactionType.Debit,
-            transactionDesc = "UKTR - DTT",
-            startDate = Some(LocalDate.of(2025, 1, 1)),
-            endDate = Some(LocalDate.of(2025, 12, 31)),
-            accruedInterest = None,
-            chargeRefNo = Some("X123456789012"),
-            transactionDate = LocalDate.of(2025, 2, 15),
-            dueDate = Some(LocalDate.of(2025, 12, 31)),
-            originalAmount = BigDecimal(2000),
-            outstandingAmount = Some(BigDecimal(1000)),
-            clearedAmount = Some(BigDecimal(1000)),
-            standOverAmount = None,
-            appealFlag = None,
-            clearingDetails = None
+        transactionDetails = Some(
+          Seq(
+            AccountActivityTransaction(
+              transactionType = TransactionType.Debit,
+              transactionDesc = "UKTR - DTT",
+              startDate = Some(LocalDate.of(2025, 1, 1)),
+              endDate = Some(LocalDate.of(2025, 12, 31)),
+              accruedInterest = None,
+              chargeRefNo = Some("X123456789012"),
+              transactionDate = LocalDate.of(2025, 2, 15),
+              dueDate = Some(LocalDate.of(2025, 12, 31)),
+              originalAmount = BigDecimal(2000),
+              outstandingAmount = Some(BigDecimal(1000)),
+              clearedAmount = Some(BigDecimal(1000)),
+              standOverAmount = None,
+              appealFlag = None,
+              clearingDetails = None
+            )
           )
         )
       )
@@ -276,7 +278,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
     "return OK and show 'No payments due' when feature flag is enabled and no outstanding payments exist" in {
       val accountActivityResponse = AccountActivityResponse(
         processingDate = LocalDateTime.now(),
-        transactionDetails = Seq.empty
+        transactionDetails = None
       )
 
       val subscriptionData = SubscriptionDataV1(
