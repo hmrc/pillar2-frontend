@@ -43,49 +43,51 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
   val accountActivityResponse: AccountActivityResponse =
     AccountActivityResponse(
       processingDate = LocalDateTime.of(2025, 1, 6, 10, 30, 0),
-      transactionDetails = Seq(
-        AccountActivityTransaction(
-          transactionType = TransactionType.Payment,
-          transactionDesc = "Pillar 2 Payment on Account",
-          startDate = None,
-          endDate = None,
-          accruedInterest = None,
-          chargeRefNo = None,
-          transactionDate = LocalDate.of(2025, 10, 15),
-          dueDate = None,
-          originalAmount = BigDecimal(10000),
-          outstandingAmount = Some(BigDecimal(1000)),
-          clearedAmount = Some(BigDecimal(9000)),
-          standOverAmount = None,
-          appealFlag = None,
-          clearingDetails = Some(
-            Seq(
-              AccountActivityClearance(
-                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
-                chargeRefNo = Some("X123456789012"),
-                dueDate = Some(LocalDate.of(2025, 12, 31)),
-                amount = BigDecimal(2000),
-                clearingDate = LocalDate.of(2025, 10, 15),
-                clearingReason = Some("Allocated to Charge")
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransaction(
+            transactionType = TransactionType.Payment,
+            transactionDesc = "Pillar 2 Payment on Account",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = None,
+            transactionDate = LocalDate.of(2025, 10, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(10000),
+            outstandingAmount = Some(BigDecimal(1000)),
+            clearedAmount = Some(BigDecimal(9000)),
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = Some(
+              Seq(
+                AccountActivityClearance(
+                  transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  amount = BigDecimal(2000),
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  clearingReason = Some("Allocated to Charge")
+                )
               )
             )
+          ),
+          AccountActivityTransaction(
+            transactionType = TransactionType.Credit,
+            transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+            startDate = None,
+            endDate = None,
+            accruedInterest = None,
+            chargeRefNo = Some("XR23456789012"),
+            transactionDate = LocalDate.of(2025, 3, 15),
+            dueDate = None,
+            originalAmount = BigDecimal(-100),
+            outstandingAmount = Some(BigDecimal(-100)),
+            clearedAmount = None,
+            standOverAmount = None,
+            appealFlag = None,
+            clearingDetails = None
           )
-        ),
-        AccountActivityTransaction(
-          transactionType = TransactionType.Credit,
-          transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
-          startDate = None,
-          endDate = None,
-          accruedInterest = None,
-          chargeRefNo = Some("XR23456789012"),
-          transactionDate = LocalDate.of(2025, 3, 15),
-          dueDate = None,
-          originalAmount = BigDecimal(-100),
-          outstandingAmount = Some(BigDecimal(-100)),
-          clearedAmount = None,
-          standOverAmount = None,
-          appealFlag = None,
-          clearingDetails = None
         )
       )
     )
@@ -114,7 +116,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
       val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
-      value.futureValue.transactionDetails mustBe Seq.empty
+      value.futureValue.transactionDetails mustBe None
     }
 
     "return empty AccountActivityResponse when ETMP returns 422 no data found (code 014) with whitespace" in {
@@ -132,7 +134,7 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
       val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
 
-      value.futureValue.transactionDetails mustBe Seq.empty
+      value.futureValue.transactionDetails mustBe None
     }
 
     "return UnexpectedResponse when ETMP returns 422 for a non-014 code" in {

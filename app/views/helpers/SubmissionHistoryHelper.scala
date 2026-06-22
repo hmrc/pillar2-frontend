@@ -55,7 +55,8 @@ object SubmissionHistoryHelper {
           )
         )
       ),
-      firstCellIsHeader = true
+      firstCellIsHeader = true,
+      captionClasses = "govuk-table__caption govuk-table__caption--m"
     )
   }
 

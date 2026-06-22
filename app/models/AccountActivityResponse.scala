@@ -21,7 +21,7 @@ import play.api.libs.json.*
 
 import java.time.{LocalDate, LocalDateTime}
 
-case class AccountActivityResponse(processingDate: LocalDateTime, transactionDetails: Seq[AccountActivityTransaction]) {
+case class AccountActivityResponse(processingDate: LocalDateTime, transactionDetails: Option[Seq[AccountActivityTransaction]]) {
 
   /** Converts account activity to transactions for the Transaction History screen.
     *
@@ -33,7 +33,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     *     payment - Paid".
     */
   def toTransactions: Seq[Transaction] = {
-    val paymentOnAccountTransactions = transactionDetails.filter { t =>
+    val paymentOnAccountTransactions = transactionDetails.getOrElse(Seq.empty).filter { t =>
       t.transactionType == TransactionType.Payment &&
       TransactionDescription.matches(t.transactionDesc, TransactionDescription.PaymentOnAccount)
     }
@@ -67,7 +67,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     // Repayment Interest: From Credit transactions with RepaymentInterest description
     // Uses clearingDate and amount from clearingDetails with "Outgoing payment - Paid"
     val repaymentInterest: Seq[Transaction] = for {
-      transaction <- transactionDetails.filter { t =>
+      transaction <- transactionDetails.getOrElse(Seq.empty).filter { t =>
                        t.transactionType == TransactionType.Credit &&
                        TransactionDescription.matches(t.transactionDesc, TransactionDescription.RepaymentInterest)
                      }
@@ -87,7 +87,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     * outstanding amounts > 0, groups by accounting period, and maps to UI descriptions using Column G names.
     */
   def toOutstandingPayments: Seq[OutstandingPaymentSummary] = {
-    val outstandingDebits = transactionDetails.filter { t =>
+    val outstandingDebits = transactionDetails.getOrElse(Seq.empty).filter { t =>
       t.transactionType == TransactionType.Debit &&
       t.outstandingAmount.exists(_ > 0) &&
       (t.startDate.isDefined || t.endDate.isDefined) // Need at least one date to create accounting period
@@ -130,6 +130,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
 
   def toOtherPenaltyItems: Seq[OutstandingPaymentsRowForActivity] =
     transactionDetails
+      .getOrElse(Seq.empty)
       .filter { t =>
         t.transactionType == TransactionType.Debit &&
         t.outstandingAmount.exists(_ > 0) &&
@@ -154,19 +155,21 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
 
   def totalAccruedInterest: BigDecimal =
     transactionDetails
+      .getOrElse(Seq.empty)
       .filter(t => t.transactionType == TransactionType.Debit && t.outstandingAmount.exists(_ > 0))
       .flatMap(_.accruedInterest)
       .sum
 
   def unallocatedPaymentAmount: BigDecimal =
     transactionDetails
+      .getOrElse(Seq.empty)
       .filter(_.transactionType == TransactionType.Payment)
       .flatMap(_.outstandingAmount.filter(_ < 0))
       .map(_.abs)
       .sum
 
   def toStoodoverCharges: Seq[StoodoverChargeSummary] = {
-    val stoodoverCharges = transactionDetails.filter { t =>
+    val stoodoverCharges = transactionDetails.getOrElse(Seq.empty).filter { t =>
       t.standOverAmount.exists(_ > 0) &&
       (t.startDate.isDefined || t.endDate.isDefined)
     }
