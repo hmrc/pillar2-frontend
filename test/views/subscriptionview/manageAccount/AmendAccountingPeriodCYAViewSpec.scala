@@ -110,7 +110,7 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
         warningText
           .getElementsByClass("govuk-warning-text__text")
           .text() mustBe "Warning Your change has left a gap in your accounting history. " +
-          "We have created additional accounting periods of 3 months and 4 days and 5 months and 27 days to fill the gap."
+          "We have created additional accounting periods of 3 months and 4 days and also 5 months and 27 days to fill the gap."
       }
 
       "a new date is entered and is the same as the accounting period date being changed" in {
