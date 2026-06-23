@@ -49,7 +49,7 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
           logger.info(s"getGroupIds - success, parsed: ${Json.toJson(groupIds)}")
           groupIds
         case response =>
-          logger.warn(s"getGroupIds - unexpected response status: ${response.status}")
+          logger.warn(s"getGroupIds - unexpected response status: ${response.status} with ${response.body}")
           None
       }
 

@@ -452,8 +452,10 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(using hc: HeaderCarrier): Future[Done] =
+  def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(using hc: HeaderCarrier): Future[Done] = {
+    logger.info(s"allocateEnrolment - allocating enrolment for ${enrolmentInfo.userId} to $plrReference")
     enrolmentConnector.allocateEnrolment(groupId, plrReference, enrolmentInfo)
+  }
 
   def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionData, pillar2Reference: String, userId: String)(using
     hc: HeaderCarrier
