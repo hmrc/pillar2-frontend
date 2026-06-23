@@ -71,11 +71,11 @@ class WaitingRoomController @Inject() (
               )
 
           case Right(error: SubmissionState.Error) =>
-            logger.error(s"RIGHT: Failure to fetch current state of submission $submission due to $error")
+            logger.error(s"Submission Error: Failure to fetch current state of submission $submission due to $error")
             Redirect(submission.errorPage(Right(error)))
 
           case Left(error: SubmissionLookupError) =>
-            logger.error(s"LEFT: Failure to fetch current state of submission $submission due to $error")
+            logger.error(s"Submission Lookup Error: Failure to fetch current state of submission $submission due to $error")
             Redirect(submission.errorPage(Left(error)))
         }
     }
