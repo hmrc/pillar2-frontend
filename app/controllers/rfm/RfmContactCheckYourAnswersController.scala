@@ -116,6 +116,7 @@ class RfmContactCheckYourAnswersController @Inject() (
                               )
                             )
         groupId <- fromOption[Future](request.groupId)
+        _ = logger.info(s"request.groupId: ${request.groupId}")
         _ <- liftF(subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo))
         _ <- liftF(userAnswersConnectors.remove(request.userId))
         _ <- liftF(updateSessionData(request.userAnswers, PlrReferencePage, newFilingMemberInformation.plrReference))
