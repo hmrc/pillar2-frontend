@@ -45,13 +45,11 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
       .execute[HttpResponse](using readRaw, ec)
       .map {
         case response if response.status == OK =>
-          logger.info(s"getGroupIds - success")
-          val groupIds = response.json
-            .asOpt[GroupIds]
-          logger.info(s"gerGroupIds -response -${Json.toJson(groupIds)}")
+          val groupIds: Option[GroupIds] = response.json.asOpt[GroupIds]
+          logger.info(s"getGroupIds - success, parsed: ${Json.toJson(groupIds)}")
           groupIds
         case response =>
-          logger.warn(s"Enrolment response not formed. ${response.status} response status")
+          logger.warn(s"getGroupIds - unexpected response status: ${response.status} with ${response.body}")
           None
       }
 
