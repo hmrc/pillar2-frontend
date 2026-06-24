@@ -4,13 +4,6 @@
     width: 100%;
 }
 
-.table-scroll-wrapper:focus,
-.table-scroll-wrapper:focus-visible {
-    outline: 3px solid #ffdd00;
-    outline-offset: 0;
-    padding: 5px;
-}
-
 .govuk-table thead th {
     position: sticky;
     top: 0;
