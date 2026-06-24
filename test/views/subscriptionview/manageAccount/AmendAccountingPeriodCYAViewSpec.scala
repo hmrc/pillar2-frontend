@@ -77,7 +77,7 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
 
     "have summary card with correct content" in {
       val summaryCard = view().getElementsByClass("govuk-summary-card").first()
-      summaryCard.getElementsByClass("govuk-summary-card__title").text() mustBe "New accounting period"
+      summaryCard.getElementsByClass("govuk-summary-card__title").text() mustBe "New accounting period - 1 year"
       summaryCard.getElementsByClass("govuk-summary-card__actions").text() mustBe "Change new accounting period"
 
       val summaryCardRows = summaryCard.getElementsByClass("govuk-summary-list__row")
@@ -109,9 +109,8 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
           .first()
         warningText
           .getElementsByClass("govuk-warning-text__text")
-          .text() mustBe "Warning This change will create an accounting period of 1 year and 3 months. " +
-          "This will create an accounting period of 3 months and 4 days from 28 September 2022 to 31 December 2022. " +
-          "This will create an accounting period of 5 months and 27 days from 1 April 2024 to 27 September 2024."
+          .text() mustBe "Warning Your change has left a gap in your accounting history. " +
+          "We have created additional accounting periods of 3 months and 4 days and also 5 months and 27 days to fill the gap."
       }
 
       "a new date is entered and is the same as the accounting period date being changed" in {
@@ -129,6 +128,23 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
       val link = buttonGroup.getElementsByClass("govuk-link").first()
       link.text mustBe "Cancel and return to homepage"
       link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+    }
+    "have agent specific content" when {
+      "a new date is entered resulting in a predicted period" in {
+        val accountingPeriod = AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2024, 3, 31))
+        val duration         = "1 year and 3 months"
+        val predictedPeriods = Seq(
+          (AccountingPeriod(LocalDate.of(2022, 9, 28), LocalDate.of(2022, 12, 31)), "3 months and 4 days")
+        )
+
+        val warningText = view(isAgent = true, newPeriod = accountingPeriod, newDurationText = duration, predictedPeriods = predictedPeriods)
+          .getElementsByClass("govuk-warning-text")
+          .first()
+        warningText
+          .getElementsByClass("govuk-warning-text__text")
+          .text() mustBe "Warning Your change has left a gap in your group’s accounting history. " +
+          "We have created an additional accounting period of 3 months and 4 days to fill the gap."
+      }
     }
 
     val viewScenarios: Seq[ViewScenario] =

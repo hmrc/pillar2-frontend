@@ -44,7 +44,7 @@
 
         <div class="govuk-summary-card govuk-!-margin-bottom-6">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">@messages("amendAccountingPeriodCYA.newPeriod.title")</h2>
+                <h2 class="govuk-summary-card__title">@messages("amendAccountingPeriodCYA.newPeriod.title", newDurationText)</h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
                         <a class="govuk-link" href="@controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onPageLoad(models.CheckMode).url">
@@ -72,9 +72,14 @@
             if(sameDatesEntered) {
                 Seq(messages("amendAccountingPeriodCYA.sameDatesEntered.warning"), messages("amendAccountingPeriodCYA.sameDatesEntered.duration", newDurationText))
             } else {
-                Seq(messages("amendAccountingPeriodCYA.warning", newDurationText)) ++
-                predictedPeriods.map { case (period, durationText) =>
-                    messages("amendAccountingPeriodCYA.predictedPeriod.duration", durationText, period.startDate.toDateFormat, period.endDate.toDateFormat)
+                val agentOrGroupPrefix = if(isAgent) "amendAccountingPeriodCYA.predictedPeriod.agent.duration" else "amendAccountingPeriodCYA.predictedPeriod.duration"
+
+                predictedPeriods.toList match {
+                    case List((_, duration)) =>
+                        Seq(messages(s"$agentOrGroupPrefix.one", duration))
+                    case List((_, firstDuration), (_, secondDuration)) =>
+                        Seq(messages(s"$agentOrGroupPrefix.two", firstDuration, secondDuration))
+                    case _ => Seq(messages("amendAccountingPeriodCYA.warning", newDurationText))
                 }
             }
         ) { warningLines =>

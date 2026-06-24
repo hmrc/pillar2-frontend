@@ -52,7 +52,7 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
         view.text() must include("Previous period")
         view.text() must include("1 January 2025")
         view.text() must include("31 December 2025")
-        view.text() must include("Change")
+        view.text() must include("Change accounting period 1 January 2025 to 31 December 2025")
       }
     }
 
