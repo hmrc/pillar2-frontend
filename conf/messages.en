@@ -1909,7 +1909,7 @@ payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your 
 payments.outstanding.activity.penaltiesAndCharges.p1 = Find out when HMRC may charge your group penalties and interest.
 payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
 payments.outstanding.activity.penaltiesAndCharges.agent.p1 = Find out when HMRC may charge the group penalties and interest.
-payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
+payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new tab)
 
 payments.noOutstanding.title = Outstanding payments
 payments.noOutstanding.heading = Outstanding payments
