@@ -87,67 +87,57 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
           case Some(InProgress) =>
             Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
           case _ =>
-            if appConfig.amendMultipleAccountingPeriods then
-              val localDataF: Future[SubscriptionLocalData] =
-                subscriptionService.readSubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
-              localDataF
-                .map { local =>
-                  given msgs: play.api.i18n.Messages = request.messages
-                  val amendablePeriods = local.accountingPeriods
-                    .getOrElse(Seq.empty)
-                    .sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
-                  val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
-                    val title =
-                      if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
-                      else msgs("manageGroupDetails.multiPeriod.previousPeriod")
-                    (
-                      title,
-                      p.startDate.getOrElse(LocalDate.now).toDateFormat,
-                      p.endDate.getOrElse(LocalDate.now).toDateFormat,
-                      Some(
-                        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
-                          .selectPeriod(displayIdx)
-                          .url
-                      )
-                    )
-                  }
-                  val locationKey =
-                    if local.subMneOrDomestic == MneOrDomestic.Uk then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
-                  Ok(
-                    multiPeriodView(
-                      locationMessageKey = locationKey,
-                      periodCards = periodCards,
-                      isEmpty = amendablePeriods.isEmpty,
-                      isAgent = request.isAgent,
-                      organisationName = local.organisationName,
-                      plrReference = local.plrReference
+            val localDataF: Future[SubscriptionLocalData] =
+              subscriptionService.readSubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+            localDataF
+              .map { local =>
+                given msgs: play.api.i18n.Messages = request.messages
+
+                val amendablePeriods = local.accountingPeriods
+                  .getOrElse(Seq.empty)
+                  .sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
+                val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
+                  val title =
+                    if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
+                    else msgs("manageGroupDetails.multiPeriod.previousPeriod")
+                  (
+                    title,
+                    p.startDate.getOrElse(LocalDate.now).toDateFormat,
+                    p.endDate.getOrElse(LocalDate.now).toDateFormat,
+                    Some(
+                      controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController
+                        .selectPeriod(displayIdx)
+                        .url
                     )
                   )
                 }
-                .recover { case _ =>
-                  logger.warn(
-                    "[ManageGroupDetailsCheckYourAnswers] Display Subscription V2 failed (e.g. 404), falling back to single-period view"
+                val locationKey =
+                  if local.subMneOrDomestic == MneOrDomestic.Uk then "mneOrDomestic.uk" else "mneOrDomestic.ukAndOther"
+                Ok(
+                  multiPeriodView(
+                    locationMessageKey = locationKey,
+                    periodCards = periodCards,
+                    isEmpty = amendablePeriods.isEmpty,
+                    isAgent = request.isAgent,
+                    organisationName = local.organisationName,
+                    plrReference = local.plrReference
                   )
-                  val list = SummaryListViewModel(
-                    rows = Seq(
-                      MneOrDomesticSummary.row(),
-                      GroupAccountingPeriodSummary.row(),
-                      GroupAccountingPeriodStartDateSummary.row(),
-                      GroupAccountingPeriodEndDateSummary.row()
-                    ).flatten
-                  )
-                  Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName))
-                }
-            else
-              val list = SummaryListViewModel(
-                rows = Seq(
-                  MneOrDomesticSummary.row(),
-                  GroupAccountingPeriodSummary.row(),
-                  GroupAccountingPeriodStartDateSummary.row(),
-                  GroupAccountingPeriodEndDateSummary.row()
-                ).flatten
-              )
-              Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
+                )
+              }
+              .recover { case _ =>
+                logger.warn(
+                  "[ManageGroupDetailsCheckYourAnswers] Display Subscription failed (e.g. 404), falling back to single-period view"
+                )
+                val list = SummaryListViewModel(
+                  rows = Seq(
+                    MneOrDomesticSummary.row(),
+                    GroupAccountingPeriodSummary.row(),
+                    GroupAccountingPeriodStartDateSummary.row(),
+                    GroupAccountingPeriodEndDateSummary.row()
+                  ).flatten
+                )
+                Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName))
+              }
         }
     }
   }
