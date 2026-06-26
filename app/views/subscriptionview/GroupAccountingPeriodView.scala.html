@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds._
+@import viewmodels.govuk.errorsummary.firstErrorField
 
 @this(
         layout: templates.Layout,
@@ -36,12 +37,10 @@
     @formHelper(action = controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = {
-                Map(
-                    "startDate" -> errorKey(form, "startDate"),
-                    "endDate" -> errorKey(form, "endDate")
-                )
-            }))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(
+                "startDate" -> s"startDate.${firstErrorField(form, "startDate").getOrElse("day")}",
+                "endDate" -> s"endDate.${firstErrorField(form, "endDate").getOrElse("day")}"
+            )))
         }
 
         @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
