@@ -155,21 +155,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
     }
 
-    "feature flag is false" must {
-      "render the single-period CYA view" in {
-        val application = buildApp(subscriptionLocalData = Some(emptySubscriptionLocalData), multiPeriodFlag = false)
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Group details")
-          contentAsString(result) must not include "Accounting periods"
-        }
-      }
-    }
-
-    "feature flag is true, group user, no micro periods" must {
+    "group user, no micro periods" must {
       "render multi-period view with a single period card and a Change link" in {
         val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro), multiPeriodFlag = true)
         running(application) {
@@ -188,7 +174,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
     }
 
-    "feature flag is true and accountingPeriods already cached" must {
+    "accountingPeriods already cached" must {
       "render the multi-period view" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
         running(application) {
@@ -206,7 +192,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     }
 
-    "feature flag is true and accountingPeriods not yet cached" must {
+    "accountingPeriods not yet cached" must {
       "call readSubscriptionV2AndSave and render multi-period view" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
@@ -235,7 +221,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
     }
 
-    "feature flag is true and V2 returns no periods" must {
+    "returns no periods" must {
       "render empty state message" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
@@ -291,24 +277,10 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "feature flag is false" must {
-        "render single-period CYA view" in {
-          val application =
-            buildApp(subscriptionLocalData = Some(localDataWithAgentInfo.copy(accountingPeriods = None)), multiPeriodFlag = false, isAgent = true)
-          running(application) {
-            when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-            val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
-            val result  = route(application, request).value
-            val body    = contentAsString(result)
-            status(result) mustEqual OK
-            body must include("Group details")
-            body must not include "Accounting periods"
-          }
-        }
-      }
     }
 
     "location rendering" must {
+
       "show UK and non-UK location text when feature flag is on" in {
         val ukAndOtherData = localDataWithPeriods.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
         val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = true)
@@ -316,18 +288,6 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
             .thenReturn(Future.successful(ukAndOtherData))
-          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("In the UK and outside the UK")
-        }
-      }
-
-      "show UK and non-UK location text when feature flag is off" in {
-        val ukAndOtherData = emptySubscriptionLocalData.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
-        val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = false)
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -348,16 +308,6 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "show UK only location text when feature flag is off" in {
-        val application = buildApp(subscriptionLocalData = Some(emptySubscriptionLocalData), multiPeriodFlag = false)
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Only in the UK")
-        }
-      }
     }
 
   }
