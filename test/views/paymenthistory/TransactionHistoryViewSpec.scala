@@ -114,7 +114,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct text for agents at the top of the page" in {
-      agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: $orgName ID: $plrRef"
+      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      caption.text mustBe s"Group: $orgName ID: $plrRef"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have correct paragraphs for a group" in {

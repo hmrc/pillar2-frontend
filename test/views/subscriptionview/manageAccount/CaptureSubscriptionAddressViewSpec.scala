@@ -62,10 +62,10 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
           ).toString()
         )
 
-        agentView
-          .getElementsByClass("govuk-caption-m")
-          .get(0)
-          .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
+        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        caption.text mustBe "Group: Organisation Inc ID: somePillar2Ref"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
       }
 
       "have a unique H1 heading" in {

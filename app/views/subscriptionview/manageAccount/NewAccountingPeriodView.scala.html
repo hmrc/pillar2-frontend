@@ -49,9 +49,9 @@
         }
 
         @if(isAgent && organisationName.isDefined) {
-            <span class="govuk-caption-m"><strong>@{messages("homepage.group")}:</strong> @organisationName<strong> @{messages("homepage.id")}:</strong> @plrReference</span>
+            <h2 class="govuk-caption-m hmrc-caption-m no-margin-bottom"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
         } else if(isAgent) {
-            <span class="govuk-caption-m"><strong>@{messages("homepage.id")}: </strong>@plrReference</span>
+            <h2 class="govuk-caption-m hmrc-caption-m no-margin-bottom"><span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
         }
 
         @heading(messages("newAccountingPeriod.heading"), "govuk-heading-l")

@@ -21,7 +21,7 @@ import controllers.routes
 import helpers.SubscriptionLocalDataFixture
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
@@ -196,11 +196,14 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
 
       "show the correct caption text at the top of the page" in {
-        agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
+        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        caption.text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
       }
 
       "have first contact header" in {
-        agentView.getElementsByTag("h2").first.text mustBe "Primary contact"
+        agentView.getElementsByTag("h2").get(1).text mustBe "Primary contact"
       }
 
       "have a first contact summary list" in {
@@ -226,7 +229,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
 
       "have second contact header" in {
-        agentView.getElementsByTag("h2").get(1).text mustBe "Secondary contact"
+        agentView.getElementsByTag("h2").get(2).text mustBe "Secondary contact"
       }
 
       "have a second contact summary list" in {
@@ -257,7 +260,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
 
       "have a contact address header" in {
-        agentView.getElementsByTag("h2").get(2).text mustBe "Filing member contact address"
+        agentView.getElementsByTag("h2").get(3).text mustBe "Filing member contact address"
       }
 
       "have an address summary list" in {
