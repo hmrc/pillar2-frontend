@@ -26,6 +26,11 @@ object errorsummary extends ErrorSummaryFluency
 
 trait ErrorSummaryFluency {
 
+  def firstErrorField(form: Form[?], key: String): Option[String] =
+    form.error(key).flatMap { error =>
+      List("day", "month", "year").find(error.args.contains)
+    }
+
   object ErrorSummaryViewModel {
 
     def apply(
