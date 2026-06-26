@@ -19,6 +19,7 @@
 @import utils.DateTimeUtils.{toDateFormat, toDateEntryFormat}
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds._
+@import viewmodels.govuk.errorsummary.firstErrorField
 
 
 @this(
@@ -41,7 +42,10 @@
     @formHelper(action = controllers.subscription.manageAccount.routes.NewAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(
+                "startDate" -> s"startDate.${firstErrorField(form, "startDate").getOrElse("day")}",
+                "endDate" -> s"endDate.${firstErrorField(form, "endDate").getOrElse("day")}"
+            )))
         }
 
         @if(isAgent && organisationName.isDefined) {
