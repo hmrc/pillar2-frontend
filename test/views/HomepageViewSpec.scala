@@ -221,13 +221,19 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardHelpTexts.get(2).text() mustBe
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
 
+      manageCardLinks.get(3).text() mustBe "Pillar 2 Top-up Taxes Guidance"
+      manageCardLinks.get(3).attr("href") mustBe
+        appConfig.pillar2TopupGuidance
+      manageCardHelpTexts.get(3).text() mustBe
+        "Find out how to submit a return a pay your Pillar 2 liabilities."
+
       manageCard
         .getElementsByClass("govuk-body")
         .last()
         .text() mustBe "You can contact the Pillar 2 team at pillar2mailbox@hmrc.gov.uk"
 
-      manageCardLinks.get(3).text() mustBe "pillar2mailbox@hmrc.gov.uk"
-      manageCardLinks.get(3).attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
+      manageCardLinks.get(4).text() mustBe "pillar2mailbox@hmrc.gov.uk"
+      manageCardLinks.get(4).attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
     }
 
     "have correct structure" in {
@@ -747,13 +753,19 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardHelpTexts.get(2).text() mustBe
         "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
 
+      manageCardLinks.get(3).text() mustBe "Pillar 2 Top-up Taxes Guidance"
+      manageCardLinks.get(3).attr("href") mustBe
+        appConfig.pillar2TopupGuidance
+      manageCardHelpTexts.get(3).text() mustBe
+        "Find out how to submit a return a pay your Pillar 2 liabilities."
+
       manageCard
         .getElementsByClass("govuk-body")
         .last()
         .text() mustBe "You can contact the Pillar 2 team at pillar2mailbox@hmrc.gov.uk"
 
-      manageCardLinks.get(3).text() mustBe "pillar2mailbox@hmrc.gov.uk"
-      manageCardLinks.get(3).attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
+      manageCardLinks.get(4).text() mustBe "pillar2mailbox@hmrc.gov.uk"
+      manageCardLinks.get(4).attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
     }
 
     "have correct structure" in {
