@@ -1902,7 +1902,6 @@ payments.outstanding.stoodoverCharges.p1 = Details of appealed charges and other
 payments.outstanding.stoodoverCharges.linkText = View stoodover charges
 
 payments.outstanding.transactionHistory.p1 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
-payments.outstanding.activity.transactionHistory.p2 = Find details on payments and refunds. It may take up to 5 working days for transactions to appear.
 
 payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
 payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
