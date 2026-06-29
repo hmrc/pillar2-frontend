@@ -979,7 +979,7 @@ homepage.manageAccount.btn.body = If your group does not expect to meet the annu
 homepage.manageAccount.agent.btn.body = Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.
 homepage.manageAccount.pillar2Email.p1 = You can contact the Pillar 2 team at
 homepage.manageAccount.guidance = Pillar 2 Top-up Taxes Guidance
-homepage.manageAccount.guidance.body = Find out how to submit a return a pay your Pillar 2 liabilities.
+homepage.manageAccount.guidance.body = Find out how to submit a return and pay your Pillar 2 liabilities.
 
 homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
 homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria in the future.

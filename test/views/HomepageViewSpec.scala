@@ -225,7 +225,7 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardLinks.get(3).attr("href") mustBe
         appConfig.pillar2TopupGuidance
       manageCardHelpTexts.get(3).text() mustBe
-        "Find out how to submit a return a pay your Pillar 2 liabilities."
+        "Find out how to submit a return and pay your Pillar 2 liabilities."
 
       manageCard
         .getElementsByClass("govuk-body")
@@ -757,7 +757,7 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardLinks.get(3).attr("href") mustBe
         appConfig.pillar2TopupGuidance
       manageCardHelpTexts.get(3).text() mustBe
-        "Find out how to submit a return a pay your Pillar 2 liabilities."
+        "Find out how to submit a return and pay your Pillar 2 liabilities."
 
       manageCard
         .getElementsByClass("govuk-body")
