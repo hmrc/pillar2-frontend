@@ -323,7 +323,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display penalties and charges section" in {
       h2Elements.get(3).text() mustBe "Penalties and interest charges"
-      paragraphs.get(11).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      paragraphs.get(10).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
       val penaltiesLink: Element = links.get(4)
 
@@ -377,7 +377,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         agentViewParagraphs.get(4).select("strong").text() mustBe "XMPLR0012345678"
         agentViewParagraphs.get(5).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(11).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(10).text() mustBe "Find out how HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {
