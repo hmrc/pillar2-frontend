@@ -61,6 +61,10 @@
   controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
 }
 
+@guidanceUrl = @{
+    appConfig.pillar2TopupGuidance
+}
+
 @bannerHtml = {
  <div class="btn-banner">
   @paragraphBody(messages("homepage.btnActiveBanner.title", if(isAgent) organisationName else "Your account"), "govuk-notification-banner__heading")
@@ -244,21 +248,26 @@
 }
 
 @manageAccountLinks(isAgent: Boolean) = @{
- Seq(
-  (
-          messages("homepage.manageAccount.manageContactDetails.linkText"),
-          controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url,
-          Some(messages(s"homepage.manageAccount$maybeAgentKey.manageContactDetails.body"))
-  ),
-  (
-          messages("homepage.manageAccount.manageGroupDetails.linkText"),
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url,
-          Some(messages(s"homepage.manageAccount$maybeAgentKey.manageGroupDetails.body"))
-  ),
-  (
-          messages("homepage.manageAccount.btn.linkText"),
-          btnUrl,
-          Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
-  )
- )
+    Seq(
+        (
+                messages("homepage.manageAccount.manageContactDetails.linkText"),
+                controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url,
+                Some(messages(s"homepage.manageAccount$maybeAgentKey.manageContactDetails.body"))
+        ),
+        (
+                messages("homepage.manageAccount.manageGroupDetails.linkText"),
+                controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url,
+                Some(messages(s"homepage.manageAccount$maybeAgentKey.manageGroupDetails.body"))
+        ),
+        (
+                messages("homepage.manageAccount.btn.linkText"),
+                btnUrl,
+                Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
+        ),
+        (
+                messages("homepage.manageAccount.guidance"),
+                guidanceUrl,
+                Some(messages(s"homepage.manageAccount.guidance.body"))
+        )
+    )
 }
