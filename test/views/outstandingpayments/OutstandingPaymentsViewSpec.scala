@@ -391,8 +391,8 @@ object OutstandingPaymentsViewSpec {
 
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
-  val activityRow: OutstandingPaymentsRowForActivity =
-    OutstandingPaymentsRowForActivity(
+  val activityRow: OutstandingPaymentsRow =
+    OutstandingPaymentsRow(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
       outstandingAmount = 1000.00,
@@ -400,17 +400,17 @@ object OutstandingPaymentsViewSpec {
       appealFlag = None
     )
 
-  val activityTable: OutstandingPaymentsTableForActivity =
-    OutstandingPaymentsTableForActivity(accountingPeriod = accountingPeriod, rows = Seq(activityRow))
+  val activityTable: OutstandingPaymentsTable =
+    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(activityRow))
 
-  val noPaymentsData: Seq[OutstandingPaymentsTableForActivity] = Seq(activityTable.copy(rows = Seq(activityRow.copy(outstandingAmount = 0.00))))
+  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(activityTable.copy(rows = Seq(activityRow.copy(outstandingAmount = 0.00))))
 
-  val activityData: Seq[OutstandingPaymentsTableForActivity] = Seq(activityTable)
+  val activityData: Seq[OutstandingPaymentsTable] = Seq(activityTable)
 
-  val penalties: Seq[OutstandingPaymentsRowForActivity] = Seq.empty
+  val penalties: Seq[OutstandingPaymentsRow] = Seq.empty
 
-  val rowWithAppeal: OutstandingPaymentsRowForActivity =
-    OutstandingPaymentsRowForActivity(
+  val rowWithAppeal: OutstandingPaymentsRow =
+    OutstandingPaymentsRow(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
       outstandingAmount = 1000.00,
@@ -418,11 +418,10 @@ object OutstandingPaymentsViewSpec {
       appealFlag = Some(true)
     )
 
-  val tableWithAppeal: OutstandingPaymentsTableForActivity =
-    OutstandingPaymentsTableForActivity(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
+  val tableWithAppeal: OutstandingPaymentsTable =
+    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
 
-  val dataWithAppeal: Seq[OutstandingPaymentsTableForActivity] = Seq(tableWithAppeal)
+  val dataWithAppeal: Seq[OutstandingPaymentsTable] = Seq(tableWithAppeal)
 
-  def amountDue(data:            Seq[OutstandingPaymentsTable]):            BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
-  def amountDueForActivity(data: Seq[OutstandingPaymentsTableForActivity]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
+  def amountDueForActivity(data: Seq[OutstandingPaymentsTable]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
 }

@@ -111,7 +111,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
                 .map(_.toUiDescription)
                 .getOrElse(t.transactionDesc) // Fallback to original description if not mapped
 
-              OutstandingPaymentsRowForActivity(
+              OutstandingPaymentsRow(
                 description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
                 chargeAmount = t.originalAmount,
                 outstandingAmount = t.outstandingAmount.get,
@@ -129,7 +129,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
     }
   }
 
-  def toOtherPenaltyItems: Seq[OutstandingPaymentsRowForActivity] =
+  def toOtherPenaltyItems: Seq[OutstandingPaymentsRow] =
     transactionDetails
       .getOrElse(Seq.empty)
       .filter { t =>
@@ -144,7 +144,7 @@ case class AccountActivityResponse(processingDate: LocalDateTime, transactionDet
           .map(_.toUiDescription)
           .getOrElse(t.transactionDesc)
 
-        OutstandingPaymentsRowForActivity(
+        OutstandingPaymentsRow(
           description = if t.accruedInterest.exists(_ > 0) then uiDescription + " accruing interest" else uiDescription,
           chargeAmount = t.originalAmount,
           outstandingAmount = t.outstandingAmount.get,

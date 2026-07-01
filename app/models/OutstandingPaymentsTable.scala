@@ -22,11 +22,7 @@ import java.time.LocalDate
 
 final case class OutstandingPaymentsTable(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRow])
 
-final case class OutstandingPaymentsRow(description: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
-
-final case class OutstandingPaymentsTableForActivity(accountingPeriod: AccountingPeriod, rows: Seq[OutstandingPaymentsRowForActivity])
-
-final case class OutstandingPaymentsRowForActivity(
+final case class OutstandingPaymentsRow(
   description:       String,
   chargeAmount:      BigDecimal,
   outstandingAmount: BigDecimal,
@@ -34,4 +30,4 @@ final case class OutstandingPaymentsRowForActivity(
   appealFlag:        Option[Boolean]
 )
 
-case class OutstandingPaymentSummary(accountingPeriod: AccountingPeriod, items: Seq[OutstandingPaymentsRowForActivity])
+case class OutstandingPaymentSummary(accountingPeriod: AccountingPeriod, items: Seq[OutstandingPaymentsRow])

@@ -60,12 +60,12 @@ class OutstandingPaymentsController @Inject() (
 
   private def toTables(
     accountActivitySummaries: Seq[OutstandingPaymentSummary]
-  ): Seq[OutstandingPaymentsTableForActivity] =
+                      ): Seq[OutstandingPaymentsTable] =
     accountActivitySummaries.map { summary =>
-      OutstandingPaymentsTableForActivity(
+      OutstandingPaymentsTable(
         accountingPeriod = summary.accountingPeriod,
         rows = summary.items.map(item =>
-          OutstandingPaymentsRowForActivity(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
+          OutstandingPaymentsRow(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
         )
       )
     }

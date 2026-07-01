@@ -81,10 +81,10 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         val view         = application.injector.instanceOf[OutstandingPaymentsView]
         val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
         val tables = sampleAccountActivityResponse.toOutstandingPayments.map { summary =>
-          OutstandingPaymentsTableForActivity(
+          OutstandingPaymentsTable(
             accountingPeriod = summary.accountingPeriod,
             rows = summary.items.map(item =>
-              OutstandingPaymentsRowForActivity(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
+              OutstandingPaymentsRow(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
             )
           )
         }

@@ -21,7 +21,7 @@
 
 @this(govukTable: GovukTable)
 
-@(accountActivityResponse: Seq[OutstandingPaymentsTableForActivity], penalties: Seq[OutstandingPaymentsRowForActivity])(implicit messages: Messages)
+@(accountActivityResponse: Seq[OutstandingPaymentsTable], penalties: Seq[OutstandingPaymentsRow])(implicit messages: Messages)
 
 @if(penalties.nonEmpty) {
     @LabelledScrollWrapper(messages("payments.outstanding.table.caption"))(
