@@ -292,10 +292,16 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         connector.amendSubscriptionV2(id, amendV2Data).futureValue mustBe Done
       }
 
-      "fail with UnexpectedResponse when the backend has returned a non-success status code" in {
+      "fail with UnprocessableEntityError when the backend has returned a 422 status" in {
+        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", UNPROCESSABLE_ENTITY, None)
+        connector.amendSubscriptionV2(id, amendV2Data).failed.futureValue mustEqual UnprocessableEntityError
+      }
+
+      "fail with UnexpectedResponse when the backend has returned a non-success and no 422 status code" in {
         stubResponseForPutRequest(s"$amendSubscriptionV2/$id", errorCodes.sample.value, None)
         connector.amendSubscriptionV2(id, amendV2Data).failed.futureValue mustEqual UnexpectedResponse
       }
+
     }
   }
 
