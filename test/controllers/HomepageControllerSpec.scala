@@ -81,7 +81,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         applicationBuilder(
           userAnswers = None,
           enrolments,
-          additionalData = Map("features.amendMultipleAccountingPeriods" -> false, "features.useAccountActivityApi" -> false)
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
         )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
