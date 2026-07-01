@@ -80,7 +80,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         val result       = route(application, request).value
         val view         = application.injector.instanceOf[OutstandingPaymentsView]
         val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
-        val tables = sampleAccountActivityResponse.toOutstandingPayments.map { summary =>
+        val tables       = sampleAccountActivityResponse.toOutstandingPayments.map { summary =>
           OutstandingPaymentsTable(
             accountingPeriod = summary.accountingPeriod,
             rows = summary.items.map(item =>
@@ -88,9 +88,9 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
             )
           )
         }
-        val penalties = sampleAccountActivityResponse.toOtherPenaltyItems
-        val tableHtml = tablePartial(tables, penalties)
-        val amountDue = (tables.flatMap(_.rows.map(_.outstandingAmount)) ++ penalties.map(_.outstandingAmount)).sum.max(0)
+        val penalties       = sampleAccountActivityResponse.toOtherPenaltyItems
+        val tableHtml       = tablePartial(tables, penalties)
+        val amountDue       = (tables.flatMap(_.rows.map(_.outstandingAmount)) ++ penalties.map(_.outstandingAmount)).sum.max(0)
         val accruedInterest = sampleAccountActivityResponse.totalAccruedInterest
 
         status(result) mustEqual OK
@@ -156,7 +156,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
 object OutstandingPaymentsControllerSpec {
 
-  val orgName: String = "orgName"
+  val orgName:   String = "orgName"
   val pillar2Id: String = "XMPLR0123456789"
 
   val enrolments: Set[Enrolment] = Set(

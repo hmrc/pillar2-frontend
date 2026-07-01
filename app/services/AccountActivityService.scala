@@ -29,7 +29,7 @@ import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccountActivityService @Inject()(accountActivityConnector: AccountActivityConnector)(using
+class AccountActivityService @Inject() (accountActivityConnector: AccountActivityConnector)(using
   ec: ExecutionContext
 ) {
   def retrieveAccountActivityData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[AccountActivityData] =

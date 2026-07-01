@@ -34,10 +34,10 @@ class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
   private given FrontendAppConfig = applicationConfig
 
   private def debitTransaction(
-                                dueDate: Option[LocalDate] = Some(LocalDate.now().minusDays(1)),
-                                outstandingAmt: BigDecimal = BigDecimal(12345.67),
-                                accruedInterest: Option[BigDecimal] = None
-                              ): AccountActivityTransaction = AccountActivityTransaction(
+    dueDate:         Option[LocalDate] = Some(LocalDate.now().minusDays(1)),
+    outstandingAmt:  BigDecimal = BigDecimal(12345.67),
+    accruedInterest: Option[BigDecimal] = None
+  ): AccountActivityTransaction = AccountActivityTransaction(
     transactionType = TransactionType.Debit,
     transactionDesc = "Pillar 2 top-up tax",
     startDate = Some(LocalDate.now().minusYears(1)),
@@ -99,13 +99,13 @@ class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
     "choose to show an 'outstanding payments w/ BTN' notification" when {
 
       "there's a past-due charge with accruing interest and a BTN has been submitted" in forAll(anyReturnStatus) { returnStatus =>
-        val data = AccountActivityData(Seq(pastDueWithInterest))
+        val data   = AccountActivityData(Seq(pastDueWithInterest))
         val result = HomepageBannerService.determineNotificationArea(returnStatus, data, InactiveAccount)
         result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(data.calculateOutstandingAmount)
       }
 
       "there's a past-due charge without interest and a BTN has been submitted" in forAll(anyReturnStatus) { returnStatus =>
-        val data = AccountActivityData(Seq(pastDueNoInterest))
+        val data   = AccountActivityData(Seq(pastDueNoInterest))
         val result = HomepageBannerService.determineNotificationArea(returnStatus, data, InactiveAccount)
         result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(data.calculateOutstandingAmount)
       }
@@ -114,7 +114,7 @@ class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
     "choose to show an 'accruing interest' notification" when {
 
       "there's a past-due charge with accruing interest and there is no submitted BTN" in forAll(anyReturnStatus) { returnStatus =>
-        val data = AccountActivityData(Seq(pastDueWithInterest))
+        val data   = AccountActivityData(Seq(pastDueWithInterest))
         val result = HomepageBannerService.determineNotificationArea(returnStatus, data, ActiveAccount)
         result mustBe DynamicNotificationAreaState.AccruingInterest(data.calculateOutstandingAmount)
       }
@@ -124,13 +124,13 @@ class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
 
       "outstanding charges are past their due date but have no accruing interest and there is no submitted BTN" in forAll(anyReturnStatus) {
         returnStatus =>
-          val data = AccountActivityData(Seq(pastDueNoInterest))
+          val data   = AccountActivityData(Seq(pastDueNoInterest))
           val result = HomepageBannerService.determineNotificationArea(returnStatus, data, ActiveAccount)
           result mustBe DynamicNotificationAreaState.OutstandingPayments(data.calculateOutstandingAmount)
       }
 
       "outstanding charges have not yet reached their due date" in forAll(anyReturnStatus, anyAccountStatus) { (returnStatus, accountStatus) =>
-        val data = AccountActivityData(Seq(notYetDueCharge))
+        val data   = AccountActivityData(Seq(notYetDueCharge))
         val result = HomepageBannerService.determineNotificationArea(returnStatus, data, accountStatus)
         result mustBe DynamicNotificationAreaState.OutstandingPayments(data.calculateOutstandingAmount)
       }

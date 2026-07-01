@@ -237,7 +237,7 @@ object TransactionHistoryController {
     val paymentTypeText =
       history.paymentType match {
         case "repayment" | "repaymentInterest" => messages(s"transactionHistory.paymentType.${history.paymentType}")
-        case other => other
+        case other                             => other
       }
 
     Seq(

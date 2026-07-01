@@ -87,7 +87,7 @@ class StoodoverChargesController @Inject() (
             retrieveStoodoverCharges(plrRef, LocalDate.now.minusYears(SubmissionAccountingPeriods), now())
           )
       } yield {
-        val tables = toTables(standoverChargesResult.toStoodoverCharges)
+        val tables    = toTables(standoverChargesResult.toStoodoverCharges)
         val amountDue = tables.flatMap(_.rows.map(_.stoodoverAmount)).sum.max(0)
         Ok(view(plrReference = plrRef, data = tables, stoodoverTotal = amountDue, organisationName = subscriptionData.upeDetails.organisationName))
       }).getOrElse {

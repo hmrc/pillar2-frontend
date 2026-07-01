@@ -43,9 +43,9 @@ object HomepageBannerService {
 
   def determineNotificationArea(
     uktr:          Option[DueAndOverdueReturnBannerScenario],
-    data: AccountActivityData,
+    data:          AccountActivityData,
     accountStatus: AccountStatus
-                               )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState = (data, uktr, accountStatus) match {
+  )(using clock: Clock, appConfig: FrontendAppConfig): DynamicNotificationAreaState = (data, uktr, accountStatus) match {
     case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
       DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
 

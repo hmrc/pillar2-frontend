@@ -60,7 +60,7 @@ class OutstandingPaymentsController @Inject() (
 
   private def toTables(
     accountActivitySummaries: Seq[OutstandingPaymentSummary]
-                      ): Seq[OutstandingPaymentsTable] =
+  ): Seq[OutstandingPaymentsTable] =
     accountActivitySummaries.map { summary =>
       OutstandingPaymentsTable(
         accountingPeriod = summary.accountingPeriod,
@@ -95,12 +95,12 @@ class OutstandingPaymentsController @Inject() (
             retrieveOutstandingPayments(plrRef, LocalDate.now.minusYears(SubmissionAccountingPeriods), now())
           )
       } yield {
-        val tables = toTables(accountActivityResponse.toOutstandingPayments)
-        val penalties = accountActivityResponse.toOtherPenaltyItems
-        val amountDue = (tables.flatMap(_.rows.map(_.outstandingAmount)) ++ penalties.map(_.outstandingAmount)).sum.max(0)
+        val tables                  = toTables(accountActivityResponse.toOutstandingPayments)
+        val penalties               = accountActivityResponse.toOtherPenaltyItems
+        val amountDue               = (tables.flatMap(_.rows.map(_.outstandingAmount)) ++ penalties.map(_.outstandingAmount)).sum.max(0)
         val hasOverdueReturnPayment = tables.exists(_.rows.exists(_.dueDate.isBefore(now())))
-        val accruedInterest = accountActivityResponse.totalAccruedInterest
-        val tableHtml = tablePartial(tables, penalties)
+        val accruedInterest         = accountActivityResponse.totalAccruedInterest
+        val tableHtml               = tablePartial(tables, penalties)
         Ok(view(tableHtml, orgName, plrRef, amountDue, hasOverdueReturnPayment, accruedInterest))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))

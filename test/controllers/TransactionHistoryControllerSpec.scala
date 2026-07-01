@@ -166,8 +166,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(sampleAccountActivityResponse))
 
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[TransactionHistoryView]
+        val result       = route(application, request).value
+        val view         = application.injector.instanceOf[TransactionHistoryView]
         val transactions = sampleAccountActivityResponse.toTransactions
 
         status(result) mustEqual OK
@@ -230,8 +230,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(paginationAccountActivityResponse))
 
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[TransactionHistoryView]
+        val result       = route(application, request).value
+        val view         = application.injector.instanceOf[TransactionHistoryView]
         val transactions = paginationAccountActivityResponse.toTransactions
 
         status(result) mustEqual OK
@@ -408,7 +408,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadError().url)
 
         val result = route(application, request).value
-        val view = application.injector.instanceOf[TransactionHistoryErrorView]
+        val view   = application.injector.instanceOf[TransactionHistoryErrorView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(

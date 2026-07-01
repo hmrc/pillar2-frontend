@@ -53,7 +53,7 @@ class HomepageController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
-  accountActivityService: AccountActivityService,
+  accountActivityService:                 AccountActivityService,
   futures:                                Futures,
   homepageBannerService:                  HomepageBannerService
 )(using
@@ -156,14 +156,14 @@ class HomepageController @Inject() (
     sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.getOrElse(UserAnswers(request.userId))
       for {
-        obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now)
+        obligationsResponse     <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now)
         accountActivityResponse <-
           accountActivityService.retrieveAccountActivityData(plrReference, LocalDate.now.minusYears(SubmissionAccountingPeriods), LocalDate.now)
       } yield {
         val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
         val returnsStatus                      = osService.getDueOrOverdueReturnsStatus(obligationsResponse)
         val (paymentsStatus, notificationArea) =
-          val paymentsStatus = AccountActivityService.getPaymentBannerScenario(accountActivityResponse)
+          val paymentsStatus   = AccountActivityService.getPaymentBannerScenario(accountActivityResponse)
           val notificationArea = homepageBannerService.determineNotificationArea(returnsStatus, accountActivityResponse, accountStatus)
           (paymentsStatus, notificationArea)
 

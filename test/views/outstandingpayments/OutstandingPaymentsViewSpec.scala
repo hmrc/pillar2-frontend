@@ -38,7 +38,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val tablePartial: _OutstandingPaymentsTable = app.injector.instanceOf[_OutstandingPaymentsTable]
 
-  lazy val tableHtml: Html = tablePartial(data, penalties)
+  lazy val tableHtml:       Html = tablePartial(data, penalties)
   lazy val appealTableHtml: Html = tablePartial(dataWithAppeal, penalties)
 
   lazy val accountActivityOrganisationView: Document =
@@ -76,7 +76,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
   lazy val pageTitle:  String   = "Outstanding payments"
   lazy val h2Elements: Elements = accountActivityOrganisationView.getElementsByTag("h2")
   lazy val paragraphs: Elements = accountActivityOrganisationView.getElementsByClass("govuk-body")
-  lazy val links: Elements = accountActivityOrganisationView.getElementsByClass("govuk-link")
+  lazy val links:      Elements = accountActivityOrganisationView.getElementsByClass("govuk-link")
 
   "OutstandingPaymentsView" should {
     "have correct width layout" in {
