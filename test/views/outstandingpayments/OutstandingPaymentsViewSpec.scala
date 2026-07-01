@@ -38,12 +38,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val tablePartial: _OutstandingPaymentsTable = app.injector.instanceOf[_OutstandingPaymentsTable]
 
-  lazy val tableHtml: Html = tablePartial(activityData, penalties)
+  lazy val tableHtml: Html = tablePartial(data, penalties)
   lazy val appealTableHtml: Html = tablePartial(dataWithAppeal, penalties)
 
   lazy val accountActivityOrganisationView: Document =
     Jsoup.parse(
-      page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = true)(
+      page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = true)(
         request,
         appConfig,
         messages,
@@ -65,7 +65,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val accountActivityAgentView: Document =
     Jsoup.parse(
-      page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = true)(
+      page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = true)(
         request,
         appConfig,
         messages,
@@ -129,7 +129,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       "group has no overdue payment " in {
         val accountActivityOrgViewNoOverduePayments: Document =
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = false)(
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
               request,
               appConfig,
               messages,
@@ -322,7 +322,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         "group has no overdue payment" in {
           val agentViewNoOverduePayments: Document =
             Jsoup.parse(
-              page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = false)(
+              page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
                 request,
                 appConfig,
                 messages,
@@ -342,7 +342,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         ViewScenario(
           "noOverdueReturnPaymentView",
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = false)(
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
               request,
               appConfig,
               messages,
@@ -368,7 +368,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         ViewScenario(
           "noOverdueReturnPaymentAgentView",
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = false)(
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
               request,
               appConfig,
               messages,
@@ -391,7 +391,7 @@ object OutstandingPaymentsViewSpec {
 
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
-  val activityRow: OutstandingPaymentsRow =
+  val row: OutstandingPaymentsRow =
     OutstandingPaymentsRow(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
@@ -400,12 +400,12 @@ object OutstandingPaymentsViewSpec {
       appealFlag = None
     )
 
-  val activityTable: OutstandingPaymentsTable =
-    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(activityRow))
+  val table: OutstandingPaymentsTable =
+    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
 
-  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(activityTable.copy(rows = Seq(activityRow.copy(outstandingAmount = 0.00))))
+  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
 
-  val activityData: Seq[OutstandingPaymentsTable] = Seq(activityTable)
+  val data: Seq[OutstandingPaymentsTable] = Seq(table)
 
   val penalties: Seq[OutstandingPaymentsRow] = Seq.empty
 
