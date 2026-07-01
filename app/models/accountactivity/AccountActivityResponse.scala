@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.accountactivity
 
+import models.*
 import models.subscription.AccountingPeriod
 import play.api.libs.json.*
 

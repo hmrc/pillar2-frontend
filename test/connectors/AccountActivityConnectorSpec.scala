@@ -18,6 +18,7 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import models.*
+import models.accountactivity.*
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json

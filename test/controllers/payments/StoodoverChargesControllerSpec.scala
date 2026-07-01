@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.AccountActivityConnector
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
+import models.accountactivity.{AccountActivityResponse, AccountActivityTransaction, TransactionType}
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
