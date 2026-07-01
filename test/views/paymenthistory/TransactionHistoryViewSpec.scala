@@ -87,9 +87,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   lazy val page:      TransactionHistoryView = inject[TransactionHistoryView]
   lazy val groupView: Document               =
-    Jsoup.parse(page(orgName, plrRef, 500, true, table, pagination, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(page(orgName, plrRef, 500, table, pagination, isAgent = false)(request, appConfig, messages).toString())
   lazy val agentView: Document =
-    Jsoup.parse(page(orgName, plrRef, 500, true, table, pagination, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(orgName, plrRef, 500, table, pagination, isAgent = true)(request, appConfig, messages).toString())
   lazy val pageTitle:           String   = "Transaction history"
   lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
   lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")

@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.*
-import models.financialdata.{AccountActivityData, FinancialData}
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.ActiveAccount
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
@@ -54,7 +53,7 @@ class HomepageController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
-  financialDataService:                   FinancialDataService,
+  accountActivityService:                 AccountActivityService,
   futures:                                Futures,
   homepageBannerService:                  HomepageBannerService
 )(using
@@ -157,26 +156,16 @@ class HomepageController @Inject() (
     sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.getOrElse(UserAnswers(request.userId))
       for {
-        obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-        financialData       <-
-          if appConfig.useAccountActivityApi then Future.successful(FinancialData(Seq.empty))
-          else financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-        accountActivityData <-
-          if appConfig.useAccountActivityApi then
-            financialDataService.retrieveAccountActivityData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-          else Future.successful(AccountActivityData(Seq.empty))
+        obligationsResponse     <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now)
+        accountActivityResponse <-
+          accountActivityService.retrieveAccountActivityData(plrReference, LocalDate.now.minusYears(SubmissionAccountingPeriods), LocalDate.now)
       } yield {
         val hasReturnsUnderEnquiry             = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
         val returnsStatus                      = osService.getDueOrOverdueReturnsStatus(obligationsResponse)
         val (paymentsStatus, notificationArea) =
-          if appConfig.useAccountActivityApi then
-            val paymentsStatus   = FinancialDataService.getPaymentBannerScenarioFromActivity(accountActivityData)
-            val notificationArea = homepageBannerService.determineNotificationAreaFromActivity(returnsStatus, accountActivityData, accountStatus)
-            (paymentsStatus, notificationArea)
-          else
-            val paymentsStatus   = FinancialDataService.getPaymentBannerScenario(financialData)
-            val notificationArea = homepageBannerService.determineNotificationArea(returnsStatus, financialData, accountStatus)
-            (paymentsStatus, notificationArea)
+          val paymentsStatus   = AccountActivityService.getPaymentBannerScenario(accountActivityResponse)
+          val notificationArea = homepageBannerService.determineNotificationArea(returnsStatus, accountActivityResponse, accountStatus)
+          (paymentsStatus, notificationArea)
 
         val btnBanner = determineBtnBanner(accountStatus, notificationArea)
         Ok(
@@ -189,8 +178,7 @@ class HomepageController @Inject() (
             notificationArea,
             plrReference,
             request.isAgent,
-            hasReturnsUnderEnquiry,
-            appConfig.useAccountActivityApi
+            hasReturnsUnderEnquiry
           )
         )
       }

@@ -26,7 +26,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.Html
 import views.behaviours.ViewScenario
-import views.html.outstandingpayments.{OutstandingPaymentsView, _OutstandingPaymentsActivityTable, _OutstandingPaymentsTable}
+import views.html.outstandingpayments.{OutstandingPaymentsView, _OutstandingPaymentsTable}
 import views.outstandingpayments.OutstandingPaymentsViewSpec.*
 
 import java.time.LocalDate
@@ -36,21 +36,14 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val page: OutstandingPaymentsView = inject[OutstandingPaymentsView]
 
-  lazy val tablePartial:         _OutstandingPaymentsTable         = app.injector.instanceOf[_OutstandingPaymentsTable]
-  lazy val activityTablePartial: _OutstandingPaymentsActivityTable = app.injector.instanceOf[_OutstandingPaymentsActivityTable]
+  lazy val tablePartial: _OutstandingPaymentsTable = app.injector.instanceOf[_OutstandingPaymentsTable]
 
-  lazy val tableHtml:               Html = tablePartial(data)
-  lazy val activityTableHtml:       Html = activityTablePartial(activityData, penalties)
-  lazy val activityAppealTableHtml: Html = activityTablePartial(dataWithAppeal, penalties)
-
-  lazy val organisationView: Document =
-    Jsoup.parse(
-      page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = false).toString()
-    )
+  lazy val tableHtml:       Html = tablePartial(data, penalties)
+  lazy val appealTableHtml: Html = tablePartial(dataWithAppeal, penalties)
 
   lazy val accountActivityOrganisationView: Document =
     Jsoup.parse(
-      page(activityTableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = true, useAccountActivity = true)(
+      page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = true)(
         request,
         appConfig,
         messages,
@@ -61,7 +54,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
   lazy val accountActivityAppealView: Document =
     Jsoup.parse(
-      page(activityAppealTableHtml, orgName, plrRef, amountDueForActivity(dataWithAppeal), hasOverdueReturnPayment = true, useAccountActivity = true)(
+      page(appealTableHtml, orgName, plrRef, amountDueForActivity(dataWithAppeal), hasOverdueReturnPayment = true)(
         request,
         appConfig,
         messages,
@@ -70,14 +63,9 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         .toString()
     )
 
-  lazy val agentView: Document =
-    Jsoup.parse(
-      page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = true).toString()
-    )
-
   lazy val accountActivityAgentView: Document =
     Jsoup.parse(
-      page(activityTableHtml, orgName, plrRef, amountDueForActivity(activityData), hasOverdueReturnPayment = true, useAccountActivity = true)(
+      page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = true)(
         request,
         appConfig,
         messages,
@@ -86,29 +74,29 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     )
 
   lazy val pageTitle:  String   = "Outstanding payments"
-  lazy val h2Elements: Elements = organisationView.getElementsByTag("h2")
-  lazy val paragraphs: Elements = organisationView.getElementsByClass("govuk-body")
-  lazy val links:      Elements = organisationView.getElementsByClass("govuk-link")
+  lazy val h2Elements: Elements = accountActivityOrganisationView.getElementsByTag("h2")
+  lazy val paragraphs: Elements = accountActivityOrganisationView.getElementsByClass("govuk-body")
+  lazy val links:      Elements = accountActivityOrganisationView.getElementsByClass("govuk-link")
 
   "OutstandingPaymentsView" should {
     "have correct width layout" in {
-      organisationView.getElementsByClass("govuk-grid-column-two-thirds").size() mustBe 2
+      accountActivityOrganisationView.getElementsByClass("govuk-grid-column-two-thirds").size() mustBe 2
     }
 
     "have a title" in {
-      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      accountActivityOrganisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = organisationView.getElementsByTag("h1")
+      val h1Elements: Elements = accountActivityOrganisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      accountActivityOrganisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      accountActivityAgentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display total amount due correctly" in {
@@ -116,27 +104,17 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display outstanding payment breakdown paragraphs" in {
-      paragraphs.get(1).text() mustBe "The amount includes all tax liabilities and penalty charges currently due. " +
-        "This may include more than one accounting period."
-      paragraphs.get(2).text() mustBe "Any payments made before today have reduced the amount due and are not " +
-        "included in this total. You must still pay the amount due."
+      paragraphs.get(1).text() mustBe "The amount includes all liabilities due. This may include more than one accounting period." +
+        " It also includes any penalties. It does not include any liabilities that are stoodover. It also does not include and late payment interest that has accrued."
+      paragraphs.get(2).text() mustBe "Any payments made to your account before submitting your tax return have been deducted from your amount due."
     }
 
     "display interest warning text section" should {
-      "group has overdue payment" in {
-        organisationView
-          .getElementsByClass("govuk-warning-text__text")
-          .first()
-          .text() must include(
-          "Your UK Tax Return payment is overdue and is subject to late payment interest. " +
-            "We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment."
-        )
-      }
 
-      "group has overdue payment while account activity is enabled" in {
+      "group has overdue payment" in {
         accountActivityOrganisationView
           .getElementsByClass("govuk-warning-text__text")
-          .first()
+          .get(1)
           .text() must include("Late payment interest accrued: £")
         accountActivityOrganisationView
           .getElementsByClass("govuk-body")
@@ -148,20 +126,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           .text mustBe "It is shown separately from the amount due as we do not charge the interest due until we receive the associated payment."
       }
 
-      "group has no overdue payment" in {
-        val orgViewNoOverduePayments: Document =
-          Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false)
-              .toString()
-          )
-
-        orgViewNoOverduePayments.getElementsByClass("govuk-warning-text__text").size() mustBe 0
-      }
-
-      "group has no overdue payment while account activity is enabled" in {
+      "group has no overdue payment " in {
         val accountActivityOrgViewNoOverduePayments: Document =
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = false, useAccountActivity = true)(
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
               request,
               appConfig,
               messages,
@@ -188,7 +156,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display payment button with correct link" in {
-      val button = organisationView.getElementsByClass("govuk-button").first()
+      val button = accountActivityOrganisationView.getElementsByClass("govuk-button").first()
 
       button.text() mustBe "Pay online"
       button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
@@ -200,7 +168,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
 
       "table if there are outstanding payments" when {
-        "account activity toggle is true, include stoodover charge content" in {
+        "include stoodover charge content" in {
           val paragraphs = accountActivityOrganisationView.getElementsByClass("govuk-body")
 
           paragraphs.get(9).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
@@ -230,33 +198,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           rows.get(1).text() mustBe "£1,000.00"
           rows.get(2).text() mustBe "31 March 2024"
         }
-
-        "account activity toggle is false, show correct content" in {
-          paragraphs.get(7).text() mustBe "We have separated any payments due by the associated accounting period where there is one."
-
-          val table = organisationView.getElementsByClass("govuk-table").first()
-
-          val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
-          caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
-
-          val headers: Elements = table.getElementsByTag("th")
-          headers.get(0).text() mustBe "Description"
-          headers.get(1).text() mustBe "Amount"
-          headers.get(2).text() mustBe "Due date"
-          headers.get(3).text() mustBe "UKTR - DTT"
-
-          val rows: Elements = table.getElementsByTag("td")
-          rows.get(0).text() mustBe "£1,000.00"
-          rows.get(1).text() mustBe "31 March 2024"
-
-          paragraphs.text must not include "An appealed charge is still part of the amount due until it is partly or completely stoodover."
-          links.text      must not include "View stoodover charges"
-        }
       }
 
       "display 'No payments due' message if no payments are outstanding" in {
         val noPaymentsView: Document = Jsoup.parse(
-          page(tablePartial(noPaymentsData), orgName, plrRef, amountDue(noPaymentsData), hasOverdueReturnPayment = false)(
+          page(tablePartial(noPaymentsData, penalties), orgName, plrRef, amountDueForActivity(noPaymentsData), hasOverdueReturnPayment = false)(
             request,
             appConfig,
             messages,
@@ -265,67 +211,48 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
             .toString()
         )
 
-        noPaymentsView.getElementsByClass("govuk-body").get(8).text() mustBe "No payments due."
+        noPaymentsView.getElementsByClass("govuk-body").get(10).text() mustBe "No payments due."
         noPaymentsView.getElementsByClass("govuk-table").size() mustBe 0
       }
     }
 
-    "when account activity is enabled" must {
-      "display the appeal label when the appeal flag is true" in {
-        val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
+    "display the appeal label when the appeal flag is true" in {
+      val table = accountActivityAppealView.getElementsByClass("govuk-table").first()
 
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(4).text() mustBe "UKTR - DTT Appealed"
+      val headers: Elements = table.getElementsByTag("th")
+      headers.get(4).text() mustBe "UKTR - DTT Appealed"
 
-        accountActivityAppealView.getElementsByClass("govuk-tag--red").size mustBe 1
-      }
-
-      "not display the appeal label when the appeal flag is false" in {
-        val table = accountActivityOrganisationView.getElementsByClass("govuk-table").first()
-
-        val headers: Elements = table.getElementsByTag("th")
-        headers.get(4).text() mustBe "UKTR - DTT"
-
-        accountActivityOrganisationView.getElementsByClass("govuk-tag--red").size mustBe 0
-      }
+      accountActivityAppealView.getElementsByClass("govuk-tag--red").size mustBe 1
     }
 
-    "The stoodover charges section" must {
-      "be displayed when account activity toggle is true" in {
-        accountActivityOrganisationView.getElementsByTag("h2").get(2).text() mustBe "Stoodover charges"
-        accountActivityOrganisationView
-          .getElementsByClass("govuk-body")
-          .get(12)
-          .text() mustBe "Details of appealed charges and other standover payments."
+    "The stoodover charges section be displayed" in {
+      accountActivityOrganisationView.getElementsByTag("h2").get(2).text() mustBe "Stoodover charges"
+      accountActivityOrganisationView
+        .getElementsByClass("govuk-body")
+        .get(12)
+        .text() mustBe "Details of appealed charges and other standover payments."
 
-        val viewTransactionHistoryLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
+      val viewTransactionHistoryLink = accountActivityOrganisationView.getElementsByClass("govuk-link").get(3)
 
-        viewTransactionHistoryLink.text() mustBe "View stoodover charges"
-        viewTransactionHistoryLink.attr("href") mustBe controllers.payments.routes.StoodoverChargesController.onPageLoad.url
-      }
-
-      "not be displayed when account activity toggle is false" in {
-        h2Elements.text() must not include "Stoodover charges"
-        paragraphs.text() must not include "Details of appealed charges and other standover payments."
-        links.text()      must not include "View stoodover charges"
-      }
+      viewTransactionHistoryLink.text() mustBe "View stoodover charges"
+      viewTransactionHistoryLink.attr("href") mustBe controllers.payments.routes.StoodoverChargesController.onPageLoad.url
     }
 
     "display transaction history section" in {
-      h2Elements.get(2).text() mustBe "Transaction history"
-      paragraphs.get(8).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+      h2Elements.get(3).text() mustBe "Transaction history"
+      paragraphs.get(14).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
 
-      val viewTransactionHistoryLink = links.get(3)
+      val viewTransactionHistoryLink = links.get(5)
 
       viewTransactionHistoryLink.text() mustBe "View transaction history"
       viewTransactionHistoryLink.attr("href") mustBe TransactionHistoryController.onPageLoadTransactionHistory(None).url
     }
 
     "display penalties and charges section" in {
-      h2Elements.get(3).text() mustBe "Penalties and interest charges"
-      paragraphs.get(10).text() mustBe "Find out how HMRC may charge your group penalties and interest."
+      h2Elements.get(4).text() mustBe "Penalties and interest charges"
+      paragraphs.get(16).text() mustBe "Find out when HMRC may charge your group penalties and interest."
 
-      val penaltiesLink: Element = links.get(4)
+      val penaltiesLink: Element = links.get(6)
 
       penaltiesLink.text() mustBe "Pillar 2 Top-up Taxes penalties information (opens in a new tab)"
       penaltiesLink.attr("href") mustBe appConfig.penaltiesInformationUrl
@@ -333,14 +260,14 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display a correct html details section" in {
-      organisationView
+      accountActivityOrganisationView
         .getElementsByClass("govuk-details")
         .first()
         .getElementsByClass("govuk-details__summary-text")
         .text() mustBe "Outstanding payments abbreviations"
 
       val items =
-        organisationView
+        accountActivityOrganisationView
           .getElementsByClass("govuk-details__text")
           .first()
           .getElementsByClass("govuk-list")
@@ -368,21 +295,22 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
 
       "should display agent-specific paragraphs" in {
-        val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
+        val agentViewParagraphs: Elements = accountActivityAgentView.getElementsByClass("govuk-body")
 
-        agentViewParagraphs.get(2).text() mustBe "Any payments made before today have reduced the amount due and are not " +
-          "included in this total. The group must still pay the amount due."
+        agentViewParagraphs
+          .get(2)
+          .text() mustBe "Any payments made to your clients account before submitting a tax return have been deducted from the amount due."
         agentViewParagraphs.get(3).text() mustBe "You can pay online or make a manual payment."
         agentViewParagraphs.get(4).text() mustBe "Pillar 2 reference: XMPLR0012345678"
         agentViewParagraphs.get(4).select("strong").text() mustBe "XMPLR0012345678"
         agentViewParagraphs.get(5).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
-        agentViewParagraphs.get(10).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(16).text() mustBe "Find out when HMRC may charge the group penalties and interest."
       }
 
       "display interest warning text section" should {
         "group has overdue payment" in {
-          agentView
+          accountActivityAgentView
             .getElementsByClass("govuk-warning-text__text")
             .first()
             .text() must include(
@@ -394,7 +322,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         "group has no overdue payment" in {
           val agentViewNoOverduePayments: Document =
             Jsoup.parse(
-              page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true)
+              page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
+                request,
+                appConfig,
+                messages,
+                isAgent = true
+              )
                 .toString()
             )
 
@@ -405,18 +338,23 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("organisationView", organisationView),
+        ViewScenario("organisationView", accountActivityOrganisationView),
         ViewScenario(
           "noOverdueReturnPaymentView",
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false)
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
+              request,
+              appConfig,
+              messages,
+              isAgent = false
+            )
               .toString()
           )
         ),
         ViewScenario(
           "noPaymentsDataView",
           Jsoup.parse(
-            page(tablePartial(noPaymentsData), orgName, plrRef, amountDue(noPaymentsData), hasOverdueReturnPayment = false)(
+            page(tablePartial(noPaymentsData, penalties), orgName, plrRef, amountDueForActivity(noPaymentsData), hasOverdueReturnPayment = false)(
               request,
               appConfig,
               messages,
@@ -426,11 +364,16 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           )
         ),
         ViewScenario("accountActivityAppealView", accountActivityAppealView),
-        ViewScenario("agentView", agentView),
+        ViewScenario("agentView", accountActivityAgentView),
         ViewScenario(
           "noOverdueReturnPaymentAgentView",
           Jsoup.parse(
-            page(tableHtml, orgName, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true)
+            page(tableHtml, orgName, plrRef, amountDueForActivity(data), hasOverdueReturnPayment = false)(
+              request,
+              appConfig,
+              messages,
+              isAgent = true
+            )
               .toString()
           )
         ),
@@ -449,16 +392,7 @@ object OutstandingPaymentsViewSpec {
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
   val row: OutstandingPaymentsRow =
-    OutstandingPaymentsRow(description = "UKTR - DTT", outstandingAmount = 1000.00, dueDate = LocalDate.of(2024, 3, 31))
-
-  val table: OutstandingPaymentsTable = OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
-
-  val data: Seq[OutstandingPaymentsTable] = Seq(table)
-
-  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
-
-  val activityRow: OutstandingPaymentsRowForActivity =
-    OutstandingPaymentsRowForActivity(
+    OutstandingPaymentsRow(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
       outstandingAmount = 1000.00,
@@ -466,15 +400,17 @@ object OutstandingPaymentsViewSpec {
       appealFlag = None
     )
 
-  val activityTable: OutstandingPaymentsTableForActivity =
-    OutstandingPaymentsTableForActivity(accountingPeriod = accountingPeriod, rows = Seq(activityRow))
+  val table: OutstandingPaymentsTable =
+    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(row))
 
-  val activityData: Seq[OutstandingPaymentsTableForActivity] = Seq(activityTable)
+  val noPaymentsData: Seq[OutstandingPaymentsTable] = Seq(table.copy(rows = Seq(row.copy(outstandingAmount = 0.00))))
 
-  val penalties: Seq[OutstandingPaymentsRowForActivity] = Seq.empty
+  val data: Seq[OutstandingPaymentsTable] = Seq(table)
 
-  val rowWithAppeal: OutstandingPaymentsRowForActivity =
-    OutstandingPaymentsRowForActivity(
+  val penalties: Seq[OutstandingPaymentsRow] = Seq.empty
+
+  val rowWithAppeal: OutstandingPaymentsRow =
+    OutstandingPaymentsRow(
       description = "UKTR - DTT",
       chargeAmount = 1000.00,
       outstandingAmount = 1000.00,
@@ -482,11 +418,10 @@ object OutstandingPaymentsViewSpec {
       appealFlag = Some(true)
     )
 
-  val tableWithAppeal: OutstandingPaymentsTableForActivity =
-    OutstandingPaymentsTableForActivity(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
+  val tableWithAppeal: OutstandingPaymentsTable =
+    OutstandingPaymentsTable(accountingPeriod = accountingPeriod, rows = Seq(rowWithAppeal))
 
-  val dataWithAppeal: Seq[OutstandingPaymentsTableForActivity] = Seq(tableWithAppeal)
+  val dataWithAppeal: Seq[OutstandingPaymentsTable] = Seq(tableWithAppeal)
 
-  def amountDue(data:            Seq[OutstandingPaymentsTable]):            BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
-  def amountDueForActivity(data: Seq[OutstandingPaymentsTableForActivity]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
+  def amountDueForActivity(data: Seq[OutstandingPaymentsTable]): BigDecimal = data.flatMap(_.rows.map(_.outstandingAmount)).sum.max(0)
 }

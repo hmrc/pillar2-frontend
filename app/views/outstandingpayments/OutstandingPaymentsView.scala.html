@@ -14,28 +14,10 @@
  * limitations under the License.
  *@
 
-@*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
-
-@import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
-@import models.OutstandingPaymentsTable
-@import views.html.components.gds._
+@import views.ViewUtils.*
+@import views.html.components.gds.*
 @import views.html.templates.Layout
-@import views.ViewUtils._
 
 @this(
         layout: Layout,
@@ -49,7 +31,7 @@
         paragraphMessageWithLink: ParagraphMessageWithLink,
         details: GovukDetails
 )
-@(tableContent: Html, orgName: String, plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean, useAccountActivity: Boolean = false, accruedInterest: BigDecimal = 0)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
+@(tableContent: Html, orgName: String, plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean, accruedInterest: BigDecimal = 0)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
 @layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -68,28 +50,18 @@
         <div class="govuk-grid-column-two-thirds">
             @h1(messages("payments.outstanding.title"))
             <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
-              @messages("payments.outstanding.amountDue", formatAmount(amountDue))
+            @messages("payments.outstanding.amountDue", formatAmount(amountDue))
             </p>
-            @if(useAccountActivity) {
-              @paragraphBody(messages("payments.outstanding.activity.p1"))
-                @paragraphBody(userTypeDependentText(
-                    messages("payments.outstanding.activity.p2"),
-                    messages("payments.outstanding.activity.agent.p2")
-                ))
-            } else {
-                @paragraphBody(messages("payments.outstanding.p1"))
-                @paragraphBody(userTypeDependentText(
-                    messages("payments.outstanding.p2"),
-                    messages("payments.outstanding.agent.p2")
-                ))
-            }
-            @if(!useAccountActivity) {
-                @if(hasOverdueReturnPayment) {
-                    @govukWarningText(WarningText(content= Text(userTypeDependentText(
-                            messages("payments.outstanding.warningText"),
-                            messages("payments.outstanding.agent.warningText")
-                    ))))
-                }
+            @paragraphBody(messages("payments.outstanding.activity.p1"))
+            @paragraphBody(userTypeDependentText(
+                messages("payments.outstanding.activity.p2"),
+                messages("payments.outstanding.activity.agent.p2")
+            ))
+            @if(hasOverdueReturnPayment) {
+                @govukWarningText(WarningText(content = Text(userTypeDependentText(
+                    messages("payments.outstanding.warningText"),
+                    messages("payments.outstanding.agent.warningText")
+                ))))
             }
             @h2(messages("payments.outstanding.howToPay.heading"), size = "m")
             @paragraphBody(messages("payments.outstanding.howToPay.p1"))
@@ -111,12 +83,10 @@
                     messages("payments.outstanding.pay.buttonText")
                 ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
 
-            @if(useAccountActivity) {
-                @if(hasOverdueReturnPayment) {
-                  @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText", formatAmount(accruedInterest))))
-                  @paragraphBody(messages("payments.outstanding.accruedInterest.description.p1"))
-                  @paragraphBody(messages("payments.outstanding.accruedInterest.description.p2"))
-                }
+            @if(hasOverdueReturnPayment) {
+                @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText", formatAmount(accruedInterest))))
+                @paragraphBody(messages("payments.outstanding.accruedInterest.description.p1"))
+                @paragraphBody(messages("payments.outstanding.accruedInterest.description.p2"))
             }
         </div>
     </div>
@@ -124,13 +94,11 @@
     @h2(messages("payments.outstanding.details.heading"), size = "m")
     @paragraphBody(messages("payments.outstanding.details.p1"))
 
-    @if(useAccountActivity) {
-        @paragraphBody(messages("payments.outstanding.details.p2"))
-        @paragraphMessageWithLink(
-            linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
-            linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
-        )
-    }
+    @paragraphBody(messages("payments.outstanding.details.p2"))
+    @paragraphMessageWithLink(
+        linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+        linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
+    )
 
     @details(Details(
         summary = messages("payments.outstanding.abbreviation.heading"),
@@ -157,14 +125,12 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if(useAccountActivity) {
-                @h2(messages("payments.stoodoverCharges.title"), size = "m")
-                @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
-                @paragraphMessageWithLink(
-                    linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
-                    linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
-                )
-            }
+            @h2(messages("payments.stoodoverCharges.title"), size = "m")
+            @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+                linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
+            )
 
             @h2(messages("transactionHistory.title"), size = "m")
             @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
@@ -174,21 +140,12 @@
             )
 
             @h2(messages("payments.outstanding.penaltiesAndCharges.heading"), size = "m")
-            @if(useAccountActivity) {
-                @paragraphBody(
-                    userTypeDependentText(
-                        messages("payments.outstanding.activity.penaltiesAndCharges.p1"),
-                        messages("payments.outstanding.activity.penaltiesAndCharges.agent.p1")
-                    )
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.activity.penaltiesAndCharges.p1"),
+                    messages("payments.outstanding.activity.penaltiesAndCharges.agent.p1")
                 )
-            } else {
-                @paragraphBody(
-                    userTypeDependentText(
-                        messages("payments.outstanding.penaltiesAndCharges.p1"),
-                        messages("payments.outstanding.penaltiesAndCharges.agent.p1")
-                    )
-                )
-            }
+            )
             @paragraphMessageWithLink(
                 linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
                 linkUrl = appConfig.penaltiesInformationUrl,

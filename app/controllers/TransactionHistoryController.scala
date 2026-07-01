@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import connectors.{AccountActivityConnector, FinancialDataConnector}
+import connectors.AccountActivityConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.*
@@ -42,7 +42,6 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val financialDataConnector:                     FinancialDataConnector,
   val accountActivityConnector:                   AccountActivityConnector,
   @Named("EnrolmentIdentifier") identifierAction: IdentifierAction,
   dataRetrievalAction:                            DataRetrievalAction,
@@ -61,14 +60,9 @@ class TransactionHistoryController @Inject() (
   private def retrieveTransactionsAndUnallocatedAmount(plrReference: String, fromDate: LocalDate, toDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[(Seq[Transaction], BigDecimal)] =
-    if appConfig.useAccountActivityApi then
-      accountActivityConnector
-        .retrieveAccountActivity(plrReference, fromDate, toDate)
-        .map(response => (response.toTransactions, response.unallocatedPaymentAmount))
-    else
-      financialDataConnector
-        .retrieveTransactionHistory(plrReference, fromDate, toDate)
-        .map(response => (response.financialHistory, BigDecimal(0)))
+    accountActivityConnector
+      .retrieveAccountActivity(plrReference, fromDate, toDate)
+      .map(response => (response.toTransactions, response.unallocatedPaymentAmount))
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
     (identifierAction andThen dataRetrievalAction).async { request =>
@@ -94,12 +88,12 @@ class TransactionHistoryController @Inject() (
           if financialHistory.isEmpty then {
             OptionT.liftF(
               Future.successful(
-                Ok(noTransactionHistoryView(orgName, referenceNumber, unallocatedPaymentAmount, appConfig.useAccountActivityApi, request.isAgent))
+                Ok(noTransactionHistoryView(orgName, referenceNumber, unallocatedPaymentAmount, request.isAgent))
               )
             )
           } else
             OptionT
-              .fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory, appConfig.useAccountActivityApi))
+              .fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), financialHistory))
               .map { table =>
                 val pagination = generatePagination(financialHistory, page)
                 Ok(
@@ -107,7 +101,6 @@ class TransactionHistoryController @Inject() (
                     orgName,
                     referenceNumber,
                     unallocatedPaymentAmount,
-                    appConfig.useAccountActivityApi,
                     table,
                     pagination,
                     request.isAgent
@@ -134,7 +127,7 @@ class TransactionHistoryController @Inject() (
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         orgName <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber).map(_.upeDetails.organisationName))
-      } yield Ok(noTransactionHistoryView(orgName, referenceNumber, BigDecimal(0), appConfig.useAccountActivityApi, request.isAgent))
+      } yield Ok(noTransactionHistoryView(orgName, referenceNumber, BigDecimal(0), request.isAgent))
 
       result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
         Redirect(routes.TransactionHistoryController.onPageLoadError())
@@ -210,13 +203,13 @@ object TransactionHistoryController {
       )
     }
 
-  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, transactions: Seq[Transaction], useNewApi: Boolean)(using
+  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, transactions: Seq[Transaction])(using
     messages: Messages
   ): Option[Table] = {
     val currentPage: Option[Seq[Transaction]] = transactions.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
 
     currentPage.map { historyOnPage =>
-      val rows = historyOnPage.map(createTableRows(_, useNewApi))
+      val rows = historyOnPage.map(createTableRows(_))
       createTable(rows)
     }
   }
@@ -237,18 +230,15 @@ object TransactionHistoryController {
       captionClasses = "govuk-table__caption--m"
     )
 
-  private def createTableRows(history: Transaction, useNewApi: Boolean)(using messages: Messages): Seq[TableRow] = {
+  private def createTableRows(history: Transaction)(using messages: Messages): Seq[TableRow] = {
     val amountPaid:   String = formatCurrencyAmount(history.amountPaid)
     val amountRepaid: String = formatCurrencyAmount(history.amountRepaid)
 
-    // New API uses message keys (payment, repayment, repaymentInterest); legacy API uses display strings
     val paymentTypeText =
-      if useNewApi then
-        history.paymentType match {
-          case "repayment" | "repaymentInterest" => messages(s"transactionHistory.paymentType.${history.paymentType}")
-          case other                             => other
-        }
-      else history.paymentType
+      history.paymentType match {
+        case "repayment" | "repaymentInterest" => messages(s"transactionHistory.paymentType.${history.paymentType}")
+        case other                             => other
+      }
 
     Seq(
       TableRow(

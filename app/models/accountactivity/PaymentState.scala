@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.financialdata
+package models.accountactivity
 
 import config.FrontendAppConfig
 import enumeratum.{Enum, EnumEntry}
@@ -30,24 +30,7 @@ object PaymentState extends Enum[PaymentState] {
   case object Paid extends PaymentState
   case object NothingDueNothingRecentlyPaid extends PaymentState
 
-  val values = findValues
-
-  def unapply(financialData: FinancialData)(using clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
-    val anyChargesAccruingInterest = financialData.overdueAccruingInterestCharges.nonEmpty
-    val anyChargesOverdue          = financialData.onlyOverdueOutstandingCharges.nonEmpty
-    val anyOutstandingCharges      = financialData.onlyOutstandingCharges.nonEmpty
-
-    Some {
-      Option
-        .when(anyChargesAccruingInterest)(PastDueWithInterestCharge(financialData.calculateOutstandingAmount))
-        .orElse(
-          Option.when(anyChargesOverdue && !anyChargesAccruingInterest)(PaymentState.PastDueNoInterest(financialData.calculateOutstandingAmount))
-        )
-        .orElse(Option.when(anyOutstandingCharges && !anyChargesOverdue)(PaymentState.NotYetDue(financialData.calculateOutstandingAmount)))
-        .orElse(Option.when(financialData.hasRecentPayment && !anyOutstandingCharges)(PaymentState.Paid))
-        .getOrElse(PaymentState.NothingDueNothingRecentlyPaid)
-    }
-  }
+  val values: IndexedSeq[PaymentState] = findValues
 
   def unapply(accountActivityData: AccountActivityData)(using clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
     val anyChargesAccruingInterest = accountActivityData.overdueAccruingInterestCharges.nonEmpty

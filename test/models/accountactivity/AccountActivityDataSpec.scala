@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package models.financialdata
+package models.accountactivity
 
 import base.{SpecBase, TestDateTimeUtils}
-import models.{AccountActivityTransaction, TransactionType}
 import org.scalatest.LoneElement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 

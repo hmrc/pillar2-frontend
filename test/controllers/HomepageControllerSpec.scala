@@ -18,11 +18,10 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.~
 import generators.ModelGenerators
 import models.*
-import models.financialdata.*
+import models.accountactivity.AccountActivityData
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.*
 import org.mockito.ArgumentCaptor
@@ -82,15 +81,14 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         applicationBuilder(
           userAnswers = None,
           enrolments,
-          additionalData = Map("features.amendMultipleAccountingPeriods" -> false, "features.useAccountActivityApi" -> false)
+          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
         )
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
-            bind[HomepageBannerService].toInstance(mockHomepageBannerService)
+            bind[HomepageBannerService].toInstance(mockHomepageBannerService),
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -105,9 +103,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
         when(mockObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(any())).thenReturn(None)
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
-        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
         when(mockHomepageBannerService.determineNotificationArea(any(), any(), any())(using any(), any()))
           .thenReturn(DynamicNotificationAreaState.NoNotification)
@@ -153,8 +149,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -169,8 +164,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -191,8 +186,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -209,8 +203,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -225,8 +219,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -238,6 +231,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .thenReturn(Future.successful(true))
         when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
           .thenReturn(Future.failed(RetryableGatewayError))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -288,43 +283,6 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
     }
 
-    "not call retrieveAccountActivityData when useAccountActivityApi flag is false" in {
-      val application =
-        applicationBuilder(
-          userAnswers = None,
-          enrolments,
-          additionalData = Map("features.useAccountActivityApi" -> false, "features.amendMultipleAccountingPeriods" -> false)
-        )
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        clearInvocations(mockFinancialDataService)
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
-
-        val result = route(application, request).value
-        status(result) mustEqual OK
-
-        verify(mockFinancialDataService, never()).retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier])
-      }
-    }
-
     "redirect to registration in progress page when subscription is still processing for agent" in {
       val application =
         applicationBuilder(
@@ -335,7 +293,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[AuthConnector].toInstance(mockAuthConnector)
+            bind[AuthConnector].toInstance(mockAuthConnector),
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
@@ -348,6 +307,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+      when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+        .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
@@ -367,8 +328,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -382,9 +342,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .thenReturn(Future.successful(v2LocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
-        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value
@@ -450,8 +408,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[FinancialDataService].toInstance(mockFinancialDataService),
-            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+            bind[AccountActivityService].toInstance(mockAccountActivityService)
           )
           .build()
 
@@ -467,9 +424,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .thenReturn(Future.successful(v2LocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
-        when(mockFinancialDataService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
+        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
         val result = route(application, request).value

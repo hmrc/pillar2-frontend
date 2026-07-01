@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import connectors.AccountActivityConnector
 import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
-import models.financialdata.*
-import models.financialdata.FinancialTransaction.OutstandingCharge
+import models.accountactivity.{AccountActivityResponse, AccountActivityTransaction, TransactionType}
 import models.subscription.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -30,7 +29,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import services.{FinancialDataService, SubscriptionService}
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.outstandingpayments.{OutstandingPaymentsView, _OutstandingPaymentsTable}
@@ -40,47 +39,63 @@ import scala.concurrent.Future
 
 class OutstandingPaymentsControllerSpec extends SpecBase {
 
+  private val subscriptionData = SubscriptionDataV1(
+    formBundleNumber = "form bundle",
+    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
+    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
+    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
+    secondaryContactDetails = None,
+    filingMemberDetails = None,
+    accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+    accountStatus = Some(AccountStatus.ActiveAccount)
+  )
+
+  private def baseApplication = applicationBuilder(
+    userAnswers = Some(emptyUserAnswers),
+    enrolments = enrolments
+  ).overrides(
+    bind[SessionRepository].toInstance(mockSessionRepository),
+    bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
+    bind[SubscriptionService].toInstance(mockSubscriptionService)
+  )
+
+  private def stubCommonMocks(): Unit = {
+    when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
+      .thenReturn(Future.successful(subscriptionData))
+    when(mockSessionRepository.get(any()))
+      .thenReturn(Future.successful(Some(emptyUserAnswers)))
+  }
+
   "OutstandingPaymentsController" should {
-    "return OK and display the correct view for a GET with outstanding payments" in {
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
 
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> false)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
+    "return OK and display the correct view when outstanding payments exist" in {
+      val application = baseApplication.build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(sampleChargeTransaction))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        stubCommonMocks()
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(sampleAccountActivityResponse))
 
         val request      = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result       = route(application, request).value
         val view         = application.injector.instanceOf[OutstandingPaymentsView]
         val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
-        val tableHtml    = tablePartial(overdueTables)
+        val tables       = sampleAccountActivityResponse.toOutstandingPayments.map { summary =>
+          OutstandingPaymentsTable(
+            accountingPeriod = summary.accountingPeriod,
+            rows = summary.items.map(item =>
+              OutstandingPaymentsRow(item.description, item.chargeAmount, item.outstandingAmount, item.dueDate, item.appealFlag)
+            )
+          )
+        }
+        val penalties       = sampleAccountActivityResponse.toOtherPenaltyItems
+        val tableHtml       = tablePartial(tables, penalties)
+        val amountDue       = (tables.flatMap(_.rows.map(_.outstandingAmount)) ++ penalties.map(_.outstandingAmount)).sum.max(0)
+        val accruedInterest = sampleAccountActivityResponse.totalAccruedInterest
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(tableHtml, orgName, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
+          view(tableHtml, orgName, pillar2Id, amountDue, hasOverdueReturnPayment = true, accruedInterest)(
             request,
             applicationConfig,
             messages(application),
@@ -89,80 +104,45 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
       }
     }
 
-    "return Ok and display correct view for a GET with outstanding payments that existed before company registration date" in {
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> false)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
+    "return OK and show no outstanding rows when transactionDetails is empty" in {
+      val application = baseApplication.build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(samplePreRegistrationChargeTransaction))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        stubCommonMocks()
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(AccountActivityResponse(LocalDateTime.now(), transactionDetails = None)))
 
-        val request      = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result       = route(application, request).value
-        val view         = application.injector.instanceOf[OutstandingPaymentsView]
-        val tablePartial = application.injector.instanceOf[_OutstandingPaymentsTable]
-        val tableHtml    = tablePartial(preRegistrationOverdueTables)
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(tableHtml, orgName: String, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
-            request,
-            applicationConfig,
-            messages(application),
-            isAgent = false
-          ).toString
+        contentAsString(result) must include("No payments due.")
       }
     }
 
-    "redirect to Journey Recovery when service call fails" in {
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(additionalData = Map("features.useAccountActivityApi" -> false))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
+    "return OK and show no outstanding rows when NoResultFound is returned by the connector" in {
+      val application = baseApplication.build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.failed(new Exception("Test error")))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        stubCommonMocks()
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.failed(NoResultFound))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("No payments due.")
+      }
+    }
+
+    "redirect to JourneyRecovery when the connector throws an unexpected error" in {
+      val application = baseApplication.build()
+
+      running(application) {
+        stubCommonMocks()
+        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.failed(new RuntimeException("upstream error")))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
         val result  = route(application, request).value
@@ -171,284 +151,44 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-
-    "return OK and show 'No payments due' when Financial Data contains no outstanding charges" in {
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> false)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
-
-      running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(FinancialData(Seq.empty)))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("No payments due.")
-      }
-    }
-
-    "return OK and display Outstanding Payments view when feature flag is enabled and outstanding payments exist" in {
-      val accountActivityResponse = AccountActivityResponse(
-        processingDate = LocalDateTime.now(),
-        transactionDetails = Some(
-          Seq(
-            AccountActivityTransaction(
-              transactionType = TransactionType.Debit,
-              transactionDesc = "UKTR - DTT",
-              startDate = Some(LocalDate.of(2025, 1, 1)),
-              endDate = Some(LocalDate.of(2025, 12, 31)),
-              accruedInterest = None,
-              chargeRefNo = Some("X123456789012"),
-              transactionDate = LocalDate.of(2025, 2, 15),
-              dueDate = Some(LocalDate.of(2025, 12, 31)),
-              originalAmount = BigDecimal(2000),
-              outstandingAmount = Some(BigDecimal(1000)),
-              clearedAmount = Some(BigDecimal(1000)),
-              standOverAmount = None,
-              appealFlag = None,
-              clearingDetails = None
-            )
-          )
-        )
-      )
-
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> true)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
-
-      running(application) {
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(accountActivityResponse))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("UKTR - DTT")
-        contentAsString(result) must include("£1,000")
-      }
-    }
-
-    "return OK and show 'No payments due' when feature flag is enabled and no outstanding payments exist" in {
-      val accountActivityResponse = AccountActivityResponse(
-        processingDate = LocalDateTime.now(),
-        transactionDetails = None
-      )
-
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> true)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
-
-      running(application) {
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(accountActivityResponse))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("No payments due.")
-      }
-    }
-
-    "return OK and show 'No payments due' when feature flag is enabled and NoResultFound is returned" in {
-      val subscriptionData = SubscriptionDataV1(
-        formBundleNumber = "form bundle",
-        upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-        upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-        primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-        secondaryContactDetails = None,
-        filingMemberDetails = None,
-        accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-        accountStatus = Some(AccountStatus.ActiveAccount)
-      )
-
-      val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers),
-        enrolments = enrolments,
-        additionalData = Map("features.useAccountActivityApi" -> true)
-      )
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[AccountActivityConnector].toInstance(mockAccountActivityConnector),
-          bind[SubscriptionService].toInstance(mockSubscriptionService)
-        )
-        .build()
-
-      running(application) {
-        when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.failed(NoResultFound))
-        when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("No payments due.")
-      }
-    }
   }
 }
 
 object OutstandingPaymentsControllerSpec {
 
-  val orgName: String = "Company Ltd"
-
+  val orgName:   String = "orgName"
   val pillar2Id: String = "XMPLR0123456789"
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", pillar2Id)), "Activated", Some(DelegatedAuthRule))
   )
 
-  val samplePaymentsData: Seq[FinancialSummary] = Seq(
-    FinancialSummary(
-      AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+  val sampleAccountActivityResponse: AccountActivityResponse = AccountActivityResponse(
+    processingDate = LocalDateTime.of(2024, 1, 1, 0, 0),
+    transactionDetails = Some(
       Seq(
-        TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, BigDecimal(1000.00), LocalDate.of(2025, 6, 15))
-      )
-    ),
-    FinancialSummary(
-      AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(
-        TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, BigDecimal(2000.00), LocalDate.of(2024, 6, 15))
-      )
-    )
-  )
-
-  val sampleChargeTransaction: FinancialData =
-    FinancialData(
-      Seq(
-        FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
-          accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-          subTransactionRef = EtmpSubtransactionRef.Dtt,
-          outstandingAmount = BigDecimal(1000.00),
-          chargeItems = OutstandingCharge.FinancialItems(
-            earliestDueDate = LocalDate.of(2024, 12, 31),
-            Seq(FinancialItem(dueDate = Some(LocalDate.of(2024, 12, 31)), clearingDate = None))
-          )
-        )
-      )
-    )
-
-  val samplePreRegistrationChargeTransaction: FinancialData =
-    FinancialData(
-      Seq(
-        FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
-          accountingPeriod = AccountingPeriod(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31)),
-          subTransactionRef = EtmpSubtransactionRef.Dtt,
-          outstandingAmount = BigDecimal(1000.00),
-          chargeItems = OutstandingCharge.FinancialItems(
-            earliestDueDate = LocalDate.of(2020, 12, 31),
-            Seq(FinancialItem(dueDate = Some(LocalDate.of(2020, 12, 31)), clearingDate = None))
-          )
-        )
-      )
-    )
-
-  val overdueFinancialSummary: Seq[FinancialSummary] = Seq(
-    FinancialSummary(
-      AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(
-        TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, EtmpSubtransactionRef.Dtt, BigDecimal(1000.00), LocalDate.of(2024, 12, 31))
-      )
-    )
-  )
-
-  val overdueTables: Seq[OutstandingPaymentsTable] = Seq(
-    OutstandingPaymentsTable(
-      accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      rows = Seq(
-        OutstandingPaymentsRow(
-          description = "UKTR - DTT",
-          outstandingAmount = BigDecimal(1000.00),
-          dueDate = LocalDate.of(2024, 12, 31)
+        AccountActivityTransaction(
+          transactionType = TransactionType.Debit,
+          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          startDate = Some(LocalDate.of(2024, 1, 1)),
+          endDate = Some(LocalDate.of(2024, 12, 31)),
+          accruedInterest = None,
+          chargeRefNo = Some("X123456789012"),
+          transactionDate = LocalDate.of(2024, 2, 15),
+          dueDate = Some(LocalDate.of(2024, 12, 31)),
+          originalAmount = BigDecimal(1000.00),
+          outstandingAmount = Some(BigDecimal(1000.00)),
+          clearedAmount = None,
+          standOverAmount = None,
+          appealFlag = None,
+          clearingDetails = None
         )
       )
     )
   )
 
-  val preRegistrationOverdueTables: Seq[OutstandingPaymentsTable] = Seq(
-    OutstandingPaymentsTable(
-      accountingPeriod = AccountingPeriod(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 12, 31)),
-      rows = Seq(
-        OutstandingPaymentsRow(
-          description = "UKTR - DTT",
-          outstandingAmount = BigDecimal(1000.00),
-          dueDate = LocalDate.of(2020, 12, 31)
-        )
-      )
-    )
-  )
-
-  val amountDue: BigDecimal = samplePaymentsData.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+  val amountDue: BigDecimal = sampleAccountActivityResponse.toOutstandingPayments
+    .flatMap(_.items.map(_.outstandingAmount))
+    .sum
+    .max(0)
 }

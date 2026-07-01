@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.AccountActivityConnector
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
+import models.accountactivity.{AccountActivityResponse, AccountActivityTransaction, TransactionType}
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -68,20 +69,8 @@ class StoodoverChargesControllerSpec extends SpecBase {
   )
 
   "StoodoverChargesController" must {
-    "redirect to homepage when useAccountActivityApi is false" in {
-      val application = applicationBuilder(subscriptionLocalData = None)
-        .configure("features.useAccountActivityApi" -> false)
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.StoodoverChargesController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.HomepageController.onPageLoad().url)
-      }
-    }
-
-    "allow request when useAccountActivityApi is true and" must {
+    "allow request and" must {
       "return OK and display the correct view for a GET with no stoodover charges" in {
 
         val application = applicationBuilder(
@@ -93,7 +82,6 @@ class StoodoverChargesControllerSpec extends SpecBase {
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
           )
-          .configure("features.useAccountActivityApi" -> true)
           .build()
 
         running(application) {
@@ -134,7 +122,6 @@ class StoodoverChargesControllerSpec extends SpecBase {
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
           )
-          .configure("features.useAccountActivityApi" -> true)
           .build()
 
         running(application) {
@@ -170,7 +157,6 @@ class StoodoverChargesControllerSpec extends SpecBase {
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
           )
-          .configure("features.useAccountActivityApi" -> true)
           .build()
 
         running(application) {
@@ -199,7 +185,6 @@ class StoodoverChargesControllerSpec extends SpecBase {
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[AccountActivityConnector].toInstance(mockAccountActivityConnector)
           )
-          .configure("features.useAccountActivityApi" -> true)
           .build()
 
         running(application) {
