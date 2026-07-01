@@ -168,11 +168,6 @@
 
             @h2(messages("transactionHistory.title"), size = "m")
             @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
-            @if(useAccountActivity) {
-                @paragraphBody(messages("payments.outstanding.activity.transactionHistory.p2"))
-            } else {
-                @paragraphBody(messages("payments.outstanding.transactionHistory.p2"))
-            }
             @paragraphMessageWithLink(
                 linkMessage = messages("homepage.payments.transactionHistory.linkText"),
                 linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
