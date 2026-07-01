@@ -36,12 +36,13 @@ class HomepageBannerServiceSpec extends SpecBase with ScalaCheckPropertyChecks {
   private def debitTransaction(
                                 dueDate: Option[LocalDate] = Some(LocalDate.now().minusDays(1)),
                                 outstandingAmt: BigDecimal = BigDecimal(12345.67),
+                                accruedInterest: Option[BigDecimal] = None
                               ): AccountActivityTransaction = AccountActivityTransaction(
     transactionType = TransactionType.Debit,
     transactionDesc = "Pillar 2 top-up tax",
     startDate = Some(LocalDate.now().minusYears(1)),
     endDate = Some(LocalDate.now()),
-    accruedInterest = None,
+    accruedInterest = accruedInterest,
     chargeRefNo = None,
     transactionDate = LocalDate.now().minusDays(30),
     dueDate = dueDate,
