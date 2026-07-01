@@ -20,11 +20,11 @@ import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
+import models.*
 import models.longrunningsubmissions.LongRunningSubmission.RFM
 import models.rfm.RfmStatus.*
 import models.rfm.{CorporatePosition, RfmStatus}
 import models.subscription.NewFilingMemberDetail
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmConfirmationPage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -127,7 +127,7 @@ class RfmContactCheckYourAnswersController @Inject() (
           case _            => Future.successful(FailException)
         }
         .recover {
-          case InternalIssueError | UnexpectedResponse => FailedInternalIssueError
+          case InternalIssueError | UnexpectedResponse | UnprocessableEntityError => FailedInternalIssueError
           case _: Exception => FailException
         }
       for {
