@@ -62,10 +62,10 @@ class SecondaryPhonePreferenceViewSpec extends ViewSpecBase with StringGenerator
         ).toString()
       )
 
-      agentView
-        .getElementsByClass("govuk-caption-m")
-        .get(0)
-        .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
+      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      caption.text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have a unique H1 heading" in {

@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.SecondaryContactEmailFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.behaviours.ViewScenario
@@ -72,10 +72,10 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase {
         ).toString()
       )
 
-      agentView
-        .getElementsByClass("govuk-caption-m")
-        .get(0)
-        .text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
+      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      caption.text mustBe s"Group: ${Some("Organisation Inc").value} ID: ${Some("somePillar2Ref").value}"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have a hint description" in {

@@ -19,7 +19,7 @@ package views.btn
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.btn.BTNUnderEnquiryWarningView
@@ -66,8 +66,15 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
     }
 
     "have a caption for agent view" in {
-      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
-      agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
+      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
+
+      val captionNoOrg: Element = agentNoOrgView.select("h2.no-margin-bottom").first()
+      captionNoOrg.text mustBe "ID: XMPLR0123456789"
+      captionNoOrg.hasClass("govuk-caption-m") mustBe true
+      captionNoOrg.hasClass("hmrc-caption-m") mustBe true
     }
 
     val viewScenarios: Seq[ViewScenario] =

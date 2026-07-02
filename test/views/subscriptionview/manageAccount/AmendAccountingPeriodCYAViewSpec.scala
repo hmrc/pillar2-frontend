@@ -21,7 +21,7 @@ import controllers.routes
 import helpers.SubscriptionLocalDataFixture
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodCYAView
@@ -61,7 +61,11 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
     }
 
     "caption for agent view" in {
-      view(isAgent = true).getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      val caption: Element = view(isAgent = true).select("h2.no-margin-bottom").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
+
     }
 
     "have a unique H1 heading" in {

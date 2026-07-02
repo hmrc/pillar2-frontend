@@ -90,9 +90,15 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have agent specific content" in {
+      val caption: Element = agentView().select("h2.no-margin-bottom").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
 
-      agentView().getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
-      agentViewNoOrg().getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
+      val captionNoOrg: Element = agentViewNoOrg().select("h2.no-margin-bottom").first()
+      captionNoOrg.text mustBe "ID: XMPLR0123456789"
+      captionNoOrg.hasClass("govuk-caption-m") mustBe true
+      captionNoOrg.hasClass("hmrc-caption-m") mustBe true
 
       val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
 

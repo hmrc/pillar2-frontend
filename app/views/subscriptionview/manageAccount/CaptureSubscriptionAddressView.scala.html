@@ -45,14 +45,7 @@
         }
 
         @if(isAgent) {
-            <div class="govuk-caption-m">
-                <span><strong>@{
-                    messages("homepage.group")
-                }:</strong> @organisationName</span>
-                <span><strong>@{
-                    messages("homepage.id")
-                }:</strong> @plrRef</span>
-            </div>
+            <h2 class="govuk-caption-m hmrc-caption-m no-margin-bottom"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrRef</h2>
         } else {
             @sectionHeader(messages("contactEmailAddress.heading.caption"))
         }

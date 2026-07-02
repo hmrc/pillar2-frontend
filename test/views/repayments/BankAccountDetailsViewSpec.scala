@@ -57,7 +57,10 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a caption for an agent view" in {
-      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have a unique H1 heading" in {

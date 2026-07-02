@@ -47,6 +47,13 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
         view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
+      "have a caption for an agent view" in {
+        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        caption.text mustBe s"Group: orgName ID: $plrReference"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
+      }
+
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1

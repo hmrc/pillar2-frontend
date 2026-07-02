@@ -110,8 +110,15 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       }
 
       "have a caption" in {
-        agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
-        agentNoOrgView.getElementsByClass("govuk-caption-m").text mustBe "ID: XMPLR0123456789"
+        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
+
+        val captionNoOrg: Element = agentNoOrgView.select("h2.no-margin-bottom").first()
+        captionNoOrg.text mustBe "ID: XMPLR0123456789"
+        captionNoOrg.hasClass("govuk-caption-m") mustBe true
+        captionNoOrg.hasClass("hmrc-caption-m") mustBe true
       }
 
       "have a unique H1 heading" in {
