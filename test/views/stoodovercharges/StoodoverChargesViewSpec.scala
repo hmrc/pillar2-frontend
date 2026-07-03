@@ -178,7 +178,10 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
 
   "display agent-specific content" should {
     "have caption" in {
-      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0012345678"
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0012345678"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
   }
 

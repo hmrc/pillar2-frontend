@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
@@ -73,6 +73,16 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
 
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
+    }
+
+    "have agent specific content" in {
+      val agentView = Jsoup.parse(
+        page(formProvider(username), username, isAgent = true, Some("OrgName"), Some("somePillar2Ref"))(request, appConfig, messages).toString()
+      )
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe "Group: OrgName ID: somePillar2Ref"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     val viewScenarios: Seq[ViewScenario] =

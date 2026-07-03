@@ -19,7 +19,7 @@ package views.submissionhistory
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.submissionhistory.SubmissionHistoryNoSubmissionsView
@@ -83,11 +83,17 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
     }
 
     "have correct text for agents at the top of the page" in {
-      agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: $orgName ID: $plrRef"
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe s"Group: $orgName ID: $plrRef"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "show only group ID in the caption when the organisation name is empty" in {
-      agentViewIdOnly.getElementsByClass("govuk-caption-m").get(0).text mustBe s"ID: $plrRef"
+      val caption: Element = agentViewIdOnly.select("h2.hmrc-caption-m").first()
+      caption.text mustBe s"ID: $plrRef"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have a first paragraph" in {

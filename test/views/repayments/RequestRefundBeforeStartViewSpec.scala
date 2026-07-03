@@ -19,7 +19,7 @@ package views.repayments
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.repayments.RequestRefundBeforeStartView
@@ -39,7 +39,10 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have a caption for an agent view" in {
-      agentView.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0123456789"
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe "Group: orgName ID: XMPLR0123456789"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "have a h1 heading" in {

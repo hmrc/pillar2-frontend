@@ -19,7 +19,7 @@ package views.paymenthistory
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.paymenthistory.NoTransactionHistoryView
@@ -94,7 +94,11 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct text for agents at the top of the page" in {
-      agentView.getElementsByClass("govuk-caption-m").get(0).text mustBe s"Group: $orgName ID: $plrRef"
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe s"Group: $orgName ID: $plrRef"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
+
     }
 
     "have paragraph 1" in {

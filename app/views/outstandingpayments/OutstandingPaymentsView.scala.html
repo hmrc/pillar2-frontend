@@ -54,14 +54,7 @@
 @layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent) {
-        <div class="govuk-hint govuk-!-margin-top-0">
-            <span><strong>@{
-                messages("homepage.group")
-            }:</strong> @orgName</span>
-            <span><strong>@{
-                messages("homepage.id")
-            }:</strong> @plrReference</span>
-        </div>
+        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @orgName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
     }
 
     <div class="govuk-grid-row">

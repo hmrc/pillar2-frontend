@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.CapturePhoneDetailsFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ContactCapturePhoneDetailsView
@@ -64,6 +64,18 @@ class ContactCapturePhoneDetailsViewSpec extends ViewSpecBase {
 
     "have a 'Continue' button" in {
       view.getElementsByClass("govuk-button").text mustBe "Continue"
+    }
+
+    "have agent specific content" in {
+      lazy val agentView: Document =
+        Jsoup.parse(
+          page(formProvider(username), username, isAgent = true, Some("OrgName"), Some("somePillar2Ref"))(request, appConfig, messages).toString()
+        )
+
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+      caption.text mustBe "Group: OrgName ID: somePillar2Ref"
+      caption.hasClass("govuk-caption-m") mustBe true
+      caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     val viewScenarios: Seq[ViewScenario] =

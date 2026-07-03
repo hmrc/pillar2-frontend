@@ -345,10 +345,22 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       }
 
       "displaying caption for agent view" in {
-        lazy val view: Document =
+        lazy val agentView: Document =
           Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, Some("orgName"))(request, appConfig, messages).toString())
 
-        view.getElementsByClass("govuk-caption-m").text mustBe "Group: orgName ID: XMPLR0012345678"
+        val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+        caption.text mustBe s"Group: orgName ID: $plrRef"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
+
+        lazy val agentViewNoOrg: Document =
+          Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true, plrRef, None)(request, appConfig, messages).toString())
+        agentViewNoOrg.getElementsByClass("govuk-caption-m").text mustBe s"ID: $plrRef"
+
+        val captionNoOrg: Element = agentViewNoOrg.select("h2.hmrc-caption-m").first()
+        captionNoOrg.text mustBe s"ID: $plrRef"
+        captionNoOrg.hasClass("govuk-caption-m") mustBe true
+        captionNoOrg.hasClass("hmrc-caption-m") mustBe true
       }
     }
 

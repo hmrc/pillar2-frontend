@@ -18,7 +18,7 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsMultiPeriodView
 
 class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
@@ -75,7 +75,7 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
 
     "rendering agent view" must {
       "show group header with name and ID" in {
-        val view: Document = Jsoup.parse(
+        val agentView: Document = Jsoup.parse(
           page(
             locationMessageKey = "mneOrDomestic.uk",
             periodCards = Seq.empty,
@@ -86,7 +86,10 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
           )(request, appConfig, messages).toString()
         )
 
-        view.text() must include("Group: ABC Group ID: XMPLR0123456789")
+        val caption: Element = agentView.select("h2.hmrc-caption-m").first()
+        caption.text mustBe "Group: ABC Group ID: XMPLR0123456789"
+        caption.hasClass("govuk-caption-m") mustBe true
+        caption.hasClass("hmrc-caption-m") mustBe true
       }
     }
   }

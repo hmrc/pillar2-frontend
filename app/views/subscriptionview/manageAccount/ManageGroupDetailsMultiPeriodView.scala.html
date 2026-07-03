@@ -29,7 +29,7 @@
 @layout(pageTitle = titleNoForm(messages("manageGroupDetails.multiPeriod.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent && organisationName.nonEmpty) {
-        <h2 class="govuk-caption-l hmrc-caption-l"><span id="section-header"><strong>Group:</strong> @organisationName.get <strong>ID:</strong> @plrReference</span></h2>
+        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
     }
 
     @heading(messages("manageGroupDetails.multiPeriod.heading"), classes = "govuk-heading-l")
