@@ -138,14 +138,14 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have correct text for agents at the top of the page" in {
-      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
       caption.text mustBe s"Group: ${SubmissionHistoryViewSpec.orgName} ID: ${SubmissionHistoryViewSpec.plrRef}"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true
     }
 
     "show only group ID in the caption when the organisation name is empty" in {
-      val captionNoOrg: Element = agentViewIdOnly.select("h2.no-margin-bottom").first()
+      val captionNoOrg: Element = agentViewIdOnly.select("h2.hmrc-caption-m").first()
       captionNoOrg.text mustBe s"ID: ${SubmissionHistoryViewSpec.plrRef}"
       captionNoOrg.hasClass("govuk-caption-m") mustBe true
       captionNoOrg.hasClass("hmrc-caption-m") mustBe true

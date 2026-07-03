@@ -363,7 +363,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display agent-specific content" should {
       "show company name and pillar 2 ID at the top of the page" in {
-        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        val caption: Element = agentView.select("h2.hmrc-caption-m").first()
         caption.text mustBe s"Group: $orgName ID: $plrRef"
         caption.hasClass("govuk-caption-m") mustBe true
         caption.hasClass("hmrc-caption-m") mustBe true

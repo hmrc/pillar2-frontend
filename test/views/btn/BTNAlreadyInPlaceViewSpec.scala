@@ -63,12 +63,12 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
     }
 
     "have a caption for an agent view" in {
-      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
       caption.text mustBe "Group: orgName ID: XMPLR0123456789"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true
 
-      val captionNoOrg: Element = agentNoOrgView.select("h2.no-margin-bottom").first()
+      val captionNoOrg: Element = agentNoOrgView.select("h2.hmrc-caption-m").first()
       captionNoOrg.text mustBe "ID: XMPLR0123456789"
       captionNoOrg.hasClass("govuk-caption-m") mustBe true
       captionNoOrg.hasClass("hmrc-caption-m") mustBe true

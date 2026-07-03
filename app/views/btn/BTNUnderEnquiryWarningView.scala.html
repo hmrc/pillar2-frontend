@@ -33,9 +33,9 @@
 @layout(pageTitle = titleNoForm(messages("btn.underEnquiryWarning.title")), showBackLink = true) {
 
   @if(isAgent && organisationName.isDefined) {
-    <h2 class="govuk-caption-m hmrc-caption-m no-margin-bottom"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
+    <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
   } else if(isAgent) {
-    <h2 class="govuk-caption-m hmrc-caption-m no-margin-bottom"><span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
+    <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
   }
 
   @heading(messages("btn.underEnquiryWarning.heading"), classes = "govuk-heading-l")

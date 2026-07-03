@@ -61,7 +61,7 @@ class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLoc
     }
 
     "caption for agent view" in {
-      val caption: Element = view(isAgent = true).select("h2.no-margin-bottom").first()
+      val caption: Element = view(isAgent = true).select("h2.hmrc-caption-m").first()
       caption.text mustBe "Group: orgName ID: XMPLR0123456789"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true

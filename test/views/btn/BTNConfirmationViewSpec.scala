@@ -112,12 +112,12 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     "have paragraph content (containing company name) and a link when in an agent flow" in {
       val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
 
-      val caption: Element = agentView().select("h2.no-margin-bottom").first()
+      val caption: Element = agentView().select("h2.hmrc-caption-m").first()
       caption.text mustBe s"Group: $companyName ID: $plrRef"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true
 
-      val captionNoOrg: Element = agentNoOrgView().select("h2.no-margin-bottom").first()
+      val captionNoOrg: Element = agentNoOrgView().select("h2.hmrc-caption-m").first()
       captionNoOrg.text mustBe s"ID: $plrRef"
       captionNoOrg.hasClass("govuk-caption-m") mustBe true
       captionNoOrg.hasClass("hmrc-caption-m") mustBe true

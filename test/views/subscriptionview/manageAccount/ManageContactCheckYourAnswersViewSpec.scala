@@ -196,7 +196,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
 
       "show the correct caption text at the top of the page" in {
-        val caption: Element = agentView.select("h2.no-margin-bottom").first()
+        val caption: Element = agentView.select("h2.hmrc-caption-m").first()
         caption.text mustBe s"Group: ${orgName.get} ID: ${plrRef.get}"
         caption.hasClass("govuk-caption-m") mustBe true
         caption.hasClass("hmrc-caption-m") mustBe true

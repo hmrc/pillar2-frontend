@@ -141,13 +141,13 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
     }
 
     "not show group/ID header for group (non-agent) view" in {
-      val caption = groupView().getElementsByClass("no-margin-bottom")
+      val caption = groupView().getElementsByClass("hmrc-caption-m")
       caption.text() must not include "Group:"
       caption.text() must not include plrReference
     }
 
     "show group/ID header for agent view" in {
-      val caption = agentView().select("h2.no-margin-bottom").first()
+      val caption = agentView().select("h2.hmrc-caption-m").first()
       caption.text() must include("Group:")
       caption.text() must include(plrReference)
       caption.hasClass("govuk-caption-m") mustBe true

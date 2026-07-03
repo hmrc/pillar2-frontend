@@ -85,7 +85,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   "Agent view" should {
     "show the correct hint text above the confirmation panel" in {
-      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
       caption.text mustBe s"Group: $testOrgName ID: $testPillar2Ref"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true

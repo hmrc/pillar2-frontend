@@ -95,22 +95,22 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a caption" in {
-        val captionUkOnly: Element = agentViewUkOnly().select("h2.no-margin-bottom").first()
+        val captionUkOnly: Element = agentViewUkOnly().select("h2.hmrc-caption-m").first()
         captionUkOnly.text mustBe "Group: orgName ID: XMPLR0123456789"
         captionUkOnly.hasClass("govuk-caption-m") mustBe true
         captionUkOnly.hasClass("hmrc-caption-m") mustBe true
 
-        val captionUkAndOther: Element = agentViewUkAndOther().select("h2.no-margin-bottom").first()
+        val captionUkAndOther: Element = agentViewUkAndOther().select("h2.hmrc-caption-m").first()
         captionUkAndOther.text mustBe "Group: orgName ID: XMPLR0123456789"
         captionUkAndOther.hasClass("govuk-caption-m") mustBe true
         captionUkAndOther.hasClass("hmrc-caption-m") mustBe true
 
-        val captionUkOnlyNoOrg: Element = agentViewUkOnly(organisationName = None).select("h2.no-margin-bottom").first()
+        val captionUkOnlyNoOrg: Element = agentViewUkOnly(organisationName = None).select("h2.hmrc-caption-m").first()
         captionUkOnlyNoOrg.text mustBe "ID: XMPLR0123456789"
         captionUkOnlyNoOrg.hasClass("govuk-caption-m") mustBe true
         captionUkOnlyNoOrg.hasClass("hmrc-caption-m") mustBe true
 
-        val captionUkAndOtherNoOrg: Element = agentViewUkAndOther(organisationName = None).select("h2.no-margin-bottom").first()
+        val captionUkAndOtherNoOrg: Element = agentViewUkAndOther(organisationName = None).select("h2.hmrc-caption-m").first()
         captionUkAndOtherNoOrg.text mustBe "ID: XMPLR0123456789"
         captionUkAndOtherNoOrg.hasClass("govuk-caption-m") mustBe true
         captionUkAndOtherNoOrg.hasClass("hmrc-caption-m") mustBe true

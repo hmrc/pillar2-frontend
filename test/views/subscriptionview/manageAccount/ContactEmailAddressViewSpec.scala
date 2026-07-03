@@ -72,7 +72,7 @@ class ContactEmailAddressViewSpec extends ViewSpecBase {
         ).toString()
       )
 
-      val caption: Element = agentView.select("h2.no-margin-bottom").first()
+      val caption: Element = agentView.select("h2.hmrc-caption-m").first()
       caption.text mustBe "Group: Organisation Inc ID: somePillar2Ref"
       caption.hasClass("govuk-caption-m") mustBe true
       caption.hasClass("hmrc-caption-m") mustBe true
