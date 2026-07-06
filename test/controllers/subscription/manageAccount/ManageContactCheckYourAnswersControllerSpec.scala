@@ -446,6 +446,53 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
+      "handle UnprocessableEntityError during submission" in {
+        val mockSessionRepository            = mock[SessionRepository]
+        val userAnswers                      = UserAnswers("id")
+        val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+
+        val finalUserAnswersWithFailedInternalIssueError =
+          userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailedInternalIssueError)
+
+        when(mockSessionRepository.get(userAnswers.id))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+
+        val finalSetDone = Promise[Unit]()
+        when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenAnswer { (_: InvocationOnMock) =>
+          finalSetDone.trySuccess(())
+          Future.successful(true)
+        }
+
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
+          val result  = route(application, request).value
+
+          await(result)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
+
+          Await.ready(finalSetDone.future, 15.seconds)
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
+        }
+      }
+
       "handle InternalIssueError during submission" in {
         val mockSessionRepository            = mock[SessionRepository]
         val userAnswers                      = UserAnswers("id")
