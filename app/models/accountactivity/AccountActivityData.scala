@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package models.financialdata
+package models.accountactivity
 
 import config.FrontendAppConfig
-import models.{AccountActivityTransaction, TransactionType}
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, LocalDate}

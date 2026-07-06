@@ -124,12 +124,6 @@ class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
       }
     }
 
-    ".useAccountActivityApi" must {
-      "return true by default" in {
-        config.useAccountActivityApi mustBe true
-      }
-    }
-
     ".amendMultipleAccountingPeriods" must {
       "return true by default" in {
         config.amendMultipleAccountingPeriods mustBe true

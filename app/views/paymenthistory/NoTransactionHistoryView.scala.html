@@ -26,7 +26,7 @@
         paragraphBodyLink: paragraphBodyLink,
 )
 
-@(orgName: String, plrRef: String, unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(orgName: String, plrRef: String, unallocatedPaymentAmount: BigDecimal, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
@@ -45,9 +45,7 @@
 
     @p(messages("transactionHistory.none.p2"))
 
-    @if(showUnallocatedPaymentAmount) {
-        @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
-    }
+    @h2(messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount)), size = "m")
 
     @h2(messages("transactionHistory.transactions"), size = "m")
     @p(messages("transactionHistory.none.p3"))

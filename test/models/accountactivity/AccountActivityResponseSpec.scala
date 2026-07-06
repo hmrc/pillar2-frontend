@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.accountactivity
 
 import base.SpecBase
 import play.api.libs.json.{JsError, JsSuccess, Json}

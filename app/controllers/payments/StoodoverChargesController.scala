@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.AccountActivityConnector
 import controllers.actions.*
 import models.*
+import models.accountactivity.AccountActivityResponse
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -44,7 +45,6 @@ class StoodoverChargesController @Inject() (
   accountActivityConnector:               AccountActivityConnector,
   referenceNumberService:                 ReferenceNumberService,
   subscriptionService:                    SubscriptionService,
-  checkAccountActivityScreens:            AccountActivityScreensAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   view:                                   StoodoverChargesView
@@ -60,7 +60,7 @@ class StoodoverChargesController @Inject() (
       .retrieveAccountActivity(plrReference, dateFrom, dateTo)
       .recover { case NoResultFound => AccountActivityResponse(LocalDateTime.now, None) }
 
-  private def toTablesFromAccountActivity(accountActivitySummaries: Seq[StoodoverChargeSummary]): Seq[StoodoverChargesTable] =
+  private def toTables(accountActivitySummaries: Seq[StoodoverChargeSummary]): Seq[StoodoverChargesTable] =
     accountActivitySummaries.map { summary =>
       StoodoverChargesTable(
         accountingPeriod = summary.accountingPeriod,
@@ -69,7 +69,7 @@ class StoodoverChargesController @Inject() (
     }
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen checkAccountActivityScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       given isAgent: Boolean = request.isAgent
@@ -86,7 +86,7 @@ class StoodoverChargesController @Inject() (
             retrieveStoodoverCharges(plrRef, LocalDate.now.minusYears(SubmissionAccountingPeriods), now())
           )
       } yield {
-        val tables    = toTablesFromAccountActivity(standoverChargesResult.toStoodoverCharges)
+        val tables    = toTables(standoverChargesResult.toStoodoverCharges)
         val amountDue = tables.flatMap(_.rows.map(_.stoodoverAmount)).sum.max(0)
         Ok(view(plrReference = plrRef, data = tables, stoodoverTotal = amountDue, organisationName = subscriptionData.upeDetails.organisationName))
       }).getOrElse {

@@ -32,7 +32,7 @@
         details: GovukDetails
 )
 
-@(orgName: String, plrRef: String, unallocatedPaymentAmount: BigDecimal, showUnallocatedPaymentAmount: Boolean, transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(orgName: String, plrRef: String, unallocatedPaymentAmount: BigDecimal, transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @outstandingPaymentsUrl = @{controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url}
 
@@ -52,12 +52,10 @@
 
   @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
 
-  @if(showUnallocatedPaymentAmount) {
     <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
-      @messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount))
+    @messages("transactionHistory.unallocatedPaymentAmount", formatAmount(unallocatedPaymentAmount))
     </p>
     @p(messages("transactionHistory.unallocatedPaymentAmount.description"))
-  }
 
   @details(Details(
       summary = messages("transactionHistory.details"),

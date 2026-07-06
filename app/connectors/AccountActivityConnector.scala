@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.*
+import models.accountactivity.AccountActivityResponse
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
