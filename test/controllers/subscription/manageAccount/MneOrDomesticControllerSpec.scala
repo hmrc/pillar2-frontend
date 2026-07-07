@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.~
 import forms.MneOrDomesticFormProvider
-import models.MneOrDomestic
+import models.{MneOrDomestic, UnprocessableEntityError}
 import navigation.AmendSubscriptionNavigator
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
@@ -199,6 +199,37 @@ class MneOrDomesticControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
+      }
+    }
+
+    "redirect to the amend-subscription failed page when the backend returns a 422" in {
+      val mockNavigator = mock[AmendSubscriptionNavigator]
+
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier]))
+        .thenReturn(Future.failed(UnprocessableEntityError))
+
+      val previousData = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(previousData))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
+        verify(mockSubscriptionConnector, never()).save(any(), any())(using any[HeaderCarrier])
+        verify(mockNavigator, never()).nextPage(any(), any())
       }
     }
 
@@ -418,6 +449,40 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url
+        verify(mockSubscriptionConnector, never()).save(any(), any())(using any[HeaderCarrier])
+        verify(mockNavigator, never()).nextPage(any(), any())
+      }
+    }
+
+    "redirect to the amend-subscription failed page when the backend returns a 422" in {
+      val mockNavigator = mock[AmendSubscriptionNavigator]
+
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any[HeaderCarrier]))
+        .thenReturn(Future.failed(UnprocessableEntityError))
+
+      val previousData = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(subscriptionLocalData = Some(previousData))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[AuthConnector].toInstance(mockAuthConnector)
+        )
+        .build()
+
+      setupAgentAuth()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
+          .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
         verify(mockSubscriptionConnector, never()).save(any(), any())(using any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }

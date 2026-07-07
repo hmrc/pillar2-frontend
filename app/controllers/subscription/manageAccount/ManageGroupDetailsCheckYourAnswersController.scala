@@ -223,6 +223,9 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         case InternalIssueError =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
           setStatusOnFailure(userId, ManageGroupDetailsStatus.FailedInternalIssueError)
+        case UnprocessableEntityError =>
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId due to UnprocessableEntityError")
+          setStatusOnFailure(userId, ManageGroupDetailsStatus.FailedInternalIssueError)
         case e: Exception =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}")
           setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)

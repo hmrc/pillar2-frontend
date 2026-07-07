@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.*
 import forms.MneOrDomesticFormProvider
 import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
-import models.MneOrDomestic
+import models.{InternalIssueError, MneOrDomestic, UnprocessableEntityError}
 import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
 import play.api.Logging
@@ -75,14 +75,22 @@ class MneOrDomesticController @Inject() (
           newMneOrDomesticValue =>
             MneOrDomestic.handleEntityLocationChange(from = request.subscriptionLocalData.subMneOrDomestic, to = newMneOrDomesticValue) match {
               case EntityLocationChangeAllowed =>
-                logger.info(s"Allowed entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
-                for {
+                logger.info(
+                  s"MneOrDomestic allowed entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue"
+                )
+                (for {
                   updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, newMneOrDomesticValue))
                   _              <- subscriptionService.amendContactOrGroupDetails(request.userId, updatedAnswers.plrReference, updatedAnswers)
                   _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))).recover {
+                  case e @ (UnprocessableEntityError | InternalIssueError) =>
+                    logger.warn(s"MneOrDomestic amend failed for ${request.userId}: ${e.getClass.getSimpleName}")
+                    Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad())
+                }
               case EntityLocationChangeBlocked =>
-                logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
+                logger.info(
+                  s"MneOrDomestic blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue"
+                )
                 Future.successful(Redirect(controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad()))
             }
         )

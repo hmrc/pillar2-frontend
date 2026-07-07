@@ -17,15 +17,17 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import controllers.payments.OutstandingPaymentsControllerSpec.enrolments
 import controllers.routes
 import controllers.subscription.manageAccount.routes as manageRoutes
 import forms.mappings.Mappings
 import helpers.AllMocks
-import models.UserAnswers
 import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.subscription.ManageGroupDetailsStatus
+import models.{UnprocessableEntityError, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.invocation.InvocationOnMock
 import org.scalatest.concurrent.ScalaFutures
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
@@ -37,7 +39,8 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future, Promise}
 
 class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with ScalaFutures with Mappings with AllMocks {
 
@@ -51,9 +54,9 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
   "ManageGroupDetailsCheckYourAnswersController" when {
 
-    "onPageLoad" when {
+    "onPageLoad" must {
 
-      "must return OK and the correct view if all answers are complete" in {
+      "return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
@@ -74,7 +77,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to journey recovery if no user answers are available" in {
+      "redirect to journey recovery if no user answers are available" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
@@ -94,7 +97,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to waiting room when status is InProgress" in {
+      "redirect to waiting room when status is InProgress" in {
         val userAnswers = emptyUserAnswers
           .setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
 
@@ -121,7 +124,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must display the check your answers page for any non-InProgress status" in {
+      "display the check your answers page for any non-InProgress status" in {
         val userAnswers = emptyUserAnswers
 
         when(mockSessionRepository.get(any()))
@@ -145,7 +148,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to Journey Recovery when no session data exists" in {
+      "redirect to Journey Recovery when no session data exists" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
@@ -214,6 +217,43 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           })
         }
       }
+
+      "redirect to waiting room when amend fails with UnprocessableEntityError" in {
+        val failedAnswers = emptyUserAnswers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.FailedInternalIssueError)
+
+        val failureSet = Promise[Unit]()
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(failedAnswers)).thenAnswer { (_: InvocationOnMock) =>
+          failureSet.trySuccess(())
+          Future.successful(true)
+        }
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any())(using any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
+
+          Await.ready(failureSet.future, 15.seconds)
+          verify(mockSessionRepository).set(failedAnswers)
+        }
+      }
+
     }
   }
 }
