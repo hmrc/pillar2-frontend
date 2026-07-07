@@ -740,6 +740,47 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
+      "redirect to waiting page in case of a FailedInternalIssueError, if amend filing details fails with UnprocessableEntityError, and save the API response in the backend" in {
+        val setCount        = new AtomicInteger(0)
+        val secondSetCalled = Promise[Unit]()
+        val ua              = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
+            any()
+          )
+        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+        when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
+          if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
+          Future.successful(true)
+        }
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
+        running(application) {
+          val controller = buildController(application, ua, mockSessionRepository)
+          val request    = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
+          val result     = controller.onSubmit()(request)
+          await(result)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
+          Await.ready(secondSetCalled.future, 15.seconds)
+          verify(mockSessionRepository).set(eqTo(sessionData))
+        }
+      }
+
       "redirect to incomplete data page if they have only partially completed their application" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {

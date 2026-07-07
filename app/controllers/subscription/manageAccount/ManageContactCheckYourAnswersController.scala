@@ -169,6 +169,9 @@ class ManageContactCheckYourAnswersController @Inject() (
         case UnexpectedResponse =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to UnexpectedResponse")
           setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
+        case UnprocessableEntityError =>
+          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to UnprocessableEntityError")
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailedInternalIssueError)
         case e: Exception =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to generic Exception: ${e.getMessage}", e)
           setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)

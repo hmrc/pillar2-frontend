@@ -201,6 +201,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           case OK =>
             logger.info(s"amendSubscriptionV2 - success")
             Done.toFuture
+          case UNPROCESSABLE_ENTITY =>
+            logger.warn(s"amendSubscriptionV2 - 422")
+            Future.failed(UnprocessableEntityError)
           case error =>
             logger.warn(s"amendSubscriptionV2 - $error")
             Future.failed(UnexpectedResponse)
