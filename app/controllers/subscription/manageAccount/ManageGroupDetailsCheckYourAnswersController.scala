@@ -96,12 +96,8 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                 val amendablePeriods = local.accountingPeriods
                   .getOrElse(Seq.empty)
                   .sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
-                val periodCards = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
-                  val title =
-                    if displayIdx == 0 then msgs("manageGroupDetails.multiPeriod.currentPeriod")
-                    else msgs("manageGroupDetails.multiPeriod.previousPeriod")
+                val periods = amendablePeriods.zipWithIndex.map { case (p, displayIdx) =>
                   (
-                    title,
                     p.startDate.getOrElse(LocalDate.now).toDateFormat,
                     p.endDate.getOrElse(LocalDate.now).toDateFormat,
                     Some(
@@ -116,7 +112,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                 Ok(
                   multiPeriodView(
                     locationMessageKey = locationKey,
-                    periodCards = periodCards,
+                    periods = periods,
                     isEmpty = amendablePeriods.isEmpty,
                     isAgent = request.isAgent,
                     organisationName = local.organisationName,

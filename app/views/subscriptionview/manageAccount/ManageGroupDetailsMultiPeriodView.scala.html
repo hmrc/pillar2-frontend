@@ -24,7 +24,7 @@
     h2: HeadingH2
 )
 
-@(locationMessageKey: String, periodCards: Seq[(String, String, String, Option[String])], isEmpty: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(locationMessageKey: String, periods: Seq[(String, String, Option[String])], isEmpty: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageGroupDetails.multiPeriod.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -59,37 +59,25 @@
     @if(isEmpty) {
         <p class="govuk-body">@messages("manageGroupDetails.multiPeriod.emptyState")</p>
     } else {
-        @for(card <- periodCards) {
-            @defining(card) { case (title, startDate, endDate, changeUrlOpt) =>
-                <div class="govuk-summary-card govuk-!-margin-bottom-6">
-                    <div class="govuk-summary-card__title-wrapper">
-                        <h3 class="govuk-summary-card__title">@title</h3>
-                        @changeUrlOpt.map { changeUrl =>
-                            <ul class="govuk-summary-card__actions">
-                                <li class="govuk-summary-card__action">
-                                    <a class="govuk-link" href="@changeUrl">
-                                        @messages("site.change")
-                                        <span class="govuk-visually-hidden"> @messages("manageGroupDetails.multiPeriod.change.hidden", startDate, endDate)</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        }
-                    </div>
-                    <div class="govuk-summary-card__content">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">@messages("manageGroupDetails.multiPeriod.startDate")</dt>
-                                <dd class="govuk-summary-list__value">@startDate</dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">@messages("manageGroupDetails.multiPeriod.endDate")</dt>
-                                <dd class="govuk-summary-list__value">@endDate</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </div>
+        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+        @for(period <- periods) {
+            @defining(period) { case (startDate, endDate, changeUrlOpt) =>
+            <div class="govuk-summary-list__row@if(changeUrlOpt.isEmpty){ govuk-summary-list__row--no-actions}">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular custom-date-range-key govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+                    @startDate to @endDate
+                </dt>
+                @changeUrlOpt.map { changeUrl =>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="@changeUrl">
+                            @messages("site.change")
+                            <span class="govuk-visually-hidden"> @messages("manageGroupDetails.multiPeriod.change.hidden", startDate, endDate)</span>
+                        </a>
+                    </dd>
+                }
+            </div>
             }
         }
+        </dl>
     }
 
     <p class="govuk-body">

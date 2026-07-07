@@ -29,15 +29,15 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
 
     "rendering amendable period cards" must {
       "show cards and change links" in {
-        val periodCards = Seq(
-          ("Current period", "1 January 2025", "31 December 2025", Some("/manage-account/account-details/select-period/0")),
-          ("Previous period", "1 January 2024", "31 December 2024", Some("/manage-account/account-details/select-period/1"))
+        val periods = Seq(
+          ("1 January 2025", "31 December 2025", Some("/manage-account/account-details/select-period/0")),
+          ("1 January 2024", "31 December 2024", Some("/manage-account/account-details/select-period/1"))
         )
 
         val view: Document = Jsoup.parse(
           page(
             locationMessageKey = "mneOrDomestic.ukAndOther",
-            periodCards = periodCards,
+            periods = periods,
             isEmpty = false,
             isAgent = false,
             organisationName = None,
@@ -46,12 +46,10 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
         )
 
         view.title() mustBe "Manage group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        view.getElementsByClass("govuk-summary-card").size() mustBe 2
+        view.getElementsByClass("govuk-summary-list__row").size() mustBe 3
         view.text() must include("In the UK and outside the UK")
-        view.text() must include("Current period")
-        view.text() must include("Previous period")
-        view.text() must include("1 January 2025")
-        view.text() must include("31 December 2025")
+        view.text() must include("1 January 2025 to 31 December 2025")
+        view.text() must include("1 January 2024 to 31 December 2024")
         view.text() must include("Change accounting period 1 January 2025 to 31 December 2025")
       }
     }
@@ -61,7 +59,7 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
         val view: Document = Jsoup.parse(
           page(
             locationMessageKey = "mneOrDomestic.uk",
-            periodCards = Seq.empty,
+            periods = Seq.empty,
             isEmpty = true,
             isAgent = false,
             organisationName = None,
@@ -78,7 +76,7 @@ class ManageGroupDetailsMultiPeriodViewSpec extends ViewSpecBase {
         val agentView: Document = Jsoup.parse(
           page(
             locationMessageKey = "mneOrDomestic.uk",
-            periodCards = Seq.empty,
+            periods = Seq.empty,
             isEmpty = true,
             isAgent = true,
             organisationName = Some("ABC Group"),
