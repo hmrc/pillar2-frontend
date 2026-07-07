@@ -156,7 +156,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     }
 
     "group user, no micro periods" must {
-      "render multi-period view with a single period card and a Change link" in {
+      "render multi-period view with a single period and a Change link" in {
         val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -166,10 +166,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           val result  = route(application, request).value
           val body    = contentAsString(result)
           status(result) mustEqual OK
-//          body must include("Accounting periods")
-//          body must include("Current period")
-//          body must not include "Previous period"
-          body must include("select-period/0")
+          contentAsString(result) must include("Accounting periods")
+          contentAsString(result) must include("1 January 2025 to 31 December 2025")
+          body                    must include("select-period/0")
         }
       }
     }
