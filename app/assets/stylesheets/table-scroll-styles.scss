@@ -4,6 +4,11 @@
     width: 100%;
 }
 
+// Adds outline when the focus is on the table-scroll-wrapper
+.table-scroll-wrapper:focus-visible {
+    outline: 2px solid var(--govuk-focus-text-colour, #0b0c0c);
+}
+
 .govuk-table thead th {
     position: sticky;
     top: 0;
