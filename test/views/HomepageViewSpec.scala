@@ -492,7 +492,10 @@ class HomepageViewSpec extends ViewSpecBase {
       val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag")
       statusTags.size() mustBe 0
 
-      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+      val paymentsHeading: Element = returnsCard.getElementsByTag("h2").first()
+      paymentsHeading.ownText() mustBe "Payments"
+      paymentsHeading.hasAttr("aria-describedby") mustBe false
+      Option(returnsCard.getElementById("payment-status")) mustBe empty
 
       paymentsCardLinks.get(0).text() mustBe "View transaction history"
       paymentsCardLinks.get(0).attr("href") mustBe
@@ -530,14 +533,15 @@ class HomepageViewSpec extends ViewSpecBase {
             messages
           ).toString()
         )
-      val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
-      val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--red")
+      val returnsCard: Element = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
 
-      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+      val paymentsHeading: Element = returnsCard.getElementsByTag("h2").first()
+      paymentsHeading.ownText() mustBe "Payments"
+      paymentsHeading.attr("aria-describedby") mustBe "payment-status"
 
-      val outstandingTag: Element = statusTags.first()
+      val outstandingTag: Element = returnsCard.getElementById("payment-status")
       outstandingTag.text() mustBe "Outstanding"
-      outstandingTag.attr("title") mustBe "Outstanding payments"
+      outstandingTag.hasClass("govuk-tag--red") mustBe true
     }
 
     "display Payments Paid tag with green style when Paid scenario is provided" in {
@@ -560,15 +564,15 @@ class HomepageViewSpec extends ViewSpecBase {
           )
             .toString()
         )
-      val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
-      val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--green")
+      val returnsCard: Element = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
 
-      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+      val paymentsHeading: Element = returnsCard.getElementsByTag("h2").first()
+      paymentsHeading.ownText() mustBe "Payments"
+      paymentsHeading.attr("aria-describedby") mustBe "payment-status"
 
-      val paidTag: Element = statusTags.first()
+      val paidTag: Element = returnsCard.getElementById("payment-status")
       paidTag.text() mustBe "Paid"
-      paidTag.attr("aria-label") mustBe "Paid payments"
-      paidTag.attr("title") mustBe "Paid payments"
+      paidTag.hasClass("govuk-tag--green") mustBe true
     }
 
     val organisationViewScenarios: Seq[ViewScenario] =
