@@ -63,7 +63,7 @@
         @for(period <- periods) {
             @defining(period) { case (startDate, endDate, changeUrlOpt) =>
             <div class="govuk-summary-list__row@if(changeUrlOpt.isEmpty){ govuk-summary-list__row--no-actions}">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular custom-date-range-key govuk-!-padding-top-6 govuk-!-padding-bottom-6">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-body govuk-!-padding-top-6 govuk-!-padding-bottom-6">
                     @startDate to @endDate
                 </dt>
                 @changeUrlOpt.map { changeUrl =>
