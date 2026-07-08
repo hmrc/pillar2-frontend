@@ -49,7 +49,7 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
           logger.info(s"getGroupIds - success, parsed: ${Json.toJson(groupIds)}")
           groupIds
         case response =>
-          logger.warn(s"getGroupIds - unexpected response status: ${response.status} with ${response.body}")
+          logger.warn(s"getGroupIds - unexpected response status: ${response.status}")
           None
       }
 
@@ -71,7 +71,7 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
               Future.failed(UnexpectedJsResult)
           }
         } else {
-          logger.warn(s"get known facts returned an unexpected response : ${response.status} with body ${response.body}")
+          logger.warn(s"get known facts returned an unexpected response : ${response.status}")
           Future.failed(InternalIssueError)
         }
       }
