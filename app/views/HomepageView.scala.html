@@ -168,18 +168,15 @@
  @if(maybePaymentBannerScenario.isDefined) {
      <div class="card-half-width">
          <div class="govuk-summary-card__title-wrapper card-with-tag">
-             <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
+             <h2 class="govuk-heading-m govuk-!-margin-0" aria-describedby="payment-status">@messages("homepage.payments.title")</h2>
              @maybePaymentBannerScenario.map {
                  case Outstanding => {
-                     <span class="govuk-tag govuk-tag--red" title="Outstanding payments">
+                     <span class="govuk-tag govuk-tag--red" id="payment-status">
                      @messages("homepage.payments.tags.outstanding")
                      </span>
                  }
                  case Paid => {
-                     <span
-                     class="govuk-tag govuk-tag--green"
-                     aria-label="Paid payments"
-                     title="Paid payments">
+                     <span class="govuk-tag govuk-tag--green" id="payment-status">
                      @messages("homepage.payments.tags.paid")
                      </span>
                  }
