@@ -52,6 +52,29 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
   "BTNBeforeStartController" must {
 
+    "returns an OK with correct view for when subscription data and obligation data exists with no accounting period" in
+      running(application) {
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(emptyResponse))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[BTNBeforeStartView]
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 0, NormalMode)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+      }
+
     "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
@@ -68,7 +91,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), hasMultipleAccountingPeriods = false, NormalMode)(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 1, NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -91,7 +114,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustBe OK
 
-        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), hasMultipleAccountingPeriods = true, NormalMode)(
+        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 2, NormalMode)(
           request,
           applicationConfig,
           messages(application)

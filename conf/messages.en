@@ -1840,6 +1840,9 @@ btn.error.title = Sorry, there is a problem with the service
 btn.error.heading = Sorry, there is a problem with the service
 btn.error.tryAgainLater.p1 = You can try again later when the service is available.
 btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
+btn.error.emptyAccountingPeriods.heading = You cannot submit a Below-Threshold Notification
+btn.error.emptyAccountingPeriods.p1 = You have already submitted for all eligible accounting periods.
+btn.error.emptyAccountingPeriods.link = Return to homepage
 
 btn.cannotReturn.heading = You have submitted a Below-Threshold Notification
 btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification

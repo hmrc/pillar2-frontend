@@ -76,7 +76,7 @@ class BTNBeforeStartController @Inject() (
                   request.subscriptionLocalData.plrReference,
                   request.isAgent,
                   request.subscriptionLocalData.organisationName,
-                  filteredAccountingPeriodDetails.size > 1,
+                  filteredAccountingPeriodDetails.size,
                   mode
                 )
               )

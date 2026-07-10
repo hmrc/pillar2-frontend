@@ -28,41 +28,47 @@
         govukInsetText: GovukInsetText
 )
 
-@(plrReference: String, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(plrReference: String, isAgent: Boolean, organisationName: Option[String], numberOfAccountingPeriods: Int, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.beforeStart.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
     @if(isAgent && organisationName.isDefined) {
-        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
+        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{
+            messages("homepage.group")
+        }:</span> @organisationName <span class="govuk-!-font-weight-bold">@{
+            messages("homepage.id")
+        }:</span> @plrReference</h2>
     } else if(isAgent) {
-        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
+    <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{
+        messages("homepage.id")
+    }:</span> @plrReference</h2>
     }
 
     @heading(messages("btn.beforeStart.header"), classes = "govuk-heading-l")
 
     @if(isAgent) {
-      @p(messages("btn.beforeStart.agent.p1"))
+        @p(messages("btn.beforeStart.agent.p1"))
     } else {
-      @p(messages("btn.beforeStart.group.p1"))
+        @p(messages("btn.beforeStart.group.p1"))
     }
 
     @h2(messages("btn.beforeStart.header2"), size = "m")
 
     @if(isAgent) {
-      @p(messages("btn.beforeStart.agent.p2"))
+        @p(messages("btn.beforeStart.agent.p2"))
     } else {
-      @p(messages("btn.beforeStart.group.p2"))
+        @p(messages("btn.beforeStart.group.p2"))
     }
 
     @bulletList(items = List(
         Html(messages("btn.beforeStart.li1")),
         Html(messages("btn.beforeStart.li2")),
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses = Some("govuk-!-margin-bottom-3"))
 
     @if(isAgent) {
-      @govukInsetText(InsetText(content = Text(messages("btn.beforeStart.agent.insetText"))))
+        @govukInsetText(InsetText(content = Text(messages("btn.beforeStart.agent.insetText"))))
     } else {
-      @govukInsetText(InsetText(content = Text(messages("btn.beforeStart.group.insetText"))))
+        @govukInsetText(InsetText(content = Text(messages("btn.beforeStart.group.insetText"))))
     }
 
     @h2(messages("btn.beforeStart.header3"), size = "m")
@@ -71,17 +77,21 @@
     @bulletList(items = List(
         Html(messages("btn.beforeStart.li3")),
         Html(messages("btn.beforeStart.li4"))
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses=Some("govuk-!-margin-bottom-3"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"), itemClasses = Some("govuk-!-margin-bottom-3"))
 
     @p(messages("btn.beforeStart.p4"))
 
-    @if(hasMultipleAccountingPeriods) {
-      @govukButton(
+    @if(numberOfAccountingPeriods == 0) {
+        @govukButton(
+            ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNNoAccountingPeriodController.onPageLoad.url)
+        )
+    } else if(numberOfAccountingPeriods > 1) {
+    @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
-      )
+    )
     } else {
-      @govukButton(
+    @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode).url)
-      )
+    )
     }
 }
