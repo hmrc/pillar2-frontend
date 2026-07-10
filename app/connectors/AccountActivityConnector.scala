@@ -52,8 +52,9 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
           logger.warn(s"Account activity no data found (422/014) for $plrReference")
           Future successful AccountActivityResponse(LocalDateTime.now(), None)
         case e @ _ =>
-          logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}")
-          Future failed UnexpectedResponse
+          val error = UnexpectedResponse
+          logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}", error)
+          Future failed error
       }
 
 }
