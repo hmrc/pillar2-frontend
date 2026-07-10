@@ -57,9 +57,8 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
             Future failed UnexpectedResponse
           }
         case e @ _ =>
-          val error = UnexpectedResponse
-          logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}", error)
-          Future failed error
+          logger.error(s"Account activity error for $plrReference - status=${e.status}", UnexpectedResponse)
+          Future failed UnexpectedResponse
       }
 
 }
