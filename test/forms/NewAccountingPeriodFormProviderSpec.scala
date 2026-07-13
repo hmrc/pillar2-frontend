@@ -37,7 +37,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
   "bind successfully when a valid date is provided" in {
     val data = Map(
-      "startDate.day"   -> "1",
+      "startDate.day"   -> "2",
       "startDate.month" -> "1",
       "startDate.year"  -> "2024",
       "endDate.day"     -> "31",
@@ -46,12 +46,12 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors mustBe empty
-    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
+    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 2), LocalDate.of(2024, 12, 31))
   }
 
   "bind successfully when leading/trailing spaces are present in a valid date" in {
     val data = Map(
-      "startDate.day"   -> " 1 ",
+      "startDate.day"   -> " 2 ",
       "startDate.month" -> " 1 ",
       "startDate.year"  -> " 2024 ",
       "endDate.day"     -> " 31 ",
@@ -60,7 +60,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors mustBe empty
-    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
+    form.bind(data).value.value mustBe AccountingPeriod(LocalDate.of(2024, 1, 2), LocalDate.of(2024, 12, 31))
   }
 
   "throw a form error for a start date before 31/12/2023" in {
@@ -679,6 +679,28 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
 
     form.bind(data).errors shouldEqual Seq(
       FormError("endDate", "newAccountingPeriod.error.overlap")
+    )
+  }
+
+  "throw a form error when the new AP dates match the chosen AP dates" in {
+    val chosenAP = ChosenAccountingPeriod(
+      AccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), None),
+      None,
+      None
+    )
+    val form: Form[AccountingPeriod] = formProvider(chosenAP)
+
+    val data = Map(
+      "startDate.day"   -> "1",
+      "startDate.month" -> "1",
+      "startDate.year"  -> "2025",
+      "endDate.day"     -> "31",
+      "endDate.month"   -> "12",
+      "endDate.year"    -> "2025"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("", "newAccountingPeriod.error.dates.alreadyExist")
     )
   }
 }
