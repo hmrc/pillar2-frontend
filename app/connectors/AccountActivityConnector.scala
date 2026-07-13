@@ -48,11 +48,16 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
         case response if response.status == NOT_FOUND =>
           logger.warn(s"Account activity not found for $plrReference")
           Future failed NoResultFound
-        case response if response.status == UNPROCESSABLE_ENTITY && response.body.replaceAll("\\s", "").contains(noDataFoundCode) =>
-          logger.warn(s"Account activity no data found (422/014) for $plrReference")
-          Future successful AccountActivityResponse(LocalDateTime.now(), None)
+        case response if response.status == UNPROCESSABLE_ENTITY =>
+          if response.body.replaceAll("\\s", "").contains(noDataFoundCode) then {
+            logger.warn(s"Account activity no data found (422/014) for $plrReference")
+            Future successful AccountActivityResponse(LocalDateTime.now(), None)
+          } else {
+            logger.warn(s"Account activity 422 error for $plrReference")
+            Future failed UnexpectedResponse
+          }
         case e @ _ =>
-          logger.error(s"Account activity error for $plrReference - status=${e.status} - error=${e.body}")
+          logger.error(s"Account activity error for $plrReference - status=${e.status}", UnexpectedResponse)
           Future failed UnexpectedResponse
       }
 
