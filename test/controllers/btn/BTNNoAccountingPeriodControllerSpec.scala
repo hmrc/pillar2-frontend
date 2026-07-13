@@ -51,7 +51,7 @@ class BTNNoAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(isAgent = false)(request, applicationConfig, messages(application)).toString
       }
 
     "redirect to BTN error page when no subscription data is found" in {

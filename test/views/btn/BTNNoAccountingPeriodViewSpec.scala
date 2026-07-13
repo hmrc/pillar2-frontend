@@ -26,32 +26,34 @@ import views.html.btn.BTNNoAccountingPeriodView
 
 class BTNNoAccountingPeriodViewSpec extends ViewSpecBase {
 
-  lazy val page:      BTNNoAccountingPeriodView = inject[BTNNoAccountingPeriodView]
-  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString)
-  lazy val pageTitle: String                    = "You cannot submit a Below-Threshold Notification"
+  lazy val page:             BTNNoAccountingPeriodView = inject[BTNNoAccountingPeriodView]
+  lazy val organisationView: Document                  = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString)
+  lazy val agentView:        Document                  = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString)
+  lazy val pageTitle:        String                    = "You cannot submit a Below-Threshold Notification"
 
   "BTNNoAccountingPeriodView" should {
     "have a title" in {
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display a descriptive paragraph of the problem" in {
-      view.getElementsByClass("govuk-body").first().text() mustBe "You have already submitted for all eligible accounting periods."
+      organisationView.getElementsByClass("govuk-body").first().text() mustBe "You have already submitted for all eligible accounting periods."
+      agentView.getElementsByClass("govuk-body").first().text() mustBe "The group has already submitted for all eligible accounting periods."
     }
 
     "have a return to home page link with the correct URL" in {
-      val link: Element = view.getElementsByClass("govuk-link").get(2)
+      val link: Element = organisationView.getElementsByClass("govuk-link").get(2)
 
       link.text() mustBe "Return to homepage"
       link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -61,7 +63,7 @@ class BTNNoAccountingPeriodViewSpec extends ViewSpecBase {
 
     val viewScenarios: Seq[ViewScenario] =
       Seq(
-        ViewScenario("view", view)
+        ViewScenario("view", organisationView)
       )
 
     behaveLikeAccessiblePage(viewScenarios)

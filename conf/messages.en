@@ -1842,6 +1842,7 @@ btn.error.tryAgainLater.p1 = You can try again later when the service is availab
 btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
 btn.error.emptyAccountingPeriods.heading = You cannot submit a Below-Threshold Notification
 btn.error.emptyAccountingPeriods.p1 = You have already submitted for all eligible accounting periods.
+btn.error.agent.emptyAccountingPeriods.p1 = The group has already submitted for all eligible accounting periods.
 btn.error.emptyAccountingPeriods.link = Return to homepage
 
 btn.cannotReturn.heading = You have submitted a Below-Threshold Notification

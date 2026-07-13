@@ -26,17 +26,21 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.error.emptyAccountingPeriods.heading")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
-  @heading(messages("btn.error.emptyAccountingPeriods.heading"))
+    @heading(messages("btn.error.emptyAccountingPeriods.heading"))
 
-  @p(messages("btn.error.emptyAccountingPeriods.p1"))
+    @if(isAgent) {
+        @p(messages("btn.error.agent.emptyAccountingPeriods.p1"))
+    } else {
+        @p(messages("btn.error.emptyAccountingPeriods.p1"))
+    }
 
- @paragraphMessageWithLink(
-  linkMessage = messages("btn.error.emptyAccountingPeriods.link"),
-  linkUrl = controllers.routes.HomepageController.onPageLoad().url
- )
+    @paragraphMessageWithLink(
+        linkMessage = messages("btn.error.emptyAccountingPeriods.link"),
+        linkUrl = controllers.routes.HomepageController.onPageLoad().url
+    )
 
 }

@@ -40,7 +40,7 @@ class BTNNoAccountingPeriodController @Inject() (
   def onPageLoad: Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData).async { request =>
       given SubscriptionDataRequest[AnyContent] = request
-      Future.successful(Ok(view()))
+      Future.successful(Ok(view(request.isAgent)))
     }
 
 }
