@@ -18,22 +18,20 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.scalatest.LoneElement
 import viewmodels.WaitingRoom
 import views.behaviours.ViewScenario
 import views.html.WaitingRoomView
 
-import scala.jdk.CollectionConverters.*
-
 class WaitingRoomViewSpec extends ViewSpecBase with LoneElement {
 
   lazy val params: WaitingRoom = viewmodels.WaitingRoom(
     pageTitle = "some test page title",
     h1Message = "test h1 message",
-    h2Message = "some h2 message",
-    afterHeadingsContent = Some("message below the spinner and under the other headings")
+    paragraphMessage = "some paragraph message",
+    additionalMessage = Some("additional message")
   )
 
   lazy val page: WaitingRoomView = inject[WaitingRoomView]
@@ -55,30 +53,26 @@ class WaitingRoomViewSpec extends ViewSpecBase with LoneElement {
       doc.getElementsByClass(className).attr("href") mustBe empty
     }
 
-    "have a single visible subheading" in {
-      val h2s = doc
-        .getElementsByTag("h2")
-        .asScala
-        .filter(!_.classNames().contains("govuk-visually-hidden"))
+    "have a mandatory paragraph message" in {
+      val paragraphMessage: Element = doc.getElementsByClass("govuk-body").first()
 
-      h2s must have size 1
-      h2s.loneElement.text() mustBe params.h2Message
+      paragraphMessage.text() mustBe params.paragraphMessage
     }
 
-    "have a post-headings message" when {
+    "have an additional paragraph message" when {
       "present in params" in {
-        val body = doc.getElementsByClass("govuk-body")
-        body.size() mustBe 1
-        body.text() mustBe params.afterHeadingsContent.value
+        val additionalMessage: Element = doc.getElementsByClass("govuk-body").get(1)
+
+        additionalMessage.text() mustBe params.additionalMessage.value
       }
     }
 
     "not have a post-headings message" when {
       "missing from params" in {
-        val doc: Document = Jsoup.parse(page(params.copy(afterHeadingsContent = None))(request, appConfig, messages).toString())
-        val body = doc.getElementsByClass("govuk-body")
-        body.size() mustBe 0
-        body.text() mustBe empty
+        val doc:  Document = Jsoup.parse(page(params.copy(additionalMessage = None))(request, appConfig, messages).toString())
+        val body: Elements = doc.getElementsByClass("govuk-body")
+
+        body.text() must not contain params.additionalMessage.value
       }
     }
 

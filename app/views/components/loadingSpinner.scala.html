@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components.gds.heading
+@import views.html.components.gds.{heading, paragraphBody}
 
-@this(heading: heading)
+@this(heading: heading, paragraphBody: paragraphBody)
 
 @(
     h1Message: String,
-    h2Message: String,
-    afterHeadingsMessage: Option[String] = None
+    paragraphMessage: String,
+    additionalMessage: Option[String] = None
 )
 
 <div class="hods-loading-spinner">
@@ -32,8 +32,8 @@
     ></div>
     <div class="hods-loading-spinner__content">
         @heading(h1Message, "govuk-heading-m")
-        @heading(h2Message, "govuk-body-s", "h2")
-        @afterHeadingsMessage.map { message =>
+        @paragraphBody(paragraphMessage)
+        @additionalMessage.map { message =>
             <div class="govuk-body">
                 <p>@message</p>
             </div>
