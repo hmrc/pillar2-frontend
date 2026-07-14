@@ -17,20 +17,18 @@
 package models.accountactivity
 
 import config.FrontendAppConfig
-import enumeratum.{Enum, EnumEntry}
+import enumeratum.EnumEntry
 
 import java.time.Clock
 
 sealed trait PaymentState extends EnumEntry
 
-object PaymentState extends Enum[PaymentState] {
+object PaymentState {
   case class PastDueWithInterestCharge(totalAmountOutstanding: BigDecimal) extends PaymentState
   case class PastDueNoInterest(totalAmountOutstanding: BigDecimal) extends PaymentState
   case class NotYetDue(totalAmountOutstanding: BigDecimal) extends PaymentState
   case object Paid extends PaymentState
   case object NothingDueNothingRecentlyPaid extends PaymentState
-
-  val values: IndexedSeq[PaymentState] = findValues
 
   def unapply(accountActivityData: AccountActivityData)(using clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
     val anyChargesAccruingInterest = accountActivityData.overdueAccruingInterestCharges.nonEmpty

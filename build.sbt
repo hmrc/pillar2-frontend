@@ -1,12 +1,10 @@
 import play.sbt.routes.RoutesKeys
-import sbt.Def
-import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "pillar2-frontend"
 
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 ThisBuild / useSuperShell := false
 ThisBuild / semanticdbEnabled := true
@@ -41,6 +39,7 @@ lazy val root: Project = (project in file("."))
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     scalacOptions ++= compilerSettings,
+    scalacOptions := scalacOptions.value.distinct,
 
     // Asset pipeline configuration
     // bundle multiple JS files into a single file
