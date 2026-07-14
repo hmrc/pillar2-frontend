@@ -21,6 +21,7 @@ import controllers.routes
 import models.subscription.AccountingPeriodV2
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodConfirmationView
 
@@ -95,22 +96,23 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
       groupView().body().text() must include(s"You have successfully made an accounting period change on: $timestamp")
     }
 
-    "show the 'What has changed' heading" in {
+    "show the 'New accounting period' heading" in {
       val h2Elements = groupView().select("h2.govuk-heading-m")
-      h2Elements.text() must include("What has changed")
+      h2Elements.text() must include("New accounting period")
     }
 
-    "show a summary card for each new period with formatted start and end dates" in {
-      val cards = groupView().select(".govuk-summary-card")
-      cards.size mustBe 1
-      cards.first().text() must include("1 January 2026")
-      cards.first().text() must include("31 December 2026")
+    "show a single row for one new period with formatted start and end dates" in {
+      val rows = groupView().select(".govuk-summary-list__row")
+      rows.size mustBe 1
+      rows.first().text() must include("1 January 2026 to 31 December 2026")
     }
 
-    "show multiple summary cards when multiple new periods exist" in {
-      val doc   = groupView(multipleNewPeriods, hasGapPeriods = true)
-      val cards = doc.select(".govuk-summary-card")
-      cards.size mustBe 2
+    "show multiple rows with formatted start and end dates when multiple new periods exist" in {
+      val doc:  Document = groupView(multipleNewPeriods, hasGapPeriods = true)
+      val rows: Elements = doc.select(".govuk-summary-list__row")
+      rows.size mustBe 2
+      rows.first().text() must include("1 January 2026 to 31 December 2026")
+      rows.get(1).text()  must include("1 July 2025 to 31 December 2025")
     }
 
     "show the further adjustments paragraph" in {
@@ -130,10 +132,17 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
       link.text() mustBe "Back to manage group details"
     }
 
-    "show gap period inset text when hasGapPeriods is true" in {
-      val inset = groupView(hasGapPeriods = true).getElementsByClass("govuk-inset-text")
+    "show 'What has changed' heading, gap period inset text and 'New accounting periods' heading when hasGapPeriods is true" in {
+      val view:       Document = groupView(hasGapPeriods = true)
+      val h2Elements: Elements = view.select("h2.govuk-heading-m")
+
+      h2Elements.first().text() mustBe "What has changed"
+
+      val inset: Elements = view.getElementsByClass("govuk-inset-text")
       inset.size mustBe 1
       inset.text() must include("Your new accounting period left a gap")
+
+      h2Elements.get(1).text() mustBe "New accounting periods"
     }
 
     "not show gap period inset text when hasGapPeriods is false" in {
