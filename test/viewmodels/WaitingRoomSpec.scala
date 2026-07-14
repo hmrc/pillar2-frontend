@@ -69,8 +69,8 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
         RFM                   -> "Do not leave this page.",
         AmendAccountingPeriod -> "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
       )
-    ) { (submission, expectedH2) =>
-      viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).h2Message mustBe expectedH2
+    ) { (submission, expectedParagraph) =>
+      viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).paragraphMessage mustBe expectedParagraph
     }
 
     "produce the correct post-headings content" in forAll(
@@ -84,8 +84,8 @@ class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Mat
         RFM                   -> None,
         AmendAccountingPeriod -> None
       )
-    ) { (submission, expectedPostHeadingsContent) =>
-      viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).afterHeadingsContent mustBe expectedPostHeadingsContent
+    ) { (submission, expectedAdditionalMessage) =>
+      viewmodels.WaitingRoom.fromLongRunningSubmission.apply(submission).additionalMessage mustBe expectedAdditionalMessage
     }
   }
 
