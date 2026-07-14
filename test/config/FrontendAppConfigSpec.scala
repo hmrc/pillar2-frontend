@@ -145,13 +145,14 @@ class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
     "loading long-running submission config" must {
       "pull the proper timeouts for all submission kinds" in forAll(
         Table(
-          "submission kind"    -> "expected timeout",
-          BTN                  -> 3,
-          ManageContactDetails -> 2,
-          ManageGroupDetails   -> 2,
-          Registration         -> 2,
-          Repayments           -> 2,
-          RFM                  -> 2
+          "submission kind"     -> "expected timeout",
+          BTN                   -> 5,
+          ManageContactDetails  -> 5,
+          ManageGroupDetails    -> 5,
+          Registration          -> 5,
+          Repayments            -> 5,
+          RFM                   -> 5,
+          AmendAccountingPeriod -> 5
         )
       ) { (submission, expectedTimeout) =>
         config.longRunningSubmissionConfig(submission).pollingIntervalSeconds mustBe expectedTimeout
