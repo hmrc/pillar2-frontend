@@ -20,10 +20,10 @@ import models.longrunningsubmissions.LongRunningSubmission
 import play.api.i18n.Messages
 
 case class WaitingRoom(
-  pageTitle:            String,
-  h1Message:            String,
-  h2Message:            String,
-  afterHeadingsContent: Option[String]
+  pageTitle:         String,
+  h1Message:         String,
+  paragraphMessage:  String,
+  additionalMessage: Option[String]
 )
 
 object WaitingRoom {
@@ -32,50 +32,50 @@ object WaitingRoom {
       WaitingRoom(
         pageTitle = messages("btn.waitingRoom.title"),
         h1Message = messages("btn.waitingRoom.submitting"),
-        h2Message = messages("btn.waitingRoom.dontLeave"),
-        afterHeadingsContent = Some(messages("btn.waitingRoom.redirect"))
+        paragraphMessage = messages("btn.waitingRoom.dontLeave"),
+        additionalMessage = Some(messages("btn.waitingRoom.redirect"))
       )
     case LongRunningSubmission.ManageContactDetails =>
       WaitingRoom(
         pageTitle = messages("manageContactDetails.title"),
         h1Message = messages("manageContactDetails.h1"),
-        h2Message = messages("manageContactDetails.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("manageContactDetails.h2"),
+        additionalMessage = None
       )
     case LongRunningSubmission.ManageGroupDetails =>
       WaitingRoom(
         pageTitle = messages("manageGroupDetails.title"),
         h1Message = messages("manageGroupDetails.h1"),
-        h2Message = messages("manageGroupDetails.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("manageGroupDetails.h2"),
+        additionalMessage = None
       )
     case LongRunningSubmission.Registration =>
       WaitingRoom(
         pageTitle = messages("registrationWaitingRoom.title"),
         h1Message = messages("registrationWaitingRoom.h1"),
-        h2Message = messages("registrationWaitingRoom.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("registrationWaitingRoom.h2"),
+        additionalMessage = None
       )
     case LongRunningSubmission.Repayments =>
       WaitingRoom(
         pageTitle = messages("repaymentsWaitingRoom.title"),
         h1Message = messages("repaymentsWaitingRoom.h1"),
-        h2Message = messages("repaymentsWaitingRoom.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("repaymentsWaitingRoom.h2"),
+        additionalMessage = None
       )
     case LongRunningSubmission.RFM =>
       WaitingRoom(
         pageTitle = messages("rfmWaitingRoom.title"),
         h1Message = messages("rfmWaitingRoom.h1"),
-        h2Message = messages("rfmWaitingRoom.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("rfmWaitingRoom.h2"),
+        additionalMessage = None
       )
     case LongRunningSubmission.AmendAccountingPeriod =>
       WaitingRoom(
         pageTitle = messages("amendAccountingPeriod.waitingRoom.title"),
         h1Message = messages("amendAccountingPeriod.waitingRoom.h1"),
-        h2Message = messages("amendAccountingPeriod.waitingRoom.h2"),
-        afterHeadingsContent = None
+        paragraphMessage = messages("amendAccountingPeriod.waitingRoom.h2"),
+        additionalMessage = None
       )
   }
 }
