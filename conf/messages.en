@@ -868,7 +868,7 @@ newAccountingPeriod.error.startDate.dayYear.invalid = Start date must be a real 
 newAccountingPeriod.error.startDate.day.length = Start date must be a real date
 newAccountingPeriod.error.startDate.month.length = Start date must be a real date
 newAccountingPeriod.error.startDate.year.length = Start date must be a real date
-newAccountingPeriod.error.dates.alreadyExist = You must enter an accounting period that is different to the period you asked to change
+newAccountingPeriod.error.dates.alreadyExists = You must enter an accounting period that is different to the period you asked to change
 
 newAccountingPeriod.error.endDate.before.startDate = The end date cannot be before the start date
 newAccountingPeriod.error.endDate.format = Enter a date in the correct format

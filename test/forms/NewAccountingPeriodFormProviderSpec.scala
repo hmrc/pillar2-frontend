@@ -700,7 +700,7 @@ class NewAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("", "newAccountingPeriod.error.dates.alreadyExist")
+      FormError("", "newAccountingPeriod.error.dates.alreadyExists")
     )
   }
 }
