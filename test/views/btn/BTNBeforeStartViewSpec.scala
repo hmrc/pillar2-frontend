@@ -31,24 +31,24 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String             = "Below-Threshold Notification (BTN)"
   lazy val plrReference: String             = "XMPLR0123456789"
 
-  def organisationView(hasMultipleAccountPeriods: Boolean = false, organisationName: Option[String] = Some("orgName")): Document =
+  def organisationView(numberOfAccountingPeriods: Int = 1, organisationName: Option[String] = Some("orgName")): Document =
     Jsoup.parse(
-      page(plrReference, isAgent = false, organisationName, hasMultipleAccountPeriods, NormalMode)(
+      page(plrReference, isAgent = false, organisationName, numberOfAccountingPeriods, NormalMode)(
         request,
         appConfig,
         messages
       ).toString()
     )
 
-  def agentView(hasMultipleAccountPeriods: Boolean = false, organisationName: Option[String] = Some("orgName")): Document =
+  def agentView(numberOfAccountingPeriods: Int = 1, organisationName: Option[String] = Some("orgName")): Document =
     Jsoup.parse(
-      page(plrReference, isAgent = true, organisationName, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages)
+      page(plrReference, isAgent = true, organisationName, numberOfAccountingPeriods, NormalMode)(request, appConfig, messages)
         .toString()
     )
 
-  def agentViewNoOrg(hasMultipleAccountPeriods: Boolean = false): Document =
+  def agentViewNoOrg(numberOfAccountingPeriods: Int = 1): Document =
     Jsoup.parse(
-      page(plrReference, isAgent = true, organisationName = None, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages)
+      page(plrReference, isAgent = true, organisationName = None, numberOfAccountingPeriods, NormalMode)(request, appConfig, messages)
         .toString()
     )
 
@@ -132,6 +132,13 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have a button" that {
+      "links to the no accounting period page when there are no accounting periods" in {
+        val button: Element = organisationView(numberOfAccountingPeriods = 0).getElementsByClass("govuk-button").first()
+
+        button.text mustBe "Continue"
+        button.attr("href") mustBe controllers.btn.routes.BTNNoAccountingPeriodController.onPageLoad.url
+      }
+
       "links to the accounting period page when there is only one accounting period present" in {
         val button: Element = organisationView().getElementsByClass("govuk-button").first()
 
@@ -140,7 +147,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
       }
 
       "links to the choose accounting period page when there are multiple accounting periods present" in {
-        val button: Element = organisationView(hasMultipleAccountPeriods = true).getElementsByClass("govuk-button").first()
+        val button: Element = organisationView(numberOfAccountingPeriods = 2).getElementsByClass("govuk-button").first()
 
         button.text mustBe "Continue"
         button.attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
@@ -150,7 +157,7 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     val viewScenarios: Seq[ViewScenario] =
       Seq(
         ViewScenario("view", organisationView()),
-        ViewScenario("hasMultipleAccountPeriodsView", organisationView(hasMultipleAccountPeriods = true)),
+        ViewScenario("hasMultipleAccountPeriodsView", organisationView(numberOfAccountingPeriods = 2)),
         ViewScenario("agentView", agentView()),
         ViewScenario("agentViewNoOrg", agentViewNoOrg())
       )
