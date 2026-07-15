@@ -49,33 +49,25 @@
         @timestamp
     </p>
 
-    @h2(messages("amendAccountingPeriod.confirmation.whatHasChanged"), size = "m")
-
     @if(hasGapPeriods) {
+        @h2(messages("amendAccountingPeriod.confirmation.whatHasChanged"), size = "m")
         @govukInsetText(InsetText(
             content = Text(messages("amendAccountingPeriod.confirmation.gapPeriods"))
         ))
+        @h2(messages("amendAccountingPeriod.confirmation.newPeriods"), size = "m", extraClasses = Seq("govuk-!-margin-bottom-0"))
+    } else {
+        @h2(messages("amendAccountingPeriod.confirmation.newPeriod"), size = "m", extraClasses = Seq("govuk-!-margin-bottom-0"))
     }
 
-    @for(period <- newPeriods) {
-        <div class="govuk-summary-card govuk-!-margin-bottom-6">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title">@messages("amendAccountingPeriod.confirmation.newPeriod.title")</h3>
+    <dl class="govuk-summary-list">
+        @for(period <- newPeriods) {
+            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-body govuk-!-padding-top-6 govuk-!-padding-bottom-2">
+                    @period.startDate.toDateFormat to @period.endDate.toDateFormat
+                </dt>
             </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriod.confirmation.startDate")</dt>
-                        <dd class="govuk-summary-list__value">@period.startDate.toDateFormat</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">@messages("amendAccountingPeriod.confirmation.endDate")</dt>
-                        <dd class="govuk-summary-list__value">@period.endDate.toDateFormat</dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
-    }
+        }
+    </dl>
 
     @p(messages("amendAccountingPeriod.confirmation.furtherAdjustments"))
 

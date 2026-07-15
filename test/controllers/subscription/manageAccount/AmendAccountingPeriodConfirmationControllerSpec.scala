@@ -99,7 +99,7 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
         body must include(messages(application)("amendAccountingPeriod.confirmation.heading"))
         body must include(timestamp)
         body must include(messages(application)("amendAccountingPeriod.confirmation.whatHasChanged"))
-        body must include(messages(application)("amendAccountingPeriod.confirmation.newPeriod.title"))
+        body must include(messages(application)("amendAccountingPeriod.confirmation.newPeriods"))
         body must include(messages(application)("amendAccountingPeriod.confirmation.gapPeriods"))
       }
     }
@@ -147,6 +147,8 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual OK
         val body = contentAsString(result)
         body must include(messages(application)("amendAccountingPeriod.confirmation.heading"))
+        body must include(messages(application)("amendAccountingPeriod.confirmation.newPeriod"))
+        body must not include messages(application)("amendAccountingPeriod.confirmation.whatHasChanged")
         body must not include messages(application)("amendAccountingPeriod.confirmation.gapPeriods")
       }
     }
