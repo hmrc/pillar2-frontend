@@ -10,7 +10,6 @@ ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / majorVersion := 0
 ThisBuild / useSuperShell := false
 ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root: Project = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
