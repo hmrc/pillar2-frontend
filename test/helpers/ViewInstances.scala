@@ -17,6 +17,7 @@
 package helpers
 
 import base.SpecBase
+import play.api.Configuration
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components.*
 import uk.gov.hmrc.govukfrontend.views.html.helpers.{GovukFormGroup, GovukHintAndErrorMessage, GovukLogo}
@@ -38,7 +39,7 @@ import views.html.templates.*
 trait ViewInstances extends StubMessageControllerComponents {
   this: SpecBase =>
 
-  lazy val configuration = app.configuration
+  lazy val configuration: Configuration = app.configuration
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 
@@ -55,6 +56,10 @@ trait ViewInstances extends StubMessageControllerComponents {
   val govukTemplate =
     new GovukTemplate(govukHeader, new GovukFooter(rebrandConfig, govukLogo), new GovukSkipLink, new FixedWidthPageLayout, rebrandConfig)
 
+  val serviceNavigationConfig = new ServiceNavigationConfig(configuration)
+
+  val govukServiceNavigation = new GovukServiceNavigation()
+
   val hmrcStandardHeader = new HmrcStandardHeader(
     hmrcHeader = new HmrcHeader(
       hmrcBanner = new HmrcBanner(tudorCrownConfig),
@@ -62,8 +67,11 @@ trait ViewInstances extends StubMessageControllerComponents {
       govukPhaseBanner = new GovukPhaseBanner(govukTag = new GovukTag()),
       tudorCrownConfig = tudorCrownConfig,
       rebrandConfig = rebrandConfig,
-      govukLogo = govukLogo
-    )
+      govukLogo = govukLogo,
+      govukServiceNavigation = govukServiceNavigation
+    ),
+    serviceNavigationConfig = serviceNavigationConfig,
+    configuration = configuration
   )
   val hmrcStandardFooter = new HmrcStandardFooter(
     new HmrcFooter(new GovukFooter(rebrandConfig, govukLogo)),
