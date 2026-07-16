@@ -109,7 +109,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val opsBaseUrl:                     String  = servicesConfig.baseUrl("ops")
   val opsStartUrl:                    String  = configuration.get[String]("microservice.services.ops.startUrl")
   val enablePayByBankAccount:         Boolean = configuration.get[Boolean]("features.enablePayByBankAccount")
-  val amendMultipleAccountingPeriods: Boolean = configuration.get[Boolean]("features.amendMultipleAccountingPeriods")
 
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
