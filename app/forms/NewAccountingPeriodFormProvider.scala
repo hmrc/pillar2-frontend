@@ -75,5 +75,11 @@ class NewAccountingPeriodFormProvider @Inject() extends Mappings {
         Some((accountingPeriod.startDate, accountingPeriod.endDate))
       )
         .verifying("newAccountingPeriod.error.endDate.before.startDate", a => a.endDate.isAfter(a.startDate))
+        .verifying(
+          "newAccountingPeriod.error.dates.alreadyExists",
+          a =>
+            !(a.startDate.isEqual(chosenAccountingPeriod.selectedAccountingPeriod.startDate)
+              && a.endDate.isEqual(chosenAccountingPeriod.selectedAccountingPeriod.endDate))
+        )
     )
 }

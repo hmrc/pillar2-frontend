@@ -129,9 +129,13 @@ class NewAccountingPeriodController @Inject() (
     }
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =
-    form.copy(errors = form.errors.map {
-      case e if e.key == "" => e.copy(key = "endDate")
-      case e                => e
+    form.copy(errors = form.errors.flatMap {
+      case e if e.key == "" && e.message == "newAccountingPeriod.error.dates.alreadyExists" =>
+        Seq(e.copy(key = "startDate"), e.copy(key = "endDate"))
+      case e if e.key == "" =>
+        Seq(e.copy(key = "endDate"))
+      case e =>
+        Seq(e)
     })
 
 }
