@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import models.subscription.AccountingPeriodV2
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.AmendAccountingPeriodConfirmationView
@@ -101,18 +101,20 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
       h2Elements.text() must include("New accounting period")
     }
 
-    "show a single row for one new period with formatted start and end dates" in {
-      val rows = groupView().select(".govuk-summary-list__row")
-      rows.size mustBe 1
-      rows.first().text() must include("1 January 2026 to 31 December 2026")
+    "show a single list item for one new period with formatted start and end dates" in {
+      val list:  Element  = groupView().getElementsByClass("govuk-list").first()
+      val items: Elements = list.getElementsByTag("li")
+      items.size mustBe 1
+      items.first().text() must include("1 January 2026 to 31 December 2026")
     }
 
-    "show multiple rows with formatted start and end dates when multiple new periods exist" in {
-      val doc:  Document = groupView(multipleNewPeriods, hasGapPeriods = true)
-      val rows: Elements = doc.select(".govuk-summary-list__row")
-      rows.size mustBe 2
-      rows.first().text() must include("1 January 2026 to 31 December 2026")
-      rows.get(1).text()  must include("1 July 2025 to 31 December 2025")
+    "show multiple list items with formatted start and end dates when multiple new periods exist" in {
+      val doc:   Document = groupView(multipleNewPeriods, hasGapPeriods = true)
+      val list:  Element  = doc.getElementsByClass("govuk-list").first()
+      val items: Elements = list.getElementsByTag("li")
+      items.size mustBe 2
+      items.first().text() must include("1 January 2026 to 31 December 2026")
+      items.get(1).text()  must include("1 July 2025 to 31 December 2025")
     }
 
     "show the further adjustments paragraph" in {
