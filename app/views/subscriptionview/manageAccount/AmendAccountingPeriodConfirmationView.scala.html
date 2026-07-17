@@ -59,15 +59,13 @@
         @h2(messages("amendAccountingPeriod.confirmation.newPeriod"), size = "m", extraClasses = Seq("govuk-!-margin-bottom-0"))
     }
 
-    <dl class="govuk-summary-list">
+    <ul class="govuk-list">
         @for(period <- newPeriods) {
-            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
-                <dt class="govuk-summary-list__key govuk-!-font-weight-regular govuk-body govuk-!-padding-top-6 govuk-!-padding-bottom-2">
-                    @period.startDate.toDateFormat to @period.endDate.toDateFormat
-                </dt>
-            </div>
+            <li class="govuk-!-font-weight-regular govuk-body govuk-!-padding-top-4 govuk-!-margin-0">
+                @period.startDate.toDateFormat to @period.endDate.toDateFormat
+            </li>
         }
-    </dl>
+    </ul>
 
     @p(messages("amendAccountingPeriod.confirmation.furtherAdjustments"))
 
