@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-final case class AmendSubscriptionV2(
+final case class SubscriptionDataAmend(
   replaceFilingMember:      Boolean,
   upeDetails:               UpeDetailsAmend,
   accountingPeriod:         AccountingPeriodAmendV2,
@@ -40,8 +40,8 @@ final case class NewAccountingPeriod(
   updateObligationEndDate:   LocalDate
 )
 
-object AmendSubscriptionV2 {
-  given format: OFormat[AmendSubscriptionV2] = Json.format[AmendSubscriptionV2]
+object SubscriptionDataAmend {
+  given format: OFormat[SubscriptionDataAmend] = Json.format[SubscriptionDataAmend]
 }
 
 object OriginalAccountingPeriod {
