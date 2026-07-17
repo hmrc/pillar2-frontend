@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class SubscriptionDataV2Spec extends SpecBase {
+class SubscriptionDataDisplaySpec extends SpecBase {
 
   private val v2Json = Json.parse("""
     {
@@ -65,7 +65,7 @@ class SubscriptionDataV2Spec extends SpecBase {
 
   "SubscriptionDataV2" must {
     "deserialise from a valid V2 JSON payload" in {
-      val result = v2Json.as[SubscriptionDataV2]
+      val result = v2Json.as[SubscriptionDataDisplay]
       result.formBundleNumber mustBe "119000004323"
       result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
       result.upeDetails.domesticOnly mustBe true
@@ -76,19 +76,19 @@ class SubscriptionDataV2Spec extends SpecBase {
     }
 
     "round-trip serialise/deserialise" in {
-      val model = v2Json.as[SubscriptionDataV2]
-      Json.toJson(model).as[SubscriptionDataV2] mustBe model
+      val model = v2Json.as[SubscriptionDataDisplay]
+      Json.toJson(model).as[SubscriptionDataDisplay] mustBe model
     }
 
     "deserialise with empty accountingPeriod array" in {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
-      val result        = noPeriodsJson.as[SubscriptionDataV2]
+      val result        = noPeriodsJson.as[SubscriptionDataDisplay]
       result.accountingPeriod.value mustBe empty
     }
 
     "deserialise with accountingPeriod absent from JSON and default to None" in {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
-      val result        = noPeriodsJson.as[SubscriptionDataV2]
+      val result        = noPeriodsJson.as[SubscriptionDataDisplay]
       result.accountingPeriod mustBe None
       result.formBundleNumber mustBe "119000004323"
     }

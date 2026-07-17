@@ -22,8 +22,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.*
 import models.requests.OptionalDataRequest
+import models.subscription.AccountStatus
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters}
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -85,44 +85,22 @@ class HomepageController @Inject() (
           OptionT.liftF {
             def attemptHomepageLoad(attempt: Int): Future[Result] = {
               val homepageFuture =
-                if appConfig.amendMultipleAccountingPeriods then
-                  subscriptionService
-                    .readSubscriptionV2AndSave(request.userId, referenceNumber)
-                    .flatMap { localData =>
-                      renderHomepage(
-                        organisationName = localData.organisationName.getOrElse(""),
-                        registrationDate = localData.registrationDate.getOrElse(LocalDate.now()),
-                        accountStatus = localData.accountStatus.getOrElse(ActiveAccount),
-                        plrReference = referenceNumber
-                      )
-                    }
-                    .recover {
-                      case NoResultFound =>
-                        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-                      case UnprocessableEntityError =>
-                        Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
-                    }
-                else
-                  subscriptionService
-                    .maybeReadSubscription(referenceNumber)
-                    .flatMap {
-                      case Some(_) =>
-                        subscriptionService
-                          .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                          .flatMap { subData =>
-                            renderHomepage(
-                              organisationName = subData.upeDetails.organisationName,
-                              registrationDate = subData.upeDetails.registrationDate,
-                              accountStatus = subData.accountStatus.getOrElse(ActiveAccount),
-                              plrReference = referenceNumber
-                            )
-                          }
-                      case None =>
-                        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-                    }
-                    .recover { case UnprocessableEntityError =>
+                subscriptionService
+                  .readSubscriptionV2AndSave(request.userId, referenceNumber)
+                  .flatMap { localData =>
+                    renderHomepage(
+                      organisationName = localData.organisationName.getOrElse(""),
+                      registrationDate = localData.registrationDate.getOrElse(LocalDate.now()),
+                      accountStatus = localData.accountStatus.getOrElse(ActiveAccount),
+                      plrReference = referenceNumber
+                    )
+                  }
+                  .recover {
+                    case NoResultFound =>
+                      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                    case UnprocessableEntityError =>
                       Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
-                    }
+                  }
 
               homepageFuture.recoverWith {
                 case RetryableGatewayError if attempt + 1 < appConfig.homepageRetryMaxAttempts =>
