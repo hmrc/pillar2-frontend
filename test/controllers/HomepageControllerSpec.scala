@@ -46,6 +46,7 @@ import java.util.UUID
 import scala.concurrent.Future
 
 class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
+
   given Clock             = Clock.systemUTC()
   given FrontendAppConfig = applicationConfig
 
@@ -62,44 +63,42 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     )
   )
 
-  val agentEnrolment: Set[Enrolment] =
-    Set(
-      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
+  val agentEnrolment: Set[Enrolment] = Set(
+    Enrolment(
+      key = "HMRC-PILLAR2-ORG",
+      identifiers = Seq(
+        EnrolmentIdentifier("PLRID", "XMPLR0123456789")
+      ),
+      state = "Activated",
+      delegatedAuthRule = Some("pillar2-auth")
     )
-
-  val dashboardInfo: DashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
+  )
 
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "Homepage Controller" should {
+  "HomepageController" should {
 
-    "return OK and the correct view for a GET" in {
-      val application =
-        applicationBuilder(
-          userAnswers = None,
-          enrolments,
-          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+    "return OK and load the correct view for a GET" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[HomepageBannerService].toInstance(mockHomepageBannerService),
+          bind[AccountActivityService].toInstance(mockAccountActivityService)
         )
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[HomepageBannerService].toInstance(mockHomepageBannerService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
         when(mockObligationsAndSubmissionsService.getDueOrOverdueReturnsStatus(any())).thenReturn(None)
@@ -113,8 +112,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          subscriptionData.upeDetails.organisationName,
-          subscriptionData.upeDetails.registrationDate.toDateFormat,
+          someSubscriptionLocalData.organisationName.getOrElse(""),
+          someSubscriptionLocalData.registrationDate.getOrElse(LocalDate.now()).toDateFormat,
           BtnBanner.Hide,
           None,
           None,
@@ -139,29 +138,22 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         .success
         .value
 
-      val application =
-        applicationBuilder(
-          userAnswers = Some(initialUserAnswers),
-          enrolments,
-          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+      val application = applicationBuilder(userAnswers = Some(initialUserAnswers), enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[AccountActivityService].toInstance(mockAccountActivityService)
         )
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
 
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(initialUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(initialUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
         when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
@@ -180,27 +172,24 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     }
 
     "retry and eventually succeed when maybeReadSubscription returns RetryableGatewayError then succeeds" in {
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[AccountActivityService].toInstance(mockAccountActivityService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
           .thenReturn(Future.failed(RetryableGatewayError))
           .thenReturn(Future.failed(RetryableGatewayError))
-          .thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+          .thenReturn(Future.successful(someSubscriptionLocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
         when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
@@ -208,28 +197,26 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         val result = route(application, request).value
         status(result) mustEqual OK
-        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).maybeReadSubscription(any())(using any())
+        verify(mockSubscriptionService, times(3)).readSubscriptionV2AndSave(any(), any())(using any())
       }
     }
 
     "redirect to ViewAmendSubscriptionFailed when retries are exhausted after RetryableGatewayError" in {
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[AccountActivityService].toInstance(mockAccountActivityService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
           .thenReturn(Future.failed(RetryableGatewayError))
         when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
@@ -237,42 +224,42 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
-        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).maybeReadSubscription(any())(using any())
+        verify(mockSubscriptionService, times(3)).readSubscriptionV2AndSave(any(), any())(using any())
       }
     }
 
-    "redirect to registration in progress page when subscription is still processing" in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> false))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
+    "redirect to RegistrationInProgress page when subscription is still processing" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.failed(models.UnprocessableEntityError))
-        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         val result = route(application, request).value
+
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("12345678").url
-
       }
     }
 
-    "redirect to journey recovery if no pillar 2 reference is found in session repository or enrolment data" in {
-      val application =
-        applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
-      when(mockSessionRepository.get(any()))
-        .thenReturn(Future.successful(None))
+    "redirect to journey recovery if no Pillar 2 reference is found in session repository or enrolment data" in {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
+
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
@@ -280,31 +267,26 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
-
     }
 
     "redirect to registration in progress page when subscription is still processing for agent" in {
-      val application =
-        applicationBuilder(
-          userAnswers = Some(emptyUserAnswers),
-          agentEnrolment,
-          additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[AuthConnector].toInstance(mockAuthConnector),
+          bind[AccountActivityService].toInstance(mockAccountActivityService)
         )
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[AuthConnector].toInstance(mockAuthConnector),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+        .build()
+
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.failed(models.UnprocessableEntityError))
-      when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+      when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        .thenReturn(Future.failed(UnprocessableEntityError))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
       when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
@@ -318,53 +300,19 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       }
     }
 
-    "return OK using V2 endpoint when amendMultipleAccountingPeriods flag is true" in {
-      val v2LocalData = someSubscriptionLocalData.copy(
-        registrationDate = Some(subscriptionData.upeDetails.registrationDate)
-      )
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
+    "redirect to JourneyRecovery when subscription returns NoResultFound" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
-          .thenReturn(Future.successful(v2LocalData))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
 
-        val result = route(application, request).value
-        status(result) mustEqual OK
-      }
-    }
-
-    "redirect to JourneyRecovery when V2 endpoint returns NoResultFound and flag is true" in {
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
           .thenReturn(Future.failed(NoResultFound))
 
@@ -374,64 +322,6 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       }
     }
 
-    "redirect to RegistrationInProgress when V2 endpoint returns UnprocessableEntityError and flag is true" in {
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
-          .thenReturn(Future.failed(UnprocessableEntityError))
-
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("12345678").url
-      }
-    }
-
-    "retry and eventually succeed when V2 endpoint returns RetryableGatewayError then succeeds and flag is true" in {
-      val v2LocalData = someSubscriptionLocalData.copy(
-        registrationDate = Some(subscriptionData.upeDetails.registrationDate)
-      )
-      val application =
-        applicationBuilder(userAnswers = None, enrolments, additionalData = Map("features.amendMultipleAccountingPeriods" -> true))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-            bind[AccountActivityService].toInstance(mockAccountActivityService)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
-          .thenReturn(Future.failed(RetryableGatewayError))
-          .thenReturn(Future.failed(RetryableGatewayError))
-          .thenReturn(Future.successful(v2LocalData))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
-
-        val result = route(application, request).value
-        status(result) mustEqual OK
-        verify(mockSubscriptionService, org.mockito.Mockito.times(3)).readSubscriptionV2AndSave(any(), any())(using any())
-      }
-    }
-
   }
+
 }
