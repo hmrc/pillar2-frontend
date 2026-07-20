@@ -16,9 +16,18 @@
 
 package fixtures
 
+import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.requests.SubscriptionDataRequest
+import models.{MneOrDomestic, NonUKAddress, Verifier}
+import models.rfm.CorporatePosition
 import models.subscription.*
 import models.subscription.AccountStatus.ActiveAccount
 import models.subscription.responses.SubscriptionResponse
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utils.countryOptions.CountryOptions
+import viewmodels.checkAnswers.manageAccount.{AddSecondaryContactSummary, ContactByPhoneSummary, ContactCapturePhoneDetailsSummary, ContactCorrespondenceAddressSummary, ContactEmailAddressSummary, ContactNameComplianceSummary, GroupAccountingPeriodEndDateSummary, GroupAccountingPeriodStartDateSummary, GroupAccountingPeriodSummary, MneOrDomesticSummary, SecondaryContactEmailSummary, SecondaryContactNameSummary, SecondaryPhonePreferenceSummary, SecondaryPhoneSummary}
+import viewmodels.govuk.all.SummaryListViewModel
 
 import java.time.LocalDate
 
@@ -36,7 +45,7 @@ trait SubscriptionDataFixtures {
 
   val testFormBundleNumber: String = "123456789012"
 
-  private val upeDetails =
+  private val upeDetails: UpeDetails =
     UpeDetails(
       safeId = None,
       customerIdentification1 = None,
@@ -47,7 +56,18 @@ trait SubscriptionDataFixtures {
       filingMember = false
     )
 
-  private val upeCorrespAddressDetails =
+  private val upeDetailsAmend: UpeDetailsAmend =
+    UpeDetailsAmend(
+      plrReference = "plrReference",
+      customerIdentification1 = None,
+      customerIdentification2 = None,
+      organisationName = "Organisation Ltd",
+      registrationDate = LocalDate.of(2024, 1, 31),
+      domesticOnly = false,
+      filingMember = false
+    )
+
+  private val upeCorrespAddressDetails: UpeCorrespAddressDetails =
     UpeCorrespAddressDetails(
       addressLine1 = "1 High Street",
       addressLine2 = None,
@@ -57,11 +77,18 @@ trait SubscriptionDataFixtures {
       countryCode = "GB"
     )
 
-  private val primaryContactDetails =
+  private val primaryContactDetails: ContactDetailsType =
     ContactDetailsType(
       name = "Primary Contact",
       phone = None,
       emailAddress = "primary.contact@example.com"
+    )
+
+  private val secondaryContactDetails: ContactDetailsType =
+    ContactDetailsType(
+      name = "Secondary Contact",
+      phone = None,
+      emailAddress = "secondary.contact@example.com"
     )
 
   val amendableAccountingPeriod: AccountingPeriodV2 =
@@ -73,8 +100,27 @@ trait SubscriptionDataFixtures {
       canAmendEndDate = Some(true)
     )
 
+  val originalAccountingPeriod: OriginalAccountingPeriod =
+    OriginalAccountingPeriod(
+      taxObligationStartDate = LocalDate.of(2024, 1, 1),
+      taxObligationEndDate = LocalDate.of(2024, 12, 31)
+    )
+
+  val newAccountingPeriod: NewAccountingPeriod =
+    NewAccountingPeriod(
+      updateObligationStartDate = LocalDate.of(2025, 1, 1),
+      updateObligationEndDate = LocalDate.of(2025, 12, 31)
+    )
+
+  val accountingPeriodAmendV2: AccountingPeriodAmendV2 =
+    AccountingPeriodAmendV2(
+      amendAccountingPeriod = true,
+      originalAccountingPeriods = Some(Seq(originalAccountingPeriod)),
+      newAccountingPeriod = Some(newAccountingPeriod)
+    )
+
   val subscriptionDataDisplay: SubscriptionDataDisplay = SubscriptionDataDisplay(
-    formBundleNumber = "123456789012",
+    formBundleNumber = testFormBundleNumber,
     upeDetails = upeDetails,
     upeCorrespAddressDetails = upeCorrespAddressDetails,
     primaryContactDetails = primaryContactDetails,
@@ -85,39 +131,62 @@ trait SubscriptionDataFixtures {
   )
 
   val subscriptionDataDisplayJson: String =
-    """
-      |{
-      |  "formBundleNumber": "123456789012",
-      |  "upeDetails": {
-      |    "organisationName": "UK Only Organisation Ltd",
-      |    "registrationDate": "2024-01-31",
-      |    "domesticOnly": true,
-      |    "filingMember": false
-      |  },
-      |  "upeCorrespAddressDetails": {
-      |    "addressLine1": "1 High Street",
-      |    "countryCode": "GB"
-      |  },
-      |  "primaryContactDetails": {
-      |    "name": "Primary Contact",
-      |    "emailAddress": "primary.contact@example.com"
-      |  },
-      |  "secondaryContactDetails": null,
-      |  "filingMemberDetails": null,
-      |  "accountingPeriod": [
-      |    {
-      |      "startDate": "2024-01-06",
-      |      "endDate": "2025-04-06",
-      |      "dueDate": "2024-04-06",
-      |      "canAmendStartDate": true,
-      |      "canAmendEndDate": true
-      |    }
-      |  ],
-      |  "accountStatus": {
-      |     "inactive": false
-      |   }
-      |}
-      |""".stripMargin
+    s"""
+       |{
+       |  "formBundleNumber": "$testFormBundleNumber",
+       |  "upeDetails": {
+       |    "organisationName": "UK Only Organisation Ltd",
+       |    "registrationDate": "2024-01-31",
+       |    "domesticOnly": true,
+       |    "filingMember": false
+       |  },
+       |  "upeCorrespAddressDetails": {
+       |    "addressLine1": "1 High Street",
+       |    "countryCode": "GB"
+       |  },
+       |  "primaryContactDetails": {
+       |    "name": "Primary Contact",
+       |    "emailAddress": "primary.contact@example.com"
+       |  },
+       |  "secondaryContactDetails": null,
+       |  "filingMemberDetails": null,
+       |  "accountingPeriod": [
+       |    {
+       |      "startDate": "2024-01-06",
+       |      "endDate": "2025-04-06",
+       |      "dueDate": "2024-04-06",
+       |      "canAmendStartDate": true,
+       |      "canAmendEndDate": true
+       |    }
+       |  ],
+       |  "accountStatus": {
+       |    "inactive": false
+       |  }
+       |}
+       |""".stripMargin
+
+  val subscriptionDataDisplayWrappedJson: String =
+    s"""{ "success": $subscriptionDataDisplayJson }"""
+
+  val filingMemberAmendDetails: FilingMemberAmendDetails =
+    FilingMemberAmendDetails(
+      addNewFilingMember = true,
+      safeId = "someSafeId",
+      customerIdentification1 = Some("CRN"),
+      customerIdentification2 = Some("UTR"),
+      organisationName = "Company"
+    )
+
+  val amendSubscriptionDataV2: SubscriptionDataAmend =
+    SubscriptionDataAmend(
+      replaceFilingMember = true,
+      upeDetails = upeDetailsAmend,
+      accountingPeriod = accountingPeriodAmendV2,
+      upeCorrespAddressDetails = upeCorrespAddressDetails,
+      primaryContactDetails = primaryContactDetails,
+      secondaryContactDetails = Some(secondaryContactDetails),
+      filingMemberDetails = Some(filingMemberAmendDetails)
+    )
 
   val subscriptionDataAmendJson: String =
     """
@@ -149,13 +218,34 @@ trait SubscriptionDataFixtures {
       |  },
       |  "primaryContactDetails": {
       |    "name": "Primary Contact",
-      |    "emailAddress": "primary@example.com"
+      |    "emailAddress": "primary.contact@example.com"
       |  }
       |}
       |""".stripMargin
 
-  val subscriptionDataDisplayWrappedJson: String =
-    s"""{ "success": $subscriptionDataDisplayJson }"""
+  val replaceFilingMemberData: NewFilingMemberDetail = NewFilingMemberDetail(
+    securityAnswerUserReference = "plrReference",
+    securityAnswerRegistrationDate = LocalDate.of(2024, 12, 31),
+    plrReference = "plrReference",
+    corporatePosition = CorporatePosition.Upe,
+    ukBased = Some(false),
+    nameRegistration = Some("New Filing Member Ltd"),
+    registeredAddress = Some(NonUKAddress("1 Test Street", None, "Testville", None, None, "US")),
+    primaryContactName = "Primary Contact",
+    primaryContactEmail = "primary.contact@example.com",
+    primaryContactPhonePreference = true,
+    primaryContactPhoneNumber = Some("0771234567"),
+    addSecondaryContact = true,
+    secondaryContactInformation = Some(secondaryContactDetails),
+    contactAddress = NonUKAddress("1 Test Street", None, "Testville", None, None, "US")
+  )
+
+  val validSubscriptionCreateParameter: SubscriptionRequestParameters =
+    SubscriptionRequestParameters(
+      id = "id",
+      regSafeId = "regSafeId",
+      fmSafeId = Some("fmSafeId")
+    )
 
   val businessSubscriptionSuccessResponseJson: String =
     """
@@ -174,22 +264,6 @@ trait SubscriptionDataFixtures {
       processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
     )
 
-  val validSubscriptionCreateParameter: SubscriptionRequestParameters =
-    SubscriptionRequestParameters(
-      id = "id",
-      regSafeId = "regSafeId",
-      fmSafeId = Some("fmSafeId")
-    )
-
-  val businessSubscriptionMissingPlrRefJson: String =
-    """
-      |{
-      |  "failure" : {
-      |    "formBundleNumber": "119000004320",
-      |    "processingDate": "2023-09-22"
-      |  }
-      |}""".stripMargin
-
   val unsuccessfulNotFoundJson: String =
     """
       |{
@@ -198,5 +272,106 @@ trait SubscriptionDataFixtures {
       |}""".stripMargin
 
   val unsuccessfulResponseJson: String = """{ "status": "error" }"""
+
+  val emptySubscriptionLocalData: SubscriptionLocalData =
+    SubscriptionLocalData(
+      plrReference = "XMPLR0123456789",
+      subMneOrDomestic = MneOrDomestic.Uk,
+      subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))),
+      subPrimaryContactName = "",
+      subPrimaryEmail = "",
+      subPrimaryPhonePreference = false,
+      subPrimaryCapturePhone = None,
+      subAddSecondaryContact = false,
+      subSecondaryContactName = None,
+      subSecondaryEmail = None,
+      subSecondaryCapturePhone = None,
+      subSecondaryPhonePreference = Some(false),
+      subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+      accountStatus = Some(ActiveAccount),
+      organisationName = None
+    )
+
+  val someSubscriptionLocalData: SubscriptionLocalData =
+    SubscriptionLocalData(
+      plrReference = "XMPLR0123456789",
+      subMneOrDomestic = MneOrDomestic.Uk,
+      subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))),
+      subPrimaryContactName = "Primary Contact",
+      subPrimaryEmail = "primary.contact@example.com",
+      subPrimaryPhonePreference = true,
+      subPrimaryCapturePhone = Some("0771234567"),
+      subAddSecondaryContact = true,
+      subSecondaryContactName = Some("Secondary Contact"),
+      subSecondaryEmail = Some("secondary.contact@example.com"),
+      subSecondaryCapturePhone = Some("0771234567"),
+      subSecondaryPhonePreference = Some(true),
+      subRegisteredAddress = NonUKAddress("1 High Street", None, "Testville", None, None, "GB"),
+      accountStatus = Some(ActiveAccount),
+      organisationName = Some("Test Organisation Ltd")
+    )
+
+  val someSubscriptionLocalDataUkOther: SubscriptionLocalData =
+    SubscriptionLocalData(
+      plrReference = "XMPLR0123456789",
+      subMneOrDomestic = MneOrDomestic.UkAndOther,
+      subAccountingPeriod = Some(AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23))),
+      subPrimaryContactName = "Primary Contact",
+      subPrimaryEmail = "primary.contact@example.com",
+      subPrimaryPhonePreference = true,
+      subPrimaryCapturePhone = Some("0771234567"),
+      subAddSecondaryContact = true,
+      subSecondaryContactName = Some("Secondary Contact"),
+      subSecondaryEmail = Some("secondary.contact@example.com"),
+      subSecondaryCapturePhone = Some("0771234567"),
+      subSecondaryPhonePreference = Some(true),
+      subRegisteredAddress = NonUKAddress("1 High Street", None, "Testville", None, None, "GB"),
+      accountStatus = Some(ActiveAccount),
+      organisationName = Some("Test Organisation Ltd")
+    )
+
+  val allocateEnrolmentParameters: AllocateEnrolmentParameters =
+    AllocateEnrolmentParameters(
+      userId = "testUserId",
+      verifiers = Seq(Verifier(key = "CTUTR", value = "Utr"), Verifier(key = "CRN", value = "Crn"))
+    )
+
+  def subscriptionDataGroupSummaryList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        MneOrDomesticSummary.row(),
+        GroupAccountingPeriodSummary.row(),
+        GroupAccountingPeriodStartDateSummary.row(),
+        GroupAccountingPeriodEndDateSummary.row()
+      ).flatten
+    )
+
+  def subscriptionDataPrimaryContactList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        ContactNameComplianceSummary.row(),
+        ContactEmailAddressSummary.row(),
+        ContactByPhoneSummary.row(),
+        ContactCapturePhoneDetailsSummary.row()
+      ).flatten
+    )
+
+  def subscriptionDataSecondaryContactList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        AddSecondaryContactSummary.row(),
+        SecondaryContactNameSummary.row(),
+        SecondaryContactEmailSummary.row(),
+        SecondaryPhonePreferenceSummary.row(),
+        SecondaryPhoneSummary.row()
+      ).flatten
+    )
+
+  def subscriptionDataAddress(countryOptions: CountryOptions)(using
+    messages: Messages,
+    request:  SubscriptionDataRequest[?]
+  ): SummaryList = SummaryListViewModel(
+    rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
+  )
 
 }
