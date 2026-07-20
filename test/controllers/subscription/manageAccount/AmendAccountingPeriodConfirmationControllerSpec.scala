@@ -76,12 +76,11 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
 
   private def buildApp(userAnswers: Option[UserAnswers]) = {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(userAnswers))
-    applicationBuilder(
-      subscriptionLocalData = Some(emptySubscriptionLocalData),
-      additionalData = Map("features.amendMultipleAccountingPeriods" -> true)
-    ).overrides(
-      bind[SessionRepository].toInstance(mockSessionRepository)
-    ).build()
+    applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
+      .overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository)
+      )
+      .build()
   }
 
   "AmendAccountingPeriodConfirmationController onPageLoad" when {
