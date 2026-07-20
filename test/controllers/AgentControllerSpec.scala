@@ -147,7 +147,7 @@ class AgentControllerSpec extends SpecBase {
         )
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(using any()))
-        .thenReturn(Future.successful(subscriptionData))
+        .thenReturn(Future.successful(subscriptionDataDisplay))
 
       running(application) {
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
