@@ -42,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future, blocking}
 
 class AmendAccountingPeriodCYAController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
@@ -56,7 +55,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
         given Messages = request.messages
@@ -92,7 +91,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>

@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import models.UserAnswers
 import models.longrunningsubmissions.LongRunningSubmission
-import models.subscription.{AccountingPeriod, AccountingPeriodV2, AmendAccountingPeriodStatus}
+import models.subscription.{AccountingPeriod, AccountingPeriodV2, AmendAccountingPeriodStatus, SubscriptionLocalData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -56,20 +56,18 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
     )
   )
 
-  private def baseLocalData =
-    emptySubscriptionLocalData.copy(accountingPeriods = Some(allPeriods))
+  private def baseLocalData = emptySubscriptionLocalData.copy(accountingPeriods = Some(allPeriods))
 
-  private def buildApp(userAnswers: Option[UserAnswers], localData: Option[models.subscription.SubscriptionLocalData] = Some(baseLocalData)) = {
+  private def buildApp(userAnswers: Option[UserAnswers], localData: Option[SubscriptionLocalData] = Some(baseLocalData)) = {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(userAnswers))
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-    applicationBuilder(
-      subscriptionLocalData = localData,
-      additionalData = Map("features.amendMultipleAccountingPeriods" -> true)
-    ).overrides(
-      bind[SessionRepository].toInstance(mockSessionRepository),
-      bind[SubscriptionService].toInstance(mockSubscriptionService),
-      bind[ReferenceNumberService].toInstance(mockReferenceNumberService)
-    ).build()
+    applicationBuilder(subscriptionLocalData = localData)
+      .overrides(
+        bind[SessionRepository].toInstance(mockSessionRepository),
+        bind[SubscriptionService].toInstance(mockSubscriptionService),
+        bind[ReferenceNumberService].toInstance(mockReferenceNumberService)
+      )
+      .build()
   }
 
   "AmendAccountingPeriodCYAController onPageLoad" when {
@@ -198,20 +196,6 @@ class AmendAccountingPeriodCYAControllerSpec extends SpecBase {
 
         val body = contentAsString(result)
         body must include("1 year")
-      }
-    }
-
-    "redirects to journey recovery when feature flag is off" in {
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-      val application = applicationBuilder(
-        subscriptionLocalData = Some(baseLocalData),
-        additionalData = Map("features.amendMultipleAccountingPeriods" -> false)
-      ).overrides(bind[SessionRepository].toInstance(mockSessionRepository)).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AmendAccountingPeriodCYAController.onPageLoad().url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad().url
       }
     }
   }
