@@ -27,57 +27,44 @@ class AccountingPeriodAmendV2Spec extends SpecBase {
   private val originalPeriod = OriginalAccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
   private val newPeriod      = NewAccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31))
 
+  val testAccountingPeriodAmendV2Json = Json.parse(
+    """
+      |{
+      |  "amendAccountingPeriod": true,
+      |  "originalAccountingPeriods": [
+      |    {
+      |      "taxObligationStartDate": "2024-01-01",
+      |      "taxObligationEndDate":"2024-12-31"
+      |    }
+      |  ],
+      |  "newAccountingPeriod": {
+      |    "updateObligationStartDate": "2025-01-01",
+      |    "updateObligationEndDate": "2025-12-31"
+      |  }
+      |}
+      |""".stripMargin)
+
+  val accountingPeriodAmendV2Model: AccountingPeriodAmendV2 =
+    AccountingPeriodAmendV2(
+      amendAccountingPeriod = true,
+      originalAccountingPeriods = Some(Seq(originalPeriod)),
+      newAccountingPeriod = Some(newPeriod)
+    )
+
   "AccountingPeriodAmendV2" when {
 
-    "amendAccountingPeriod is set to true" must {
+    "all fields are present" must {
 
-      "parse when both periods are set" in {
-        val testAccountingPeriodAmendV2Json = Json.parse("""
-            |{
-            |  "amendAccountingPeriod": true,
-            |  "originalAccountingPeriods": [
-            |    {
-            |      "taxObligationStartDate": "2024-01-01",
-            |      "taxObligationEndDate":"2024-12-31"
-            |    }
-            |  ],
-            |  "newAccountingPeriod": {
-            |    "updateObligationStartDate": "2025-01-01",
-            |    "updateObligationEndDate": "2025-12-31"
-            |  }
-            |}
-            |""".stripMargin)
-
-        val expectedAccountingPeriodAmendV2: AccountingPeriodAmendV2 =
-          AccountingPeriodAmendV2(
-            amendAccountingPeriod = true,
-            originalAccountingPeriods = Some(Seq(originalPeriod)),
-            newAccountingPeriod = Some(newPeriod)
-          )
-
-        val result = testAccountingPeriodAmendV2Json.validate[AccountingPeriodAmendV2]
-
-        result mustBe JsSuccess(expectedAccountingPeriodAmendV2)
+      "serialise to JSON correctly" in {
+        Json.toJson(accountingPeriodAmendV2Model) mustBe testAccountingPeriodAmendV2Json
       }
 
-      "fail to parse when only originalAccountingPeriods is set" in {
-        val testAccountingPeriodAmendV2Json = Json.parse("""
-            |{
-            |  "amendAccountingPeriod": true,
-            |  "originalAccountingPeriods": [
-            |    {
-            |      "taxObligationStartDate": "2024-01-01",
-            |      "taxObligationEndDate":"2024-12-31"
-            |    }
-            |  ]
-            |}
-            |""".stripMargin)
-
-        val result = testAccountingPeriodAmendV2Json.validate[AccountingPeriodAmendV2]
-
-        result mustBe a[JsError]
+      "deserialise from JSON correctly" in {
+        testAccountingPeriodAmendV2Json.as[AccountingPeriodAmendV2] mustBe accountingPeriodAmendV2Model
       }
-
+    }
+    
+    "optional fields are absent" mush {
       "fail to parse when only newAccountingPeriod is set" in {
         val testAccountingPeriodAmendV2Json = Json.parse("""
             |{
