@@ -42,7 +42,6 @@ trait ViewSpecBase
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]
   val appConfig:                      FrontendAppConfig   = inject[FrontendAppConfig]
 
-  given messages: Messages =
-    realMessagesApi.preferred(request)
+  given messages: Messages = realMessagesApi.preferred(request)
 
 }
