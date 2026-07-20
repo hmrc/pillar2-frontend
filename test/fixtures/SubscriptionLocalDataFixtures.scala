@@ -30,12 +30,15 @@ import viewmodels.govuk.summarylist.SummaryListViewModel
 
 import java.time.LocalDate
 
+// TODO: move  to test.fixtures package - there is an app.helpers package so this test.helpers should have tests for these files
 trait SubscriptionLocalDataFixture {
 
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val upeDetailsAmend          =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
+
   private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
+  
   val filingMemberAmendDetails: FilingMemberAmendDetails = FilingMemberAmendDetails(
     addNewFilingMember = true,
     safeId = "someSafeId",
@@ -94,7 +97,8 @@ trait SubscriptionLocalDataFixture {
     organisationName = Some("ABC Intl")
   )
 
-  val subscriptionData: SubscriptionDataV1 = SubscriptionDataV1(
+  @deprecated("Use subscriptionDataDisplay (v2)")
+  val subscriptionDataV1: SubscriptionDataV1 = SubscriptionDataV1(
     formBundleNumber = "form bundle",
     upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
@@ -105,26 +109,26 @@ trait SubscriptionLocalDataFixture {
     accountStatus = Some(ActiveAccount)
   )
 
-  val subscriptionDataV2: SubscriptionDataV2 = SubscriptionDataV2(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = upeCorrespondenceAddress,
-    primaryContactDetails = contactDetails,
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = Some(
-      Seq(
-        AccountingPeriodV2(
-          startDate = None,
-          endDate = None,
-          dueDate = None,
-          canAmendStartDate = Some(false),
-          canAmendEndDate = Some(false)
-        )
-      )
-    ),
-    accountStatus = Some(ActiveAccount)
-  )
+//  val subscriptionDataDisplay: SubscriptionDataDisplay = SubscriptionDataDisplay(
+//    formBundleNumber = "form bundle",
+//    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false),
+//    upeCorrespAddressDetails = upeCorrespondenceAddress,
+//    primaryContactDetails = contactDetails,
+//    secondaryContactDetails = None,
+//    filingMemberDetails = None,
+//    accountingPeriod = Some(
+//      Seq(
+//        AccountingPeriodV2(
+//          startDate = None,
+//          endDate = None,
+//          dueDate = None,
+//          canAmendStartDate = Some(false),
+//          canAmendEndDate = Some(false)
+//        )
+//      )
+//    ),
+//    accountStatus = Some(ActiveAccount)
+//  )
 
   val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
     userId = "id",
@@ -138,7 +142,7 @@ trait SubscriptionLocalDataFixture {
       newAccountingPeriod = Some(newAccountingPeriod)
     )
 
-  val amendSubscriptionDataV2: AmendSubscriptionV2 = AmendSubscriptionV2(
+  val amendSubscriptionDataV2: SubscriptionDataAmend = SubscriptionDataAmend(
     replaceFilingMember = true,
     upeDetails = upeDetailsAmend,
     accountingPeriod = accountingPeriodAmendV2,
