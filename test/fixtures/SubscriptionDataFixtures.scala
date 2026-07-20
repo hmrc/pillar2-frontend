@@ -16,12 +16,15 @@
 
 package fixtures
 
+import models.subscription.*
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription.{AccountingPeriodV2, ContactDetailsType, SubscriptionDataDisplay, UpeCorrespAddressDetails, UpeDetails}
+import models.subscription.responses.SubscriptionResponse
 
 import java.time.LocalDate
 
 trait SubscriptionDataFixtures {
+
+  val createSubscriptionPath: String = "/report-pillar2-top-up-taxes/subscription/create-subscription"
 
   val readCachedSubscriptionPath: String = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
 
@@ -31,35 +34,60 @@ trait SubscriptionDataFixtures {
   val amendSubscriptionPath:   String = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
   val amendSubscriptionV2Path: String = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
 
-  private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
-  private val contactDetails           = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  private val upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
+  val testFormBundleNumber: String = "123456789012"
+
+  private val upeDetails =
+    UpeDetails(
+      safeId = None,
+      customerIdentification1 = None,
+      customerIdentification2 = None,
+      organisationName = "UK Only Organisation Ltd",
+      registrationDate = LocalDate.of(2024, 1, 31),
+      domesticOnly = true,
+      filingMember = false
+    )
+
+  private val upeCorrespAddressDetails =
+    UpeCorrespAddressDetails(
+      addressLine1 = "1 High Street",
+      addressLine2 = None,
+      addressLine3 = None,
+      addressLine4 = None,
+      postCode = None,
+      countryCode = "GB"
+    )
+
+  private val primaryContactDetails =
+    ContactDetailsType(
+      name = "Primary Contact",
+      phone = None,
+      emailAddress = "primary.contact@example.com"
+    )
+
+  val amendableAccountingPeriod: AccountingPeriodV2 =
+    AccountingPeriodV2(
+      startDate = Some(LocalDate.of(2024, 1, 6)),
+      endDate = Some(LocalDate.of(2025, 4, 6)),
+      dueDate = Some(LocalDate.of(2024, 4, 6)),
+      canAmendStartDate = Some(true),
+      canAmendEndDate = Some(true)
+    )
 
   val subscriptionDataDisplay: SubscriptionDataDisplay = SubscriptionDataDisplay(
-    formBundleNumber = "form bundle",
+    formBundleNumber = "123456789012",
     upeDetails = upeDetails,
-    upeCorrespAddressDetails = upeCorrespondenceAddress,
-    primaryContactDetails = contactDetails,
+    upeCorrespAddressDetails = upeCorrespAddressDetails,
+    primaryContactDetails = primaryContactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
-    accountingPeriod = Some(
-      Seq(
-        AccountingPeriodV2(
-          startDate = None,
-          endDate = None,
-          dueDate = None,
-          canAmendStartDate = Some(false),
-          canAmendEndDate = Some(false)
-        )
-      )
-    ),
+    accountingPeriod = Some(Seq(amendableAccountingPeriod)),
     accountStatus = Some(ActiveAccount)
   )
 
   val subscriptionDataDisplayJson: String =
     """
       |{
-      |  "formBundleNumber": "119000004323",
+      |  "formBundleNumber": "123456789012",
       |  "upeDetails": {
       |    "organisationName": "UK Only Organisation Ltd",
       |    "registrationDate": "2024-01-31",
@@ -105,7 +133,10 @@ trait SubscriptionDataFixtures {
       |  "accountingPeriod": {
       |    "amendAccountingPeriod": true,
       |    "originalAccountingPeriods": [
-      |      { "taxObligationStartDate": "2024-01-06", "taxObligationEndDate": "2025-04-06" }
+      |      {
+      |        "taxObligationStartDate": "2024-01-06",
+      |        "taxObligationEndDate": "2025-04-06"
+      |      }
       |    ],
       |    "newAccountingPeriod": {
       |      "updateObligationStartDate": "2024-06-01",
@@ -125,5 +156,47 @@ trait SubscriptionDataFixtures {
 
   val subscriptionDataDisplayWrappedJson: String =
     s"""{ "success": $subscriptionDataDisplayJson }"""
+
+  val businessSubscriptionSuccessResponseJson: String =
+    """
+      |{
+      |  "success" : {
+      |    "plrReference": "XMPLR0012345678",
+      |    "formBundleNumber": "119000004320",
+      |    "processingDate": "2023-09-22T00:00"
+      |  }
+      |}""".stripMargin
+
+  val validBusinessSubscriptionSuccessResponse: SubscriptionResponse =
+    SubscriptionResponse(
+      plrReference = "XMPLR0012345678",
+      formBundleNumber = "119000004320",
+      processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
+    )
+
+  val validSubscriptionCreateParameter: SubscriptionRequestParameters =
+    SubscriptionRequestParameters(
+      id = "id",
+      regSafeId = "regSafeId",
+      fmSafeId = Some("fmSafeId")
+    )
+
+  val businessSubscriptionMissingPlrRefJson: String =
+    """
+      |{
+      |  "failure" : {
+      |    "formBundleNumber": "119000004320",
+      |    "processingDate": "2023-09-22"
+      |  }
+      |}""".stripMargin
+
+  val unsuccessfulNotFoundJson: String =
+    """
+      |{
+      |  "status": "404",
+      |  "error": "there is nothing here"
+      |}""".stripMargin
+
+  val unsuccessfulResponseJson: String = """{ "status": "error" }"""
 
 }
