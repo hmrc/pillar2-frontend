@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package helpers
+package fixtures
 
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.requests.SubscriptionDataRequest
@@ -30,15 +30,14 @@ import viewmodels.govuk.summarylist.SummaryListViewModel
 
 import java.time.LocalDate
 
-// TODO: move  to test.fixtures package - there is an app.helpers package so this test.helpers should have tests for these files
-trait SubscriptionLocalDataFixture {
+trait SubscriptionLocalDataFixtures {
 
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
   private val upeDetailsAmend          =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
 
   private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
-  
+
   val filingMemberAmendDetails: FilingMemberAmendDetails = FilingMemberAmendDetails(
     addNewFilingMember = true,
     safeId = "someSafeId",

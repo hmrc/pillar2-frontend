@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions.*
+import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures, SubscriptionLocalDataFixtures}
 import generators.StringGenerators
 import helpers.*
 import models.UserAnswers
@@ -65,8 +66,9 @@ trait SpecBase
     with IntegrationPatience
     with GuiceOneAppPerSuite
     with UserAnswersFixture
-    with SubscriptionLocalDataFixture
-    with ObligationsAndSubmissionsDataFixture
+    with SubscriptionDataFixtures
+    with SubscriptionLocalDataFixtures
+    with ObligationsAndSubmissionsDataFixtures
     with StringGenerators {
 
   given ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
@@ -74,9 +76,10 @@ trait SpecBase
   given system:            ActorSystem       = ActorSystem()
   given applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   given materializer:      Materializer      = Materializer(system)
-  def injectedParsers:     PlayBodyParsers   = app.injector.instanceOf[PlayBodyParsers]
 
-  val PlrReference = "XMPLR0123456789"
+  def injectedParsers: PlayBodyParsers = app.injector.instanceOf[PlayBodyParsers]
+
+  val testPillar2Id: String = "XMPLR0123456789"
 
   type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -96,7 +99,7 @@ trait SpecBase
     Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
-        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        identifiers = List(EnrolmentIdentifier("PLRID", testPillar2Id)),
         state = "Activated",
         delegatedAuthRule = Some("pillar2-auth")
       )
@@ -107,7 +110,7 @@ trait SpecBase
     Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
-        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        identifiers = List(EnrolmentIdentifier("PLRID", testPillar2Id)),
         state = "Activated",
         delegatedAuthRule = None
       )
