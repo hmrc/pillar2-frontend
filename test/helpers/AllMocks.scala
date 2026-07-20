@@ -37,7 +37,6 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import utils.countryOptions.CountryOptions
 import views.html.CheckYourAnswersView
 
-//TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
 
   val mockAuditConnector:                          AuditConnector                          = mock[AuditConnector]
