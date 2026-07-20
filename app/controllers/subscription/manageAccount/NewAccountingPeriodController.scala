@@ -41,7 +41,6 @@ class NewAccountingPeriodController @Inject() (
   sessionRepository:                      SessionRepository,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   formProvider:                           NewAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   NewAccountingPeriodView
@@ -53,7 +52,7 @@ class NewAccountingPeriodController @Inject() (
     formProvider(chosenAccountingPeriod)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
@@ -86,7 +85,7 @@ class NewAccountingPeriodController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
       val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
