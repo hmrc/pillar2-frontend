@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription
+package models.subscription.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-// TODO: rename to SubscriptionDataDisplaySuccessResponse?
-final case class SubscriptionSuccess(
-  success: SubscriptionDataDisplay
+import java.time.LocalDateTime
+
+final case class SubscriptionCreateResponse(
+  plrReference:     String,
+  formBundleNumber: String,
+  processingDate:   LocalDateTime
 )
 
-object SubscriptionSuccess {
-  given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+object SubscriptionCreateResponse {
+  given format: OFormat[SubscriptionCreateResponse] = Json.format[SubscriptionCreateResponse]
 }

@@ -21,7 +21,7 @@ import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
 import models.subscription.*
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription.responses.SubscriptionResponse
+import models.subscription.responses.SubscriptionCreateResponse
 import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -276,8 +276,8 @@ trait SubscriptionDataFixtures {
       |  }
       |}""".stripMargin
 
-  val validBusinessSubscriptionSuccessResponse: SubscriptionResponse =
-    SubscriptionResponse(
+  val validBusinessSubscriptionSuccessResponse: SubscriptionCreateResponse =
+    SubscriptionCreateResponse(
       plrReference = "XMPLR0012345678",
       formBundleNumber = "119000004320",
       processingDate = LocalDate.parse("2023-09-22").atStartOfDay()

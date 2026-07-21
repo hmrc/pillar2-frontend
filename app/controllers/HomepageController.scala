@@ -86,7 +86,7 @@ class HomepageController @Inject() (
             def attemptHomepageLoad(attempt: Int): Future[Result] = {
               val homepageFuture =
                 subscriptionService
-                  .readSubscriptionV2AndSave(request.userId, referenceNumber)
+                  .readSubscriptionAndSave(request.userId, referenceNumber)
                   .flatMap { localData =>
                     renderHomepage(
                       organisationName = localData.organisationName.getOrElse(""),

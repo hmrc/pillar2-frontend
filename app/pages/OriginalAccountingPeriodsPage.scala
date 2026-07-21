@@ -16,10 +16,10 @@
 
 package pages
 
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import play.api.libs.json.JsPath
 
-case object OriginalAccountingPeriodsPage extends QuestionPage[Seq[AccountingPeriodV2]] {
+case object OriginalAccountingPeriodsPage extends QuestionPage[Seq[AccountingPeriodDisplay]] {
   override def path:     JsPath = JsPath \ toString
   override def toString: String = "originalAccountingPeriods"
 }

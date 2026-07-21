@@ -97,7 +97,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.successful(someSubscriptionLocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
@@ -152,7 +152,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(initialUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.successful(someSubscriptionLocalData))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
@@ -186,7 +186,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.failed(RetryableGatewayError))
           .thenReturn(Future.failed(RetryableGatewayError))
           .thenReturn(Future.successful(someSubscriptionLocalData))
@@ -197,7 +197,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         val result = route(application, request).value
         status(result) mustEqual OK
-        verify(mockSubscriptionService, times(3)).readSubscriptionV2AndSave(any(), any())(using any())
+        verify(mockSubscriptionService, times(3)).readSubscriptionAndSave(any(), any())(using any())
       }
     }
 
@@ -216,7 +216,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.failed(RetryableGatewayError))
         when(mockAccountActivityService.retrieveAccountActivityData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(AccountActivityData(Seq.empty)))
@@ -224,7 +224,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
-        verify(mockSubscriptionService, times(3)).readSubscriptionV2AndSave(any(), any())(using any())
+        verify(mockSubscriptionService, times(3)).readSubscriptionAndSave(any(), any())(using any())
       }
     }
 
@@ -240,7 +240,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.failed(UnprocessableEntityError))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -285,7 +285,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+      when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
         .thenReturn(Future.failed(UnprocessableEntityError))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
@@ -313,7 +313,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscriptionV2AndSave(any(), any())(using any()))
+        when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
           .thenReturn(Future.failed(NoResultFound))
 
         val result = route(application, request).value

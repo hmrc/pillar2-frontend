@@ -41,13 +41,11 @@ class SubscriptionService @Inject() (
   subscriptionConnector:        SubscriptionConnector,
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
-  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector,
-  appConfig:                    config.FrontendAppConfig
+  enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
 )(using ec: ExecutionContext)
     extends Logging {
 
-  def createSubscription(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] = {
-    logger.info(s"createSubscription - userAnswers: - ${Json.toJson(userAnswers)}")
+  def createSubscription(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     for {
       upeSafeId     <- registerUpe(userAnswers)
       latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
@@ -60,26 +58,15 @@ class SubscriptionService @Inject() (
       enrolmentInfo = updatedAnswers.createEnrolmentInfo(plrRef)
       _ <- enrolmentConnector.enrolAndActivate(enrolmentInfo)
     } yield plrRef
-  }
 
-  private def enrolmentExists(plrReference: String)(using hc: HeaderCarrier): Future[Boolean] =
-    enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
-      case Some(_) => true
-      case _       => false
-    }
-
-  def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    if appConfig.amendMultipleAccountingPeriods then subscriptionConnector.readSubscriptionV2(plrReference)
-    else subscriptionConnector.readSubscription(plrReference)
-
-  def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
+  def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionDataDisplay] =
     maybeReadSubscription(plrReference).flatMap {
-      case Some(subData) => Future.successful(subData)
-      case None          => Future.failed(NoResultFound)
+      case Some(subscriptionDataDisplay) => Future.successful(subscriptionDataDisplay)
+      case None                          => Future.failed(NoResultFound)
     }
 
-  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionDataV1] =
-    subscriptionConnector.cacheSubscription(parameters)
+  def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionDataDisplay]] =
+    subscriptionConnector.readSubscription(plrReference)
 
   def getSubscriptionCache(userId: String)(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
     subscriptionConnector.getSubscriptionCache(userId).flatMap {
@@ -92,14 +79,14 @@ class SubscriptionService @Inject() (
   /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache, also does not overwrite phone related fields on flag
     * alternation.
     */
-  def readSubscriptionV2AndSave(
+  def readSubscriptionAndSave(
     userId:       String,
     plrReference: String
   )(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
     for {
-      existingOpt <- subscriptionConnector.getSubscriptionCache(userId)
-      v2          <- subscriptionConnector.readAndCacheSubscriptionV2(userId, plrReference)
-      fresh  = subscriptionDataV2ToLocalData(plrReference, v2)
+      existingOpt             <- subscriptionConnector.getSubscriptionCache(userId)
+      subscriptionDataDisplay <- subscriptionConnector.readAndCacheSubscription(userId, plrReference)
+      fresh  = subscriptionDataDisplayToLocalData(plrReference, subscriptionDataDisplay)
       merged = existingOpt match {
                  case Some(existing) =>
                    fresh.copy(
@@ -113,20 +100,20 @@ class SubscriptionService @Inject() (
       _ <- subscriptionConnector.save(userId, Json.toJson(merged))
     } yield merged
 
-  private def subscriptionDataV2ToLocalData(plrReference: String, v2: SubscriptionDataV2): SubscriptionLocalData = {
-    val address = v2.upeCorrespAddressDetails
+  private def subscriptionDataDisplayToLocalData(plrReference: String, subscriptionDataDisplay: SubscriptionDataDisplay): SubscriptionLocalData = {
+    val address = subscriptionDataDisplay.upeCorrespAddressDetails
     SubscriptionLocalData(
       plrReference = plrReference,
-      subMneOrDomestic = if v2.upeDetails.domesticOnly then MneOrDomestic.Uk else MneOrDomestic.UkAndOther,
-      subPrimaryContactName = v2.primaryContactDetails.name,
-      subPrimaryEmail = v2.primaryContactDetails.emailAddress,
-      subPrimaryPhonePreference = v2.primaryContactDetails.phone.isDefined,
-      subPrimaryCapturePhone = v2.primaryContactDetails.phone,
-      subAddSecondaryContact = v2.secondaryContactDetails.isDefined,
-      subSecondaryContactName = v2.secondaryContactDetails.map(_.name),
-      subSecondaryEmail = v2.secondaryContactDetails.map(_.emailAddress),
-      subSecondaryCapturePhone = v2.secondaryContactDetails.flatMap(_.phone),
-      subSecondaryPhonePreference = v2.secondaryContactDetails.map(_.phone.isDefined),
+      subMneOrDomestic = if subscriptionDataDisplay.upeDetails.domesticOnly then MneOrDomestic.Uk else MneOrDomestic.UkAndOther,
+      subPrimaryContactName = subscriptionDataDisplay.primaryContactDetails.name,
+      subPrimaryEmail = subscriptionDataDisplay.primaryContactDetails.emailAddress,
+      subPrimaryPhonePreference = subscriptionDataDisplay.primaryContactDetails.phone.isDefined,
+      subPrimaryCapturePhone = subscriptionDataDisplay.primaryContactDetails.phone,
+      subAddSecondaryContact = subscriptionDataDisplay.secondaryContactDetails.isDefined,
+      subSecondaryContactName = subscriptionDataDisplay.secondaryContactDetails.map(_.name),
+      subSecondaryEmail = subscriptionDataDisplay.secondaryContactDetails.map(_.emailAddress),
+      subSecondaryCapturePhone = subscriptionDataDisplay.secondaryContactDetails.flatMap(_.phone),
+      subSecondaryPhonePreference = subscriptionDataDisplay.secondaryContactDetails.map(_.phone.isDefined),
       subRegisteredAddress = NonUKAddress(
         address.addressLine1,
         address.addressLine2,
@@ -135,14 +122,14 @@ class SubscriptionService @Inject() (
         address.postCode,
         address.countryCode
       ),
-      accountStatus = v2.accountStatus,
-      organisationName = Some(v2.upeDetails.organisationName),
-      accountingPeriods = v2.accountingPeriod,
-      registrationDate = Some(v2.upeDetails.registrationDate),
-      upeCustomerIdentification1 = v2.upeDetails.customerIdentification1,
-      upeCustomerIdentification2 = v2.upeDetails.customerIdentification2,
-      upeFilingMember = Some(v2.upeDetails.filingMember),
-      filingMemberDetails = v2.filingMemberDetails
+      accountStatus = subscriptionDataDisplay.accountStatus,
+      organisationName = Some(subscriptionDataDisplay.upeDetails.organisationName),
+      accountingPeriods = subscriptionDataDisplay.accountingPeriod,
+      registrationDate = Some(subscriptionDataDisplay.upeDetails.registrationDate),
+      upeCustomerIdentification1 = subscriptionDataDisplay.upeDetails.customerIdentification1,
+      upeCustomerIdentification2 = subscriptionDataDisplay.upeDetails.customerIdentification2,
+      upeFilingMember = Some(subscriptionDataDisplay.upeDetails.filingMember),
+      filingMemberDetails = subscriptionDataDisplay.filingMemberDetails
     )
   }
 
@@ -162,31 +149,33 @@ class SubscriptionService @Inject() (
   ): Future[Done] =
     for {
       currentSubscriptionData <- readSubscription(plrReference)
-      result                  <- currentSubscriptionData match {
-                  case v1: SubscriptionDataV1 =>
-                    subscriptionConnector.amendSubscription(userId, amendGroupOrContactDetails(plrReference, v1, subscriptionLocalData))
-                  case v2: SubscriptionDataV2 =>
-                    subscriptionConnector.amendSubscriptionV2(userId, amendGroupOrContactDetailsV2(plrReference, v2, subscriptionLocalData))
-                }
+      result                  <- subscriptionConnector.amendSubscription(
+                  userId,
+                  amendGroupOrContactDetails(
+                    plrReference,
+                    currentSubscriptionData,
+                    subscriptionLocalData
+                  )
+                )
     } yield result
 
   def amendAccountingPeriods(
     userId:          String,
     plrReference:    String,
     userData:        SubscriptionLocalData,
-    affectedPeriods: Seq[AccountingPeriodV2],
+    affectedPeriods: Seq[AccountingPeriodDisplay],
     newPeriod:       AccountingPeriod
   )(using hc: HeaderCarrier): Future[Done] = {
-    val amendData = buildAmendSubscriptionV2(plrReference, userData, affectedPeriods, newPeriod)
-    subscriptionConnector.amendSubscriptionV2(userId, amendData)
+    val amendData = buildAmendSubscription(plrReference, userData, affectedPeriods, newPeriod)
+    subscriptionConnector.amendSubscription(userId, amendData)
   }
 
-  private def buildAmendSubscriptionV2(
+  private def buildAmendSubscription(
     plrReference:    String,
     userData:        SubscriptionLocalData,
-    affectedPeriods: Seq[AccountingPeriodV2],
+    affectedPeriods: Seq[AccountingPeriodDisplay],
     newPeriod:       AccountingPeriod
-  ): AmendSubscriptionV2 = {
+  ): SubscriptionDataAmend = {
     val address = UpeCorrespAddressDetails(
       addressLine1 = userData.subRegisteredAddress.addressLine1,
       addressLine2 = userData.subRegisteredAddress.addressLine2,
@@ -195,7 +184,7 @@ class SubscriptionService @Inject() (
       postCode = userData.subRegisteredAddress.postalCode,
       countryCode = userData.subRegisteredAddress.countryCode
     )
-    AmendSubscriptionV2(
+    SubscriptionDataAmend(
       replaceFilingMember = false,
       upeDetails = UpeDetailsAmend(
         plrReference,
@@ -206,7 +195,7 @@ class SubscriptionService @Inject() (
         domesticOnly = if userData.subMneOrDomestic == MneOrDomestic.Uk then true else false,
         filingMember = userData.upeFilingMember.getOrElse(false)
       ),
-      accountingPeriod = AccountingPeriodAmendV2(
+      accountingPeriod = AccountingPeriodAmend(
         amendAccountingPeriod = true,
         originalAccountingPeriods =
           Some(affectedPeriods.map(p => OriginalAccountingPeriod(p.startDate.getOrElse(LocalDate.now), p.endDate.getOrElse(LocalDate.now)))),
@@ -227,7 +216,7 @@ class SubscriptionService @Inject() (
         None
       },
       filingMemberDetails = userData.filingMemberDetails.map(details =>
-        FilingMemberAmendDetails(
+        FilingMemberDetailsAmend(
           safeId = details.safeId,
           customerIdentification1 = details.customerIdentification1,
           customerIdentification2 = details.customerIdentification2,
@@ -265,61 +254,10 @@ class SubscriptionService @Inject() (
 
   private[services] def amendGroupOrContactDetails(
     plrReference: String,
-    currentData:  SubscriptionDataV1,
+    currentData:  SubscriptionDataDisplay,
     userData:     SubscriptionLocalData
-  ): AmendSubscription =
-    AmendSubscription(
-      replaceFilingMember = false,
-      upeDetails = UpeDetailsAmend(
-        plrReference,
-        customerIdentification1 = currentData.upeDetails.customerIdentification1,
-        customerIdentification2 = currentData.upeDetails.customerIdentification2,
-        organisationName = currentData.upeDetails.organisationName,
-        registrationDate = currentData.upeDetails.registrationDate,
-        domesticOnly = if userData.subMneOrDomestic == MneOrDomestic.Uk then true else false,
-        filingMember = currentData.upeDetails.filingMember
-      ),
-      accountingPeriod = {
-        val period = userData.subAccountingPeriod.getOrElse(currentData.accountingPeriod)
-        AccountingPeriodAmend(startDate = period.startDate, endDate = period.endDate)
-      },
-      upeCorrespAddressDetails = UpeCorrespAddressDetails(
-        addressLine1 = userData.subRegisteredAddress.addressLine1,
-        addressLine2 = userData.subRegisteredAddress.addressLine2,
-        addressLine3 = Some(userData.subRegisteredAddress.addressLine3),
-        addressLine4 = userData.subRegisteredAddress.addressLine4,
-        postCode = userData.subRegisteredAddress.postalCode,
-        countryCode = userData.subRegisteredAddress.countryCode
-      ),
-      primaryContactDetails = ContactDetailsType(
-        name = userData.subPrimaryContactName,
-        phone = userData.subPrimaryCapturePhone,
-        emailAddress = userData.subPrimaryEmail
-      ),
-      secondaryContactDetails = if userData.subAddSecondaryContact then {
-        for {
-          name  <- userData.subSecondaryContactName
-          email <- userData.subSecondaryEmail
-        } yield ContactDetailsType(name = name, phone = userData.subSecondaryCapturePhone, emailAddress = email)
-      } else {
-        None
-      },
-      filingMemberDetails = currentData.filingMemberDetails.map(details =>
-        FilingMemberAmendDetails(
-          safeId = details.safeId,
-          customerIdentification1 = details.customerIdentification1,
-          customerIdentification2 = details.customerIdentification2,
-          organisationName = details.organisationName
-        )
-      )
-    )
-
-  private[services] def amendGroupOrContactDetailsV2(
-    plrReference: String,
-    currentData:  SubscriptionData,
-    userData:     SubscriptionLocalData
-  ): AmendSubscriptionV2 =
-    AmendSubscriptionV2(
+  ): SubscriptionDataAmend =
+    SubscriptionDataAmend(
       replaceFilingMember = false,
       upeDetails = UpeDetailsAmend(
         plrReference,
@@ -330,7 +268,7 @@ class SubscriptionService @Inject() (
         domesticOnly = userData.subMneOrDomestic == MneOrDomestic.Uk,
         filingMember = currentData.upeDetails.filingMember
       ),
-      accountingPeriod = AccountingPeriodAmendV2(
+      accountingPeriod = AccountingPeriodAmend(
         amendAccountingPeriod = false,
         originalAccountingPeriods = None,
         newAccountingPeriod = None
@@ -356,7 +294,7 @@ class SubscriptionService @Inject() (
           } yield ContactDetailsType(name, userData.subSecondaryCapturePhone, email)
         else None,
       filingMemberDetails = currentData.filingMemberDetails.map(details =>
-        FilingMemberAmendDetails(
+        FilingMemberDetailsAmend(
           safeId = details.safeId,
           customerIdentification1 = details.customerIdentification1,
           customerIdentification2 = details.customerIdentification2,
@@ -366,10 +304,10 @@ class SubscriptionService @Inject() (
     )
 
   private def setUltimateParentAsNewFilingMember(
-    requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionData
-  ): AmendSubscriptionV2 =
-    AmendSubscriptionV2(
+    requiredInfo:     NewFilingMemberDetails,
+    subscriptionData: SubscriptionDataDisplay
+  ): SubscriptionDataAmend =
+    SubscriptionDataAmend(
       replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
@@ -380,7 +318,7 @@ class SubscriptionService @Inject() (
         domesticOnly = subscriptionData.upeDetails.domesticOnly,
         filingMember = true
       ),
-      accountingPeriod = AccountingPeriodAmendV2(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
+      accountingPeriod = AccountingPeriodAmend(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
         requiredInfo.contactAddress.addressLine1,
         requiredInfo.contactAddress.addressLine2,
@@ -399,11 +337,11 @@ class SubscriptionService @Inject() (
     )
 
   private def replaceOldFilingMember(
-    requiredInfo:     NewFilingMemberDetail,
-    subscriptionData: SubscriptionData,
-    filingMember:     FilingMemberAmendDetails
-  ): AmendSubscriptionV2 =
-    AmendSubscriptionV2(
+    requiredInfo:     NewFilingMemberDetails,
+    subscriptionData: SubscriptionDataDisplay,
+    filingMember:     FilingMemberDetailsAmend
+  ): SubscriptionDataAmend =
+    SubscriptionDataAmend(
       replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
@@ -414,7 +352,7 @@ class SubscriptionService @Inject() (
         domesticOnly = subscriptionData.upeDetails.domesticOnly,
         filingMember = false
       ),
-      accountingPeriod = AccountingPeriodAmendV2(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
+      accountingPeriod = AccountingPeriodAmend(amendAccountingPeriod = false, originalAccountingPeriods = None, newAccountingPeriod = None),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
         requiredInfo.contactAddress.addressLine1,
         requiredInfo.contactAddress.addressLine2,
@@ -432,8 +370,8 @@ class SubscriptionService @Inject() (
       filingMemberDetails = Some(filingMember)
     )
 
-  def amendFilingMemberDetails(userId: String, amendData: AmendSubscriptionV2)(using hc: HeaderCarrier): Future[Done] =
-    subscriptionConnector.amendSubscriptionV2(userId, amendData)
+  def amendFilingMemberDetails(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] =
+    subscriptionConnector.amendSubscription(userId, amendData)
 
   private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     for {
@@ -457,7 +395,7 @@ class SubscriptionService @Inject() (
     enrolmentConnector.allocateEnrolment(groupId, plrReference, enrolmentInfo)
   }
 
-  def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionData, pillar2Reference: String, userId: String)(using
+  def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionDataDisplay, pillar2Reference: String, userId: String)(using
     hc: HeaderCarrier
   ): Future[AllocateEnrolmentParameters] =
     subscriptionData.upeDetails.customerIdentification1
@@ -485,7 +423,7 @@ class SubscriptionService @Inject() (
           }
       )
 
-  private def getNewFilingMemberDetails(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[FilingMemberAmendDetails] =
+  private def getNewFilingMemberDetails(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[FilingMemberDetailsAmend] =
     userAnswers
       .get(RfmUkBasedPage)
       .flatMap(ukBased =>
@@ -493,7 +431,7 @@ class SubscriptionService @Inject() (
           userAnswers
             .get(RfmGrsDataPage)
             .map(grsData =>
-              FilingMemberAmendDetails(
+              FilingMemberDetailsAmend(
                 addNewFilingMember = true,
                 safeId = grsData.companyId,
                 customerIdentification1 = Some(grsData.crn),
@@ -506,7 +444,7 @@ class SubscriptionService @Inject() (
             .get(RfmNameRegistrationPage)
             .map(companyName =>
               registerOrGetNewFilingMemberSafeId(userAnswers).map(companyId =>
-                FilingMemberAmendDetails(
+                FilingMemberDetailsAmend(
                   addNewFilingMember = true,
                   safeId = companyId,
                   customerIdentification1 = None,
@@ -520,10 +458,10 @@ class SubscriptionService @Inject() (
       .getOrElse(throw new Exception("New Filing member details expected but could not find a value for RfmUkBased page"))
 
   def createAmendObjectForReplacingFilingMember(
-    subscriptionData:   SubscriptionData,
-    filingMemberDetail: NewFilingMemberDetail,
+    subscriptionData:   SubscriptionDataDisplay,
+    filingMemberDetail: NewFilingMemberDetails,
     userAnswers:        UserAnswers
-  )(using hc: HeaderCarrier): Future[AmendSubscriptionV2] =
+  )(using hc: HeaderCarrier): Future[SubscriptionDataAmend] =
     if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
       logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
       setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture
@@ -551,6 +489,12 @@ class SubscriptionService @Inject() (
       .orElse(userAnswers.get(UpeGRSResponsePage).flatMap(getCompanyNameFromGRS)) match {
       case Some(companyName) => Right(companyName)
       case None              => Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
+
+  private def enrolmentExists(plrReference: String)(using hc: HeaderCarrier): Future[Boolean] =
+    enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
+      case Some(_) => true
+      case _       => false
     }
 
 }
