@@ -18,7 +18,7 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import controllers.routes
-import helpers.SubscriptionLocalDataFixture
+import fixtures.SubscriptionDataFixtures
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -28,7 +28,7 @@ import utils.DateTimeUtils.*
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
-class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionDataFixtures {
 
   lazy val page:      ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
   lazy val pageTitle: String                                 = "Group details"
@@ -80,10 +80,10 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe currentDate.toDateFormat
+        summaryListItems.get(2).text() mustBe testLocalDate.toDateFormat
 
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDateFormat
+        summaryListItems.get(3).text() mustBe testLocalDate.plusYears(1).toDateFormat
       }
 
       "have a button" in {
@@ -140,9 +140,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe currentDate.toDateFormat
+        summaryListItems.get(2).text() mustBe testLocalDate.toDateFormat
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDateFormat
+        summaryListItems.get(3).text() mustBe testLocalDate.plusYears(1).toDateFormat
       }
 
       "have a button" in {

@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures, SubscriptionLocalDataFixtures}
+import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures}
 import generators.StringGenerators
 import helpers.*
 import models.UserAnswers
@@ -27,6 +27,7 @@ import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
+import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -67,7 +68,6 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with UserAnswersFixture
     with SubscriptionDataFixtures
-    with SubscriptionLocalDataFixtures
     with ObligationsAndSubmissionsDataFixtures
     with StringGenerators {
 
@@ -79,7 +79,11 @@ trait SpecBase
 
   def injectedParsers: PlayBodyParsers = app.injector.instanceOf[PlayBodyParsers]
 
+  val testId:        String = "testId"
+  val testUserId:    String = "testUserId"
   val testPillar2Id: String = "XMPLR0123456789"
+
+  val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 

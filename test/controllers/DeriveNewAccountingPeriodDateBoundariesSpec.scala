@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
@@ -24,7 +24,7 @@ import java.time.LocalDate
 
 class DeriveNewAccountingPeriodDateBoundariesSpec extends AnyFreeSpec with Matchers {
 
-  private def period(year: Int, canAmendStart: Boolean = true, canAmendEnd: Boolean = true): AccountingPeriodV2 = AccountingPeriodV2(
+  private def period(year: Int, canAmendStart: Boolean = true, canAmendEnd: Boolean = true): AccountingPeriodDisplay = AccountingPeriodDisplay(
     startDate = Some(LocalDate.of(year, 1, 1)),
     endDate = Some(LocalDate.of(year, 12, 31)),
     dueDate = Some(LocalDate.of(year, 12, 31).plusYears(1)),

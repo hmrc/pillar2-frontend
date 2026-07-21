@@ -18,7 +18,8 @@ package controllers.actions
 
 import cats.syntax.option.*
 import controllers.btn.routes
-import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
+import fixtures.SubscriptionDataFixtures
+import helpers.UserAnswersFixture
 import models.btn.BTNStatus
 import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.obligationsandsubmissions.AccountingPeriodDetails
@@ -54,7 +55,7 @@ class BTNStatusActionSpec
     with MockitoSugar
     with must.Matchers
     with UserAnswersFixture
-    with SubscriptionLocalDataFixture
+    with SubscriptionDataFixtures
     with ScalaFutures
     with TryValues
     with ScalaCheckDrivenPropertyChecks {

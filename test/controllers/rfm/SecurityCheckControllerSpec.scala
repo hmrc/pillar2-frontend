@@ -89,7 +89,7 @@ class SecurityCheckControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(GroupIds(Seq("different group Id"), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
+          .withFormUrlEncodedBody("value" -> testPillar2Id)
 
         val result = route(application, request).value
 
@@ -113,7 +113,7 @@ class SecurityCheckControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(GroupIds(Seq("groupId"), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
+          .withFormUrlEncodedBody("value" -> testPillar2Id)
 
         val result = route(application, request).value
 
@@ -135,7 +135,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any()))
-          .thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
+          .thenReturn(Future.successful(Some(GroupIds(Seq(testPillar2Id), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> testPillar2Id)
@@ -201,10 +201,10 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any()))
-          .thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
+          .thenReturn(Future.successful(Some(GroupIds(Seq(testPillar2Id), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(CheckMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
+          .withFormUrlEncodedBody("value" -> testPillar2Id)
 
         val result = route(application, request).value
 
@@ -224,10 +224,10 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(using any()))
-          .thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
+          .thenReturn(Future.successful(Some(GroupIds(Seq(testPillar2Id), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
+          .withFormUrlEncodedBody("value" -> testPillar2Id)
 
         val result = route(application, request).value
 

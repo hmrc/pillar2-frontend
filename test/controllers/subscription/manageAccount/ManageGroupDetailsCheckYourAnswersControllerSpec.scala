@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.*
 import models.*
 import models.requests.IdentifierRequest
-import models.subscription.{AccountingPeriod, AccountingPeriodV2, SubscriptionLocalData}
+import models.subscription.{AccountingPeriod, AccountingPeriodDisplay, SubscriptionLocalData}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
-  private val amendablePeriod = AccountingPeriodV2(
+  private val amendablePeriod = AccountingPeriodDisplay(
     startDate = Some(LocalDate.of(2025, 1, 1)),
     endDate = Some(LocalDate.of(2025, 12, 31)),
     dueDate = Some(LocalDate.of(2026, 3, 31)),
@@ -51,7 +51,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     canAmendEndDate = Some(true)
   )
 
-  private val microPeriod = AccountingPeriodV2(
+  private val microPeriod = AccountingPeriodDisplay(
     startDate = Some(LocalDate.of(2024, 4, 1)),
     endDate = Some(LocalDate.of(2024, 9, 30)),
     dueDate = Some(LocalDate.of(2024, 12, 31)),

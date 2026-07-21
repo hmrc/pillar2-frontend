@@ -27,7 +27,7 @@ import models.longrunningsubmissions.LongRunningSubmission
 import models.requests.IdentifierRequest
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
-import models.subscription.{AmendSubscriptionV2, NewFilingMemberDetail, SubscriptionData}
+import models.subscription.{NewFilingMemberDetails, SubscriptionDataAmend, SubscriptionDataDisplay}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{atLeastOnce, verify, when}
@@ -328,15 +328,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.successful(Done))
@@ -375,15 +376,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[AuditService].toInstance(mockAuditService)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.successful(Done))
@@ -429,15 +431,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
@@ -470,11 +473,12 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.failed(new Exception("no rfm uk based")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
@@ -509,16 +513,17 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.successful(Done))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
@@ -553,13 +558,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
@@ -594,15 +600,16 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
@@ -639,13 +646,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
@@ -714,13 +722,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
@@ -755,13 +764,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
-            any()
-          )
+          mockSubscriptionService
+            .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
+              any()
+            )
         ).thenReturn(Future.successful(amendSubscriptionDataV2))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscriptionV2])(using any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(UnprocessableEntityError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
           if setCount.incrementAndGet() == 2 then secondSetCalled.trySuccess(())
