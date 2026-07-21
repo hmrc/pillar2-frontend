@@ -16,28 +16,12 @@
 
 package models
 
-/*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import play.twirl.api.HtmlFormat
 import utils.countryOptions.CountryOptions
 
-case class NonUKAddress(
+final case class NonUKAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
@@ -53,12 +37,14 @@ case class NonUKAddress(
   val postcode:    String = if postalCode.isDefined then HtmlFormat.escape(postalCode.mkString("")).body + "<br>" else ""
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 
+  // TODO: delete - unused
   def getAddressList(countryOptions: CountryOptions)(using messages: Messages): List[String] = {
     val country = countryOptions.getCountryNameFromCode(countryCode)
     List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode.getOrElse(""), country).filter(_.nonEmpty)
   }
 
 }
+
 object NonUKAddress {
   given format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
 }
