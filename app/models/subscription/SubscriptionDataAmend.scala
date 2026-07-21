@@ -18,8 +18,6 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
 final case class SubscriptionDataAmend(
   replaceFilingMember:      Boolean,
   upeDetails:               UpeDetailsAmend,
@@ -30,24 +28,6 @@ final case class SubscriptionDataAmend(
   filingMemberDetails:      Option[FilingMemberAmendDetails]
 )
 
-final case class OriginalAccountingPeriod(
-  taxObligationStartDate: LocalDate,
-  taxObligationEndDate:   LocalDate
-)
-
-final case class NewAccountingPeriod(
-  updateObligationStartDate: LocalDate,
-  updateObligationEndDate:   LocalDate
-)
-
 object SubscriptionDataAmend {
   given format: OFormat[SubscriptionDataAmend] = Json.format[SubscriptionDataAmend]
-}
-
-object OriginalAccountingPeriod {
-  given format: OFormat[OriginalAccountingPeriod] = Json.format[OriginalAccountingPeriod]
-}
-
-object NewAccountingPeriod {
-  given format: OFormat[NewAccountingPeriod] = Json.format[NewAccountingPeriod]
 }

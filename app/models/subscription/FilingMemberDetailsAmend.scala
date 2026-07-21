@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,14 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
-final case class AccountingPeriodAmend(
-  startDate: LocalDate,
-  endDate:   LocalDate
+final case class FilingMemberDetailsAmend(
+  addNewFilingMember:      Boolean = false,
+  safeId:                  String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String
 )
 
-object AccountingPeriodAmend {
-  given format: OFormat[AccountingPeriodAmend] = Json.format[AccountingPeriodAmend]
+object FilingMemberDetailsAmend {
+  given format: OFormat[FilingMemberDetailsAmend] = Json.format[FilingMemberDetailsAmend]
 }

@@ -31,7 +31,7 @@ import views.html.rfm.RfmPrimaryContactNameView
 
 import scala.concurrent.Future
 
-class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
+class RfmNewFilingMemberDetailsControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider()
 
