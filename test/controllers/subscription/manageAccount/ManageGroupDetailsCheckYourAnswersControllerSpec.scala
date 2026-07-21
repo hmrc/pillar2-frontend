@@ -83,7 +83,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
     else
       applicationBuilder(
         subscriptionLocalData = subscriptionLocalData,
-        additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag)
+        additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag) // TODO: remove flag
       ).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -107,7 +107,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
             "metrics.enabled"                         -> "false",
             "auditing.enabled"                        -> false,
             "features.grsStubEnabled"                 -> true,
-            "features.amendMultipleAccountingPeriods" -> multiPeriodFlag
+            "features.amendMultipleAccountingPeriods" -> multiPeriodFlag // TODO: remove flag
           )
         )
       )
@@ -188,11 +188,10 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           contentAsString(result) must include("1 April 2024 to 30 September 2024")
         }
       }
-
     }
 
     "accountingPeriods not yet cached" must {
-      "call readSubscriptionV2AndSave and render multi-period view" in {
+      "call readSubscriptionAndSave and render multi-period view" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -205,7 +204,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "fall back to single-period view when V2 service fails" in {
+      "fall back to single-period view when V2 service fails" in { // TODO: remove this test
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))

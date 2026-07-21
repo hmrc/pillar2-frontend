@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures}
+import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures, UserAnswersFixtures}
 import generators.StringGenerators
 import helpers.*
 import models.UserAnswers
@@ -66,7 +66,7 @@ trait SpecBase
     with StubMessageControllerComponents
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with UserAnswersFixture
+    with UserAnswersFixtures
     with SubscriptionDataFixtures
     with ObligationsAndSubmissionsDataFixtures
     with StringGenerators {

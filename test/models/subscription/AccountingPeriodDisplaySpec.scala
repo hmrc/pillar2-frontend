@@ -21,15 +21,15 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class DisplayAccountingPeriodSpec extends SpecBase {
+class AccountingPeriodDisplaySpec extends SpecBase {
 
   private val start = LocalDate.of(2024, 1, 1)
   private val end   = LocalDate.of(2024, 12, 31)
   private val due   = LocalDate.of(2025, 3, 31)
 
-  "AccountingPeriodV2" when {
+  "AccountingPeriodDisplay" when {
 
-    "toAccountingPeriod" must {
+    "calling toAccountingPeriod()" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
         val period = AccountingPeriodDisplay(
           Some(start),

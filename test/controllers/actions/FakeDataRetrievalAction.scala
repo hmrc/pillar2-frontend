@@ -16,8 +16,7 @@
 
 package controllers.actions
 
-import fixtures.SubscriptionDataFixtures
-import helpers.UserAnswersFixture
+import fixtures.{SubscriptionDataFixtures, UserAnswersFixtures}
 import models.UserAnswers
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
@@ -94,7 +93,7 @@ class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends 
     Future.successful(SessionOptionalDataRequest(request, request.userId, dataToReturn))
 }
 
-class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixture {
+class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixtures {
   given executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 

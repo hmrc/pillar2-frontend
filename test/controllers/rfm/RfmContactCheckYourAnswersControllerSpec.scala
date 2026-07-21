@@ -334,7 +334,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
@@ -382,7 +382,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
@@ -437,7 +437,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
@@ -564,7 +564,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
@@ -606,7 +606,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionDataDisplay], any(), any())(using any()))
@@ -652,7 +652,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
@@ -728,7 +728,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>
@@ -770,7 +770,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             .createAmendObjectForReplacingFilingMember(any[SubscriptionDataDisplay], any[NewFilingMemberDetails], any[UserAnswers])(using
               any()
             )
-        ).thenReturn(Future.successful(amendSubscriptionDataV2))
+        ).thenReturn(Future.successful(subscriptionDataAmend))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[SubscriptionDataAmend])(using any()))
           .thenReturn(Future.failed(UnprocessableEntityError))
         when(mockSessionRepository.set(any())).thenAnswer { (_: InvocationOnMock) =>

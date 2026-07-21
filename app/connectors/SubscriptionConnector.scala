@@ -19,7 +19,6 @@ package connectors
 import config.FrontendAppConfig
 import models.*
 import models.subscription.*
-import models.subscription.responses.SubscriptionCreateSuccessResponse
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.*
@@ -148,9 +147,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  def save(userId: String, subscriptionLocalData: JsValue)(using
-    hc: HeaderCarrier
-  ): Future[JsValue] = {
+  def save(userId: String, subscriptionLocalData: JsValue)(using hc: HeaderCarrier): Future[JsValue] = {
     val saveSubscriptionCacheUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId"
     http
       .post(saveSubscriptionCacheUrl)
