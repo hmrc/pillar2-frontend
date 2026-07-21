@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
+// TODO: rename to AccountingPeriodCreate
 final case class AccountingPeriod(
   startDate: LocalDate,
   endDate:   LocalDate,
