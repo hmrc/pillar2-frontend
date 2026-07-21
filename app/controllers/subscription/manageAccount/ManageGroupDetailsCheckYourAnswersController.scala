@@ -88,7 +88,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
           case _ =>
             val localDataF: Future[SubscriptionLocalData] =
-              subscriptionService.readSubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+              subscriptionService.readSubscriptionAndSave(request.userId, request.subscriptionLocalData.plrReference)
             localDataF
               .map { local =>
                 given msgs: play.api.i18n.Messages = request.messages

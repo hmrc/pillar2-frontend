@@ -334,7 +334,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription(testId).futureValue
@@ -349,7 +349,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").failed.futureValue
@@ -364,7 +364,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val resultFuture = service.readSubscription("plr")
@@ -382,7 +382,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "return Some(SubscriptionDataDisplay) when the connector returns valid data" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
 
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
@@ -393,7 +393,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "return None when the connector returns no data" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.maybeReadSubscription(testPillar2Id).futureValue
@@ -403,7 +403,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "handle exceptions thrown by the connector" in
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val resultFuture = service.maybeReadSubscription(testPillar2Id)
@@ -426,7 +426,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(Some(subscriptionData)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.maybeReadSubscription(testPillar2Id).futureValue
@@ -446,8 +446,8 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any())).thenReturn(Future.successful(Some(subscriptionDataDisplay)))
-          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any())).thenReturn(Future.successful(Some(subscriptionDataDisplay)))
+          when(mockSubscriptionConnector.amendSubscription(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).futureValue
@@ -462,7 +462,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).failed.futureValue
@@ -477,7 +477,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).failed.futureValue
@@ -493,7 +493,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
           val resultFuture = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData)
@@ -521,16 +521,16 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionV2(any())(using any(), any()))
+          when(mockSubscriptionConnector.readSubscription(any())(using any(), any()))
             .thenReturn(Future.successful(Some(subscriptionData)))
-          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
+          when(mockSubscriptionConnector.amendSubscription(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
 
           val service = application.injector.instanceOf[SubscriptionService]
 
           service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).futureValue mustBe Done
 
-          verify(mockSubscriptionConnector).amendSubscriptionV2(
+          verify(mockSubscriptionConnector).amendSubscription(
             eqTo(testId),
             argThat[SubscriptionDataAmend] { subscriptionDataAmend =>
               subscriptionDataAmend.accountingPeriod.amendAccountingPeriod == false &&
@@ -545,7 +545,7 @@ class SubscriptionServiceSpec extends SpecBase {
     "amendGroupOrContactDetailsV2" must {
       "build a v2 payload with amendAccountingPeriod = false for contact-only amend" in {
         val service = app.injector.instanceOf[SubscriptionService]
-        val result  = service.amendGroupOrContactDetailsV2("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
+        val result  = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
 
         result.accountingPeriod.amendAccountingPeriod mustBe false
         result.accountingPeriod.originalAccountingPeriods mustBe None
@@ -555,13 +555,13 @@ class SubscriptionServiceSpec extends SpecBase {
       "not populate secondary contact when nominated but name and email are missing" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
         val newLocalData = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
-        val resultFuture = service.amendGroupOrContactDetailsV2("plr", subscriptionDataDisplay, newLocalData)
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, newLocalData)
         resultFuture.secondaryContactDetails mustBe None
       }
 
       "not populate secondary contact when none is nominated" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
-        val resultFuture = service.amendGroupOrContactDetailsV2("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
+        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
         resultFuture.secondaryContactDetails mustBe None
       }
     }
@@ -574,7 +574,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
-        when(mockSubscriptionConnector.amendSubscriptionV2(any(), any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionConnector.amendSubscription(any(), any())(using any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails(testId, amendSubscriptionDataV2).futureValue mustEqual Done
@@ -584,7 +584,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val application = applicationBuilder().overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
-        when(mockSubscriptionConnector.amendSubscriptionV2(any(), any())(using any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionConnector.amendSubscription(any(), any())(using any())).thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails(testId, amendSubscriptionDataV2).failed.futureValue mustEqual InternalIssueError
@@ -978,6 +978,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
+    // TODO: use fixtures - remove v2
     "readSubscriptionV2AndSave" must {
 
       val v2Period = AccountingPeriodDisplay(
@@ -1021,14 +1022,14 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "fetch SubscriptionDataDisplay data from connector, convert to SubscriptionLocalData, save and return it" in
         running(application) {
-          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscription(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo(testId), any())(using any()))
             .thenReturn(Future.successful(Json.obj()))
           when(mockSubscriptionConnector.getSubscriptionCache(eqTo(testId))(using any(), any()))
             .thenReturn(Future.successful(None))
 
-          val result = service.readSubscriptionV2AndSave(testId, testPillar2Id).futureValue
+          val result = service.readSubscriptionAndSave(testId, testPillar2Id).futureValue
           result.plrReference mustBe testPillar2Id
           result.accountingPeriods mustBe Some(Seq(v2Period))
           result.subAccountingPeriod mustBe None
@@ -1036,7 +1037,7 @@ class SubscriptionServiceSpec extends SpecBase {
           result.registrationDate mustBe Some(LocalDate.of(2024, 1, 31))
         }
 
-      "populate UPE identification and filing member fields from V2 data" in {
+      "populate UPE identification and filing member fields from valid data" in {
         val v2DataWithDetails = v2Data.copy(
           upeDetails = v2Data.upeDetails.copy(
             customerIdentification1 = Some("CRN123"),
@@ -1052,14 +1053,14 @@ class SubscriptionServiceSpec extends SpecBase {
           )
         )
         running(application) {
-          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscription(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
             .thenReturn(Future.successful(v2DataWithDetails))
           when(mockSubscriptionConnector.save(eqTo(testId), any())(using any()))
             .thenReturn(Future.successful(Json.obj()))
           when(mockSubscriptionConnector.getSubscriptionCache(eqTo(testId))(using any(), any()))
             .thenReturn(Future.successful(None))
 
-          val result = service.readSubscriptionV2AndSave(testId, testPillar2Id).futureValue
+          val result = service.readSubscriptionAndSave(testId, testPillar2Id).futureValue
           result.upeCustomerIdentification1 mustBe Some("CRN123")
           result.upeCustomerIdentification2 mustBe Some("UTR456")
           result.upeFilingMember mustBe Some(false)
@@ -1071,24 +1072,24 @@ class SubscriptionServiceSpec extends SpecBase {
 
       "propagate failure when save fails" in
         running(application) {
-          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscription(eqTo(testId), eqTo(testPillar2Id))(using any(), any()))
             .thenReturn(Future.successful(v2Data))
           when(mockSubscriptionConnector.save(eqTo(testId), any())(using any()))
             .thenReturn(Future.failed(InternalIssueError))
           when(mockSubscriptionConnector.getSubscriptionCache(eqTo(testId))(using any(), any()))
             .thenReturn(Future.successful(None))
 
-          service.readSubscriptionV2AndSave(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
+          service.readSubscriptionAndSave(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
         }
 
-      "propagate failure when readAndCacheSubscriptionV2 fails" in
+      "propagate failure when readAndCacheSubscription fails" in
         running(application) {
-          when(mockSubscriptionConnector.readAndCacheSubscriptionV2(any(), any())(using any(), any()))
+          when(mockSubscriptionConnector.readAndCacheSubscription(any(), any())(using any(), any()))
             .thenReturn(Future.failed(InternalIssueError))
           when(mockSubscriptionConnector.getSubscriptionCache(eqTo(testId))(using any(), any()))
             .thenReturn(Future.successful(None))
 
-          service.readSubscriptionV2AndSave(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
+          service.readSubscriptionAndSave(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
         }
 
     }
@@ -1115,16 +1116,16 @@ class SubscriptionServiceSpec extends SpecBase {
         .build()
       val service = application.injector.instanceOf[SubscriptionService]
 
-      "call amendSubscriptionV2 with a valid amend shape and return Done" in
+      "call amendSubscription with a valid amend shape and return Done" in
         running(application) {
-          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
+          when(mockSubscriptionConnector.amendSubscription(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
 
           service
             .amendAccountingPeriods(testId, plrRef, emptySubscriptionLocalData, Seq(affectedPeriod), newPeriod)
             .futureValue mustBe Done
 
-          verify(mockSubscriptionConnector).amendSubscriptionV2(
+          verify(mockSubscriptionConnector).amendSubscription(
             eqTo(testId),
             argThat[SubscriptionDataAmend] { subscriptionDataAmend =>
               subscriptionDataAmend.accountingPeriod.amendAccountingPeriod &&
@@ -1134,9 +1135,9 @@ class SubscriptionServiceSpec extends SpecBase {
           )(using any[HeaderCarrier])
         }
 
-      "propagate failure when amendSubscriptionV2 fails" in
+      "propagate failure when amendSubscription fails" in
         running(application) {
-          when(mockSubscriptionConnector.amendSubscriptionV2(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
+          when(mockSubscriptionConnector.amendSubscription(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
             .thenReturn(Future.failed(UnexpectedResponse))
 
           service

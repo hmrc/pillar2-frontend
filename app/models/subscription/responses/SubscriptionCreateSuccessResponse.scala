@@ -18,10 +18,10 @@ package models.subscription.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SuccessResponse(
-  success: SubscriptionResponse
+final case class SubscriptionCreateSuccessResponse(
+  success: SubscriptionCreateResponse
 )
 
-object SuccessResponse {
-  given format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
+object SubscriptionCreateSuccessResponse {
+  given format: OFormat[SubscriptionCreateSuccessResponse] = Json.format[SubscriptionCreateSuccessResponse]
 }
