@@ -53,15 +53,16 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
   val transactionHistoryResponse: TransactionHistory =
     TransactionHistory(
-      PlrReference,
+      testPillar2Id,
       List(
         Transaction(LocalDate.of(2024, 12, 1), "Payment", 100.0, 0.00),
         Transaction(LocalDate.of(2025, 1, 31), "Repayment", 0.0, 100.0)
       )
     )
+
   val transactionHistoryResponsePagination: TransactionHistory =
     TransactionHistory(
-      PlrReference,
+      testPillar2Id,
       List(
         Transaction(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
         Transaction(LocalDate.now.plusDays(2), "Payment", 100.0, 0.00),
@@ -162,7 +163,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(sampleAccountActivityResponse))
 
@@ -199,7 +200,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(decimalAmountsAccountActivityResponse))
 
@@ -226,7 +227,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(paginationAccountActivityResponse))
 
@@ -262,7 +263,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
           .thenReturn(Future.successful(accountActivityResponse))
         val result = route(application, request).value
@@ -289,7 +290,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
           .thenReturn(Future.failed(NoResultFound))
         val result = route(application, request).value
@@ -339,7 +340,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
           .thenReturn(Future.successful(debitOnlyAccountActivityResponse))
 
@@ -366,7 +367,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
         val result = route(application, request).value
@@ -391,7 +392,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.failed(new Exception("")))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
 
         val result = route(application, request).value
 

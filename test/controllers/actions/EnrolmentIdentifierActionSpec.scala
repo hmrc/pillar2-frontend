@@ -68,7 +68,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       val userAnswer = emptyUserAnswers
-        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+        .setOrException(AgentClientPillar2ReferencePage, testPillar2Id)
 
       "has correct credentials" must {
         "return the credentials we require" in {
@@ -406,7 +406,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "has no pillar2 enrolment, has plrReference in session " must {
         "return the credentials we require" in {
           val userAnswer = emptyUserAnswers
-            .setOrException(PlrReferencePage, PlrReference)
+            .setOrException(PlrReferencePage, testPillar2Id)
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
             .thenReturn(
               Future.successful(

@@ -20,7 +20,7 @@ import base.SpecBase
 import models.NonUKAddress
 import models.grs.GrsRegistrationData
 import models.rfm.CorporatePosition
-import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
+import models.subscription.{ContactDetailsType, NewFilingMemberDetails}
 import pages.*
 import utils.RowStatus
 
@@ -204,7 +204,7 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
     }
 
     "return ContactDetail with primary phone detail if provided" in {
-      val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
+      val expectedAnswer: NewFilingMemberDetails = NewFilingMemberDetails(
         securityAnswerUserReference = "plrReference",
         securityAnswerRegistrationDate = date,
         plrReference = "plrReference",
@@ -234,8 +234,9 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
 
       ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
     }
+
     "return ContactDetail with no primary phone detail if they have answered no to phone preference page" in {
-      val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
+      val expectedAnswer: NewFilingMemberDetails = NewFilingMemberDetails(
         securityAnswerUserReference = "plrReference",
         securityAnswerRegistrationDate = date,
         plrReference = "plrReference",

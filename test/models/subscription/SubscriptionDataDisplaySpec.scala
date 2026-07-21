@@ -25,7 +25,7 @@ class SubscriptionDataDisplaySpec extends SpecBase {
 
   private val v2Json = Json.parse("""
     {
-      "formBundleNumber": "119000004323",
+      "formBundleNumber": "123456789012",
       "upeDetails": {
         "safeId": null,
         "customerIdentification1": "12345678",
@@ -66,7 +66,7 @@ class SubscriptionDataDisplaySpec extends SpecBase {
   "SubscriptionDataV2" must {
     "deserialise from a valid V2 JSON payload" in {
       val result = v2Json.as[SubscriptionDataDisplay]
-      result.formBundleNumber mustBe "119000004323"
+      result.formBundleNumber mustBe "123456789012"
       result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
       result.upeDetails.domesticOnly mustBe true
       result.accountingPeriod mustBe defined
@@ -90,13 +90,13 @@ class SubscriptionDataDisplaySpec extends SpecBase {
       val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
       val result        = noPeriodsJson.as[SubscriptionDataDisplay]
       result.accountingPeriod mustBe None
-      result.formBundleNumber mustBe "119000004323"
+      result.formBundleNumber mustBe "123456789012"
     }
 
     "SubscriptionSuccessV2 wraps SubscriptionDataV2" in {
       val wrapped = Json.obj("success" -> v2Json)
-      val result  = wrapped.as[SubscriptionSuccessV2]
-      result.success.formBundleNumber mustBe "119000004323"
+      val result  = wrapped.as[SubscriptionSuccess]
+      result.success.formBundleNumber mustBe "123456789012"
     }
   }
 }

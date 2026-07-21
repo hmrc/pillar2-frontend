@@ -64,7 +64,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[BTNEntitiesInsideOutsideUKView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, PlrReference, isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(form, testPillar2Id, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -85,7 +85,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), PlrReference, isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(true), testPillar2Id, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -144,7 +144,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, PlrReference, isAgent = false, Some("orgName"), NormalMode)(
+        contentAsString(result) mustEqual view(boundForm, testPillar2Id, isAgent = false, Some("orgName"), NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -180,7 +180,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val view = application.injector.instanceOf[BTNAmendDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(MneOrDomestic.Uk, PlrReference, isAgent = false, Some("orgName"))(
+        contentAsString(result) mustEqual view(MneOrDomestic.Uk, testPillar2Id, isAgent = false, Some("orgName"))(
           request,
           applicationConfig,
           messages(application)
