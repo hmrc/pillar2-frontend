@@ -135,7 +135,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .get(readSubscriptionCacheUrl)
       .execute[HttpResponse]
       .map {
-        case response if response.status == 200 =>
+        case response if response.status == OK =>
           Json.parse(response.body).validate[SubscriptionLocalData] match {
             case JsSuccess(data, _) => Some(data)
             case JsError(errors)    =>

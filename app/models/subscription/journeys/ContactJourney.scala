@@ -21,7 +21,6 @@ import cats.implicits.*
 import models.*
 import pages.*
 import queries.Query
-import utils.DateTimeUtils.*
 
 final case class ContactJourney(
   primaryContactName:      String,
