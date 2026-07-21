@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OFormat}
 final case class SubscriptionDataAmend(
   replaceFilingMember:      Boolean,
   upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriodAmendV2,
+  accountingPeriod:         AccountingPeriodAmend,
   upeCorrespAddressDetails: UpeCorrespAddressDetails,
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],

@@ -25,7 +25,7 @@ final case class SubscriptionDataDisplay(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         Option[Seq[AccountingPeriodV2]] = None,
+  accountingPeriod:         Option[Seq[AccountingPeriodDisplay]] = None,
   accountStatus:            Option[AccountStatus]
 )
 

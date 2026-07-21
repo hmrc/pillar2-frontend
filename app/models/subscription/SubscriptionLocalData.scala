@@ -40,7 +40,7 @@ final case class SubscriptionLocalData(
   subRegisteredAddress:        NonUKAddress,
   accountStatus:               Option[AccountStatus],
   organisationName:            Option[String],
-  accountingPeriods:           Option[Seq[AccountingPeriodV2]] = None,
+  accountingPeriods:           Option[Seq[AccountingPeriodDisplay]] = None,
   registrationDate:            Option[LocalDate] = None,
   upeCustomerIdentification1:  Option[String] = None,
   upeCustomerIdentification2:  Option[String] = None,
