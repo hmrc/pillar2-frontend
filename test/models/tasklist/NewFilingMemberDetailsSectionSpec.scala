@@ -24,7 +24,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class NewFilingMemberDetailSectionSpec extends NewFilingMemberDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class NewFilingMemberDetailsSectionSpec extends NewFilingMemberDetailsSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "toRequiredSection" should {
     "call the correct url" in {
@@ -66,7 +66,7 @@ class NewFilingMemberDetailSectionSpec extends NewFilingMemberDetailSectionFixtu
   }
 }
 
-protected trait NewFilingMemberDetailSectionFixture extends SpecBase {
+protected trait NewFilingMemberDetailsSectionFixture extends SpecBase {
 
   val progressScenarios: TableFor3[String, UserAnswers, SectionStatus] = Table(
     ("assertion", "input", "result"),
