@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package models.subscription.responses
+package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionCreateSuccessResponse(
-  success: SubscriptionCreateResponse
+import java.time.LocalDateTime
+
+final case class SubscriptionCreateResponse(
+  plrReference:     String,
+  formBundleNumber: String,
+  processingDate:   LocalDateTime
 )
 
-object SubscriptionCreateSuccessResponse {
-  given format: OFormat[SubscriptionCreateSuccessResponse] = Json.format[SubscriptionCreateSuccessResponse]
+object SubscriptionCreateResponse {
+  given format: OFormat[SubscriptionCreateResponse] = Json.format[SubscriptionCreateResponse]
 }

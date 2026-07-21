@@ -26,7 +26,7 @@ class AccountingPeriodAmendSpec extends SpecBase {
   private val originalPeriod = OriginalAccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31))
   private val newPeriod      = NewAccountingPeriod(LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31))
 
-  val testAccountingPeriodAmendV2Json: JsValue = Json.parse("""
+  val testAccountingPeriodAmendJson: JsValue = Json.parse("""
       |{
       |  "amendAccountingPeriod": true,
       |  "originalAccountingPeriods": [
@@ -56,16 +56,16 @@ class AccountingPeriodAmendSpec extends SpecBase {
       newAccountingPeriod = None
     )
 
-  "AccountingPeriodAmendV2" when {
+  "AccountingPeriodAmend" when {
 
     "all fields are present" must {
 
       "serialise to JSON correctly" in {
-        Json.toJson(accountingPeriodAmendModel) mustBe testAccountingPeriodAmendV2Json
+        Json.toJson(accountingPeriodAmendModel) mustBe testAccountingPeriodAmendJson
       }
 
       "deserialise from JSON correctly" in {
-        testAccountingPeriodAmendV2Json.as[AccountingPeriodAmend] mustBe accountingPeriodAmendModel
+        testAccountingPeriodAmendJson.as[AccountingPeriodAmend] mustBe accountingPeriodAmendModel
       }
     }
 

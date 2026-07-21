@@ -177,7 +177,7 @@ class AmendAccountingPeriodCYAController @Inject() (
       .recoverWith {
         case UnprocessableEntityError | RetryableGatewayError if attempt < appConfig.amendAPReadRetryMaxAttempts =>
           logger.warn(
-            s"[AmendAccountingPeriodCYA] readSubscriptionV2 retry ${attempt + 1}/${appConfig.amendAPReadRetryMaxAttempts} for $userId"
+            s"[AmendAccountingPeriodCYA] readSubscription retry ${attempt + 1}/${appConfig.amendAPReadRetryMaxAttempts} for $userId"
           )
           Future(blocking(Thread.sleep(appConfig.amendAPReadRetryDelaySeconds * 1000L)))
             .flatMap(_ => readSubscriptionWithRetry(userId, plrReference, attempt + 1))
