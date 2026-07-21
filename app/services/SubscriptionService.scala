@@ -76,7 +76,7 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  /** Call Read Subscription V2, convert to SubscriptionLocalData, and save to user-cache, also does not overwrite phone related fields on flag
+  /** Call Read Subscription, convert to SubscriptionLocalData, and save to user-cache, also does not overwrite phone related fields on flag
     * alternation.
     */
   def readSubscriptionAndSave(

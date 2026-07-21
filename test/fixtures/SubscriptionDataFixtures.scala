@@ -21,7 +21,6 @@ import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
 import models.subscription.*
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription.responses.SubscriptionCreateResponse
 import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -37,11 +36,8 @@ trait SubscriptionDataFixtures {
 
   val readCachedSubscriptionPath: String = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
 
-  val readSubscriptionPath:   String = "/report-pillar2-top-up-taxes/subscription/read-subscription"
-  val readSubscriptionV2Path: String = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
-
-  val amendSubscriptionPath:   String = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
-  val amendSubscriptionV2Path: String = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
+  val readSubscriptionPath:  String = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+  val amendSubscriptionPath: String = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
 
   val testFormBundleNumber: String = "123456789012"
 
@@ -196,7 +192,7 @@ trait SubscriptionDataFixtures {
       emailAddress = "john.doe@example.com"
     )
 
-  val amendSubscriptionDataV2: SubscriptionDataAmend =
+  val subscriptionDataAmend: SubscriptionDataAmend =
     SubscriptionDataAmend(
       replaceFilingMember = true,
       upeDetails = upeDetailsAmend,
