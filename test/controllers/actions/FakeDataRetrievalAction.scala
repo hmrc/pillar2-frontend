@@ -16,7 +16,8 @@
 
 package controllers.actions
 
-import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
+import fixtures.SubscriptionDataFixtures
+import helpers.UserAnswersFixture
 import models.UserAnswers
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
@@ -67,7 +68,7 @@ class FakeSubscriptionDataRetrievalAction(
   given ExecutionContext = executionContext
 }
 
-class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionLocalDataFixture {
+class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionDataFixtures {
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
     Future.successful(
       Right[Result, SubscriptionDataRequest[A]](

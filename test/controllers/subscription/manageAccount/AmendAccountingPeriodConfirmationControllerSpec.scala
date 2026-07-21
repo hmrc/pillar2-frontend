@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{AmendAPConfirmationTimestampPage, OriginalAccountingPeriodsPage, UpdatedAccountingPeriodsPage}
@@ -32,8 +32,8 @@ import scala.concurrent.Future
 
 class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
 
-  private val originalPeriods: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(
+  private val originalPeriods: Seq[AccountingPeriodDisplay] = Seq(
+    AccountingPeriodDisplay(
       Some(LocalDate.of(2025, 1, 1)),
       Some(LocalDate.of(2025, 12, 31)),
       Some(LocalDate.of(2026, 3, 31)),
@@ -42,22 +42,22 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
     )
   )
 
-  private val updatedPeriods: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(
+  private val updatedPeriods: Seq[AccountingPeriodDisplay] = Seq(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2025, 1, 1)),
       endDate = Some(LocalDate.of(2025, 12, 31)),
       dueDate = Some(LocalDate.of(2026, 3, 31)),
       canAmendStartDate = Some(true),
       canAmendEndDate = Some(true)
     ),
-    AccountingPeriodV2(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2026, 1, 2)),
       endDate = Some(LocalDate.of(2026, 12, 31)),
       dueDate = Some(LocalDate.of(2027, 3, 31)),
       canAmendStartDate = Some(true),
       canAmendEndDate = Some(true)
     ),
-    AccountingPeriodV2(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2026, 1, 1)),
       endDate = Some(LocalDate.of(2026, 1, 1)),
       dueDate = Some(LocalDate.of(2026, 3, 31)),
@@ -123,7 +123,7 @@ class AmendAccountingPeriodConfirmationControllerSpec extends SpecBase {
 
     "does not show gap period message when only one new period exists" in {
       val singleNewUpdated = originalPeriods ++ Seq(
-        AccountingPeriodV2(
+        AccountingPeriodDisplay(
           startDate = Some(LocalDate.of(2026, 1, 1)),
           endDate = Some(LocalDate.of(2026, 12, 31)),
           dueDate = Some(LocalDate.of(2027, 3, 31)),

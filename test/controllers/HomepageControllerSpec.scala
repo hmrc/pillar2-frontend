@@ -67,7 +67,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     Enrolment(
       key = "HMRC-PILLAR2-ORG",
       identifiers = Seq(
-        EnrolmentIdentifier("PLRID", "XMPLR0123456789")
+        EnrolmentIdentifier("PLRID", testPillar2Id)
       ),
       state = "Activated",
       delegatedAuthRule = Some("pillar2-auth")
@@ -296,7 +296,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("XMPLR0123456789").url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad(testPillar2Id).url
       }
     }
 

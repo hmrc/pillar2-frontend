@@ -111,7 +111,7 @@ class IndexControllerSpec extends SpecBase {
 
   "redirect Agent to Dashboard if AS enrolment and pillar2 client id is confirmed" in {
     val userAnswer = emptyUserAnswers
-      .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+      .setOrException(AgentClientPillar2ReferencePage, testPillar2Id)
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()

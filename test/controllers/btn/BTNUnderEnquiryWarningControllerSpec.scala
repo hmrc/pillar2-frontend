@@ -37,7 +37,7 @@ class BTNUnderEnquiryWarningControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[BTNUnderEnquiryWarningView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(PlrReference, isAgent = false, Some("orgName"))(
+        contentAsString(result) mustEqual view(testPillar2Id, isAgent = false, Some("orgName"))(
           request,
           applicationConfig,
           messages(application)

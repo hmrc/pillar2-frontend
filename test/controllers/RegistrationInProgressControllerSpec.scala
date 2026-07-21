@@ -37,8 +37,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
-          .thenReturn(Future.successful(None))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(None))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
 
@@ -61,7 +60,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
-          .thenReturn(Future.successful(Some(subscriptionData)))
+          .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
 

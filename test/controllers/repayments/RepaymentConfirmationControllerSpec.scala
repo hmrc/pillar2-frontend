@@ -19,7 +19,7 @@ package controllers.repayments
 import base.SpecBase
 import connectors.SubscriptionConnector
 import models.UserAnswers
-import models.subscription.{AccountingPeriodV2, SubscriptionDataDisplay}
+import models.subscription.{AccountingPeriodDisplay, SubscriptionDataDisplay}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, RepaymentCompletionStatus, RepaymentConfirmationPage}
@@ -45,7 +45,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         .setOrException(PlrReferencePage, testPillar2Id)
 
       val subscriptionData = SubscriptionDataDisplay(
-        formBundleNumber = "form bundle",
+        formBundleNumber = "123456789012",
         upeDetails = subscriptionDataDisplay.upeDetails,
         upeCorrespAddressDetails = subscriptionDataDisplay.upeCorrespAddressDetails,
         primaryContactDetails = subscriptionDataDisplay.primaryContactDetails,
@@ -53,7 +53,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         filingMemberDetails = subscriptionDataDisplay.filingMemberDetails,
         accountingPeriod = Some(
           Seq(
-            AccountingPeriodV2(
+            AccountingPeriodDisplay(
               startDate = Some(LocalDate.of(2024, 1, 6)),
               endDate = Some(LocalDate.of(2025, 4, 6)),
               dueDate = Some(LocalDate.of(2024, 4, 6)),

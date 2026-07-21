@@ -18,7 +18,7 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import controllers.routes
-import helpers.SubscriptionLocalDataFixture
+import fixtures.SubscriptionDataFixtures
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -28,7 +28,7 @@ import views.html.subscriptionview.manageAccount.AmendAccountingPeriodCYAView
 
 import java.time.LocalDate
 
-class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+class AmendAccountingPeriodCYAViewSpec extends ViewSpecBase with SubscriptionDataFixtures {
 
   lazy val page:             AmendAccountingPeriodCYAView = inject[AmendAccountingPeriodCYAView]
   lazy val pageTitle:        String                       = "Confirm new accounting period"

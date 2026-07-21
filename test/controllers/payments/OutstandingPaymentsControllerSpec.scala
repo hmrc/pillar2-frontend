@@ -22,7 +22,6 @@ import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
 import models.accountactivity.{AccountActivityResponse, AccountActivityTransaction, TransactionType}
-import models.subscription.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind

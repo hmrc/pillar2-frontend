@@ -95,17 +95,17 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
   ".retrieveAccountActivity" should {
     "return account activity response" in {
-      stubGet(accountActivityUrl, expectedStatus = 200, Json.toJson(accountActivityResponse).toString(), Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 200, Json.toJson(accountActivityResponse).toString(), Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.futureValue mustBe accountActivityResponse
     }
 
     "return NoResultFound when there is no results found for plr reference" in {
-      stubGet(accountActivityUrl, expectedStatus = 404, "", Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 404, "", Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.failed.futureValue mustBe NoResultFound
     }
@@ -113,9 +113,9 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     "return empty AccountActivityResponse when ETMP returns 422 no data found (code 014)" in {
       val errorJson =
         """{"errors":{"processingDate":"2025-01-06T10:30:00Z","code":"014","text":"No data found"}}"""
-      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.futureValue.transactionDetails mustBe None
     }
@@ -131,9 +131,9 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
           |  }
           |}
           |""".stripMargin
-      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.futureValue.transactionDetails mustBe None
     }
@@ -141,17 +141,17 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
     "return UnexpectedResponse when ETMP returns 422 for a non-014 code" in {
       val errorJson =
         """{"errors":{"processingDate":"2025-01-06T10:30:00Z","code":"003","text":"Request could not be processed"}}"""
-      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 422, errorJson, Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.failed.futureValue mustBe UnexpectedResponse
     }
 
     "return UnexpectedResponse when an error is returned" in {
-      stubGet(accountActivityUrl, expectedStatus = 500, "", Map("X-Pillar2-Id" -> PlrReference))
+      stubGet(accountActivityUrl, expectedStatus = 500, "", Map("X-Pillar2-Id" -> testPillar2Id))
 
-      val value = connector.retrieveAccountActivity(PlrReference, fromDate, toDate)
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 
       value.failed.futureValue mustBe UnexpectedResponse
     }

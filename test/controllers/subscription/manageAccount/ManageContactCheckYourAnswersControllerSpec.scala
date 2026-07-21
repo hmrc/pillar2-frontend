@@ -663,6 +663,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val partialData = emptySubscriptionLocalData
           .setOrException(SubPrimaryContactNamePage, "name")
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
+        // FIXME: -->
         // Missing phone preference and phone number
 
         val application = applicationBuilder(

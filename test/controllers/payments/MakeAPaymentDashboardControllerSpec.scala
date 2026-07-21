@@ -200,7 +200,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(PlrReference)(
+        contentAsString(result) mustEqual view(testPillar2Id)(
           request,
           applicationConfig,
           messages(application)

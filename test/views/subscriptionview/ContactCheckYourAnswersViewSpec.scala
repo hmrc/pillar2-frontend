@@ -17,7 +17,7 @@
 package views.subscriptionview
 
 import base.ViewSpecBase
-import helpers.SubscriptionLocalDataFixture
+import fixtures.SubscriptionDataFixtures
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,7 +27,7 @@ import utils.countryOptions.CountryOptions
 import views.behaviours.ViewScenario
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
-class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionDataFixtures {
 
   lazy val page: ContactCheckYourAnswersView = inject[ContactCheckYourAnswersView]
 
@@ -47,25 +47,25 @@ class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLoca
   )
 
   lazy val contactNameLabel:          String = "Contact name"
-  lazy val contactNameValue:          String = "John"
+  lazy val contactNameValue:          String = "John Doe"
   lazy val emailAddressLabel:         String = "Email address"
-  lazy val emailAddressValue:         String = "john@email.com"
+  lazy val emailAddressValue:         String = "john.doe@example.com"
   lazy val contactByPhoneLabel:       String = "Can we contact the primary contact by phone?"
   lazy val contactByPhoneValue:       String = "Yes"
   lazy val contactPhoneLabel:         String = "Primary phone number"
-  lazy val contactPhoneValue:         String = "123"
+  lazy val contactPhoneValue:         String = "07700987654"
   lazy val secondContactLabel:        String = "Do you have a second contact?"
   lazy val secondContactValue:        String = "Yes"
   lazy val secondContactNameLabel:    String = "Second contact name"
-  lazy val secondContactNameValue:    String = "Doe"
+  lazy val secondContactNameValue:    String = "Jane Smith"
   lazy val secondEmailAddressLabel:   String = "Second contact email address"
-  lazy val secondEmailAddressValue:   String = "doe@email.com"
+  lazy val secondEmailAddressValue:   String = "jane.smith@example.com"
   lazy val secondContactByPhoneLabel: String = "Can we contact the secondary contact by phone?"
   lazy val secondContactByPhoneValue: String = "Yes"
   lazy val secondContactPhoneLabel:   String = "Second contact phone number"
-  lazy val secondContactPhoneValue:   String = "123"
+  lazy val secondContactPhoneValue:   String = "07700912345"
   lazy val addressLabel:              String = "Address"
-  lazy val addressValue:              String = "line1 line United Kingdom"
+  lazy val addressValue:              String = "1 High Street Testville United Kingdom"
 
   lazy val pageTitle: String = "Check your answers for contact details"
 

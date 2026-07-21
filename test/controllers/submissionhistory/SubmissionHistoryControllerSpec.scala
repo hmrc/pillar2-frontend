@@ -17,7 +17,7 @@
 package controllers.submissionhistory
 
 import base.SpecBase
-import helpers.ObligationsAndSubmissionsDataFixture
+import fixtures.ObligationsAndSubmissionsDataFixtures
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -31,12 +31,12 @@ import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, Submiss
 
 import scala.concurrent.Future
 
-class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixture {
+class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixtures {
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment(
       key = "HMRC-PILLAR2-ORG",
-      identifiers = Seq(EnrolmentIdentifier("PLRID", "XMPLR0123456789")),
+      identifiers = Seq(EnrolmentIdentifier("PLRID", testPillar2Id)),
       state = "Activated",
       delegatedAuthRule = Some("pillar2-auth")
     )
@@ -63,7 +63,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual viewNoSubmissions(subscriptionDataDisplay.upeDetails.organisationName, PlrReference, false)(
+        contentAsString(result) mustEqual viewNoSubmissions(subscriptionDataDisplay.upeDetails.organisationName, testPillar2Id, false)(
           request,
           applicationConfig,
           messages(application)
@@ -93,7 +93,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           subscriptionDataDisplay.upeDetails.organisationName,
-          PlrReference,
+          testPillar2Id,
           allFulfilledResponse.accountingPeriodDetails,
           false
         )(
