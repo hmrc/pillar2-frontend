@@ -70,7 +70,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
 
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)

@@ -17,7 +17,7 @@
 package helpers
 
 import models.rfm.CorporatePosition
-import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
+import models.subscription.{ContactDetailsType, NewFilingMemberDetails}
 import models.{GovUKMarginBottom9, NonUKAddress, UserAnswers}
 import pages.*
 import play.api.i18n.Messages
@@ -102,7 +102,7 @@ trait ReplaceFilingMemberHelpers {
       if nominated then get(RfmSecondaryCapturePhonePage) else None
     }
 
-  def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
+  def getNewFilingMemberDetail: Option[NewFilingMemberDetails] =
     for {
       securityAnswerUserReference    <- get(RfmPillar2ReferencePage)
       securityAnswerRegistrationDate <- get(RfmRegistrationDatePage)
@@ -113,7 +113,7 @@ trait ReplaceFilingMemberHelpers {
       primaryContactEmail            <- get(RfmPrimaryContactEmailPage)
       contactAddress                 <- get(RfmContactAddressPage)
       addSecondaryContact            <- get(RfmAddSecondaryContactPage)
-    } yield NewFilingMemberDetail(
+    } yield NewFilingMemberDetails(
       securityAnswerUserReference = securityAnswerUserReference,
       securityAnswerRegistrationDate = securityAnswerRegistrationDate,
       plrReference = plrReference,

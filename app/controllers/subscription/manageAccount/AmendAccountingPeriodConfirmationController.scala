@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import pages.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -71,9 +71,9 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     }
 
   private def computeNewPeriods(
-    original: Seq[AccountingPeriodV2],
-    updated:  Seq[AccountingPeriodV2]
-  ): Seq[AccountingPeriodV2] = {
+    original: Seq[AccountingPeriodDisplay],
+    updated:  Seq[AccountingPeriodDisplay]
+  ): Seq[AccountingPeriodDisplay] = {
     val originalSet = original.map(p => (p.startDate, p.endDate)).toSet
     updated
       .filterNot(p => originalSet.contains((p.startDate, p.endDate)))

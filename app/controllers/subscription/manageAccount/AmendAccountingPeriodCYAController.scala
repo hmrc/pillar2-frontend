@@ -126,7 +126,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     userId:           String,
     subscriptionData: SubscriptionLocalData,
     enrolments:       Set[Enrolment],
-    allPeriods:       Seq[AccountingPeriodV2],
+    allPeriods:       Seq[AccountingPeriodDisplay],
     newPeriod:        AccountingPeriod
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val affected = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
@@ -170,9 +170,9 @@ class AmendAccountingPeriodCYAController @Inject() (
     userId:       String,
     plrReference: String,
     attempt:      Int = 0
-  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodV2]] =
+  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodDisplay]] =
     subscriptionService
-      .readSubscriptionV2AndSave(userId, plrReference)
+      .readSubscriptionAndSave(userId, plrReference)
       .map(_.accountingPeriods.getOrElse(Seq.empty))
       .recoverWith {
         case UnprocessableEntityError | RetryableGatewayError if attempt < appConfig.amendAPReadRetryMaxAttempts =>
@@ -195,14 +195,14 @@ class AmendAccountingPeriodCYAController @Inject() (
   private[manageAccount] def findAffectedPeriods(
     newStart:   LocalDate,
     newEnd:     LocalDate,
-    allPeriods: Seq[AccountingPeriodV2]
-  ): Seq[AccountingPeriodV2] =
+    allPeriods: Seq[AccountingPeriodDisplay]
+  ): Seq[AccountingPeriodDisplay] =
     allPeriods.filter(p => !p.startDate.getOrElse(LocalDate.now).isAfter(newEnd) && !p.endDate.getOrElse(LocalDate.now).isBefore(newStart))
 
   private def predictMicroPeriods(
     newPeriod:  AccountingPeriod,
-    affected:   Seq[AccountingPeriodV2],
-    allPeriods: Seq[AccountingPeriodV2]
+    affected:   Seq[AccountingPeriodDisplay],
+    allPeriods: Seq[AccountingPeriodDisplay]
   ): Seq[AccountingPeriod] =
     if affected.isEmpty then Seq.empty
     else {

@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.*
 import models.subscription.*
-import models.subscription.responses.SuccessResponse
+import models.subscription.responses.SubscriptionCreateSuccessResponse
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.*
@@ -47,7 +47,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .flatMap {
         case response if is2xx(response.status) =>
           logger.info(s"Subscription request is successful with status ${response.status} ")
-          response.json.as[SuccessResponse].success.plrReference.toFuture
+          response.json.as[SubscriptionCreateSuccessResponse].success.plrReference.toFuture
         case conflictResponse if conflictResponse.status.equals(CONFLICT) =>
           Future.failed(DuplicateSubmissionError)
         case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) =>
@@ -62,8 +62,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  // TODO: remove the v2 part of the path
-  def amendSubscriptionV2(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] = {
+  def amendSubscription(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] = {
     val amendSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/amend-subscription/$userId"
     http
       .put(amendSubscriptionUrl)
@@ -84,7 +83,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  def readSubscriptionV2(
+  def readSubscription(
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataDisplay]] = {
     val readSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
@@ -93,7 +92,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccessV2].success))
+          Future.successful(Some(Json.parse(response.body).as[SubscriptionDisplaySuccessResponse].success))
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == NOT_FOUND =>
@@ -105,7 +104,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
   }
 
-  def readAndCacheSubscriptionV2(
+  def readAndCacheSubscription(
     userId:       String,
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataDisplay] = {
@@ -116,7 +115,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionDataDisplay])
+          Future.successful(Json.parse(response.body).as[SubscriptionDataDisplay]) // FIXME: should this be SubscriptionDisplaySuccessResponse?
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == NOT_FOUND =>

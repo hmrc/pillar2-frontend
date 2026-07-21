@@ -68,24 +68,24 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       "return Done when the backend has returned 200 OK" in {
         stubResponseForPutRequest(s"$amendSubscriptionV2Path/$testId", OK, Some(subscriptionDataAmendJson))
-        connector.amendSubscriptionV2(testId, amendV2Data).futureValue mustBe Done
+        connector.amendSubscription(testId, amendV2Data).futureValue mustBe Done
       }
 
       "fail with UnprocessableEntityError when the backend has returned a 422 status" in {
         stubResponseForPutRequest(s"$amendSubscriptionV2Path/$testId", UNPROCESSABLE_ENTITY, None)
-        connector.amendSubscriptionV2(testId, amendV2Data).failed.futureValue mustEqual UnprocessableEntityError
+        connector.amendSubscription(testId, amendV2Data).failed.futureValue mustEqual UnprocessableEntityError
       }
 
       "fail with UnexpectedResponse when the backend has returned a non-success and no 422 status code" in {
         stubResponseForPutRequest(s"$amendSubscriptionV2Path/$testId", errorCodes.sample.value, None)
-        connector.amendSubscriptionV2(testId, amendV2Data).failed.futureValue mustEqual UnexpectedResponse
+        connector.amendSubscription(testId, amendV2Data).failed.futureValue mustEqual UnexpectedResponse
       }
     }
 
     "calling readSubscriptionV2" must {
       "return Some(SubscriptionDataDisplay) when backend returns 200 OK" in {
         stubGet(s"$readSubscriptionV2Path/$testPillar2Id", OK, subscriptionDataDisplayWrappedJson)
-        val result = connector.readSubscriptionV2(testPillar2Id).futureValue
+        val result = connector.readSubscription(testPillar2Id).futureValue
         result mustBe defined
         result.get.formBundleNumber mustBe testFormBundleNumber
         result.get.accountingPeriod mustBe defined
@@ -95,29 +95,29 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       "return None when backend returns 404" in {
         stubGet(s"$readSubscriptionV2Path/$testPillar2Id", NOT_FOUND, unsuccessfulNotFoundJson)
-        connector.readSubscriptionV2(testPillar2Id).futureValue mustBe None
+        connector.readSubscription(testPillar2Id).futureValue mustBe None
       }
 
       "fail with UnprocessableEntityError when backend returns 422" in {
         stubGet(s"$readSubscriptionV2Path/$testPillar2Id", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        connector.readSubscriptionV2(testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
       }
 
       "fail with RetryableGatewayError when backend returns 500" in {
         stubGet(s"$readSubscriptionV2Path/$testPillar2Id", INTERNAL_SERVER_ERROR, "")
-        connector.readSubscriptionV2(testPillar2Id).failed.futureValue mustBe RetryableGatewayError
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with InternalIssueError when backend returns 503" in {
         stubGet(s"$readSubscriptionV2Path/$testPillar2Id", SERVICE_UNAVAILABLE, "")
-        connector.readSubscriptionV2(testPillar2Id).failed.futureValue mustBe InternalIssueError
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe InternalIssueError
       }
     }
 
     "calling readAndCacheSubscriptionV2" must {
       "return SubscriptionDataDisplay when backend returns 200 OK" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", OK, subscriptionDataDisplayJson)
-        val result = connector.readAndCacheSubscriptionV2(testId, testPillar2Id).futureValue
+        val result = connector.readAndCacheSubscription(testId, testPillar2Id).futureValue
         result.formBundleNumber mustBe testFormBundleNumber
         result.accountingPeriod mustBe defined
         result.accountingPeriod.value must have size 1
@@ -126,27 +126,27 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       "fail with NoResultFound when backend returns 404" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", NOT_FOUND, unsuccessfulNotFoundJson)
-        connector.readAndCacheSubscriptionV2(testId, testPillar2Id).failed.futureValue mustBe models.NoResultFound
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe models.NoResultFound
       }
 
       "fail with UnprocessableEntityError when backend returns 422" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        connector.readAndCacheSubscriptionV2(testId, testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
       }
 
       "fail with RetryableGatewayError when backend returns 500" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", INTERNAL_SERVER_ERROR, "")
-        connector.readAndCacheSubscriptionV2(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with RetryableGatewayError when backend returns 502" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", BAD_GATEWAY, "")
-        connector.readAndCacheSubscriptionV2(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with InternalIssueError when backend returns 503" in {
         stubGet(s"$readSubscriptionV2Path/$testId/$testPillar2Id", SERVICE_UNAVAILABLE, "")
-        connector.readAndCacheSubscriptionV2(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
       }
     }
 

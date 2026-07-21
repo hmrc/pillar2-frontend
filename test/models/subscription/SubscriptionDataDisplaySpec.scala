@@ -23,7 +23,8 @@ import java.time.LocalDate
 
 class SubscriptionDataDisplaySpec extends SpecBase {
 
-  private val v2Json = Json.parse("""
+  // TODO: use the one from the Fixtures
+  private val testSubscriptionData = Json.parse("""
     {
       "formBundleNumber": "123456789012",
       "upeDetails": {
@@ -63,9 +64,9 @@ class SubscriptionDataDisplaySpec extends SpecBase {
     }
   """)
 
-  "SubscriptionDataV2" must {
-    "deserialise from a valid V2 JSON payload" in {
-      val result = v2Json.as[SubscriptionDataDisplay]
+  "SubscriptionDataDisplay" must {
+    "deserialise from valid JSON payload" in {
+      val result = testSubscriptionData.as[SubscriptionDataDisplay]
       result.formBundleNumber mustBe "123456789012"
       result.upeDetails.organisationName mustBe "UK Only Organisation Ltd"
       result.upeDetails.domesticOnly mustBe true
@@ -76,26 +77,26 @@ class SubscriptionDataDisplaySpec extends SpecBase {
     }
 
     "round-trip serialise/deserialise" in {
-      val model = v2Json.as[SubscriptionDataDisplay]
+      val model = testSubscriptionData.as[SubscriptionDataDisplay]
       Json.toJson(model).as[SubscriptionDataDisplay] mustBe model
     }
 
     "deserialise with empty accountingPeriod array" in {
-      val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
+      val noPeriodsJson = testSubscriptionData.as[play.api.libs.json.JsObject] ++ Json.obj("accountingPeriod" -> Json.arr())
       val result        = noPeriodsJson.as[SubscriptionDataDisplay]
       result.accountingPeriod.value mustBe empty
     }
 
     "deserialise with accountingPeriod absent from JSON and default to None" in {
-      val noPeriodsJson = v2Json.as[play.api.libs.json.JsObject] - "accountingPeriod"
+      val noPeriodsJson = testSubscriptionData.as[play.api.libs.json.JsObject] - "accountingPeriod"
       val result        = noPeriodsJson.as[SubscriptionDataDisplay]
       result.accountingPeriod mustBe None
       result.formBundleNumber mustBe "123456789012"
     }
 
-    "SubscriptionSuccessV2 wraps SubscriptionDataV2" in {
-      val wrapped = Json.obj("success" -> v2Json)
-      val result  = wrapped.as[SubscriptionSuccess]
+    "SubscriptionDisplaySuccessResponse wraps SubscriptionDataDisplay" in {
+      val wrapped = Json.obj("success" -> testSubscriptionData)
+      val result  = wrapped.as[SubscriptionDisplaySuccessResponse]
       result.success.formBundleNumber mustBe "123456789012"
     }
   }

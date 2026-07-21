@@ -55,7 +55,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-        when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
@@ -78,7 +78,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-        when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
@@ -101,7 +101,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-        when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
@@ -149,7 +149,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(testApplication) {
-        when(mockSubscriptionConnector.readSubscriptionV2(any())(using any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
