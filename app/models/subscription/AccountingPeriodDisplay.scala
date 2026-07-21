@@ -18,16 +18,21 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionDataAmend(
-  replaceFilingMember:      Boolean,
-  upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriodAmendV2,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberDetailsAmend]
-)
+import java.time.LocalDate
 
-object SubscriptionDataAmend {
-  given format: OFormat[SubscriptionDataAmend] = Json.format[SubscriptionDataAmend]
+final case class AccountingPeriodDisplay(
+  startDate:         Option[LocalDate] = None,
+  endDate:           Option[LocalDate] = None,
+  dueDate:           Option[LocalDate] = None,
+  canAmendStartDate: Option[Boolean] = Some(false),
+  canAmendEndDate:   Option[Boolean] = Some(false)
+) {
+
+  // TODO: delete
+  def toAccountingPeriod: AccountingPeriod =
+    AccountingPeriod(startDate = startDate.getOrElse(LocalDate.now), endDate = endDate.getOrElse(LocalDate.now), dueDate = dueDate)
+}
+
+object AccountingPeriodDisplay {
+  given format: OFormat[AccountingPeriodDisplay] = Json.format[AccountingPeriodDisplay]
 }

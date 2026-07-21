@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionContactDetails(
-  contactName:  String,
-  contactEmail: String,
-  phonePref:    Boolean,
-  contactTel:   Option[String]
+import java.time.LocalDate
+
+final case class NewAccountingPeriod(
+  updateObligationStartDate: LocalDate,
+  updateObligationEndDate:   LocalDate
 )
 
-object SubscriptionContactDetails {
-  given format: OFormat[SubscriptionContactDetails] = Json.format[SubscriptionContactDetails]
+object NewAccountingPeriod {
+  given format: OFormat[NewAccountingPeriod] = Json.format[NewAccountingPeriod]
 }
