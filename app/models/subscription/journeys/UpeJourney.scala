@@ -23,7 +23,6 @@ import models.grs.EntityType
 import models.registration.GrsResponse
 import pages.*
 import queries.Query
-import utils.DateTimeUtils.*
 
 final case class UpeJourney(
   upeRegisteredInUK:                 Boolean,
