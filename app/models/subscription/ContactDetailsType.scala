@@ -1,0 +1,44 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package models.subscription
+
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
+
+final case class ContactDetailsType(
+  name:         String,
+  phone:        Option[String],
+  emailAddress: String
+)
+
+object ContactDetailsType {
+  given reads: Reads[ContactDetailsType] = (
+    (__ \ "name").read[String] and
+      (__ \ "telephone")
+        .readNullable[String]
+        .orElse((__ \ "phone").readNullable[String]) and
+      (__ \ "emailAddress").read[String]
+  )(ContactDetailsType.apply _)
+
+  given writes: OWrites[ContactDetailsType] = (
+    (__ \ "name").write[String] and
+      (__ \ "telephone").writeNullable[String] and
+      (__ \ "emailAddress").write[String]
+  )(c => (c.name, c.phone, c.emailAddress))
+
+  given format: OFormat[ContactDetailsType] = OFormat(reads, writes)
+}

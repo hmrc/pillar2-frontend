@@ -18,6 +18,7 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
+// TODO: rename to SubscriptionDataDisplaySuccessResponse?
 final case class SubscriptionSuccessV2(
   success: SubscriptionDataDisplay
 )

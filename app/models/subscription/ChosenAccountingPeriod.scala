@@ -22,7 +22,7 @@ import utils.DateTimeUtils.{toDateEntryFormat, toDateFormat}
 
 import java.time.LocalDate
 
-case class ChosenAccountingPeriod(
+final case class ChosenAccountingPeriod(
   selectedAccountingPeriod: AccountingPeriod,
   startDateBoundary:        Option[LocalDate],
   endDateBoundary:          Option[LocalDate]
