@@ -76,14 +76,12 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
   private def buildApp(
     subscriptionLocalData: Option[SubscriptionLocalData],
-    multiPeriodFlag:       Boolean = false,
     isAgent:               Boolean = false
   ) =
-    if isAgent then buildAgentApp(subscriptionLocalData, multiPeriodFlag)
+    if isAgent then buildAgentApp(subscriptionLocalData)
     else
       applicationBuilder(
-        subscriptionLocalData = subscriptionLocalData,
-        additionalData = Map("features.amendMultipleAccountingPeriods" -> multiPeriodFlag) // TODO: remove flag
+        subscriptionLocalData = subscriptionLocalData
       ).overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -91,8 +89,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       ).build()
 
   private def buildAgentApp(
-    subscriptionLocalData: Option[SubscriptionLocalData],
-    multiPeriodFlag:       Boolean
+    subscriptionLocalData: Option[SubscriptionLocalData]
   ) = {
     val agentAction = new IdentifierAction {
       override def refine[A](r: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
@@ -104,10 +101,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       .configure(
         Configuration.from(
           Map(
-            "metrics.enabled"                         -> "false",
-            "auditing.enabled"                        -> false,
-            "features.grsStubEnabled"                 -> true,
-            "features.amendMultipleAccountingPeriods" -> multiPeriodFlag // TODO: remove flag
+            "metrics.enabled"         -> "false",
+            "auditing.enabled"        -> false,
+            "features.grsStubEnabled" -> true
           )
         )
       )
@@ -157,7 +153,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "group user, no micro periods" must {
       "render multi-period view with a single period and a Change link" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataGroupNoMicro))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -175,7 +171,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "accountingPeriods already cached" must {
       "render the multi-period view" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -192,7 +188,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "accountingPeriods not yet cached" must {
       "call readSubscriptionAndSave and render multi-period view" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -205,7 +201,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
       }
 
       "fall back to single-period view when V2 service fails" in { // TODO: remove this test
-        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -221,7 +217,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "returns no periods" must {
       "render empty state message" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -237,9 +233,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "agent user" when {
 
-      "feature flag is true and no micro periods" must {
+      "there is no micro periods" must {
         "render multi-period view with agent section header" in {
-          val application = buildApp(subscriptionLocalData = Some(localDataAgentNoMicro), multiPeriodFlag = true, isAgent = true)
+          val application = buildApp(subscriptionLocalData = Some(localDataAgentNoMicro), isAgent = true)
           running(application) {
             when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
             when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -256,9 +252,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "feature flag is true and micro period present" must {
+      "there is micro period present" must {
         "render multi-period view with both period cards and agent section header" in {
-          val application = buildApp(subscriptionLocalData = Some(localDataWithAgentInfo), multiPeriodFlag = true, isAgent = true)
+          val application = buildApp(subscriptionLocalData = Some(localDataWithAgentInfo), isAgent = true)
           running(application) {
             when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
             when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -279,9 +275,9 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "location rendering" must {
 
-      "show UK and non-UK location text when feature flag is on" in {
+      "show UK and non-UK location text" in {
         val ukAndOtherData = localDataWithPeriods.copy(subMneOrDomestic = MneOrDomestic.UkAndOther)
-        val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData), multiPeriodFlag = true)
+        val application    = buildApp(subscriptionLocalData = Some(ukAndOtherData))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -293,8 +289,8 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "show UK only location text when feature flag is on" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+      "show UK only location text" in {
+        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscriptionAndSave(any(), any())(using any()))
@@ -314,7 +310,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "a valid index is provided" must {
       "save the selected period to cache, wipe NewAccountingPeriodPage and redirect to NewAccountingPeriodController" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods))
         running(application) {
           val expectedUpdated = localDataWithPeriods
             .setOrException(SubAccountingPeriodPage, amendablePeriod.toAccountingPeriod)
@@ -350,7 +346,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "an out-of-range index is provided" must {
       "redirect to Journey Recovery" in {
-        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(localDataWithPeriods))
         running(application) {
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(99).url)
           val result  = route(application, request).value
@@ -362,7 +358,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
 
     "accountingPeriods is empty" must {
       "redirect to Journey Recovery" in {
-        val application = buildApp(subscriptionLocalData = Some(emptySubscriptionLocalData), multiPeriodFlag = true)
+        val application = buildApp(subscriptionLocalData = Some(emptySubscriptionLocalData))
         running(application) {
           val request = FakeRequest(GET, routes.ManageGroupDetailsCheckYourAnswersController.selectPeriod(0).url)
           val result  = route(application, request).value
