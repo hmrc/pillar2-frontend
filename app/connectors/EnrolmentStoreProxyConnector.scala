@@ -52,6 +52,10 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
           logger.warn(s"getGroupIds - unexpected response status: ${response.status}")
           None
       }
+      .recoverWith { case exception =>
+        logger.error("Failed to get group Ids from the backend")
+        Future.failed(exception)
+      }
 
   }
 
@@ -74,6 +78,10 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
           logger.warn(s"get known facts returned an unexpected response : ${response.status}")
           Future.failed(InternalIssueError)
         }
+      }
+      .recoverWith { case exception =>
+        logger.error("Failed to get known facts from the backend")
+        Future.failed(exception)
       }
   }
 }

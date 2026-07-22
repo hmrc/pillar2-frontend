@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{Mode, UserType}
+import play.api.Logging
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -41,7 +42,8 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
 )(using
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
-) extends IncorporatedEntityIdentificationFrontendConnector {
+) extends IncorporatedEntityIdentificationFrontendConnector
+    with Logging {
   private val apiUrl =
     s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
 
@@ -62,10 +64,18 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       .post(url"$apiUrl/limited-company-journey")
       .withBody(Json.toJson(registrationRequest))
       .execute[GrsCreateRegistrationResponse]
+      .recoverWith { case exception =>
+        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to start limited company journey")
+        Future.failed(exception)
+      }
   }
 
   def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
     httpClient
       .get(url"$apiUrl/journey/$journeyId")
       .execute[IncorporatedEntityRegistrationData]
+      .recoverWith { case exception =>
+        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to get journey data")
+        Future.failed(exception)
+      }
 }

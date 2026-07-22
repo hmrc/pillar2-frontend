@@ -40,5 +40,9 @@ class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: H
       .withBody(Json.toJson(btnRequest))
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to submit BTN to the backend")
+        Future.failed(exception)
+      }
   }
 }

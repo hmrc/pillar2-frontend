@@ -49,6 +49,10 @@ class UserAnswersConnectors @Inject() (
           case _  => throw new HttpException(response.body, response.status)
         }
       }
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to save data to cache")
+        Future.failed(exception)
+      }
 
   def get(id: String)(using headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
     httpClient
@@ -60,6 +64,10 @@ class UserAnswersConnectors @Inject() (
           case NOT_FOUND => None
           case _         => throw new HttpException(response.body, response.status)
         }
+      }
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to get cache data")
+        Future.failed(exception)
       }
 
   def getUserAnswer(id: String)(using headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
@@ -73,11 +81,19 @@ class UserAnswersConnectors @Inject() (
           case _         => Future.failed(InternalIssueError)
         }
       }
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to get userAnswers")
+        Future.failed(exception)
+      }
 
   def remove(id: String)(using headerCarrier: HeaderCarrier): Future[Done] =
     httpClient
       .delete(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse]
       .flatMap(response => if response.status == OK then Done.toFuture else Future.failed(InternalIssueError))
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to remove cache data")
+        Future.failed(exception)
+      }
 
 }

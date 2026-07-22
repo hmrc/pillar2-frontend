@@ -54,5 +54,9 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
             else Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
         }
       }
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve obligations and submissions data from the backend")
+        Future.failed(exception)
+      }
   }
 }
