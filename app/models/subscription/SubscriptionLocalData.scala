@@ -27,7 +27,7 @@ import scala.util.{Failure, Success, Try}
 final case class SubscriptionLocalData(
   plrReference:                String,
   subMneOrDomestic:            MneOrDomestic,
-  subAccountingPeriod:         Option[AccountingPeriod] = None,
+  subAccountingPeriod:         Option[AccountingPeriod] = None, // FIXME
   subPrimaryContactName:       String,
   subPrimaryEmail:             String,
   subPrimaryPhonePreference:   Boolean,
