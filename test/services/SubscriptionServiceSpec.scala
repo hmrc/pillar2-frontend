@@ -327,7 +327,6 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "readSubscription" must {
-
       "return SubscriptionData object when the connector returns valid data" in {
         val application = applicationBuilder()
           .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
@@ -337,7 +336,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.readSubscription(testId).futureValue
+          val result = service.readSubscription(testPillar2Id).futureValue
 
           result mustBe subscriptionDataDisplay
         }
@@ -352,7 +351,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.readSubscription("plr").failed.futureValue
+          val result = service.readSubscription(testPillar2Id).failed.futureValue
 
           result mustBe models.NoResultFound
         }
@@ -367,7 +366,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val resultFuture = service.readSubscription("plr")
+          val resultFuture = service.readSubscription(testPillar2Id)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }
@@ -450,7 +449,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.amendSubscription(any(), any[SubscriptionDataAmend])(using any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).futureValue
+          val result = service.amendContactOrGroupDetails(testId, testPillar2Id, emptySubscriptionLocalData).futureValue
 
           result mustBe Done
         }
@@ -465,7 +464,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).failed.futureValue
+          val result = service.amendContactOrGroupDetails(testId, testPillar2Id, emptySubscriptionLocalData).failed.futureValue
 
           result mustBe NoResultFound
         }
@@ -480,7 +479,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(InternalIssueError))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).failed.futureValue
+          val result = service.amendContactOrGroupDetails(testId, testPillar2Id, emptySubscriptionLocalData).failed.futureValue
 
           result mustBe InternalIssueError
         }
@@ -496,7 +495,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
 
-          val resultFuture = service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData)
+          val resultFuture = service.amendContactOrGroupDetails(testId, testPillar2Id, emptySubscriptionLocalData)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }
@@ -528,7 +527,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
           val service = application.injector.instanceOf[SubscriptionService]
 
-          service.amendContactOrGroupDetails(testId, "plr", emptySubscriptionLocalData).futureValue mustBe Done
+          service.amendContactOrGroupDetails(testId, testPillar2Id, emptySubscriptionLocalData).futureValue mustBe Done
 
           verify(mockSubscriptionConnector).amendSubscription(
             eqTo(testId),
@@ -545,7 +544,7 @@ class SubscriptionServiceSpec extends SpecBase {
     "amendGroupOrContactDetails" must {
       "build a payload with amendAccountingPeriod = false for contact-only amend" in {
         val service = app.injector.instanceOf[SubscriptionService]
-        val result  = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
+        val result  = service.amendGroupOrContactDetails(testPillar2Id, subscriptionDataDisplay, emptySubscriptionLocalData)
 
         result.accountingPeriod.amendAccountingPeriod mustBe false
         result.accountingPeriod.originalAccountingPeriods mustBe None
@@ -555,13 +554,13 @@ class SubscriptionServiceSpec extends SpecBase {
       "not populate secondary contact when nominated but name and email are missing" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
         val newLocalData = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
-        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, newLocalData)
+        val resultFuture = service.amendGroupOrContactDetails(testPillar2Id, subscriptionDataDisplay, newLocalData)
         resultFuture.secondaryContactDetails mustBe None
       }
 
       "not populate secondary contact when none is nominated" in {
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
-        val resultFuture = service.amendGroupOrContactDetails("plr", subscriptionDataDisplay, emptySubscriptionLocalData)
+        val resultFuture = service.amendGroupOrContactDetails(testPillar2Id, subscriptionDataDisplay, emptySubscriptionLocalData)
         resultFuture.secondaryContactDetails mustBe None
       }
     }
@@ -639,7 +638,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
-        service.allocateEnrolment("groupdID", "plr", enrolmentInfo).futureValue mustEqual Done
+        service.allocateEnrolment("groupdID", testPillar2Id, enrolmentInfo).futureValue mustEqual Done
       }
 
       "return failure object if enrolment allocation fails in tax enrolment" in {
@@ -650,7 +649,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .thenReturn(Future.failed(InternalIssueError))
         val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
-        service.allocateEnrolment("groupdID", "plr", enrolmentInfo).failed.futureValue mustEqual models.InternalIssueError
+        service.allocateEnrolment("groupdID", testPillar2Id, enrolmentInfo).failed.futureValue mustEqual models.InternalIssueError
       }
     }
 
@@ -660,7 +659,7 @@ class SubscriptionServiceSpec extends SpecBase {
           subscriptionDataDisplay.upeDetails.copy(customerIdentification1 = Some("Crn"), customerIdentification2 = Some("Utr"))
         )
         val service: SubscriptionService = app.injector.instanceOf[SubscriptionService]
-        val result = service.getUltimateParentEnrolmentInformation(grsRegisteredSubData, "plrId", testUserId)
+        val result = service.getUltimateParentEnrolmentInformation(grsRegisteredSubData, testPillar2Id, testUserId)
         result.futureValue mustBe allocateEnrolmentParameters
       }
 

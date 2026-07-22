@@ -30,7 +30,11 @@ final case class AccountingPeriodDisplay(
 
   // TODO: delete
   def toAccountingPeriod: AccountingPeriod =
-    AccountingPeriod(startDate = startDate.getOrElse(LocalDate.now), endDate = endDate.getOrElse(LocalDate.now), dueDate = dueDate)
+    AccountingPeriod(
+      startDate = startDate.getOrElse(LocalDate.now),
+      endDate = endDate.getOrElse(LocalDate.now),
+      dueDate = dueDate
+    )
 }
 
 object AccountingPeriodDisplay {
