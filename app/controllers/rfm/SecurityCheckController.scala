@@ -22,6 +22,7 @@ import forms.RfmSecurityCheckFormProvider
 import models.{Mode, NormalMode, UserAnswers}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -46,7 +47,8 @@ class SecurityCheckController @Inject() (
   errorView:                        SecurityCheckErrorView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -70,6 +72,10 @@ class SecurityCheckController @Inject() (
             result         <- redirectSecurityCheck(pillar2Id, mode, updatedAnswers)(request.request.groupId)
           } yield result
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to complete RFM security check", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
   def onPageLoadNotAllowed: Action[AnyContent] =

@@ -19,6 +19,7 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.*
 import pages.{PlrReferencePage, RfmConfirmationPage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -38,19 +39,27 @@ class RfmConfirmationController @Inject() (
   view:                     RfmConfirmationView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
-    sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-      (for {
-        userAnswer <- optionalUserAnswers
-        pillar2Id  <- Pillar2Reference
-                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                       .orElse(userAnswer.get(PlrReferencePage))
-        submittedAt <- userAnswer.get(RfmConfirmationPage)
-      } yield Ok(view(pillar2Id, submittedAt)))
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
+    sessionRepository
+      .get(request.userAnswers.id)
+      .map { optionalUserAnswers =>
+        (for {
+          userAnswer <- optionalUserAnswers
+          pillar2Id  <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswer.get(PlrReferencePage))
+          submittedAt <- userAnswer.get(RfmConfirmationPage)
+        } yield Ok(view(pillar2Id, submittedAt)))
+          .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+      }
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to load RFM journey details", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 }

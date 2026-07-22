@@ -27,6 +27,7 @@ import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
 import navigation.SubscriptionNavigator
 import pages.*
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
@@ -56,7 +57,8 @@ class UseContactPrimaryController @Inject() (
   view:                      UseContactPrimaryView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
@@ -76,7 +78,7 @@ class UseContactPrimaryController @Inject() (
   }
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
-    contactDetail(request) match {
+    val result                = contactDetail(request) match {
       case Right(contactDetail) =>
         form
           .bindFromRequest()
@@ -92,27 +94,31 @@ class UseContactPrimaryController @Inject() (
                     )
                   )
                 ),
-            value =>
-              value match {
-                case true =>
-                  for {
-                    updatedAnswers  <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.contactEmail))
-                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
-                    updatedAnswers4 <-
-                      Future
-                        .fromTry(contactDetail.contactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
-                    _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
-                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers4))
-                case false =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
-                    _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                  } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers))
-              }
+            {
+              case value @ true =>
+                for {
+                  updatedAnswers  <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
+                  updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
+                  updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.contactEmail))
+                  updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
+                  updatedAnswers4 <-
+                    Future
+                      .fromTry(contactDetail.contactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                  _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
+                } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers4))
+              case value @ false =>
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
+                  _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+                } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers))
+            }
           )
       case Left(result) => Future.successful(result)
+    }
+
+    result.recover { case exception =>
+      logger.error("[Subscription] Failed to update primary contact selection", exception)
+      Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 

@@ -22,6 +22,7 @@ import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.{AgentClientOrganisationNamePage, RepaymentsRefundAmountPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -45,7 +46,8 @@ class RequestRepaymentAmountController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form:                                Form[BigDecimal]   = formProvider()
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
@@ -90,6 +92,10 @@ class RequestRepaymentAmountController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, mode, updatedAnswers))
         )
+        .recover { case exception =>
+          logger.error("[Repayments] Error with saving requested amount", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
 }

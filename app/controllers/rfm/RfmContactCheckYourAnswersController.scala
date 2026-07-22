@@ -69,30 +69,36 @@ class RfmContactCheckYourAnswersController @Inject() (
     val address = SummaryListViewModel(
       rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
-    sessionRepository.get(request.userId).map { optionalUserAnswer =>
-      (for {
-        userAnswer <- optionalUserAnswer
-        rfm        <- userAnswer.get(RfmStatusPage)
-      } yield rfm) match {
-        case Some(InProgress) => Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM))
-        case _                =>
-          (for {
-            userAnswer <- optionalUserAnswer
-            _          <- userAnswer.get(PlrReferencePage)
-          } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
-            .getOrElse {
-              removeRfmStatus(userAnswers)
-              Ok(
-                view(
-                  request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-                  request.userAnswers.rfmPrimaryContactList,
-                  request.userAnswers.rfmSecondaryContactList,
-                  address
+    sessionRepository
+      .get(request.userId)
+      .map { optionalUserAnswer =>
+        (for {
+          userAnswer <- optionalUserAnswer
+          rfm        <- userAnswer.get(RfmStatusPage)
+        } yield rfm) match {
+          case Some(InProgress) => Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM))
+          case _                =>
+            (for {
+              userAnswer <- optionalUserAnswer
+              _          <- userAnswer.get(PlrReferencePage)
+            } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+              .getOrElse {
+                removeRfmStatus(userAnswers)
+                Ok(
+                  view(
+                    request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                    request.userAnswers.rfmPrimaryContactList,
+                    request.userAnswers.rfmSecondaryContactList,
+                    address
+                  )
                 )
-              )
-            }
+              }
+        }
       }
-    }
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to load RFM user answers for CYA page", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { request =>

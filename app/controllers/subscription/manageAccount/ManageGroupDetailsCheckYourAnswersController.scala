@@ -121,7 +121,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                 )
               }
               .recover { case _ =>
-                logger.warn(
+                logger.error(
                   "[ManageGroupDetailsCheckYourAnswers] Display Subscription failed (e.g. 404), falling back to single-period view"
                 )
                 val list = SummaryListViewModel(

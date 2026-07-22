@@ -23,6 +23,7 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPrimaryContactNamePage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class RfmPrimaryContactNameController @Inject() (
   navigator:                        ReplaceFilingMemberNavigator
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -73,6 +75,10 @@ class RfmPrimaryContactNameController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmPrimaryContactNamePage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM contact name", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
 }

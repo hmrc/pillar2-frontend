@@ -52,54 +52,68 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { request =>
       given Request[AnyContent] = request
-      sessionRepository.get(request.userId).flatMap {
-        case Some(userAnswers) =>
-          val form         = formProvider()
-          val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
+      sessionRepository
+        .get(request.userId)
+        .flatMap {
+          case Some(userAnswers) =>
+            val form         = formProvider()
+            val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
 
-          Future.successful(
-            Ok(view(preparedForm, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName, mode))
-          )
-        case None =>
-          logger.error("user answers not found")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
+            Future.successful(
+              Ok(
+                view(preparedForm, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName, mode)
+              )
+            )
+          case None =>
+            logger.error("user answers not found")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+        .recover { case exception =>
+          logger.error("[Below Threshold Notification] Failed to load entity location type", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData).async { request =>
       given Request[AnyContent] = request
-      sessionRepository.get(request.userId).flatMap {
-        case Some(userAnswers) =>
-          val form = formProvider()
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors =>
-                Future.successful(
-                  BadRequest(
-                    view(
-                      formWithErrors,
-                      request.subscriptionLocalData.plrReference,
-                      request.isAgent,
-                      request.subscriptionLocalData.organisationName,
-                      mode
+      sessionRepository
+        .get(request.userId)
+        .flatMap {
+          case Some(userAnswers) =>
+            val form = formProvider()
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors =>
+                  Future.successful(
+                    BadRequest(
+                      view(
+                        formWithErrors,
+                        request.subscriptionLocalData.plrReference,
+                        request.isAgent,
+                        request.subscriptionLocalData.organisationName,
+                        mode
+                      )
                     )
-                  )
-                ),
-              value =>
-                for {
-                  updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
-                  _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, updatedAnswers))
-            )
-        case None =>
-          logger.error("user answers not found")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
+                  ),
+                value =>
+                  for {
+                    updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
+                    _              <- sessionRepository.set(updatedAnswers)
+                  } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, updatedAnswers))
+              )
+          case None =>
+            logger.error("user answers not found")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+        .recover { case exception =>
+          logger.error("[Below Threshold Notification] Failed to update location type", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { request =>

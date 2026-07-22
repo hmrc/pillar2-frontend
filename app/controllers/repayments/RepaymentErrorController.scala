@@ -22,6 +22,7 @@ import forms.RepaymentAccountNameConfirmationForm
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -47,7 +48,8 @@ class RepaymentErrorController @Inject() (
   accountNameConfirmationView:            AccountNameConfirmationView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form:                            Form[Boolean]      = formProvider()
   def onPageLoadNotConfirmedDetails(): Action[AnyContent] =
@@ -85,6 +87,10 @@ class RepaymentErrorController @Inject() (
         .get(BarsAccountNamePartialPage)
         .map(name => Future successful Ok(accountNameConfirmationView(preparedForm, name, mode)))
         .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError()))
+        .recover { case exception =>
+          logger.error("[Repayments] Error with loading repayment error", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   def onSubmitPartialNameError(mode: Mode): Action[AnyContent] =
@@ -105,5 +111,9 @@ class RepaymentErrorController @Inject() (
             )
         }
         .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError()))
+        .recover { case exception =>
+          logger.error("[Repayments] Error with loading repayment error", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 }

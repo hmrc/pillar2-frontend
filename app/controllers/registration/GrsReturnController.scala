@@ -25,7 +25,7 @@ import services.GrsReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.{Inject, Named, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnController @Inject() (
@@ -35,7 +35,8 @@ class GrsReturnController @Inject() (
   requireData:                         DataRequiredAction,
   val controllerComponents:            MessagesControllerComponents,
   grsReturnService:                    GrsReturnService
-) extends FrontendBaseController
+)(using ExecutionContext)
+    extends FrontendBaseController
     with Logging {
 
   def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -50,7 +51,10 @@ class GrsReturnController @Inject() (
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
+      .recover { case exception =>
+        logger.error("[Registration] Failed to continue UPE GRS journey", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -65,7 +69,10 @@ class GrsReturnController @Inject() (
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
+      .recover { case exception =>
+        logger.error("[Registration] Failed to continue filing member GRS journey", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def continueRfm(journeyId: String): Action[AnyContent] =
@@ -81,6 +88,9 @@ class GrsReturnController @Inject() (
           case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-
+        .recover { case exception =>
+          logger.error("[Registration] Failed to continue replacement filing member GRS journey", exception)
+          Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        }
     }
 }

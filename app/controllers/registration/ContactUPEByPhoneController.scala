@@ -23,6 +23,7 @@ import forms.ContactUPEByPhoneFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -44,7 +45,8 @@ class ContactUPEByPhoneController @Inject() (
   view:                      ContactUPEByPhoneView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -82,6 +84,10 @@ class ContactUPEByPhoneController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Registration] Unable to update UPE phone details", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

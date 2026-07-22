@@ -84,7 +84,7 @@ class MneOrDomesticController @Inject() (
                   _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
                 } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))).recover {
                   case e @ (UnprocessableEntityError | InternalIssueError) =>
-                    logger.warn(s"MneOrDomestic amend failed for ${request.userId}: ${e.getClass.getSimpleName}")
+                    logger.error(s"MneOrDomestic amend failed for ${request.userId}: ${e.getClass.getSimpleName}")
                     Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad())
                 }
               case EntityLocationChangeBlocked =>

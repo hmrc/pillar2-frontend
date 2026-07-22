@@ -23,6 +23,7 @@ import forms.RfmNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmNameRegistrationPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class RfmNameRegistrationController @Inject() (
   view:                             RfmNameRegistrationView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -72,5 +74,9 @@ class RfmNameRegistrationController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmNameRegistrationPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM name", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 }
