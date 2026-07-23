@@ -61,7 +61,7 @@
                 Seq(
                     TableRow(
                         content = if(row.appealFlag.contains(true)) {
-                            HtmlContent(s"""${row.description} <br> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
+                            HtmlContent(s"""${row.description} <br aria-hidden="true"> <strong class="govuk-tag govuk-tag--red">Appealed</strong>""")
                         } else {
                             Text(row.description)
                         }),

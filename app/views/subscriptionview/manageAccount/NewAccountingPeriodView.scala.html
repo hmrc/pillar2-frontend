@@ -56,7 +56,7 @@
 
         @heading(messages("newAccountingPeriod.heading"), "govuk-heading-l")
 
-        @govukInsetText(InsetText(content = HtmlContent(s"${messages("newAccountingPeriod.insetText")} <br> ${chosenAccountingPeriod.toString}")))
+        @govukInsetText(InsetText(content = HtmlContent(s"${messages("newAccountingPeriod.insetText")} <br aria-hidden=true> ${chosenAccountingPeriod.toString}")))
 
         @paragraphBody(messages("newAccountingPeriod.p1"))
         @paragraphBody(messages("newAccountingPeriod.p2"))
