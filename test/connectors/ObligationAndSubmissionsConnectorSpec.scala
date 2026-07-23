@@ -29,7 +29,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
     .build()
 
   val url:       String = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$fromDate/$toDate"
-  val pillar2Id: String = PlrReference
+  val pillar2Id: String = testPillar2Id
 
   lazy val connector: ObligationsAndSubmissionsConnector = app.injector.instanceOf[ObligationsAndSubmissionsConnector]
 
@@ -39,7 +39,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
         url,
         OK,
         obligationsAndSubmissionsSuccessResponseJson.toString(),
-        Map("X-Pillar2-Id" -> PlrReference)
+        Map("X-Pillar2-Id" -> testPillar2Id)
       )
 
       val result = connector.getData(pillar2Id, fromDate, toDate).futureValue
@@ -50,7 +50,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       stubGet(
         url,
         INTERNAL_SERVER_ERROR,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
+        headers = Map("X-Pillar2-Id" -> testPillar2Id)
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe RetryableGatewayError)
@@ -60,7 +60,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       stubGet(
         url,
         502,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
+        headers = Map("X-Pillar2-Id" -> testPillar2Id)
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe RetryableGatewayError)
@@ -70,7 +70,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       stubGet(
         url,
         503,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
+        headers = Map("X-Pillar2-Id" -> testPillar2Id)
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[RuntimeException])
@@ -81,7 +81,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
         url,
         OK,
         "invalid json",
-        Map("X-Pillar2-Id" -> PlrReference)
+        Map("X-Pillar2-Id" -> testPillar2Id)
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])

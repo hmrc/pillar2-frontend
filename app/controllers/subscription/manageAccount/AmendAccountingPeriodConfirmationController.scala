@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import pages.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -32,7 +32,6 @@ import scala.concurrent.ExecutionContext
 
 class AmendAccountingPeriodConfirmationController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
@@ -43,7 +42,7 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
@@ -72,9 +71,9 @@ class AmendAccountingPeriodConfirmationController @Inject() (
     }
 
   private def computeNewPeriods(
-    original: Seq[AccountingPeriodV2],
-    updated:  Seq[AccountingPeriodV2]
-  ): Seq[AccountingPeriodV2] = {
+    original: Seq[AccountingPeriodDisplay],
+    updated:  Seq[AccountingPeriodDisplay]
+  ): Seq[AccountingPeriodDisplay] = {
     val originalSet = original.map(p => (p.startDate, p.endDate)).toSet
     updated
       .filterNot(p => originalSet.contains((p.startDate, p.endDate)))

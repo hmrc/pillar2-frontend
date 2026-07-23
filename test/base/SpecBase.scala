@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions.*
+import fixtures.{ObligationsAndSubmissionsDataFixtures, SubscriptionDataFixtures, UserAnswersFixtures}
 import generators.StringGenerators
 import helpers.*
 import models.UserAnswers
@@ -26,6 +27,7 @@ import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
+import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -64,9 +66,9 @@ trait SpecBase
     with StubMessageControllerComponents
     with IntegrationPatience
     with GuiceOneAppPerSuite
-    with UserAnswersFixture
-    with SubscriptionLocalDataFixture
-    with ObligationsAndSubmissionsDataFixture
+    with UserAnswersFixtures
+    with SubscriptionDataFixtures
+    with ObligationsAndSubmissionsDataFixtures
     with StringGenerators {
 
   given ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
@@ -74,9 +76,14 @@ trait SpecBase
   given system:            ActorSystem       = ActorSystem()
   given applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   given materializer:      Materializer      = Materializer(system)
-  def injectedParsers:     PlayBodyParsers   = app.injector.instanceOf[PlayBodyParsers]
 
-  val PlrReference = "XMPLR0123456789"
+  def injectedParsers: PlayBodyParsers = app.injector.instanceOf[PlayBodyParsers]
+
+  val testId:        String = "testId"
+  val testUserId:    String = "testUserId"
+  val testPillar2Id: String = "XMPLR0123456789"
+
+  val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -96,7 +103,7 @@ trait SpecBase
     Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
-        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        identifiers = List(EnrolmentIdentifier("PLRID", testPillar2Id)),
         state = "Activated",
         delegatedAuthRule = Some("pillar2-auth")
       )
@@ -107,7 +114,7 @@ trait SpecBase
     Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
-        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        identifiers = List(EnrolmentIdentifier("PLRID", testPillar2Id)),
         state = "Activated",
         delegatedAuthRule = None
       )

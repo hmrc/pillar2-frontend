@@ -18,505 +18,179 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import connectors.SubscriptionConnectorSpec.*
 import models.*
 import models.subscription.*
 import org.apache.pekko.Done
-import org.scalacheck.Gen
 import play.api.Application
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpException
-
-import java.time.LocalDate
 
 class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.pillar2.port" -> server.port()
-    )
+    .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-  private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionDataV1]
-  val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
-  "SubscriptionConnector" must {
-    "subscribe" should {
 
-      "return Pillar2Id for create Subscription successful" in {
-        stubResponse(s"$apiUrl/subscription/create-subscription", OK, businessSubscriptionSuccessJson)
+  "SubscriptionConnector" when {
+
+    "calling subscribe" must {
+      "return the Pillar 2 reference when the backend returns 200 OK" in {
+        stubResponse(createSubscriptionPath, OK, businessSubscriptionSuccessResponseJson)
 
         val futureValue = connector.subscribe(validSubscriptionCreateParameter)
 
-        futureValue.futureValue mustEqual validSubscriptionSuccessResponse.plrReference
+        futureValue.futureValue mustEqual validBusinessSubscriptionSuccessResponse.plrReference
       }
 
-      "return InternalServerError for create Subscription" in {
-        stubResponse(s"$apiUrl/subscription/create-subscription", errorCodes.sample.value, "")
+      "fail with InternalIssueError when the backend returns an error status" in {
+        stubResponse(createSubscriptionPath, errorCodes.sample.value, "")
 
         val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
 
         futureResult mustBe models.InternalIssueError
       }
 
-      "return Duplicated submission for when trying to subscribe an entity that has already been subscribed" in {
-        stubResponse(s"$apiUrl/subscription/create-subscription", 409, "")
+      "fail with DuplicateSubmissionError when the backend returns 409 (entity already subscribed)" in {
+        stubResponse(createSubscriptionPath, 409, "")
+
         val futureResult = connector.subscribe(validSubscriptionCreateParameter).failed.futureValue
+
         futureResult mustBe models.DuplicateSubmissionError
       }
     }
 
-    "cacheSubscription" should {
+    "calling amendSubscription" must {
+      val subscriptionDataAmend = Json.parse(subscriptionDataAmendJson).as[SubscriptionDataAmend]
 
-      "return SubscriptionData when the backend has returned 200 OK with data" in {
-        stubGet(s"$readSubscriptionPath/$id/$plrReference", OK, successfulResponseJson)
-        val result: SubscriptionData = connector.cacheSubscription(readSubscriptionParameters).futureValue
-
-        result mustBe subscriptionDataJson
+      "return Done when the backend has returned 200 OK" in {
+        stubResponseForPutRequest(s"$amendSubscriptionPath/$testId", OK, Some(subscriptionDataAmendJson))
+        connector.amendSubscription(testId, subscriptionDataAmend).futureValue mustBe Done
       }
 
-      "return RetryableGatewayError when the backend has returned 502" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(502).withBody(unsuccessfulResponseJson))
-        )
-
-        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
-        result mustBe RetryableGatewayError
+      "fail with UnprocessableEntityError when the backend has returned a 422 status" in {
+        stubResponseForPutRequest(s"$amendSubscriptionPath/$testId", UNPROCESSABLE_ENTITY, None)
+        connector.amendSubscription(testId, subscriptionDataAmend).failed.futureValue mustEqual UnprocessableEntityError
       }
 
-      "return RetryableGatewayError when the backend has returned 500" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR).withBody(unsuccessfulResponseJson))
-        )
-
-        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
-        result mustBe RetryableGatewayError
-      }
-
-      "return InternalIssueError when the backend has returned other error status codes" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(SERVICE_UNAVAILABLE).withBody(unsuccessfulResponseJson))
-        )
-
-        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
-        result mustBe InternalIssueError
+      "fail with UnexpectedResponse when the backend has returned a non-success and no 422 status code" in {
+        stubResponseForPutRequest(s"$amendSubscriptionPath/$testId", errorCodes.sample.value, None)
+        connector.amendSubscription(testId, subscriptionDataAmend).failed.futureValue mustEqual UnexpectedResponse
       }
     }
 
-    "readSubscription" should {
-
-      "return Some(json) when the backend has returned 200 OK with data" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-        val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
-
+    "calling readSubscription" must {
+      "return Some(SubscriptionDataDisplay) when backend returns 200 OK" in {
+        stubGet(s"$readSubscriptionPath/$testPillar2Id", OK, subscriptionDataDisplayWrappedJson)
+        val result = connector.readSubscription(testPillar2Id).futureValue
         result mustBe defined
-        result mustBe Some(subscriptionDataJson)
-
-      }
-
-      "return NoResult error when the backend has returned a 404 status" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
-        val result = connector.readSubscription(plrReference).futureValue
-        result mustBe None
-      }
-
-      "return UnprocessableEntityError when the backend has returned a 422 status" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        val result = connector.readSubscription(plrReference).failed.futureValue
-        result mustBe UnprocessableEntityError
-      }
-
-      "return RetryableGatewayError when the backend has returned 502" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", 502, unsuccessfulResponseJson)
-        val result = connector.readSubscription(plrReference).failed.futureValue
-        result mustBe RetryableGatewayError
-      }
-
-      "return RetryableGatewayError when the backend has returned 500" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", INTERNAL_SERVER_ERROR, unsuccessfulResponseJson)
-        val result = connector.readSubscription(plrReference).failed.futureValue
-        result mustBe RetryableGatewayError
-      }
-
-      "return InternalIssueError when the backend has returned other error status codes" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", SERVICE_UNAVAILABLE, unsuccessfulResponseJson)
-        val result = connector.readSubscription(plrReference)
-        result.failed.futureValue mustBe InternalIssueError
-      }
-    }
-
-    "getSubscriptionCache" should {
-
-      "return Some(json) when the backend has returned 200 OK with data" in {
-        stubGet(s"$getSubscription/$id", OK, Json.toJson(emptySubscriptionLocalData).toString)
-        val result: Option[SubscriptionLocalData] = connector.getSubscriptionCache(id).futureValue
-
-        result mustBe defined
-        result mustBe Some(emptySubscriptionLocalData)
-      }
-
-      "return None when the backend returns 200 but JSON is unparseable" in {
-        stubGet(s"$getSubscription/$id", OK, """{"invalid": "json"}""")
-        val result = connector.getSubscriptionCache(id).futureValue
-        result mustBe None
-      }
-
-      "return None when the backend has returned a non-success status code" in {
-        server.stubFor(
-          get(urlEqualTo(s"$getSubscription/$id"))
-            .willReturn(aResponse().withStatus(errorCodes.sample.value))
-        )
-
-        val result = connector.getSubscriptionCache(id).futureValue
-        result mustBe None
-      }
-    }
-
-    "readAndCacheSubscriptionV2" should {
-
-      "return SubscriptionDataV2 when backend returns 200 OK" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", OK, v2SuccessJson)
-        val result = connector.readAndCacheSubscriptionV2(id, plrReference).futureValue
-        result.formBundleNumber mustBe "119000004323"
-        result.accountingPeriod mustBe defined
-        result.accountingPeriod.value must have size 1
-        result.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
-      }
-
-      "fail with NoResultFound when backend returns 404" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
-        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe models.NoResultFound
-      }
-
-      "fail with UnprocessableEntityError when backend returns 422" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe UnprocessableEntityError
-      }
-
-      "fail with RetryableGatewayError when backend returns 500" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", INTERNAL_SERVER_ERROR, "")
-        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
-      }
-
-      "fail with RetryableGatewayError when backend returns 502" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", BAD_GATEWAY, "")
-        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe RetryableGatewayError
-      }
-
-      "fail with InternalIssueError when backend returns 503" in {
-        stubGet(s"$readSubscriptionV2Path/$id/$plrReference", SERVICE_UNAVAILABLE, "")
-        connector.readAndCacheSubscriptionV2(id, plrReference).failed.futureValue mustBe InternalIssueError
-      }
-    }
-
-    "readSubscriptionV2 (read-only)" should {
-
-      "return Some(SubscriptionDataV2) when backend returns 200 OK" in {
-        stubGet(s"$readSubscriptionV2Path/$plrReference", OK, v2SuccessWrappedJson)
-        val result = connector.readSubscriptionV2(plrReference).futureValue
-        result mustBe defined
-        result.get.formBundleNumber mustBe "119000004323"
+        result.get.formBundleNumber mustBe testFormBundleNumber
         result.get.accountingPeriod mustBe defined
         result.get.accountingPeriod.value must have size 1
         result.get.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
       }
 
       "return None when backend returns 404" in {
-        stubGet(s"$readSubscriptionV2Path/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
-        connector.readSubscriptionV2(plrReference).futureValue mustBe None
+        stubGet(s"$readSubscriptionPath/$testPillar2Id", NOT_FOUND, unsuccessfulNotFoundJson)
+        connector.readSubscription(testPillar2Id).futureValue mustBe None
       }
 
       "fail with UnprocessableEntityError when backend returns 422" in {
-        stubGet(s"$readSubscriptionV2Path/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
-        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe UnprocessableEntityError
+        stubGet(s"$readSubscriptionPath/$testPillar2Id", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
       }
 
       "fail with RetryableGatewayError when backend returns 500" in {
-        stubGet(s"$readSubscriptionV2Path/$plrReference", INTERNAL_SERVER_ERROR, "")
-        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe RetryableGatewayError
+        stubGet(s"$readSubscriptionPath/$testPillar2Id", INTERNAL_SERVER_ERROR, "")
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe RetryableGatewayError
       }
 
       "fail with InternalIssueError when backend returns 503" in {
-        stubGet(s"$readSubscriptionV2Path/$plrReference", SERVICE_UNAVAILABLE, "")
-        connector.readSubscriptionV2(plrReference).failed.futureValue mustBe InternalIssueError
+        stubGet(s"$readSubscriptionPath/$testPillar2Id", SERVICE_UNAVAILABLE, "")
+        connector.readSubscription(testPillar2Id).failed.futureValue mustBe InternalIssueError
       }
     }
 
-    "Save" should {
+    "calling readAndCacheSubscription" must {
+      "return SubscriptionDataDisplay when backend returns 200 OK" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", OK, subscriptionDataDisplayJson)
+        val result = connector.readAndCacheSubscription(testId, testPillar2Id).futureValue
+        result.formBundleNumber mustBe testFormBundleNumber
+        result.accountingPeriod mustBe defined
+        result.accountingPeriod.value must have size 1
+        result.accountingPeriod.value.head.canAmendStartDate mustBe Some(true)
+      }
 
-      "return Some(json) when the backend has returned 200 OK with data" in {
-        val json = Json.toJson(emptySubscriptionLocalData)
-        stubResponse(s"$getSubscription/$id", OK, json.toString)
-        val result = connector.save(id, json).futureValue
-        result mustBe json
+      "fail with NoResultFound when backend returns 404" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", NOT_FOUND, unsuccessfulNotFoundJson)
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe models.NoResultFound
+      }
 
+      "fail with UnprocessableEntityError when backend returns 422" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe UnprocessableEntityError
+      }
+
+      "fail with RetryableGatewayError when backend returns 500" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", INTERNAL_SERVER_ERROR, "")
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
+      }
+
+      "fail with RetryableGatewayError when backend returns 502" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", BAD_GATEWAY, "")
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe RetryableGatewayError
+      }
+
+      "fail with InternalIssueError when backend returns 503" in {
+        stubGet(s"$readSubscriptionPath/$testId/$testPillar2Id", SERVICE_UNAVAILABLE, "")
+        connector.readAndCacheSubscription(testId, testPillar2Id).failed.futureValue mustBe InternalIssueError
+      }
+    }
+
+    "calling getSubscriptionCache" must {
+      "return Some(SubscriptionLocalData) when the backend returns 200 OK with valid data" in {
+        stubGet(s"$readCachedSubscriptionPath/$testId", OK, Json.toJson(emptySubscriptionLocalData).toString)
+        val result: Option[SubscriptionLocalData] = connector.getSubscriptionCache(testId).futureValue
+
+        result mustBe defined
+        result mustBe Some(emptySubscriptionLocalData)
+      }
+
+      "return None when the backend returns 200 but JSON is unparseable" in {
+        stubGet(s"$readCachedSubscriptionPath/$testId", OK, """{"invalid": "json"}""")
+        val result = connector.getSubscriptionCache(testId).futureValue
+        result mustBe None
       }
 
       "return None when the backend has returned a non-success status code" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readCachedSubscriptionPath/$testId"))
+            .willReturn(aResponse().withStatus(errorCodes.sample.value))
+        )
+
+        val result = connector.getSubscriptionCache(testId).futureValue
+        result mustBe None
+      }
+    }
+
+    "calling save" must {
+      "return the saved data when the backend returns 200 OK" in {
         val json = Json.toJson(emptySubscriptionLocalData)
-        stubResponse(s"$getSubscription/$id", errorCodes.sample.value, "")
-        val result = connector.save(id, json)
+        stubResponse(s"$readCachedSubscriptionPath/$testId", OK, json.toString)
+        val result = connector.save(testId, json).futureValue
+        result mustBe json
+      }
+
+      "fail with HttpException when the backend returns a non-success status code" in {
+        val json = Json.toJson(emptySubscriptionLocalData)
+        stubResponse(s"$readCachedSubscriptionPath/$testId", errorCodes.sample.value, "")
+        val result = connector.save(testId, json)
 
         result.failed.futureValue mustBe a[HttpException]
-
       }
-    }
-
-    "amendSubscription" should {
-
-      "return Done when the backend has returned 200 OK with data" in {
-        val json = Json.parse(successfulAmendObject).as[AmendSubscription]
-        stubResponseForPutRequest(s"$amendSubscription/$id", OK, Some(successfulAmendObject))
-        val result = connector.amendSubscription(id, json).futureValue
-        result mustBe Done
-      }
-
-      "return None when the backend has returned a non-success status code" in {
-        val json = Json.parse(successfulAmendObject).as[AmendSubscription]
-        stubResponseForPutRequest(s"$amendSubscription/$id", errorCodes.sample.value, None)
-        val result = connector.amendSubscription(id, json)
-        result.failed.futureValue mustEqual UnexpectedResponse
-      }
-    }
-
-    "amendSubscriptionV2" should {
-      val amendV2Data = Json.parse(successfulAmendV2Object).as[AmendSubscriptionV2]
-
-      "return Done when the backend has returned 200 OK" in {
-        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", OK, Some(successfulAmendV2Object))
-        connector.amendSubscriptionV2(id, amendV2Data).futureValue mustBe Done
-      }
-
-      "fail with UnprocessableEntityError when the backend has returned a 422 status" in {
-        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", UNPROCESSABLE_ENTITY, None)
-        connector.amendSubscriptionV2(id, amendV2Data).failed.futureValue mustEqual UnprocessableEntityError
-      }
-
-      "fail with UnexpectedResponse when the backend has returned a non-success and no 422 status code" in {
-        stubResponseForPutRequest(s"$amendSubscriptionV2/$id", errorCodes.sample.value, None)
-        connector.amendSubscriptionV2(id, amendV2Data).failed.futureValue mustEqual UnexpectedResponse
-      }
-
     }
   }
-
-}
-
-object SubscriptionConnectorSpec {
-  val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes:     Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-  val readSubscriptionV2Path: String   = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
-
-  val v2SuccessJson: String =
-    """
-      |{
-      |  "formBundleNumber": "119000004323",
-      |  "upeDetails": {
-      |    "organisationName": "UK Only Organisation Ltd",
-      |    "registrationDate": "2024-01-31",
-      |    "domesticOnly": true,
-      |    "filingMember": false
-      |  },
-      |  "upeCorrespAddressDetails": {
-      |    "addressLine1": "1 High Street",
-      |    "countryCode": "GB"
-      |  },
-      |  "primaryContactDetails": {
-      |    "name": "Primary Contact",
-      |    "emailAddress": "primary.contact@example.com"
-      |  },
-      |  "secondaryContactDetails": null,
-      |  "filingMemberDetails": null,
-      |  "accountingPeriod": [
-      |    {
-      |      "startDate": "2024-01-06",
-      |      "endDate":   "2025-04-06",
-      |      "dueDate":   "2024-04-06",
-      |      "canAmendStartDate": true,
-      |      "canAmendEndDate":   true
-      |    }
-      |  ],
-      |  "accountStatus": { "inactive": false }
-      |}
-      |""".stripMargin
-
-  val v2SuccessWrappedJson: String =
-    s"""{ "success": $v2SuccessJson }"""
-
-  private val businessSubscriptionSuccessJson: String =
-    """
-      |{
-      |"success" : {
-      |"plrReference":"XMPLR0012345678",
-      |"formBundleNumber":"119000004320",
-      |"processingDate":"2023-09-22T00:00"
-      |}
-      |}""".stripMargin
-  val validSubscriptionCreateParameter: SubscriptionRequestParameters = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
-
-  val validSubscriptionSuccessResponse: SubscriptionResponse =
-    SubscriptionResponse(
-      plrReference = "XMPLR0012345678",
-      formBundleNumber = "119000004320",
-      processingDate = LocalDate.parse("2023-09-22").atStartOfDay()
-    )
-
-  val businessSubscriptionMissingPlrRefJson: String =
-    """
-      |{
-      |"failure" : {
-      |"formBundleNumber":"119000004320",
-      |"processingDate":"2023-09-22"
-      |}
-      |}""".stripMargin
-
-  private val readSubscriptionPath       = "/report-pillar2-top-up-taxes/subscription/read-subscription"
-  private val getSubscription            = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
-  private val amendSubscription          = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
-  private val amendSubscriptionV2        = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
-  private val id                         = "testId"
-  private val plrReference               = "testPlrRef"
-  private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
-  private val successfulResponseJson     =
-    """
-      |{
-      |
-      |      "formBundleNumber": "119000004320",
-      |      "upeDetails": {
-      |          "domesticOnly": false,
-      |          "organisationName": "International Organisation Inc.",
-      |          "customerIdentification1": "12345678",
-      |          "customerIdentification2": "12345678",
-      |          "registrationDate": "2022-01-31",
-      |          "filingMember": false
-      |      },
-      |      "upeCorrespAddressDetails": {
-      |          "addressLine1": "1 High Street",
-      |          "addressLine2": "Egham",
-      |
-      |          "addressLine3": "Wycombe",
-      |          "addressLine4": "Surrey",
-      |          "postCode": "HP13 6TT",
-      |          "countryCode": "GB"
-      |      },
-      |      "primaryContactDetails": {
-      |          "name": "Primary Contact",
-      |          "phone": "0115 9700 700",
-      |          "emailAddress": "primary.contact@example.com"
-      |      },
-      |      "secondaryContactDetails": {
-      |          "name": "Secondary Contact",
-      |          "phone": "0115 9700 701",
-      |          "emailAddress": "secondary.contact@example.com"
-      |
-      |      },
-      |      "filingMemberDetails": {
-      |          "safeId": "XL6967739016188",
-      |          "organisationName": "Domestic Operations Ltd",
-      |          "customerIdentification1": "1234Z678",
-      |          "customerIdentification2": "1234567Y"
-      |      },
-      |      "accountingPeriod": {
-      |          "startDate": "2024-01-06",
-      |          "endDate": "2025-04-06",
-      |          "dueDate": "2024-04-06"
-      |      },
-      |      "accountStatus": {
-      |          "inactive": true
-      |      }
-      |  }
-      |""".stripMargin
-
-  private val successfulAmendObject =
-    """
-      |{
-      |
-      |      "formBundleNumber": "119000004320",
-      |      "replaceFilingMember": true,
-      |      "upeDetails": {
-      |          "domesticOnly": false,
-      |          "plrReference": "PLRXLM123123123",
-      |          "organisationName": "International Organisation Inc.",
-      |          "customerIdentification1": "12345678",
-      |          "customerIdentification2": "12345678",
-      |          "registrationDate": "2022-01-31",
-      |          "filingMember": false
-      |      },
-      |      "upeCorrespAddressDetails": {
-      |          "addressLine1": "1 High Street",
-      |          "addressLine2": "Egham",
-      |          "addressLine3": "Wycombe",
-      |          "addressLine4": "Surrey",
-      |          "postCode": "HP13 6TT",
-      |          "countryCode": "GB"
-      |      },
-      |      "primaryContactDetails": {
-      |          "name": "Primary Contact",
-      |          "phone": "0115 9700 700",
-      |          "emailAddress": "primary.contact@example.com"
-      |      },
-      |      "secondaryContactDetails": {
-      |          "name": "Secondary Contact",
-      |          "phone": "0115 9700 701",
-      |          "emailAddress": "secondary.contact@example.com"
-      |
-      |      },
-      |      "filingMemberDetails": {
-      |          "addNewFilingMember": true,
-      |          "safeId": "XL6967739016188",
-      |          "organisationName": "Domestic Operations Ltd",
-      |          "customerIdentification1": "1234Z678",
-      |          "customerIdentification2": "1234567Y"
-      |      },
-      |      "accountingPeriod": {
-      |          "startDate": "2024-01-06",
-      |          "endDate": "2025-04-06"
-      |      },
-      |      "accountStatus": {
-      |          "inactive": true
-      |      }
-      |  }
-      |""".stripMargin
-
-  private val successfulAmendV2Object =
-    """
-      |{
-      |  "replaceFilingMember": false,
-      |  "upeDetails": {
-      |    "plrReference": "PLRXLM123123123",
-      |    "organisationName": "Organisation Ltd",
-      |    "registrationDate": "2024-01-31",
-      |    "domesticOnly": true,
-      |    "filingMember": false
-      |  },
-      |  "accountingPeriod": {
-      |    "amendAccountingPeriod": true,
-      |    "originalAccountingPeriods": [
-      |      { "taxObligationStartDate": "2024-01-06", "taxObligationEndDate": "2025-04-06" }
-      |    ],
-      |    "newAccountingPeriod": {
-      |      "updateObligationStartDate": "2024-06-01",
-      |      "updateObligationEndDate": "2025-05-31"
-      |    }
-      |  },
-      |  "upeCorrespAddressDetails": {
-      |    "addressLine1": "1 High Street",
-      |    "countryCode": "GB"
-      |  },
-      |  "primaryContactDetails": {
-      |    "name": "Primary Contact",
-      |    "emailAddress": "primary@example.com"
-      |  }
-      |}
-      |""".stripMargin
-
-  private val unsuccessfulResponseJson = """{ "status": "error" }"""
-  private val unsuccessfulNotFoundJson =
-    """{ "status": "404",
-      | "error": "there is nothing here" }""".stripMargin
 }

@@ -21,7 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.*
 import controllers.deriveNewAccountingPeriodDateBoundaries
 import forms.NewAccountingPeriodFormProvider
-import models.subscription.{AccountingPeriod, AccountingPeriodV2, ChosenAccountingPeriod}
+import models.subscription.{AccountingPeriod, AccountingPeriodDisplay, ChosenAccountingPeriod}
 import models.{Mode, UserAnswers}
 import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
 import play.api.data.Form
@@ -41,7 +41,6 @@ class NewAccountingPeriodController @Inject() (
   sessionRepository:                      SessionRepository,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   formProvider:                           NewAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   NewAccountingPeriodView
@@ -53,11 +52,11 @@ class NewAccountingPeriodController @Inject() (
     formProvider(chosenAccountingPeriod)
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
-      val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
-      val selectedAccountingPeriod: Option[AccountingPeriod]        = request.subscriptionLocalData.get(SubAccountingPeriodPage)
+      val accountingPeriods:        Option[Seq[AccountingPeriodDisplay]] = request.subscriptionLocalData.accountingPeriods
+      val selectedAccountingPeriod: Option[AccountingPeriod]             = request.subscriptionLocalData.get(SubAccountingPeriodPage)
 
       (accountingPeriods, selectedAccountingPeriod) match {
         case (Some(periods), Some(selectedPeriod)) =>
@@ -86,11 +85,11 @@ class NewAccountingPeriodController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
 
-      val accountingPeriods:        Option[Seq[AccountingPeriodV2]] = request.subscriptionLocalData.accountingPeriods
-      val selectedAccountingPeriod: Option[AccountingPeriod]        = request.subscriptionLocalData.get(SubAccountingPeriodPage)
+      val accountingPeriods:        Option[Seq[AccountingPeriodDisplay]] = request.subscriptionLocalData.accountingPeriods
+      val selectedAccountingPeriod: Option[AccountingPeriod]             = request.subscriptionLocalData.get(SubAccountingPeriodPage)
 
       (accountingPeriods, selectedAccountingPeriod) match {
         case (Some(periods), Some(selectedPeriod)) =>

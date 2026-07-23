@@ -18,7 +18,7 @@ package services.audit
 import base.SpecBase
 import models.audit.RepaymentsAuditEvent
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
+import models.subscription.{AccountingPeriod, NewFilingMemberDetails}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -40,8 +40,8 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
   val validRegisterWithIdResponseForLLP: PartnershipEntityRegistrationData =
     Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
-  val validReplaceFilingMemberNoId: NewFilingMemberDetail = Json.parse(validReplaceFilingMember).as[NewFilingMemberDetail]
-  val validRepayment:               RepaymentsAuditEvent  = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
+  val validReplaceFilingMemberNoId: NewFilingMemberDetails = Json.parse(validReplaceFilingMember).as[NewFilingMemberDetails]
+  val validRepayment:               RepaymentsAuditEvent   = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
 
   def withMockedAuditConnector(test: (AuditService, AuditConnector) => Assertion): Assertion = {
     val mockAuditConnector = mock[AuditConnector]

@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.SubscriptionConnector.constructUrl
 import models.*
 import models.subscription.*
 import org.apache.pekko.Done
@@ -31,111 +30,97 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.FutureConverter.toFuture
 
+import java.net.URL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
-  private val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
-  def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(using hc: HeaderCarrier): Future[String] =
+  def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(using hc: HeaderCarrier): Future[String] = {
+    val createSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
     http
-      .post(url"$subscriptionUrl")
+      .post(createSubscriptionUrl)
       .withBody(Json.toJson(subscriptionRequestParameters))
       .execute[HttpResponse]
       .flatMap {
         case response if is2xx(response.status) =>
-          logger.info(s" Subscription request is successful with status ${response.status} ")
-          response.json.as[SuccessResponse].success.plrReference.toFuture
-        case conflictResponse if conflictResponse.status.equals(CONFLICT)                                   => Future.failed(DuplicateSubmissionError)
-        case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) => Future.failed(UnprocessableEntityError)
-        case errorResponse                                                                                  =>
+          logger.info(s"Subscription request is successful with status ${response.status} ")
+          response.json.as[SubscriptionCreateSuccessResponse].success.plrReference.toFuture
+        case conflictResponse if conflictResponse.status.equals(CONFLICT) =>
+          Future.failed(DuplicateSubmissionError)
+        case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) =>
+          Future.failed(UnprocessableEntityError)
+        case errorResponse =>
           logger.debug(
-            s"[Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
+            s"Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
               s"and fmSafeId ${subscriptionRequestParameters.fmSafeId}"
           )
           logger.warn(s"Subscription call failed with status ${errorResponse.status}")
-
           Future.failed(InternalIssueError)
       }
+  }
 
-  def cacheSubscription(
-    readSubscriptionParameter: ReadSubscriptionRequestParameters
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV1] = {
-    val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
+  def amendSubscription(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] = {
+    val amendSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/amend-subscription/$userId"
     http
-      .get(url"$subscriptionUrl")
+      .put(amendSubscriptionUrl)
+      .withBody(Json.toJson(amendData))
       .execute[HttpResponse]
-      .flatMap {
-        case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionDataV1])
-        case e =>
-          logger.warn(s"Connection issue when calling cache subscription with status: ${e.status}")
-          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
-          else Future.failed(InternalIssueError)
+      .flatMap { response =>
+        response.status match {
+          case OK =>
+            logger.info(s"amendSubscription - success")
+            Done.toFuture
+          case UNPROCESSABLE_ENTITY =>
+            logger.warn(s"amendSubscription - 422")
+            Future.failed(UnprocessableEntityError)
+          case error =>
+            logger.warn(s"amendSubscription - $error")
+            Future.failed(UnexpectedResponse)
+        }
       }
   }
 
   def readSubscription(
     plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataV1]] = {
-    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
-
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataDisplay]] = {
+    val readSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
     http
-      .get(url"$subscriptionUrl")
+      .get(readSubscriptionUrl)
       .execute[HttpResponse]
       .flatMap {
-        case response if response.status == 200 =>
-          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
+        case response if response.status == OK =>
+          Future.successful(Some(Json.parse(response.body).as[SubscriptionDisplaySuccessResponse].success))
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
-        case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
-        case e                                                  =>
+        case notFoundResponse if notFoundResponse.status == NOT_FOUND =>
+          Future.successful(None)
+        case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)
       }
   }
 
-  /** Read and cache Subscription V2: returns multiple accounting periods with canAmend flags, caches the result. */
-  def readAndCacheSubscriptionV2(
+  def readAndCacheSubscription(
     userId:       String,
     plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataV2] = {
-    val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$userId/$plrReference"
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataDisplay] = {
+    val readAndCacheSubscriptionUrl: URL =
+      url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$userId/$plrReference"
     http
-      .get(url"$url")
+      .get(readAndCacheSubscriptionUrl)
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionDataV2])
+          Future.successful(Json.parse(response.body).as[SubscriptionDataDisplay]) // FIXME: should this be SubscriptionDisplaySuccessResponse?
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == NOT_FOUND =>
           Future.failed(NoResultFound)
         case e =>
-          logger.warn(s"Connection issue when calling read subscription v2 with status: ${e.status}")
-          if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
-          else Future.failed(InternalIssueError)
-      }
-  }
-
-  /** Read Subscription V2 (no cache). Uses the v2 endpoint that returns multiple accounting periods. */
-  def readSubscriptionV2(
-    plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataV2]] = {
-    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
-    http
-      .get(url"$subscriptionUrl")
-      .execute[HttpResponse]
-      .flatMap {
-        case response if response.status == OK =>
-          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccessV2].success))
-        case response if response.status == UNPROCESSABLE_ENTITY =>
-          Future.failed(UnprocessableEntityError)
-        case notFoundResponse if notFoundResponse.status == NOT_FOUND => Future.successful(None)
-        case e                                                        =>
-          logger.warn(s"Connection issue when calling read subscription v2 with status: ${e.status}")
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)
       }
@@ -143,12 +128,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def getSubscriptionCache(
     userId: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] = {
+    val readSubscriptionCacheUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId"
     http
-      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .get(readSubscriptionCacheUrl)
       .execute[HttpResponse]
       .map {
-        case response if response.status == 200 =>
+        case response if response.status == OK =>
           Json.parse(response.body).validate[SubscriptionLocalData] match {
             case JsSuccess(data, _) => Some(data)
             case JsError(errors)    =>
@@ -159,12 +145,12 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
           None
       }
+  }
 
-  def save(userId: String, subscriptionLocalData: JsValue)(using
-    hc: HeaderCarrier
-  ): Future[JsValue] =
+  def save(userId: String, subscriptionLocalData: JsValue)(using hc: HeaderCarrier): Future[JsValue] = {
+    val saveSubscriptionCacheUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId"
     http
-      .post(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .post(saveSubscriptionCacheUrl)
       .withBody(Json.toJson(subscriptionLocalData))
       .execute[HttpResponse]
       .map { response =>
@@ -173,47 +159,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           case _  => throw new HttpException(response.body, response.status)
         }
       }
-
-  def amendSubscription(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
-    http
-      .put(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId")
-      .withBody(Json.toJson(amendData))
-      .execute[HttpResponse]
-      .flatMap { response =>
-        response.status match {
-          case OK =>
-            logger.info(s"amendSubscription - success")
-            Done.toFuture
-          case error =>
-            logger.warn(s"amendSubscription - $error")
-            Future.failed(UnexpectedResponse)
-        }
-      }
-
-  def amendSubscriptionV2(userId: String, amendData: AmendSubscriptionV2)(using hc: HeaderCarrier): Future[Done] = {
-    val amendUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/amend-subscription/$userId"
-    http
-      .put(url"$amendUrl")
-      .withBody(Json.toJson(amendData))
-      .execute[HttpResponse]
-      .flatMap { response =>
-        response.status match {
-          case OK =>
-            logger.info(s"amendSubscriptionV2 - success")
-            Done.toFuture
-          case UNPROCESSABLE_ENTITY =>
-            logger.warn(s"amendSubscriptionV2 - 422")
-            Future.failed(UnprocessableEntityError)
-          case error =>
-            logger.warn(s"amendSubscriptionV2 - $error")
-            Future.failed(UnexpectedResponse)
-        }
-      }
   }
-}
-
-object SubscriptionConnector {
-  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters, config: FrontendAppConfig): String =
-    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
 
 }

@@ -88,7 +88,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
           case _ =>
             val localDataF: Future[SubscriptionLocalData] =
-              subscriptionService.readSubscriptionV2AndSave(request.userId, request.subscriptionLocalData.plrReference)
+              subscriptionService.readSubscriptionAndSave(request.userId, request.subscriptionLocalData.plrReference)
             localDataF
               .map { local =>
                 given msgs: play.api.i18n.Messages = request.messages
@@ -146,7 +146,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       val sorted  = periods.sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
       sorted.lift(index) match {
         case Some(period) =>
-          val updated = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match {
+          val updated: SubscriptionLocalData = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match { // FIXME:
             case scala.util.Success(ua) => ua
             case scala.util.Failure(_)  => request.subscriptionLocalData
           }

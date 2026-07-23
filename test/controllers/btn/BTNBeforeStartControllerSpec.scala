@@ -37,11 +37,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class BTNBeforeStartControllerSpec extends SpecBase {
 
-  val plrReference = "testPlrRef"
   val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
 
   val ua: SubscriptionLocalData =
-    emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+    emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, testPillar2Id)
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
     .overrides(
@@ -52,12 +51,12 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
   "BTNBeforeStartController" must {
 
-    "returns an OK with correct view for when subscription data and obligation data exists with no accounting period" in
+    "return an OK with correct view for when subscription data and obligation data exists with no accounting period" in
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
         when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(subscriptionData)))
+          .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
 
@@ -68,19 +67,19 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 0, NormalMode)(
+        contentAsString(result) mustEqual view(testPillar2Id, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 0, NormalMode)(
           request,
           applicationConfig,
           messages(application)
         ).toString
       }
 
-    "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in
+    "return an OK with correct view for when subscription data and obligation data exists with a singular account period" in
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
         when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(subscriptionData)))
+          .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
@@ -91,7 +90,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 1, NormalMode)(
+        contentAsString(result) mustEqual view(testPillar2Id, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 1, NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -103,7 +102,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
         when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(subscriptionData)))
+          .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
@@ -114,7 +113,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustBe OK
 
-        contentAsString(result) mustEqual view(plrReference, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 2, NormalMode)(
+        contentAsString(result) mustEqual view(testPillar2Id, isAgent = false, Some("orgName"), numberOfAccountingPeriods = 2, NormalMode)(
           request,
           applicationConfig,
           messages(application)
@@ -151,7 +150,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
       running(testApplication) {
         when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
-          .thenReturn(Future.successful(Some(subscriptionData)))
+          .thenReturn(Future.successful(Some(subscriptionDataDisplay)))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
 

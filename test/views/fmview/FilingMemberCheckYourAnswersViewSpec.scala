@@ -17,7 +17,7 @@
 package views.fmview
 
 import base.ViewSpecBase
-import helpers.SubscriptionLocalDataFixture
+import fixtures.SubscriptionDataFixtures
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -25,7 +25,7 @@ import viewmodels.govuk.all.SummaryListViewModel
 import views.behaviours.ViewScenario
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
-class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionDataFixtures {
 
   lazy val page:      FilingMemberCheckYourAnswersView = inject[FilingMemberCheckYourAnswersView]
   lazy val pageTitle: String                           = "Check your answers for filing member details"

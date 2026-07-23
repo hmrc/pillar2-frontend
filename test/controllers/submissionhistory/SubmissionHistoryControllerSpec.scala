@@ -17,7 +17,7 @@
 package controllers.submissionhistory
 
 import base.SpecBase
-import helpers.ObligationsAndSubmissionsDataFixture
+import fixtures.ObligationsAndSubmissionsDataFixtures
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -31,10 +31,15 @@ import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, Submiss
 
 import scala.concurrent.Future
 
-class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixture {
+class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixtures {
 
   val enrolments: Set[Enrolment] = Set(
-    Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
+    Enrolment(
+      key = "HMRC-PILLAR2-ORG",
+      identifiers = Seq(EnrolmentIdentifier("PLRID", testPillar2Id)),
+      state = "Activated",
+      delegatedAuthRule = Some("pillar2-auth")
+    )
   )
 
   "SubmissionHistoryController" should {
@@ -48,7 +53,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         .build()
 
       running(application) {
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -58,7 +63,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual viewNoSubmissions(subscriptionData.upeDetails.organisationName, PlrReference, false)(
+        contentAsString(result) mustEqual viewNoSubmissions(subscriptionDataDisplay.upeDetails.organisationName, testPillar2Id, false)(
           request,
           applicationConfig,
           messages(application)
@@ -76,7 +81,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         .build()
 
       running(application) {
-        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(allFulfilledResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -87,8 +92,8 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          subscriptionData.upeDetails.organisationName,
-          PlrReference,
+          subscriptionDataDisplay.upeDetails.organisationName,
+          testPillar2Id,
           allFulfilledResponse.accountingPeriodDetails,
           false
         )(

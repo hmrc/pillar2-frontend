@@ -22,7 +22,6 @@ import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
 import controllers.payments.OutstandingPaymentsControllerSpec.*
 import models.*
 import models.accountactivity.{AccountActivityResponse, AccountActivityTransaction, TransactionType}
-import models.subscription.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -39,17 +38,6 @@ import scala.concurrent.Future
 
 class OutstandingPaymentsControllerSpec extends SpecBase {
 
-  private val subscriptionData = SubscriptionDataV1(
-    formBundleNumber = "form bundle",
-    upeDetails = UpeDetails(None, None, None, "orgName", LocalDate.of(2024, 1, 1), domesticOnly = false, filingMember = false),
-    upeCorrespAddressDetails = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv"),
-    primaryContactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com"),
-    secondaryContactDetails = None,
-    filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-    accountStatus = Some(AccountStatus.ActiveAccount)
-  )
-
   private def baseApplication = applicationBuilder(
     userAnswers = Some(emptyUserAnswers),
     enrolments = enrolments
@@ -61,7 +49,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
   private def stubCommonMocks(): Unit = {
     when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-      .thenReturn(Future.successful(subscriptionData))
+      .thenReturn(Future.successful(subscriptionDataDisplay))
     when(mockSessionRepository.get(any()))
       .thenReturn(Future.successful(Some(emptyUserAnswers)))
   }

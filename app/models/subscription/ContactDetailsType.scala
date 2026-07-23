@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,7 @@
 package models.subscription
 
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.*
-
-import java.time.LocalDate
-
-case class AmendSubscription(
-  replaceFilingMember:      Boolean,
-  upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriodAmend,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberAmendDetails]
-)
-
-final case class UpeDetailsAmend(
-  plrReference:            String,
-  customerIdentification1: Option[String],
-  customerIdentification2: Option[String],
-  organisationName:        String,
-  registrationDate:        LocalDate,
-  domesticOnly:            Boolean,
-  filingMember:            Boolean
-)
+import play.api.libs.json.{OFormat, OWrites, Reads, __}
 
 final case class ContactDetailsType(
   name:         String,
@@ -63,22 +41,4 @@ object ContactDetailsType {
   )(c => (c.name, c.phone, c.emailAddress))
 
   given format: OFormat[ContactDetailsType] = OFormat(reads, writes)
-}
-
-final case class FilingMemberAmendDetails(
-  addNewFilingMember:      Boolean = false,
-  safeId:                  String,
-  customerIdentification1: Option[String],
-  customerIdentification2: Option[String],
-  organisationName:        String
-)
-object AmendSubscription {
-  given format: OFormat[AmendSubscription] = Json.format[AmendSubscription]
-}
-object UpeDetailsAmend {
-  given format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
-}
-
-object FilingMemberAmendDetails {
-  given format: OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
 }

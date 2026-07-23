@@ -16,30 +16,15 @@
 
 package models.subscription
 
-import models.NonUKAddress
-import models.rfm.CorporatePosition
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
-case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])
-case class NewFilingMemberDetail(
-  securityAnswerUserReference:    String,
-  securityAnswerRegistrationDate: LocalDate,
-  plrReference:                   String,
-  corporatePosition:              CorporatePosition,
-  ukBased:                        Option[Boolean],
-  nameRegistration:               Option[String],
-  registeredAddress:              Option[NonUKAddress],
-  primaryContactName:             String,
-  primaryContactEmail:            String,
-  primaryContactPhonePreference:  Boolean,
-  primaryContactPhoneNumber:      Option[String],
-  addSecondaryContact:            Boolean,
-  secondaryContactInformation:    Option[ContactDetailsType],
-  contactAddress:                 NonUKAddress
+final case class SubscriptionContactDetails(
+  contactName:  String,
+  contactEmail: String,
+  phonePref:    Boolean,
+  contactTel:   Option[String]
 )
 
-object NewFilingMemberDetail {
-  given format: OFormat[NewFilingMemberDetail] = Json.format[NewFilingMemberDetail]
+object SubscriptionContactDetails {
+  given format: OFormat[SubscriptionContactDetails] = Json.format[SubscriptionContactDetails]
 }

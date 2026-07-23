@@ -18,7 +18,7 @@ package controllers.actions
 
 import cats.syntax.option.*
 import controllers.btn.routes
-import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
+import fixtures.{SubscriptionDataFixtures, UserAnswersFixtures}
 import models.btn.BTNStatus
 import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.obligationsandsubmissions.AccountingPeriodDetails
@@ -53,8 +53,8 @@ class BTNStatusActionSpec
     extends AnyWordSpec
     with MockitoSugar
     with must.Matchers
-    with UserAnswersFixture
-    with SubscriptionLocalDataFixture
+    with UserAnswersFixtures
+    with SubscriptionDataFixtures
     with ScalaFutures
     with TryValues
     with ScalaCheckDrivenPropertyChecks {

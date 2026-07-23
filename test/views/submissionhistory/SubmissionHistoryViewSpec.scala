@@ -18,7 +18,7 @@ package views.submissionhistory
 
 import base.ViewSpecBase
 import controllers.routes
-import helpers.ObligationsAndSubmissionsDataFixture
+import fixtures.ObligationsAndSubmissionsDataFixtures
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -28,7 +28,7 @@ import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.{LocalDate, ZonedDateTime}
 
-class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
+class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixtures {
 
   lazy val page:             SubmissionHistoryView = inject[SubmissionHistoryView]
   lazy val organisationView: Document              =

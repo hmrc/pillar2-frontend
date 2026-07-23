@@ -19,7 +19,7 @@ package services.audit
 import models.audit.*
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
+import models.subscription.{AccountingPeriod, NewFilingMemberDetails}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -178,7 +178,7 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
 
-  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(using hc: HeaderCarrier): Future[AuditResult] =
+  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetails)(using hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       RfmAuditEvent(
         nfmDetail.plrReference,
