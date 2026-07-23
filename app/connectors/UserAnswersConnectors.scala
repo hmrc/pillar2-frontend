@@ -16,7 +16,7 @@
 
 package connectors
 
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.*
@@ -51,7 +51,7 @@ class UserAnswersConnectors @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[UserAnswersConnector] Failed to save data to cache")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 
   def get(id: String)(using headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
@@ -67,7 +67,7 @@ class UserAnswersConnectors @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[UserAnswersConnector] Failed to get cache data")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 
   def getUserAnswer(id: String)(using headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
@@ -83,7 +83,7 @@ class UserAnswersConnectors @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[UserAnswersConnector] Failed to get userAnswers")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 
   def remove(id: String)(using headerCarrier: HeaderCarrier): Future[Done] =
@@ -93,7 +93,7 @@ class UserAnswersConnectors @Inject() (
       .flatMap(response => if response.status == OK then Done.toFuture else Future.failed(InternalIssueError))
       .recoverWith { case exception =>
         logger.error("[UserAnswersConnector] Failed to remove cache data")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 
 }

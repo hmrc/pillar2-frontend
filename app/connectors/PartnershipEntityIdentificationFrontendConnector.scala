@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
-import models.{Mode, UserType}
+import models.{Mode, UnexpectedResponse, UserType}
 import play.api.Logging
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -73,7 +73,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .execute[GrsCreateRegistrationResponse]
       .recoverWith { case exception =>
         logger.error("[PartnershipIdentificationFrontendConnector] Failed to create partnership journey")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 
@@ -83,6 +83,6 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .execute[PartnershipEntityRegistrationData]
       .recoverWith { case exception =>
         logger.error("[PartnershipIdentificationFrontendConnector] Failed to get journey data")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 }

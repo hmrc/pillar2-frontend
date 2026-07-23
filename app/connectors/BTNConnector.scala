@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.UnexpectedResponse
 import models.btn.*
 import play.api.Logging
 import play.api.libs.json.*
@@ -42,7 +43,7 @@ class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: H
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("Failed to submit BTN to the backend")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 }

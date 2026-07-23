@@ -163,7 +163,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
       .recoverWith { case exception =>
         logger.error("[SubscriptionConnector] Failed to get subscription cache")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 
@@ -181,7 +181,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
       .recoverWith { case exception =>
         logger.error("[SubscriptionConnector] Failed to save subscription data")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 

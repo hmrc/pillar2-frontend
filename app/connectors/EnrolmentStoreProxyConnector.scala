@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.EnrolmentRequest.{KnownFactsParameters, KnownFactsResponse}
-import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult, UnexpectedResponse}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -81,7 +81,7 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
       }
       .recoverWith { case exception =>
         logger.error("Failed to get known facts from the backend")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 }

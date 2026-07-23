@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
-import models.{Mode, UserType}
+import models.{Mode, UnexpectedResponse, UserType}
 import play.api.Logging
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
@@ -76,6 +76,6 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       .execute[IncorporatedEntityRegistrationData]
       .recoverWith { case exception =>
         logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to get journey data")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 }

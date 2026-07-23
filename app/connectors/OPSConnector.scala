@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import controllers.payments.routes as paymentRoutes
 import controllers.routes
-import models.{OPSRedirectRequest, OPSRedirectResponse}
+import models.{OPSRedirectRequest, OPSRedirectResponse, UnexpectedResponse}
 import play.api.Logging
 import play.api.libs.json.*
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -53,7 +53,7 @@ class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClien
       .map(_.nextUrl)
       .recoverWith { case exception =>
         logger.error("[OPSConnector] Failed to get redirect location")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 

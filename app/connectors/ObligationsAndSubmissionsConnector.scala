@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.RetryableGatewayError
+import models.{RetryableGatewayError, UnexpectedResponse}
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import play.api.Logging
 import play.api.http.Status.*
@@ -56,7 +56,7 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
       }
       .recoverWith { case exception =>
         logger.error("Failed to retrieve obligations and submissions data from the backend")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 }

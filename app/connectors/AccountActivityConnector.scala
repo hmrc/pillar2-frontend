@@ -62,7 +62,7 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
       }
       .recoverWith { case exception =>
         logger.error("Failed to retrieve Account Activity from the backend")
-        Future.failed(exception)
+        Future.failed(UnexpectedResponse)
       }
 
 }
