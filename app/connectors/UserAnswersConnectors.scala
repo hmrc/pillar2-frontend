@@ -43,21 +43,25 @@ class UserAnswersConnectors @Inject() (
       .post(url"$url/user-cache/registration-subscription/$id")
       .withBody(Json.toJson(data))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to save data to cache")
+        Future.failed(UnexpectedResponse)
+      }
       .map { response =>
         response.status match {
           case OK => data
           case _  => throw new HttpException(response.body, response.status)
         }
       }
-      .recoverWith { case exception =>
-        logger.error("[UserAnswersConnector] Failed to save data to cache")
-        Future.failed(UnexpectedResponse)
-      }
 
   def get(id: String)(using headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse](using readRaw, ec)
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to get cache data")
+        Future.failed(UnexpectedResponse)
+      }
       .map { response =>
         response.status match {
           case OK        => Some(response.json)
@@ -65,15 +69,15 @@ class UserAnswersConnectors @Inject() (
           case _         => throw new HttpException(response.body, response.status)
         }
       }
-      .recoverWith { case exception =>
-        logger.error("[UserAnswersConnector] Failed to get cache data")
-        Future.failed(UnexpectedResponse)
-      }
 
   def getUserAnswer(id: String)(using headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse](using readRaw, ec)
+      .recoverWith { case exception =>
+        logger.error("[UserAnswersConnector] Failed to get userAnswers")
+        Future.failed(UnexpectedResponse)
+      }
       .flatMap { response =>
         response.status match {
           case OK        => Future.successful(Some(UserAnswers(id = id, data = response.json.as[JsObject])))
@@ -81,19 +85,15 @@ class UserAnswersConnectors @Inject() (
           case _         => Future.failed(InternalIssueError)
         }
       }
-      .recoverWith { case exception =>
-        logger.error("[UserAnswersConnector] Failed to get userAnswers")
-        Future.failed(UnexpectedResponse)
-      }
 
   def remove(id: String)(using headerCarrier: HeaderCarrier): Future[Done] =
     httpClient
       .delete(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse]
-      .flatMap(response => if response.status == OK then Done.toFuture else Future.failed(InternalIssueError))
       .recoverWith { case exception =>
         logger.error("[UserAnswersConnector] Failed to remove cache data")
         Future.failed(UnexpectedResponse)
       }
+      .flatMap(response => if response.status == OK then Done.toFuture else Future.failed(InternalIssueError))
 
 }

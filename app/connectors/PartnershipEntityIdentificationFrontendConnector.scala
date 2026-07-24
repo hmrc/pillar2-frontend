@@ -72,7 +72,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .withBody(Json.toJson(registrationRequest))
       .execute[GrsCreateRegistrationResponse]
       .recoverWith { case exception =>
-        logger.error("[PartnershipIdentificationFrontendConnector] Failed to create partnership journey")
+        logger.error("[PartnershipIdentificationFrontendConnector] Failed to create partnership journey", exception)
         Future.failed(UnexpectedResponse)
       }
   }
@@ -82,7 +82,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .get(url"$apiUrl/journey/$journeyId")
       .execute[PartnershipEntityRegistrationData]
       .recoverWith { case exception =>
-        logger.error("[PartnershipIdentificationFrontendConnector] Failed to get journey data")
+        logger.error("[PartnershipIdentificationFrontendConnector] Failed to get journey data", exception)
         Future.failed(UnexpectedResponse)
       }
 }

@@ -65,8 +65,8 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       .withBody(Json.toJson(registrationRequest))
       .execute[GrsCreateRegistrationResponse]
       .recoverWith { case exception =>
-        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to start limited company journey")
-        Future.failed(exception)
+        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to start limited company journey", exception)
+        Future.failed(UnexpectedResponse)
       }
   }
 
@@ -75,7 +75,7 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       .get(url"$apiUrl/journey/$journeyId")
       .execute[IncorporatedEntityRegistrationData]
       .recoverWith { case exception =>
-        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to get journey data")
+        logger.error("[IncorporatedEntityIdentificationFrontendConnector] Failed to get journey data", exception)
         Future.failed(UnexpectedResponse)
       }
 }

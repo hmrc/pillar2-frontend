@@ -52,7 +52,7 @@ class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClien
       .execute[OPSRedirectResponse]
       .map(_.nextUrl)
       .recoverWith { case exception =>
-        logger.error("[OPSConnector] Failed to get redirect location")
+        logger.error("[OPSConnector] Failed to get redirect location", exception)
         Future.failed(UnexpectedResponse)
       }
   }
