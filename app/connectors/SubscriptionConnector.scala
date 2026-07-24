@@ -179,10 +179,55 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           case _  => throw new HttpException(response.body, response.status)
         }
       }
+
+  def amendSubscription(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
+    http
+      .put(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId")
+      .withBody(Json.toJson(amendData))
+      .execute[HttpResponse]
       .recoverWith { case exception =>
-        logger.error("[SubscriptionConnector] Failed to save subscription data")
+        logger.error("[SubscriptionConnector] Failed to amend subscription", exception)
         Future.failed(UnexpectedResponse)
       }
+      .flatMap { response =>
+        response.status match {
+          case OK =>
+            logger.info(s"amendSubscription - success")
+            Done.toFuture
+          case error =>
+            logger.warn(s"amendSubscription - $error")
+            Future.failed(UnexpectedResponse)
+        }
+      }
+
+  def amendSubscriptionV2(userId: String, amendData: AmendSubscriptionV2)(using hc: HeaderCarrier): Future[Done] = {
+    val amendUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/amend-subscription/$userId"
+    http
+      .put(url"$amendUrl")
+      .withBody(Json.toJson(amendData))
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to amend subscription", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap { response =>
+        response.status match {
+          case OK =>
+            logger.info(s"amendSubscriptionV2 - success")
+            Done.toFuture
+          case UNPROCESSABLE_ENTITY =>
+            logger.warn(s"amendSubscriptionV2 - 422")
+            Future.failed(UnprocessableEntityError)
+          case error =>
+            logger.warn(s"amendSubscriptionV2 - $error")
+            Future.failed(UnexpectedResponse)
+        }
+      }
   }
+}
+
+object SubscriptionConnector {
+  private def constructUrl(readSubscriptionParameter: ReadSubscriptionRequestParameters, config: FrontendAppConfig): String =
+    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/${readSubscriptionParameter.id}/${readSubscriptionParameter.plrReference}"
 
 }
