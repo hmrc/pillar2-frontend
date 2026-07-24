@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.EnrolmentRequest.AllocateEnrolmentParameters
-import models.{EnrolmentInfo, InternalIssueError}
+import models.{EnrolmentInfo, InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.{CREATED, NO_CONTENT}
@@ -45,46 +45,61 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
     http
       .put(url"$enrolAndActivateUrl")
       .withBody(Json.toJson(enrolmentInfo.convertToEnrolmentRequest))
-      .execute[HttpResponse] flatMap {
-      case success if is2xx(success.status) =>
-        logger.info(s"enrolAndActivate - success")
-        Done.toFuture
-      case failure =>
-        logger.error(
-          s" Error in creating and activating a new enrolment with status  ${failure.status} and body: ${failure.body}"
-        )
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TaxEnrolmentConnector] Failed to enrol and activate", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case success if is2xx(success.status) =>
+          logger.info(s"enrolAndActivate - success")
+          Done.toFuture
+        case failure =>
+          logger.error(
+            s" Error in creating and activating a new enrolment with status  ${failure.status} and body: ${failure.body}"
+          )
+          Future.failed(InternalIssueError)
+      }
 
   def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(using hc: HeaderCarrier): Future[Done] =
     http
       .post(url"${allocateOrDeallocateUrl(groupId, plrReference)}")
       .withBody(Json.toJson(body))
-      .execute[HttpResponse] flatMap {
-      case success if success.status == CREATED =>
-        logger.info(s"allocateEnrolment success for groupId -$groupId")
-        Done.toFuture
-      case failure =>
-        logger.error(
-          s" Allocating an enrolment to a new filing member failed with status ${failure.status} and body: ${failure.body}"
-        )
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TaxEnrolmentConnector] Failed to allocate enrolment", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case success if success.status == CREATED =>
+          logger.info(s"allocateEnrolment success for groupId -$groupId")
+          Done.toFuture
+        case failure =>
+          logger.error(
+            s" Allocating an enrolment to a new filing member failed with status ${failure.status} and body: ${failure.body}"
+          )
+          Future.failed(InternalIssueError)
+      }
 
   def revokeEnrolment(groupId: String, plrReference: String)(using hc: HeaderCarrier): Future[Done] = {
     val completeUrl = allocateOrDeallocateUrl(groupId = groupId, plrReference = plrReference)
     http
       .delete(url"$completeUrl")
-      .execute[HttpResponse] flatMap {
-      case success if success.status == NO_CONTENT =>
-        logger.info(s"Successfully deleted the enrolment for groupId- $groupId")
-        Done.toFuture
-      case failure =>
-        logger.error(
-          s"Revoke enrolments call to tax enrolments failed with status ${failure.status} and body:  ${failure.body}"
-        )
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[TaxEnrolmentConnector] Failed to revoke enrolment", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case success if success.status == NO_CONTENT =>
+          logger.info(s"Successfully deleted the enrolment for groupId- $groupId")
+          Done.toFuture
+        case failure =>
+          logger.error(
+            s"Revoke enrolments call to tax enrolments failed with status ${failure.status} and body:  ${failure.body}"
+          )
+          Future.failed(InternalIssueError)
+      }
   }
 
 }
