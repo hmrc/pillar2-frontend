@@ -17,8 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{InternalIssueError, UnexpectedResponse}
 import models.registration.RegistrationWithoutIDResponse
+import models.{InternalIssueError, UnexpectedResponse}
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
