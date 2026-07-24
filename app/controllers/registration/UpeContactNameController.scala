@@ -23,6 +23,7 @@ import forms.UpeContactNameFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeContactNamePage, UpeRegisteredAddressPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -44,7 +45,8 @@ class UpeContactNameController @Inject() (
   view:                      UpeContactNameView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -74,6 +76,10 @@ class UpeContactNameController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(UpeContactNamePage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Registration] Unable to update UPE contact name", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

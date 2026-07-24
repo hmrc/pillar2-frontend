@@ -21,6 +21,7 @@ import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import pages.{BTNChooseAccountingPeriodPage, BtnConfirmationPage, PlrReferencePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -41,39 +42,46 @@ class BTNConfirmationController @Inject() (
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { request =>
     given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
-    sessionRepository.get(request.userId).map {
-      case Some(userAnswers) =>
-        (for {
-          chosenPeriod <- userAnswers.get(BTNChooseAccountingPeriodPage)
-          submittedAt  <- userAnswers.get(BtnConfirmationPage)
-        } yield {
-          val plrRef                  = userAnswers.get(PlrReferencePage)
-          val showUnderEnquiryWarning = {
-            val accountingPeriods = filteredAccountingPeriodDetails
-            chosenPeriod.underEnquiry ||
-            accountingPeriods
-              .filter(_.startDate.isAfter(chosenPeriod.startDate))
-              .exists(_.underEnquiry)
-          }
+    sessionRepository
+      .get(request.userId)
+      .map {
+        case Some(userAnswers) =>
+          (for {
+            chosenPeriod <- userAnswers.get(BTNChooseAccountingPeriodPage)
+            submittedAt  <- userAnswers.get(BtnConfirmationPage)
+          } yield {
+            val plrRef                  = userAnswers.get(PlrReferencePage)
+            val showUnderEnquiryWarning = {
+              val accountingPeriods = filteredAccountingPeriodDetails
+              chosenPeriod.underEnquiry ||
+              accountingPeriods
+                .filter(_.startDate.isAfter(chosenPeriod.startDate))
+                .exists(_.underEnquiry)
+            }
 
-          Ok(
-            view(
-              request.subscriptionLocalData.organisationName,
-              plrRef,
-              submittedAt.toDateAtTimeFormat,
-              chosenPeriod.startDate,
-              chosenPeriod.endDate,
-              request.isAgent,
-              showUnderEnquiryWarning
+            Ok(
+              view(
+                request.subscriptionLocalData.organisationName,
+                plrRef,
+                submittedAt.toDateAtTimeFormat,
+                chosenPeriod.startDate,
+                chosenPeriod.endDate,
+                request.isAgent,
+                showUnderEnquiryWarning
+              )
             )
-          )
-        }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-      case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-    }
+        case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
+      .recover { case exception =>
+        logger.error("[Below Threshold Notification] Failed to load confirmation page", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

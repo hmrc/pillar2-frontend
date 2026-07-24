@@ -49,4 +49,8 @@ class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: Htt
             Future.failed(UnexpectedResponse)
         }
       }
+      .recoverWith { case exception =>
+        logger.error("Failed to send repayment information to the backend", exception)
+        Future.failed(UnexpectedResponse)
+      }
 }

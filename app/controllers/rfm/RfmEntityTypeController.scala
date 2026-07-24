@@ -23,6 +23,7 @@ import forms.RfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
 import pages.*
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -48,7 +49,8 @@ class RfmEntityTypeController @Inject() (
   view:                                              RfmEntityTypeView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[EntityType] = formProvider()
 
@@ -72,6 +74,10 @@ class RfmEntityTypeController @Inject() (
           .getOrElse(Future.successful(Ok(view(form, mode))))
       }
       .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+      .recover { case exception =>
+        logger.error("Failed to load replacement filing member entity type", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -106,5 +112,9 @@ class RfmEntityTypeController @Inject() (
             } yield Redirect(controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(mode))
         }
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to process RFM entity type", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 }

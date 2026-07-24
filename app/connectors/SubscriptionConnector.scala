@@ -59,6 +59,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Subscription call failed with status ${errorResponse.status}")
           Future.failed(InternalIssueError)
       }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to create subscription")
+        Future.failed(exception)
+      }
   }
 
   def amendSubscription(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] = {
@@ -80,6 +84,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
             Future.failed(UnexpectedResponse)
         }
       }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to amend subscription")
+        Future.failed(exception)
+      }
   }
 
   def readSubscription(
@@ -100,6 +108,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)
+      }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to read subscription")
+        Future.failed(exception)
       }
   }
 
@@ -124,6 +136,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           if RetryableGatewayError.retryableStatuses(e.status) then Future.failed(RetryableGatewayError)
           else Future.failed(InternalIssueError)
       }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to read and cache subscription")
+        Future.failed(exception)
+      }
   }
 
   def getSubscriptionCache(
@@ -145,6 +161,10 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
           None
       }
+      .recoverWith { case exception =>
+        logger.error("[SubscriptionConnector] Failed to get subscription cache")
+        Future.failed(UnexpectedResponse)
+      }
   }
 
   def save(userId: String, subscriptionLocalData: JsValue)(using hc: HeaderCarrier): Future[JsValue] = {
@@ -159,6 +179,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           case _  => throw new HttpException(response.body, response.status)
         }
       }
-  }
 
+  }
 }

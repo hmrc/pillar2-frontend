@@ -23,6 +23,7 @@ import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.NominateFilingMemberPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class NominateFilingMemberYesNoController @Inject() (
   view:                      NominateFilingMemberYesNoView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -75,5 +77,9 @@ class NominateFilingMemberYesNoController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(NominateFilingMemberPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Nominate Filing Member] Unable to update FM status", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

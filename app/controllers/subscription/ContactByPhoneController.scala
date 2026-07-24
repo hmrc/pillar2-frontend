@@ -23,6 +23,7 @@ import forms.ContactByPhoneFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -45,7 +46,8 @@ class ContactByPhoneController @Inject() (
   view:                      ContactByPhoneView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -83,6 +85,10 @@ class ContactByPhoneController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update primary phone preference", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

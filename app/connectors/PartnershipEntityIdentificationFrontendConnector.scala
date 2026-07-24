@@ -19,7 +19,8 @@ package connectors
 import config.FrontendAppConfig
 import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
-import models.{Mode, UserType}
+import models.{Mode, UnexpectedResponse, UserType}
+import play.api.Logging
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -46,7 +47,8 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
 )(using
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
-) extends PartnershipIdentificationFrontendConnector {
+) extends PartnershipIdentificationFrontendConnector
+    with Logging {
   private val apiUrl = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
 
   def createPartnershipJourney(
@@ -69,10 +71,18 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .post(url"$apiUrl/limited-liability-partnership-journey")
       .withBody(Json.toJson(registrationRequest))
       .execute[GrsCreateRegistrationResponse]
+      .recoverWith { case exception =>
+        logger.error("[PartnershipIdentificationFrontendConnector] Failed to create partnership journey", exception)
+        Future.failed(UnexpectedResponse)
+      }
   }
 
   def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
     httpClient
       .get(url"$apiUrl/journey/$journeyId")
       .execute[PartnershipEntityRegistrationData]
+      .recoverWith { case exception =>
+        logger.error("[PartnershipIdentificationFrontendConnector] Failed to get journey data", exception)
+        Future.failed(UnexpectedResponse)
+      }
 }

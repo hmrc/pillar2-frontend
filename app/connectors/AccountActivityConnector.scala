@@ -43,6 +43,10 @@ class AccountActivityConnector @Inject() (val config: FrontendAppConfig, val htt
       .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=${dateFrom.toString}&toDate=${dateTo.toString}")
       .setHeader("X-Pillar2-Id" -> plrReference)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve Account Activity from the backend")
+        Future.failed(UnexpectedResponse)
+      }
       .flatMap {
         case response if response.status == OK        => Future successful Json.parse(response.body).as[AccountActivityResponse]
         case response if response.status == NOT_FOUND =>

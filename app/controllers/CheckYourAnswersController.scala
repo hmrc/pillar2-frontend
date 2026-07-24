@@ -56,23 +56,34 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
     given userAnswers: UserAnswers = request.userAnswers
-    sessionRepository.get(request.userId).map { optionalUserAnswer =>
-      (for {
-        userAnswer <- optionalUserAnswer
-        _          <- userAnswer.get(PlrReferencePage)
-      } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
-        .getOrElse {
-          setCheckYourAnswersLogic(userAnswers)
-          Ok(
-            view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
-          )
-        }
-    }
+    sessionRepository
+      .get(request.userId)
+      .map { optionalUserAnswer =>
+        (for {
+          userAnswer <- optionalUserAnswer
+          _          <- userAnswer.get(PlrReferencePage)
+        } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
+          .getOrElse {
+            setCheckYourAnswersLogic(userAnswers)
+            Ok(
+              view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
+            )
+          }
+      }
+      .recover { case exception =>
+        logger.error("Failed to load check your answers", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
-    subscriptionOrchestrationService.onSubmit(userId = request.userId, userAnswers = request.userAnswers)
+    subscriptionOrchestrationService
+      .onSubmit(userId = request.userId, userAnswers = request.userAnswers)
+      .recover { case exception =>
+        logger.error("Failed to submit subscription", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[Unit] =

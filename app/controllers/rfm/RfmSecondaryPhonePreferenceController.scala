@@ -23,6 +23,7 @@ import forms.RfmSecondaryPhonePreferenceFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -45,7 +46,8 @@ class RfmSecondaryPhonePreferenceController @Inject() (
   view:                             RfmSecondaryPhonePreferenceView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
@@ -77,5 +79,9 @@ class RfmSecondaryPhonePreferenceController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM phone preference", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 }

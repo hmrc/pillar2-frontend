@@ -53,85 +53,97 @@ class BTNChooseAccountingPeriodController @Inject() (
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { request =>
         given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
-        sessionRepository.get(request.userId).flatMap {
-          case Some(userAnswers) =>
-            val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
-            val form              = formProvider()
-            val preparedForm      = userAnswers
-              .get(BTNChooseAccountingPeriodPage)
-              .flatMap { chosenPeriod =>
-                accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
-                  form.fill(index)
+        sessionRepository
+          .get(request.userId)
+          .flatMap {
+            case Some(userAnswers) =>
+              val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
+              val form              = formProvider()
+              val preparedForm      = userAnswers
+                .get(BTNChooseAccountingPeriodPage)
+                .flatMap { chosenPeriod =>
+                  accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
+                    form.fill(index)
+                  }
                 }
-              }
-              .getOrElse(form)
-            Future.successful(
-              Ok(
-                view(
-                  preparedForm,
-                  mode,
-                  request.subscriptionLocalData.plrReference,
-                  request.isAgent,
-                  request.subscriptionLocalData.organisationName,
-                  accountingPeriods
+                .getOrElse(form)
+              Future.successful(
+                Ok(
+                  view(
+                    preparedForm,
+                    mode,
+                    request.subscriptionLocalData.plrReference,
+                    request.isAgent,
+                    request.subscriptionLocalData.organisationName,
+                    accountingPeriods
+                  )
                 )
               )
-            )
-          case None =>
-            logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        }
+            case None =>
+              logger.error("user answers not found")
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
+          .recover { case exception =>
+            logger.error("[Below Threshold Notification] Failed to load accounting periods", exception)
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }
       }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { request =>
         given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
-        sessionRepository.get(request.userId).flatMap {
-          case Some(userAnswers) =>
-            val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
-            val form              = formProvider()
-            form
-              .bindFromRequest()
-              .fold(
-                formWithErrors =>
-                  Future.successful(
-                    BadRequest(
-                      view(
-                        formWithErrors,
-                        mode,
-                        request.subscriptionLocalData.plrReference,
-                        request.isAgent,
-                        request.subscriptionLocalData.organisationName,
-                        accountingPeriods
-                      )
-                    )
-                  ),
-                value =>
-                  accountingPeriods.find { case (_, index) => index == value } match {
-                    case Some((chosenPeriod, chosenIndex)) =>
-                      for {
-                        updatedAnswers <- Future.fromTry(userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
-                        _              <- sessionRepository.set(updatedAnswers)
-                      } yield {
-                        val shouldShowWarning = chosenPeriod.underEnquiry ||
+        sessionRepository
+          .get(request.userId)
+          .flatMap {
+            case Some(userAnswers) =>
+              val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
+              val form              = formProvider()
+              form
+                .bindFromRequest()
+                .fold(
+                  formWithErrors =>
+                    Future.successful(
+                      BadRequest(
+                        view(
+                          formWithErrors,
+                          mode,
+                          request.subscriptionLocalData.plrReference,
+                          request.isAgent,
+                          request.subscriptionLocalData.organisationName,
                           accountingPeriods
-                            .take(chosenIndex)
-                            .exists(_._1.underEnquiry)
+                        )
+                      )
+                    ),
+                  value =>
+                    accountingPeriods.find { case (_, index) => index == value } match {
+                      case Some((chosenPeriod, chosenIndex)) =>
+                        for {
+                          updatedAnswers <- Future.fromTry(userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
+                          _              <- sessionRepository.set(updatedAnswers)
+                        } yield {
+                          val shouldShowWarning = chosenPeriod.underEnquiry ||
+                            accountingPeriods
+                              .take(chosenIndex)
+                              .exists(_._1.underEnquiry)
 
-                        if shouldShowWarning then {
-                          Redirect(routes.BTNUnderEnquiryWarningController.onPageLoad)
-                        } else {
-                          Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                          if shouldShowWarning then {
+                            Redirect(routes.BTNUnderEnquiryWarningController.onPageLoad)
+                          } else {
+                            Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                          }
                         }
-                      }
-                    case None =>
-                      Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
-                  }
-              )
-          case None =>
-            logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        }
+                      case None =>
+                        Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+                    }
+                )
+            case None =>
+              logger.error("user answers not found")
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
+          .recover { case exception =>
+            logger.error("[Below Threshold Notification] Failed to choose selected accounting period", exception)
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          }
       }
 }

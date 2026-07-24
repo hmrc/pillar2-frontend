@@ -75,6 +75,10 @@ class NfmEntityTypeController @Inject() (
           .getOrElse(Future.successful(Ok(view(form, mode))))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[New Filing Member] Failed to load filing member entity type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -83,33 +87,36 @@ class NfmEntityTypeController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case EntityType.UkLimitedCompany =>
-              logger.info("Filing Member- Initialising GRS journey with entity type chosen as UK Limited Company")
-              for {
-                updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
-                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Fm, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-            case EntityType.LimitedLiabilityPartnership =>
-              logger.info("Filing Member- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
-              for {
-                updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
-                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-                createJourneyRes <-
-                  partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
-            case EntityType.Other =>
-              logger.info("Filing Member- Redirecting to the no ID journey as entity type not listed chosen")
-              for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
-              } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
-          }
+        {
+          case value @ EntityType.UkLimitedCompany =>
+            logger.info("Filing Member- Initialising GRS journey with entity type chosen as UK Limited Company")
+            for {
+              updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+              updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+              _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+              createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Fm, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+          case value @ EntityType.LimitedLiabilityPartnership =>
+            logger.info("Filing Member- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
+            for {
+              updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+              updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+              _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+              createJourneyRes <-
+                partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+          case value @ EntityType.Other =>
+            logger.info("Filing Member- Redirecting to the no ID journey as entity type not listed chosen")
+            for {
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
+              updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+              _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
+            } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
+        }
       )
+      .recover { case exception =>
+        logger.error("[Nominate Filing Member] Failed to process filing member entity type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

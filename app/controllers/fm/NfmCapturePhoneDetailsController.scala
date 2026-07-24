@@ -23,6 +23,7 @@ import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -44,7 +45,8 @@ class NfmCapturePhoneDetailsController @Inject() (
   view:                      NfmCapturePhoneDetailsView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -80,5 +82,9 @@ class NfmCapturePhoneDetailsController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Nominate Filing Member] Unable to update FM phone details", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

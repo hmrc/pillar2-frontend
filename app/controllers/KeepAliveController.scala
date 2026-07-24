@@ -17,6 +17,7 @@
 package controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import play.api.Logging
 import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,7 +31,8 @@ class KeepAliveController @Inject() (
   getData:                  DataRetrievalAction,
   sessionRepository:        SessionRepository
 )(using ec: ExecutionContext)
-    extends FrontendBaseController {
+    extends FrontendBaseController
+    with Logging {
 
   def keepAlive: Action[AnyContent] = (identify andThen getData).async { request =>
     request.userAnswers
@@ -38,5 +40,9 @@ class KeepAliveController @Inject() (
         sessionRepository.keepAlive(answers.id).map(_ => Ok)
       }
       .getOrElse(Future.successful(Ok))
+      .recover { case exception =>
+        logger.error("Failed to keep session alive", exception)
+        InternalServerError
+      }
   }
 }

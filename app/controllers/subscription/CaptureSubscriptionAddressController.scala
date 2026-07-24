@@ -23,6 +23,7 @@ import forms.CaptureSubscriptionAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.SubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -46,7 +47,8 @@ class CaptureSubscriptionAddressController @Inject() (
   view:                      CaptureSubscriptionAddressView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[NonUKAddress] = formProvider()
 
@@ -73,6 +75,10 @@ class CaptureSubscriptionAddressController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(SubRegisteredAddressPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update subscription address", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

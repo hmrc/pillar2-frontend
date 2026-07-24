@@ -23,6 +23,7 @@ import models.Mode
 import models.repayments.NonUKBank
 import navigation.RepaymentNavigator
 import pages.{AgentClientOrganisationNamePage, NonUKBankPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class NonUKBankController @Inject() (
   view:                                   NonUKBankView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[NonUKBank] = formProvider()
 
@@ -84,6 +86,10 @@ class NonUKBankController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(NonUKBankPage, mode, updatedAnswers))
         )
+        .recover { case exception =>
+          logger.error("[Repayments] Failed to submit details", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
 }

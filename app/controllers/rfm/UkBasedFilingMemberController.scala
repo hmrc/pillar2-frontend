@@ -23,6 +23,7 @@ import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmUkBasedPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -45,7 +46,8 @@ class UkBasedFilingMemberController @Inject() (
   view:                             UkBasedFilingMemberView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -70,6 +72,10 @@ class UkBasedFilingMemberController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmUkBasedPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM location type", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
 }

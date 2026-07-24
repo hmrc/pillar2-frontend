@@ -23,6 +23,7 @@ import forms.MneOrDomesticFormProvider
 import models.{MneOrDomestic, Mode}
 import navigation.SubscriptionNavigator
 import pages.SubMneOrDomesticPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class MneOrDomesticController @Inject() (
   view:                      MneOrDomesticView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[MneOrDomestic] = formProvider()
 
@@ -77,6 +79,10 @@ class MneOrDomesticController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update Mne or Domestic status", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

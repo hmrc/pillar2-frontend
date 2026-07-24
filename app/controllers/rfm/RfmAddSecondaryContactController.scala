@@ -23,6 +23,7 @@ import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.*
@@ -44,7 +45,8 @@ class RfmAddSecondaryContactController @Inject() (
   view:                             RfmAddSecondaryContactView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
@@ -76,5 +78,9 @@ class RfmAddSecondaryContactController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Unable to update FM secondary contact ", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }
