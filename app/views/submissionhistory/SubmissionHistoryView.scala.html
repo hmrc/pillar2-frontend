@@ -55,8 +55,10 @@
     @govukInsetText(InsetText(content = Text(messages("submissionHistory.insetText"))))
     <br>
     @for(table <- SubmissionHistoryHelper.generateSubmissionHistoryTable(accountPeriods)) {
-        @LabelledScrollWrapper(messages("submissionHistory.heading")) {
-            @govukTable(table)
+        @table.caption.map { caption =>
+            @LabelledScrollWrapper(s"$caption ${messages("submissionHistory.heading").toLowerCase}") {
+                @govukTable(table)
+            }
         }
     }
     <br>

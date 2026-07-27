@@ -115,7 +115,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
 
       wrapper.attr("role") mustBe "region"
       wrapper.attr("tabindex") mustBe "0"
-      wrapper.attr("aria-label") mustBe "Submission history table"
+      wrapper.attr("aria-label") mustBe s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat} submission history table"
     }
 
     "have a sub heading" in {
