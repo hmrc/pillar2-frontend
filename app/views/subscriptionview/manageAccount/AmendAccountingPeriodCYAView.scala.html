@@ -85,7 +85,7 @@
         ) { warningLines =>
             @govukWarningText(WarningText(
                 iconFallbackText = Some(messages("site.warning")),
-                content = HtmlContent(warningLines.mkString("<br>"))
+                content = HtmlContent(warningLines.mkString("<br aria-hidden=true>"))
             ))
         }
 
