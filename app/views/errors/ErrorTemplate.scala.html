@@ -23,5 +23,10 @@
     <h1 class="govuk-heading-xl">@messages(heading)</h1>
 
     <p class="govuk-body">@messages(message)</p>
-<p class="govuk-body">You must <a class="govuk-link" href="@routes.TaskListController.onPageLoad.url">@messages("page_not_available.link")</a> and complete the required tasks.</p>
+    <p class="govuk-body">@messages("page_not_available.message1")</p>
+    <p class="govuk-body">@messages("page_not_available.message2")</p>
+    <p class="govuk-body">
+        @messages("page_not_available.message3")
+        <a class="govuk-link" href="mailto:pillar2mailbox@@hmrc.gov.uk">pillar2mailbox@@hmrc.gov.uk</a>
+    </p>
 }
