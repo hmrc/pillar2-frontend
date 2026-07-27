@@ -53,7 +53,6 @@ final case class UKAddress(
   val postcode:    String = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 
-  // TODO: delete - unused
   def getAddressList(countryOptions: CountryOptions)(using messages: Messages): List[String] = {
     val country = countryOptions.getCountryNameFromCode(countryCode)
     List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode, country).filter(_.nonEmpty)

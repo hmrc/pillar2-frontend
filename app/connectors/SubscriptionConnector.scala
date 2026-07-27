@@ -114,7 +114,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK =>
-          Future.successful(Json.parse(response.body).as[SubscriptionDataDisplay]) // FIXME: should this be SubscriptionDisplaySuccessResponse?
+          Future.successful(Json.parse(response.body).as[SubscriptionDataDisplay])
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == NOT_FOUND =>
