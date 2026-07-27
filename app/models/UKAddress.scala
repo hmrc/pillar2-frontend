@@ -37,7 +37,7 @@ import play.api.libs.json.{Json, OFormat}
 import play.twirl.api.HtmlFormat
 import utils.countryOptions.CountryOptions
 
-case class UKAddress(
+final case class UKAddress(
   addressLine1: String,
   addressLine2: Option[String],
   addressLine3: String,
@@ -59,6 +59,7 @@ case class UKAddress(
   }
 
 }
+
 object UKAddress {
   given format: OFormat[UKAddress] = Json.format[UKAddress]
 }

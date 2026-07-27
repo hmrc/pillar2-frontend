@@ -18,11 +18,10 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
-
 final case class AccountingPeriodAmend(
-  startDate: LocalDate,
-  endDate:   LocalDate
+  amendAccountingPeriod:     Boolean,
+  originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]] = None,
+  newAccountingPeriod:       Option[NewAccountingPeriod] = None
 )
 
 object AccountingPeriodAmend {

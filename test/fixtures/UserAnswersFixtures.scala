@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package helpers
+package fixtures
 
 import models.*
 import models.grs.*
@@ -28,7 +28,7 @@ import utils.RowStatus
 
 import java.time.LocalDate
 
-trait UserAnswersFixture extends TryValues {
+trait UserAnswersFixtures extends TryValues {
   val userAnswersId:    String      = "id"
   val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 

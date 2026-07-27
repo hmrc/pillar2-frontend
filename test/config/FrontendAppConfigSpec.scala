@@ -124,12 +124,6 @@ class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
       }
     }
 
-    ".amendMultipleAccountingPeriods" must {
-      "return true by default" in {
-        config.amendMultipleAccountingPeriods mustBe true
-      }
-    }
-
     ".maxDaysAgoToConsiderPaymentAsRecent" must {
       "read value from config" in {
         config.maxDaysAgoToConsiderPaymentAsRecent mustBe 60

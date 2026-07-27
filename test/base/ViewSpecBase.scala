@@ -17,7 +17,8 @@
 package base
 
 import config.FrontendAppConfig
-import helpers.{AllMocks, UserAnswersFixture}
+import fixtures.UserAnswersFixtures
+import helpers.AllMocks
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.PlaySpec
@@ -33,7 +34,7 @@ trait ViewSpecBase
     with GuiceOneAppPerSuite
     with Injecting
     with Matchers
-    with UserAnswersFixture
+    with UserAnswersFixtures
     with BeforeAndAfterEach
     with AllMocks
     with AccessibilityBehaviours {
@@ -42,7 +43,6 @@ trait ViewSpecBase
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]
   val appConfig:                      FrontendAppConfig   = inject[FrontendAppConfig]
 
-  given messages: Messages =
-    realMessagesApi.preferred(request)
+  given messages: Messages = realMessagesApi.preferred(request)
 
 }

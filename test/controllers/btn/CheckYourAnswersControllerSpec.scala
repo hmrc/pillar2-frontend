@@ -92,7 +92,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val view    = application.injector.instanceOf[CheckYourAnswersView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(btnCyaSummaryList(), PlrReference, isAgent = false, Some("orgName"))(
+          contentAsString(result) mustEqual view(btnCyaSummaryList(), testPillar2Id, isAgent = false, Some("orgName"))(
             request,
             applicationConfig,
             messages(application)
@@ -120,7 +120,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             buildSummaryList(testLocalDateFrom, testLocalDateTo, testLocalDateTo.plusMonths(2)),
-            PlrReference,
+            testPillar2Id,
             isAgent = false,
             Some("orgName")
           )(

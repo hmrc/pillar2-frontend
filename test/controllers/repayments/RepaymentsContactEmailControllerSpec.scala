@@ -35,10 +35,11 @@ import scala.concurrent.Future
 class RepaymentsContactEmailControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactEmailFormProvider()
-  val form:                            Form[String] = formProvider("ABC Limited")
-  val agentEnrolmentWithDelegatedAuth: Enrolments   = Enrolments(
+  val form: Form[String] = formProvider("ABC Limited")
+
+  val agentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
     Set(
-      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
+      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", testPillar2Id)), "Activated", Some("pillar2-auth"))
     )
   )
 

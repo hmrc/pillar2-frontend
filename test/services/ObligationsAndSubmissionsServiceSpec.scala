@@ -38,7 +38,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
     .build()
 
   val service:   ObligationsAndSubmissionsService = application.injector.instanceOf[ObligationsAndSubmissionsService]
-  val pillar2Id: String                           = PlrReference
+  val pillar2Id: String                           = testPillar2Id
 
   private val fromDate = LocalDate.now().minusMonths(12)
   private val toDate   = LocalDate.now()

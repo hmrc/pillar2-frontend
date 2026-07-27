@@ -42,7 +42,6 @@ import scala.concurrent.{ExecutionContext, Future, blocking}
 
 class AmendAccountingPeriodCYAController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  checkAmendMultipleAPScreens:            AmendMultipleAccountingPeriodScreensAction,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
@@ -56,7 +55,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given Request[AnyContent] = request
       sessionRepository.get(request.userId).map { maybeUserAnswers =>
         given Messages = request.messages
@@ -92,7 +91,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen checkAmendMultipleAPScreens andThen getData andThen requireData).async { request =>
+    (identify andThen getData andThen requireData).async { request =>
       given HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
@@ -127,7 +126,7 @@ class AmendAccountingPeriodCYAController @Inject() (
     userId:           String,
     subscriptionData: SubscriptionLocalData,
     enrolments:       Set[Enrolment],
-    allPeriods:       Seq[AccountingPeriodV2],
+    allPeriods:       Seq[AccountingPeriodDisplay],
     newPeriod:        AccountingPeriod
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val affected = findAffectedPeriods(newPeriod.startDate, newPeriod.endDate, allPeriods)
@@ -171,14 +170,14 @@ class AmendAccountingPeriodCYAController @Inject() (
     userId:       String,
     plrReference: String,
     attempt:      Int = 0
-  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodV2]] =
+  )(using hc: HeaderCarrier): Future[Seq[AccountingPeriodDisplay]] =
     subscriptionService
-      .readSubscriptionV2AndSave(userId, plrReference)
+      .readSubscriptionAndSave(userId, plrReference)
       .map(_.accountingPeriods.getOrElse(Seq.empty))
       .recoverWith {
         case UnprocessableEntityError | RetryableGatewayError if attempt < appConfig.amendAPReadRetryMaxAttempts =>
           logger.warn(
-            s"[AmendAccountingPeriodCYA] readSubscriptionV2 retry ${attempt + 1}/${appConfig.amendAPReadRetryMaxAttempts} for $userId"
+            s"[AmendAccountingPeriodCYA] readSubscription retry ${attempt + 1}/${appConfig.amendAPReadRetryMaxAttempts} for $userId"
           )
           Future(blocking(Thread.sleep(appConfig.amendAPReadRetryDelaySeconds * 1000L)))
             .flatMap(_ => readSubscriptionWithRetry(userId, plrReference, attempt + 1))
@@ -196,14 +195,14 @@ class AmendAccountingPeriodCYAController @Inject() (
   private[manageAccount] def findAffectedPeriods(
     newStart:   LocalDate,
     newEnd:     LocalDate,
-    allPeriods: Seq[AccountingPeriodV2]
-  ): Seq[AccountingPeriodV2] =
+    allPeriods: Seq[AccountingPeriodDisplay]
+  ): Seq[AccountingPeriodDisplay] =
     allPeriods.filter(p => !p.startDate.getOrElse(LocalDate.now).isAfter(newEnd) && !p.endDate.getOrElse(LocalDate.now).isBefore(newStart))
 
   private def predictMicroPeriods(
     newPeriod:  AccountingPeriod,
-    affected:   Seq[AccountingPeriodV2],
-    allPeriods: Seq[AccountingPeriodV2]
+    affected:   Seq[AccountingPeriodDisplay],
+    allPeriods: Seq[AccountingPeriodDisplay]
   ): Seq[AccountingPeriod] =
     if affected.isEmpty then Seq.empty
     else {

@@ -88,7 +88,7 @@ class UseContactPrimaryController @Inject() (
                     view(
                       formWithErrors,
                       mode,
-                      contactSummaryList(contactDetail.contactName, contactDetail.ContactEmail, contactDetail.ContactTel)
+                      contactSummaryList(contactDetail.contactName, contactDetail.contactEmail, contactDetail.contactTel)
                     )
                   )
                 ),
@@ -98,11 +98,11 @@ class UseContactPrimaryController @Inject() (
                   for {
                     updatedAnswers  <- Future.fromTry(request.userAnswers.set(SubUsePrimaryContactPage, value))
                     updatedAnswers1 <- Future.fromTry(updatedAnswers.set(SubPrimaryContactNamePage, contactDetail.contactName))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.ContactEmail))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.set(SubPrimaryEmailPage, contactDetail.contactEmail))
                     updatedAnswers3 <- Future.fromTry(updatedAnswers2.set(SubPrimaryPhonePreferencePage, contactDetail.phonePref))
                     updatedAnswers4 <-
                       Future
-                        .fromTry(contactDetail.ContactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
+                        .fromTry(contactDetail.contactTel.map(updatedAnswers3.set(SubPrimaryCapturePhonePage, _)).getOrElse(Success(updatedAnswers3)))
                     _ <- userAnswersConnectors.save(updatedAnswers4.id, Json.toJson(updatedAnswers4.data))
                   } yield Redirect(navigator.nextPage(SubUsePrimaryContactPage, mode, updatedAnswers4))
                 case false =>

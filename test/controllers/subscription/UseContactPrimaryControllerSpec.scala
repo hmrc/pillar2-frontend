@@ -42,9 +42,9 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
   val email        = "email@gmail.com"
   val phone        = "1221312"
 
-  "UseContact Primary Controller" when {
+  "UseContactPrimaryController" must {
 
-    "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously not answered" in {
+    "return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -69,7 +69,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously not answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -99,7 +100,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -129,7 +131,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are not uk-based whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -161,7 +164,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously not answered" in {
+    "return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -186,7 +189,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously not answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -216,7 +220,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are uk-based with no phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, true)
@@ -246,7 +251,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously answered" in {
+
+    "return OK and the correct view if filing member is nominated and they are uk-based with phone whilst page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -277,7 +283,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must redirect to journey recovery if fm has gone through no id journey but contact name not answered/available" in {
+
+    "redirect to journey recovery if fm has gone through no id journey but contact name not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -296,7 +303,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "must redirect to journey recovery if fm has gone through no id journey but contact email not answered/available" in {
+
+    "redirect to journey recovery if fm has gone through no id journey but contact email not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -316,7 +324,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if fm has gone through no id journey but phone preference is not answered/available" in {
+    "redirect to journey recovery if fm has gone through no id journey but phone preference is not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -332,11 +340,10 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-
       }
     }
 
-    "must redirect to journey recovery if upe has gone through no id journey but contact name not answered/available" in {
+    "redirect to journey recovery if upe has gone through no id journey but contact name not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -354,7 +361,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
-    "must redirect to journey recovery if upe has gone through no id journey but contact email not answered/available" in {
+
+    "redirect to journey recovery if upe has gone through no id journey but contact email not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -370,11 +378,10 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-
       }
     }
 
-    "must redirect to journey recovery if upe has gone through no id journey but phone preference is not answered/available" in {
+    "redirect to journey recovery if upe has gone through no id journey but phone preference is not answered/available" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -393,7 +400,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "must return OK with the correct view if no filing member has been nominated with upe non-uk based and page not answered previously" in {
+
+    "return OK with the correct view if no filing member has been nominated with upe non-uk based and page not answered previously" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -417,7 +425,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must return OK with the correct view if no filing member has been nominated with upe non-uk based and page answered previously" in {
+
+    "return OK with the correct view if no filing member has been nominated with upe non-uk based and page answered previously" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -447,7 +456,8 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         ).toString
       }
     }
-    "must redirect to journey recovery if no answer is provided/available for whether if they want to nominate a filing member" in {
+
+    "redirect to journey recovery if no answer is provided/available for whether if they want to nominate a filing member" in {
       val ua          = emptyUserAnswers.set(UpeRegisteredInUKPage, false).success.value
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -459,7 +469,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if no answer is provided/available for whether if the ultimate parent is uk based" in {
+    "redirect to journey recovery if no answer is provided/available for whether if the ultimate parent is uk based" in {
       val ua          = emptyUserAnswers.set(NominateFilingMemberPage, false).success.value
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -471,8 +481,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted for nfm uk based" in {
-
+    "return a Bad Request and errors when invalid data is submitted for nfm uk based" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, true)
@@ -506,8 +515,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted for fm non-uk based" in {
-
+    "return a Bad Request and errors when invalid data is submitted for fm non-uk based" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -540,8 +548,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if fm is registered and they are not uk based but no fm contact name can be found" in {
-
+    "redirect to journey recovery if fm is registered and they are not uk based but no fm contact name can be found" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -562,8 +569,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if fm is registered and they are uk based but no upe contact name can be found" in {
-
+    "redirect to journey recovery if fm is registered and they are uk based but no upe contact name can be found" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -585,8 +591,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if fm is registered and they are not uk based but no fm contact email can be found" in {
-
+    "redirect to journey recovery if fm is registered and they are not uk based but no fm contact email can be found" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -607,8 +612,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if fm is registered and they are uk based but no upe contact email can be found" in {
-
+    "redirect to journey recovery if fm is registered and they are uk based but no upe contact email can be found" in {
       val ua = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
         .setOrException(FmRegisteredInUKPage, false)
@@ -630,7 +634,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to next page when valid data is submitted and use primary contact is yes" in {
+    "redirect to next page when valid data is submitted and use primary contact is yes" in {
       val ua = emptyUserAnswers
         .set(SubSecondaryContactNamePage, "TestName")
         .success
@@ -661,7 +665,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to next page when valid data is submitted and use primary contact is no" in {
+    "redirect to next page when valid data is submitted and use primary contact is no" in {
       val ua = emptyUserAnswers
         .set(SubSecondaryContactNamePage, "TestName")
         .success
@@ -692,8 +696,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to journey recovery if no data can be fetched for nominate filing member page" in {
-
+    "redirect to journey recovery if no data can be fetched for nominate filing member page" in {
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -709,7 +712,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must show ultimate parent entity contact details when nominated filing member is false" in {
+    "show ultimate parent entity contact details when nominated filing member is false" in {
       val testDataWithSpecificValues: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -740,7 +743,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must show saved contact information heading when contact details exist" in {
+    "show saved contact information heading when contact details exist" in {
       val testDataWithContactDetails: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -771,7 +774,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must retain No selection when user previously declined to use primary contact" in {
+    "retain No selection when user previously declined to use primary contact" in {
       val testDataWithPreviousAnswer: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))

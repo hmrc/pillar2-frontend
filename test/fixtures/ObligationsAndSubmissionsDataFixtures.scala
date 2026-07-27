@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package helpers
+package fixtures
 
 import models.UserAnswers
 import models.btn.BTNStatus
@@ -35,7 +35,7 @@ import viewmodels.govuk.summarylist.withCssClass
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
 
-trait ObligationsAndSubmissionsDataFixture {
+trait ObligationsAndSubmissionsDataFixtures {
 
   // Use the current date as the base for our tests
   val fromDate: LocalDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)

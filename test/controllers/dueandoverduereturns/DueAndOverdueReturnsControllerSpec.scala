@@ -18,7 +18,7 @@ package controllers.dueandoverduereturns
 
 import base.SpecBase
 import controllers.routes as baseRoutes
-import helpers.ObligationsAndSubmissionsDataFixture
+import fixtures.ObligationsAndSubmissionsDataFixtures
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
@@ -35,10 +35,10 @@ import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import scala.concurrent.Future
 
-class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixture {
+class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixtures {
 
   val enrolments: Set[Enrolment] = Set(
-    Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
+    Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", testPillar2Id)), "Activated", Some("pillar2-auth"))
   )
 
   lazy val application: Application =
@@ -64,7 +64,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, agentView = false, PlrReference, None)(
+        contentAsString(result) mustEqual view(emptyResponse, fromDate, toDate, agentView = false, testPillar2Id, None)(
           request,
           applicationConfig,
           messages(application)
@@ -81,7 +81,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, agentView = false, PlrReference, None)(
+        contentAsString(result) mustEqual view(dueReturnsResponse, fromDate, toDate, agentView = false, testPillar2Id, None)(
           request,
           applicationConfig,
           messages(application)
@@ -98,7 +98,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, agentView = false, PlrReference, None)(
+        contentAsString(result) mustEqual view(overdueReturnsResponse, fromDate, toDate, agentView = false, testPillar2Id, None)(
           request,
           applicationConfig,
           messages(application)
@@ -120,7 +120,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
       "display agent-specific content when isAgent is true" in {
 
         val emptyContent = contentAsString(
-          view(emptyResponse, fromDate, toDate, agentView = true, PlrReference, None)(
+          view(emptyResponse, fromDate, toDate, agentView = true, testPillar2Id, None)(
             FakeRequest(),
             applicationConfig,
             messages(application)
@@ -128,7 +128,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
         )
 
         val dueContent = contentAsString(
-          view(dueReturnsResponse, fromDate, toDate, agentView = true, PlrReference, None)(
+          view(dueReturnsResponse, fromDate, toDate, agentView = true, testPillar2Id, None)(
             FakeRequest(),
             applicationConfig,
             messages(application)

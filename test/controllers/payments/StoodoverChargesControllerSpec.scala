@@ -37,8 +37,6 @@ import scala.concurrent.Future
 
 class StoodoverChargesControllerSpec extends SpecBase {
 
-  val plrReference: String = "XMPLR0123456789"
-
   val accountActivityEmptyResponse: AccountActivityResponse = AccountActivityResponse(
     processingDate = LocalDateTime.now(),
     transactionDetails = None
@@ -68,15 +66,10 @@ class StoodoverChargesControllerSpec extends SpecBase {
     )
   )
 
-  "StoodoverChargesController" must {
-
-    "allow request and" must {
+  "StoodoverChargesController" when {
+    "calling onPageLoad()" must {
       "return OK and display the correct view for a GET with no stoodover charges" in {
-
-        val application = applicationBuilder(
-          userAnswers = Some(emptyUserAnswers),
-          enrolments = enrolments
-        )
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments = enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -87,7 +80,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-            .thenReturn(Future.successful(subscriptionData))
+            .thenReturn(Future.successful(subscriptionDataDisplay))
           when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
             .thenReturn(Future.successful(accountActivityEmptyResponse))
 
@@ -97,7 +90,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
-            view(plrReference, Seq.empty, 0, "orgName")(
+            view(testPillar2Id, Seq.empty, 0, "orgName")(
               request,
               applicationConfig,
               messages(application),
@@ -107,16 +100,12 @@ class StoodoverChargesControllerSpec extends SpecBase {
       }
 
       "return OK and display the correct view for a GET with stoodover charges" in {
-
         val accountingPeriod: AccountingPeriod      = AccountingPeriod(startDate = LocalDate.of(2025, 1, 1), endDate = LocalDate.of(2025, 12, 31))
         val row:              StoodoverChargesRow   = StoodoverChargesRow(description = "UKTR - DTT", stoodoverAmount = BigDecimal(1000))
         val table:            StoodoverChargesTable = StoodoverChargesTable(accountingPeriod = accountingPeriod, rows = Seq(row))
         val data: Seq[StoodoverChargesTable] = Seq(table)
 
-        val application = applicationBuilder(
-          userAnswers = Some(emptyUserAnswers),
-          enrolments = enrolments
-        )
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments = enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -127,7 +116,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-            .thenReturn(Future.successful(subscriptionData))
+            .thenReturn(Future.successful(subscriptionDataDisplay))
           when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
             .thenReturn(Future.successful(accountActivityResponse))
 
@@ -137,7 +126,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual
-            view(plrReference, data, BigDecimal(1000), "orgName")(
+            view(testPillar2Id, data, BigDecimal(1000), "orgName")(
               request,
               applicationConfig,
               messages(application),
@@ -147,11 +136,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
       }
 
       "redirect to journey recovery when there is no plrReference" in {
-
-        val application = applicationBuilder(
-          userAnswers = None,
-          enrolments = enrolments
-        )
+        val application = applicationBuilder(userAnswers = None, enrolments = enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -162,7 +147,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSubscriptionService.readSubscription(any())(using any[HeaderCarrier]))
-            .thenReturn(Future.successful(subscriptionData))
+            .thenReturn(Future.successful(subscriptionDataDisplay))
           when(mockAccountActivityConnector.retrieveAccountActivity(any(), any(), any())(using any[HeaderCarrier]))
             .thenReturn(Future.successful(accountActivityResponse))
 
@@ -175,11 +160,7 @@ class StoodoverChargesControllerSpec extends SpecBase {
       }
 
       "redirect to journey recovery when the subscription service call fails" in {
-
-        val application = applicationBuilder(
-          userAnswers = Some(emptyUserAnswers),
-          enrolments = enrolments
-        )
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments = enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService),
