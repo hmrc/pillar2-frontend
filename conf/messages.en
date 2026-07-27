@@ -29,9 +29,7 @@ date.year = Year
 page_not_available.title = There has been an error
 page_not_available.heading = There has been an error
 page_not_available.link = return to your Pillar 2 Top-up Taxes registration
-page_not_available.message1 = If you typed the web address, check it is correct.
-page_not_available.message2 = If you pasted the web address, check you copied the entire address.
-page_not_available.message3 = If the web address is correct or you selected a link or button, you can contact the Pillar 2 team by emailing
+page_not_available.message1 = If the web address is correct or you selected a link or button, you can contact the Pillar 2 team by emailing
 page_not_available_email.link = pillar2mailbox@hmrc.gov.uk
 
 ###############################################
