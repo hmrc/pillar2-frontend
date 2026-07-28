@@ -101,6 +101,31 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmSecondaryContactNamePage, "name")
+        .setOrException(RfmAddSecondaryContactPage, true)
+        .setOrException(RfmPrimaryContactNamePage, "asd")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactNameController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "alexy")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

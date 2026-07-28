@@ -120,5 +120,29 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      Call(GET, "/")
+      val mockNavigator    = mock[RepaymentNavigator]
+      when(mockSessionRepository.set(any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+      val userAnswers = emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "valid reason")
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[RepaymentNavigator].toInstance(mockNavigator),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, postRouteUrl).withFormUrlEncodedBody(("value", "valid reason"))
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        verify(mockSessionRepository).set(eqTo(userAnswers))
+      }
+    }
+
   }
 }

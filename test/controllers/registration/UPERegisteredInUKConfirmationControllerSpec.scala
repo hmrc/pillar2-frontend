@@ -155,5 +155,39 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      import play.api.inject.bind
+
+      Call(GET, "/")
+      val mockNavigator    = mock[UltimateParentNavigator]
+      when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+      val userAnswers = emptyUserAnswers
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+
+      val expectedUserAnswers = userAnswers
+        .setOrException(UpeRegisteredInUKPage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[UltimateParentNavigator].toInstance(mockNavigator),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "false")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
+      }
+    }
+
   }
 }

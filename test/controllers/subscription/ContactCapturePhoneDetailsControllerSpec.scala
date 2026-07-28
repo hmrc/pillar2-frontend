@@ -124,6 +124,31 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
     }
+
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val ua = emptyUserAnswers
+        .set(SubPrimaryContactNamePage, "TestName")
+        .success
+        .value
+        .set(SubPrimaryPhonePreferencePage, true)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("phoneNumber", "123456")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
     "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()

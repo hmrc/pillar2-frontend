@@ -17,8 +17,10 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import models.EnrolmentRequest.{KnownFacts, KnownFactsParameters, KnownFactsResponse}
-import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult, UnexpectedResponse}
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -58,6 +60,17 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         result.futureValue mustBe None
 
       }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          get(urlEqualTo(getIdsUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.getGroupIds("200")
+
+        result.failed.futureValue mustBe UnexpectedResponse
+      }
     }
     "getKnownFacts" should {
       "return an identifier and two verifiers using a valid pillar 2 reference" in {
@@ -77,6 +90,17 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandl
         val requestParameters = Json.parse(knownFactsRequest).as[KnownFactsParameters]
         val result            = connector.getKnownFacts(requestParameters)
         result.failed.futureValue mustEqual UnexpectedJsResult
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(getKnownFactsUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.getKnownFacts(KnownFactsParameters(knownFacts = Seq(KnownFacts("PLRID", "id"))))
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 

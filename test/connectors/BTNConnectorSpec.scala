@@ -17,6 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
+import models.UnexpectedResponse
 import models.btn.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
@@ -90,6 +93,18 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
       stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result.status mustBe httpStatus
+    }
+
+    "return UnexpectedResponse when the request fails" in {
+      given pillar2Id: String = "XEPLR0000000000"
+      server.stubFor(
+        post(urlEqualTo(submitBTNPath))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)
+
+      result.failed.futureValue mustBe UnexpectedResponse
     }
   }
 }

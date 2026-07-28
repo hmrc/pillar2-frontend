@@ -17,8 +17,10 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import config.FrontendAppConfig
-import models.OPSRedirectResponse
+import models.{OPSRedirectResponse, UnexpectedResponse}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -48,6 +50,18 @@ class OPSConnectorTest extends SpecBase with WireMockServerHandler {
       given hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
       val result = connector.getRedirectLocation("pillar2Id").futureValue
       result mustEqual response.nextUrl
+    }
+
+    "return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        post(urlEqualTo(opsEndpoint))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+      given hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
+
+      val result = classUnderTest.getRedirectLocation("pillar2Id")
+
+      result.failed.futureValue mustBe UnexpectedResponse
     }
   }
 

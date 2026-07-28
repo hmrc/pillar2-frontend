@@ -105,4 +105,29 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
     }
   }
 
+  "onPageLoad" must {
+    "redirect to journey recovery when an unexpected error occurs" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+        .overrides(
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionDataDisplay))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any()))
+          .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+      }
+    }
+  }
+
 }
