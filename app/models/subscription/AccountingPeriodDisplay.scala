@@ -28,7 +28,6 @@ final case class AccountingPeriodDisplay(
   canAmendEndDate:   Option[Boolean] = Some(false)
 ) {
 
-  // TODO: delete
   def toAccountingPeriod: AccountingPeriod =
     AccountingPeriod(
       startDate = startDate.getOrElse(LocalDate.now),

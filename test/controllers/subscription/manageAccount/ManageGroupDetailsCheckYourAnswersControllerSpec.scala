@@ -200,7 +200,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "render the single-period view when the subscription read fails" in { // TODO: remove this test
+      "render the single-period view when the subscription read fails" in {
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))

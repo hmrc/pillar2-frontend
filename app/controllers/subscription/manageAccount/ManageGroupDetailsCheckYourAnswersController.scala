@@ -146,7 +146,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       val sorted  = periods.sortBy(_.endDate)(Ordering[Option[LocalDate]].reverse)
       sorted.lift(index) match {
         case Some(period) =>
-          val updated: SubscriptionLocalData = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match { // FIXME:
+          val updated: SubscriptionLocalData = request.subscriptionLocalData.set(SubAccountingPeriodPage, period.toAccountingPeriod) match {
             case scala.util.Success(ua) => ua
             case scala.util.Failure(_)  => request.subscriptionLocalData
           }
