@@ -18,10 +18,14 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-case class ReadSubscriptionRequestParameters(
-  id:           String,
-  plrReference: String
+final case class FilingMemberDetailsAmend(
+  addNewFilingMember:      Boolean = false,
+  safeId:                  String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String
 )
-object ReadSubscriptionRequestParameters {
-  given format: OFormat[ReadSubscriptionRequestParameters] = Json.format[ReadSubscriptionRequestParameters]
+
+object FilingMemberDetailsAmend {
+  given format: OFormat[FilingMemberDetailsAmend] = Json.format[FilingMemberDetailsAmend]
 }

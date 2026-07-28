@@ -322,7 +322,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must update the matching entry in accountingPeriods when subAccountingPeriod dates match" in {
-      import models.subscription.AccountingPeriodV2
+      import models.subscription.AccountingPeriodDisplay
       import play.api.inject.bind
 
       val originalStart = Some(LocalDate.of(2024, 1, 1))
@@ -330,14 +330,14 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val newStart      = Some(LocalDate.of(2024, 2, 1))
       val newEnd        = Some(LocalDate.of(2024, 11, 30))
 
-      val period1 = AccountingPeriodV2(
+      val period1 = AccountingPeriodDisplay(
         originalStart,
         originalEnd,
         dueDate = Some(LocalDate.of(2025, 3, 31)),
         canAmendStartDate = Some(true),
         canAmendEndDate = Some(true)
       )
-      val period2 = AccountingPeriodV2(
+      val period2 = AccountingPeriodDisplay(
         startDate = Some(LocalDate.of(2023, 1, 1)),
         endDate = Some(LocalDate.of(2023, 12, 31)),
         dueDate = Some(LocalDate.of(2024, 3, 31)),

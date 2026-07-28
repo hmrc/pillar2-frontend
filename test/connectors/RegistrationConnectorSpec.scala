@@ -17,7 +17,6 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -38,26 +37,6 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
       |}
       |""".stripMargin
 
-  val businessSubscriptionSuccessJson: String =
-    """
-| {
-  |
-  "success": {
-    | "plrReference": "XMPLR0012345678",
-    | "formBundleNumber": "119000004320",
-    | "processingDate": "2023-09-22"
-    |}
-  |
-}
-""".stripMargin
-
-  val businessSubscriptionMissingPlrRefJson: String =
-    """
-    |{
-    |"formBundleNumber":"119000004320",
-    |"processingDate":"2023-09-22"
-    |}""".stripMargin
-
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.pillar2.port" -> server.port()
@@ -67,7 +46,7 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
   lazy val connector: RegistrationConnector = app.injector.instanceOf[RegistrationConnector]
 
   val apiUrl = "/report-pillar2-top-up-taxes"
-  private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+
   private val safeID = "XE1111123456789"
   "RegistrationConnector" when {
     "registerUltimateParent" should {

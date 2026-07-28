@@ -16,7 +16,7 @@
 
 @import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
-@import models.subscription.AccountingPeriodV2
+@import models.subscription.AccountingPeriodDisplay
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds._
 
@@ -30,7 +30,7 @@
     govukInsetText:   GovukInsetText
 )
 
-@(timestamp: String, newPeriods: Seq[AccountingPeriodV2], hasGapPeriods: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(timestamp: String, newPeriods: Seq[AccountingPeriodDisplay], hasGapPeriods: Boolean, isAgent: Boolean, organisationName: Option[String], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("amendAccountingPeriod.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 

@@ -17,7 +17,7 @@
 package views.subscriptionview
 
 import base.ViewSpecBase
-import helpers.SubscriptionLocalDataFixture
+import fixtures.SubscriptionDataFixtures
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -30,7 +30,7 @@ import views.html.subscriptionview.SubCheckYourAnswersView
 
 import java.time.LocalDate
 
-class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
+class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionDataFixtures {
 
   lazy val page:      SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
   lazy val pageTitle: String                  = "Check your answers for further group details"

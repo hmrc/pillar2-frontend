@@ -21,17 +21,17 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class DisplayAccountingPeriodSpec extends SpecBase {
+class AccountingPeriodDisplaySpec extends SpecBase {
 
   private val start = LocalDate.of(2024, 1, 1)
   private val end   = LocalDate.of(2024, 12, 31)
   private val due   = LocalDate.of(2025, 3, 31)
 
-  "AccountingPeriodV2" when {
+  "AccountingPeriodDisplay" when {
 
-    "toAccountingPeriod" must {
+    "calling toAccountingPeriod()" must {
       "convert to AccountingPeriod preserving start/end/due dates" in {
-        val period = AccountingPeriodV2(
+        val period = AccountingPeriodDisplay(
           Some(start),
           Some(end),
           Some(due),
@@ -47,7 +47,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
 
     "JSON format" must {
       "serialise and deserialise correctly" in {
-        val period = AccountingPeriodV2(
+        val period = AccountingPeriodDisplay(
           startDate = Some(start),
           endDate = Some(end),
           dueDate = Some(due),
@@ -55,7 +55,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
           canAmendEndDate = Some(false)
         )
         val json = Json.toJson(period)
-        json.as[AccountingPeriodV2] mustBe period
+        json.as[AccountingPeriodDisplay] mustBe period
       }
 
       "deserialise from expected JSON shape" in {
@@ -68,7 +68,7 @@ class DisplayAccountingPeriodSpec extends SpecBase {
             "canAmendEndDate": false
           }
         """)
-        val result = json.as[AccountingPeriodV2]
+        val result = json.as[AccountingPeriodDisplay]
         result.startDate mustBe Some(start)
         result.endDate mustBe Some(end)
         result.dueDate mustBe Some(due)

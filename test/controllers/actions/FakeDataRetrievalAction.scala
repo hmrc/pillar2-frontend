@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
+import fixtures.{SubscriptionDataFixtures, UserAnswersFixtures}
 import models.UserAnswers
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
@@ -67,7 +67,7 @@ class FakeSubscriptionDataRetrievalAction(
   given ExecutionContext = executionContext
 }
 
-class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionLocalDataFixture {
+class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionDataFixtures {
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
     Future.successful(
       Right[Result, SubscriptionDataRequest[A]](
@@ -93,7 +93,7 @@ class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends 
     Future.successful(SessionOptionalDataRequest(request, request.userId, dataToReturn))
 }
 
-class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixture {
+class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixtures {
   given executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 

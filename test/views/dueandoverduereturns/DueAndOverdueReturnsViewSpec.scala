@@ -18,7 +18,7 @@ package views.dueandoverduereturns
 
 import base.ViewSpecBase
 import controllers.routes
-import helpers.ObligationsAndSubmissionsDataFixture
+import fixtures.ObligationsAndSubmissionsDataFixtures
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -29,7 +29,7 @@ import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 import java.time.LocalDate
 import java.util.Optional
 
-class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
+class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixtures {
 
   lazy val currentDate: LocalDate                = LocalDate.now()
   lazy val page:        DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]

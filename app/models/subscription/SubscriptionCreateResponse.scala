@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,12 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
-case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime)
+final case class SubscriptionCreateResponse(
+  plrReference:     String,
+  formBundleNumber: String,
+  processingDate:   LocalDateTime
+)
 
-object SubscriptionResponse {
-  given format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
-}
-
-case class SuccessResponse(success: SubscriptionResponse)
-
-object SuccessResponse {
-  given format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
+object SubscriptionCreateResponse {
+  given format: OFormat[SubscriptionCreateResponse] = Json.format[SubscriptionCreateResponse]
 }

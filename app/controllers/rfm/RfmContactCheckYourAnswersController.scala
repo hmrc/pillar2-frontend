@@ -24,7 +24,7 @@ import models.*
 import models.longrunningsubmissions.LongRunningSubmission.RFM
 import models.rfm.RfmStatus.*
 import models.rfm.{CorporatePosition, RfmStatus}
-import models.subscription.NewFilingMemberDetail
+import models.subscription.NewFilingMemberDetails
 import pages.{PlrReferencePage, RfmConfirmationPage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -153,7 +153,7 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   }
 
-  private def isNewNfmNonUkBased(newFilingMemberInformation: NewFilingMemberDetail): Boolean =
+  private def isNewNfmNonUkBased(newFilingMemberInformation: NewFilingMemberDetails): Boolean =
     (newFilingMemberInformation.corporatePosition, newFilingMemberInformation.ukBased) match {
       case (CorporatePosition.NewNfm, Some(false)) => true
       case (_, _)                                  => false

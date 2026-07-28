@@ -18,7 +18,7 @@ package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import controllers.routes
-import models.subscription.AccountingPeriodV2
+import models.subscription.AccountingPeriodDisplay
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -35,8 +35,8 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
   val plrReference = "XEPLR0000000001"
   val orgName: Some[String] = Some("Test Organisation Ltd")
 
-  val singleNewPeriod: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(
+  val singleNewPeriod: Seq[AccountingPeriodDisplay] = Seq(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2026, 1, 1)),
       endDate = Some(LocalDate.of(2026, 12, 31)),
       dueDate = Some(LocalDate.of(2027, 3, 31)),
@@ -45,15 +45,15 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
     )
   )
 
-  val multipleNewPeriods: Seq[AccountingPeriodV2] = Seq(
-    AccountingPeriodV2(
+  val multipleNewPeriods: Seq[AccountingPeriodDisplay] = Seq(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2026, 1, 1)),
       endDate = Some(LocalDate.of(2026, 12, 31)),
       dueDate = Some(LocalDate.of(2027, 3, 31)),
       canAmendStartDate = Some(true),
       canAmendEndDate = Some(true)
     ),
-    AccountingPeriodV2(
+    AccountingPeriodDisplay(
       startDate = Some(LocalDate.of(2025, 7, 1)),
       endDate = Some(LocalDate.of(2025, 12, 31)),
       dueDate = Some(LocalDate.of(2026, 3, 31)),
@@ -62,12 +62,12 @@ class AmendAccountingPeriodConfirmationViewSpec extends ViewSpecBase {
     )
   )
 
-  def groupView(newPeriods: Seq[AccountingPeriodV2] = singleNewPeriod, hasGapPeriods: Boolean = false): Document =
+  def groupView(newPeriods: Seq[AccountingPeriodDisplay] = singleNewPeriod, hasGapPeriods: Boolean = false): Document =
     Jsoup.parse(
       page(timestamp, newPeriods, hasGapPeriods, isAgent = false, orgName, plrReference)(request, appConfig, messages).toString()
     )
 
-  def agentView(newPeriods: Seq[AccountingPeriodV2] = singleNewPeriod, hasGapPeriods: Boolean = false): Document =
+  def agentView(newPeriods: Seq[AccountingPeriodDisplay] = singleNewPeriod, hasGapPeriods: Boolean = false): Document =
     Jsoup.parse(
       page(timestamp, newPeriods, hasGapPeriods, isAgent = true, orgName, plrReference)(request, appConfig, messages).toString()
     )

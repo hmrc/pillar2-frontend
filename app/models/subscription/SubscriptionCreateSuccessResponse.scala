@@ -18,20 +18,10 @@ package models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+final case class SubscriptionCreateSuccessResponse(
+  success: SubscriptionCreateResponse
+)
 
-final case class AccountingPeriodV2(
-  startDate:         Option[LocalDate] = None,
-  endDate:           Option[LocalDate] = None,
-  dueDate:           Option[LocalDate] = None,
-  canAmendStartDate: Option[Boolean] = Some(false),
-  canAmendEndDate:   Option[Boolean] = Some(false)
-) {
-
-  def toAccountingPeriod: AccountingPeriod =
-    AccountingPeriod(startDate = startDate.getOrElse(LocalDate.now), endDate = endDate.getOrElse(LocalDate.now), dueDate = dueDate)
-}
-
-object AccountingPeriodV2 {
-  given format: OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+object SubscriptionCreateSuccessResponse {
+  given format: OFormat[SubscriptionCreateSuccessResponse] = Json.format[SubscriptionCreateSuccessResponse]
 }
