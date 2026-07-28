@@ -159,7 +159,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       import play.api.inject.bind
 
       Call(GET, "/")
-      val mockNavigator    = mock[UltimateParentNavigator]
+      val mockNavigator = mock[UltimateParentNavigator]
       when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       val userAnswers = emptyUserAnswers

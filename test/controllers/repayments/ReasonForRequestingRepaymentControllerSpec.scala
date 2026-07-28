@@ -122,7 +122,7 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
     "must redirect to journey recovery when an unexpected error occurs" in {
       Call(GET, "/")
-      val mockNavigator    = mock[RepaymentNavigator]
+      val mockNavigator = mock[RepaymentNavigator]
       when(mockSessionRepository.set(any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       val userAnswers = emptyUserAnswers.setOrException(ReasonForRequestingRefundPage, "valid reason")
