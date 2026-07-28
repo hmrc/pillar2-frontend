@@ -97,7 +97,7 @@ class NewAccountingPeriodViewSpec extends ViewSpecBase {
       "have inset text" in {
         organisationView().getElementsByClass("govuk-inset-text").text mustBe
           s"You are changing accounting period: ${startDate.toDateFormat} to ${endDate.toDateFormat}"
-        organisationView().getElementsByClass("govuk-inset-text").html must include("<br>")
+        organisationView().getElementsByClass("govuk-inset-text").html must include("<br aria-hidden=\"true\">")
       }
 
       "have the following paragraph content" in {

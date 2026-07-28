@@ -200,7 +200,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
         }
       }
 
-      "fall back to single-period view when V2 service fails" in { // TODO: remove this test
+      "render the single-period view when the subscription read fails" in { // TODO: remove this test
         val application = buildApp(subscriptionLocalData = Some(localDataWithoutPeriods))
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -210,7 +210,7 @@ class ManageGroupDetailsCheckYourAnswersControllerSpec extends SpecBase {
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("Group details")
-          contentAsString(result) must not include "Accounting periods"
+          contentAsString(result) must not include "select-period/"
         }
       }
     }
