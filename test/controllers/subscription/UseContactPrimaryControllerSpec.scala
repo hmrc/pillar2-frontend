@@ -696,6 +696,37 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val ua = emptyUserAnswers
+        .set(SubSecondaryContactNamePage, "TestName")
+        .success
+        .value
+        .set(SubSecondaryPhonePreferencePage, true)
+        .success
+        .value
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(FmRegisteredInUKPage, true)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, false)
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "false")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "redirect to journey recovery if no data can be fetched for nominate filing member page" in {
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

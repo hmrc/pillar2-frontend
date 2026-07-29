@@ -22,6 +22,7 @@ import forms.RepaymentsContactNameFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
 import pages.{AgentClientOrganisationNamePage, RepaymentsContactNamePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -45,7 +46,8 @@ class RepaymentsContactNameController @Inject() (
   view:                                   RepaymentsContactNameView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -83,5 +85,9 @@ class RepaymentsContactNameController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
         )
+        .recover { case exception =>
+          logger.error("[Repayments] Error with saving contact name", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 }

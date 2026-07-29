@@ -98,6 +98,32 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val ua = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "TestName")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "1",
+              "startDate.month" -> "1",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "1",
+              "endDate.month"   -> "06",
+              "endDate.year"    -> "2024"
+            )
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must redirect to next page accounting period when valid data with string month is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "TestName")

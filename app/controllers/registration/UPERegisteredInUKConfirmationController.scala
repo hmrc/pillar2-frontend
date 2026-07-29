@@ -23,6 +23,7 @@ import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
   view:                      UPERegisteredInUKConfirmationView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -86,6 +88,10 @@ class UPERegisteredInUKConfirmationController @Inject() (
 
         }
       )
+      .recover { case exception =>
+        logger.error("[Registration] Unable to start UPE registered in UK submission", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

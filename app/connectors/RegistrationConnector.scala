@@ -17,8 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.InternalIssueError
 import models.registration.RegistrationWithoutIDResponse
+import models.{InternalIssueError, UnexpectedResponse}
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
@@ -43,46 +43,61 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     http
       .post(url"$upeRegistrationUrl/$id")
       .withBody(Json.obj())
-      .execute[HttpResponse] flatMap {
-      case response if is2xx(response.status) =>
-        logger.info(s" UPE register without ID successful with response ${response.status}")
-        response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
-      case errorResponse =>
-        logger.warn(s"UPE register without ID call failed with status ${errorResponse.status}")
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[RegistrationConnector] Failed to register UPE", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case response if is2xx(response.status) =>
+          logger.info(s" UPE register without ID successful with response ${response.status}")
+          response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
+        case errorResponse =>
+          logger.warn(s"UPE register without ID call failed with status ${errorResponse.status}")
+          Future.failed(InternalIssueError)
+      }
 
   def registerFilingMember(id: String)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$fmRegistrationUrl/$id")
       .withBody(Json.obj())
-      .execute[HttpResponse] flatMap {
-      case response if is2xx(response.status) =>
-        logger.info(
-          s"Filing Member registration without ID successful with response ${response.status}"
-        )
-        response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
-      case errorResponse =>
-        logger.warn(
-          s"Filing Member registration without ID call failed with status ${errorResponse.status}"
-        )
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[RegistrationConnector] Failed to register filing member", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case response if is2xx(response.status) =>
+          logger.info(
+            s"Filing Member registration without ID successful with response ${response.status}"
+          )
+          response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
+        case errorResponse =>
+          logger.warn(
+            s"Filing Member registration without ID call failed with status ${errorResponse.status}"
+          )
+          Future.failed(InternalIssueError)
+      }
 
   def registerNewFilingMember(id: String)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$rfmRegistrationUrl/$id")
       .withBody(Json.obj())
-      .execute[HttpResponse] flatMap {
-      case response if is2xx(response.status) =>
-        logger.info(
-          s"Replace Filing Member registration without ID successful with response ${response.status}"
-        )
-        response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
-      case errorResponse =>
-        logger.warn(
-          s"Replace Filing Member registration without ID call failed with status ${errorResponse.status}"
-        )
-        Future.failed(InternalIssueError)
-    }
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("[RegistrationConnector] Failed to register new filing member", exception)
+        Future.failed(UnexpectedResponse)
+      }
+      .flatMap {
+        case response if is2xx(response.status) =>
+          logger.info(
+            s"Replace Filing Member registration without ID successful with response ${response.status}"
+          )
+          response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
+        case errorResponse =>
+          logger.warn(
+            s"Replace Filing Member registration without ID call failed with status ${errorResponse.status}"
+          )
+          Future.failed(InternalIssueError)
+      }
 }

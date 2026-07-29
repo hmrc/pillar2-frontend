@@ -98,6 +98,25 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val application = applicationBuilder(None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.set(any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(
+            POST,
+            controllers.repayments.routes.RepaymentsContactNameController.onSubmit(NormalMode).url
+          )
+            .withFormUrlEncodedBody("contactName" -> "ABC Limited")
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {

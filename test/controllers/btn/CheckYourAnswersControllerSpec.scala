@@ -24,7 +24,6 @@ import models.btn.*
 import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.subscription.AccountingPeriod
 import models.{InternalIssueError, UserAnswers}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.invocation.InvocationOnMock
@@ -32,8 +31,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.*
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.JsObject
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository

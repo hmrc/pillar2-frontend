@@ -23,6 +23,7 @@ import forms.UpeRegisteredAddressFormProvider
 import models.{Mode, UKAddress}
 import navigation.UltimateParentNavigator
 import pages.*
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -46,7 +47,8 @@ class UpeRegisteredAddressController @Inject() (
   view:                      UpeRegisteredAddressView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
   val form:                   Form[UKAddress]    = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -101,5 +103,9 @@ class UpeRegisteredAddressController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Registration] Unable to update UPE address", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

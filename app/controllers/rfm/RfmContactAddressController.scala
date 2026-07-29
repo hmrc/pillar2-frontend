@@ -23,6 +23,7 @@ import forms.RfmContactAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmContactAddressPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -47,7 +48,8 @@ class RfmContactAddressController @Inject() (
   view:                             RfmContactAddressView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
   val form:                   Form[NonUKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen journeyGuard) { request =>
     given Request[AnyContent] = request
@@ -74,6 +76,10 @@ class RfmContactAddressController @Inject() (
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmContactAddressPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM contact address", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
 
   }
 }

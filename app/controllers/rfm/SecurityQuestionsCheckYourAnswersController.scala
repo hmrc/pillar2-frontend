@@ -89,6 +89,10 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
         case NoResultFound      => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to submit RFM security questions", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
 
   }
 

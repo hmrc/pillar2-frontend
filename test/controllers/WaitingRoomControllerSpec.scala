@@ -137,4 +137,18 @@ class WaitingRoomControllerSpec
     }
   }
 
+  "onPageLoad" must {
+    "redirect to journey recovery when an unexpected error occurs" in forAll(Gen.oneOf(LongRunningSubmission.values)) { submission =>
+      new WaitingRoomTestCase {
+        when(submissionService.getCurrentState(eqTo(submission))(using any[UserIdRequest[_]]))
+          .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+        private val result = controller.onPageLoad(submission)(request)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+  }
+
 }

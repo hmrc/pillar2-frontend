@@ -23,6 +23,7 @@ import forms.SecondaryContactEmailFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -44,7 +45,8 @@ class SecondaryContactEmailController @Inject() (
   view:                      SecondaryContactEmailView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -81,6 +83,10 @@ class SecondaryContactEmailController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update secondary contact email", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

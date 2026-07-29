@@ -17,8 +17,10 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, post, put, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import models.EnrolmentRequest.AllocateEnrolmentParameters
-import models.{EnrolmentInfo, Verifier}
+import models.{EnrolmentInfo, UnexpectedResponse, Verifier}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
@@ -60,6 +62,17 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.enrolAndActivate(enrolmentInfo).failed.futureValue
         result mustBe models.InternalIssueError
       }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          put(urlEqualTo("/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.enrolAndActivate(enrolmentInfo)
+
+        result.failed.futureValue mustBe UnexpectedResponse
+      }
     }
 
     "allocate Enrolment" should {
@@ -76,6 +89,17 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.allocateEnrolment("id", "plrId", allocateBody).failed.futureValue
         result mustBe models.InternalIssueError
       }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.allocateEnrolment("id", "plrId", allocateBody)
+
+        result.failed.futureValue mustBe UnexpectedResponse
+      }
     }
 
     "revoke Enrolment" should {
@@ -89,6 +113,17 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         stubDelete("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
         val result = connector.revokeEnrolment("id", "plrId").failed.futureValue
         result mustBe models.InternalIssueError
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          delete(urlEqualTo("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.revokeEnrolment("id", "plrId")
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 

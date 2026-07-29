@@ -117,5 +117,27 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val ua = emptyUserAnswers
+        .set(SubSecondaryContactNamePage, "TestName")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.SecondaryContactNameController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
   }
 }

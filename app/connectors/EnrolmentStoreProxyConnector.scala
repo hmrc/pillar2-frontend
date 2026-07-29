@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.EnrolmentRequest.{KnownFactsParameters, KnownFactsResponse}
-import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
+import models.{GroupIds, InternalIssueError, UnexpectedJsResult, UnexpectedResponse}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess, Json}
@@ -43,6 +43,10 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
     http
       .get(url"$submissionUrl")
       .execute[HttpResponse](using readRaw, ec)
+      .recoverWith { case exception =>
+        logger.error("Failed to get group Ids from the backend", exception)
+        Future.failed(UnexpectedResponse)
+      }
       .map {
         case response if response.status == OK =>
           val groupIds: Option[GroupIds] = response.json.asOpt[GroupIds]
@@ -61,6 +65,10 @@ class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: 
       .post(url"$submissionUrl")
       .withBody(Json.toJson(knownFacts))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to get known facts from the backend", exception)
+        Future.failed(UnexpectedResponse)
+      }
       .flatMap { response =>
         if response.status == OK then {
           logger.info("getKnownFacts - received ok status")

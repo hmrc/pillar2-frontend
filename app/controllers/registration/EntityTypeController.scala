@@ -73,6 +73,10 @@ class EntityTypeController @Inject() (
           .getOrElse(Future.successful(Ok(view(form, mode))))
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("Failed to load UPE entity type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
@@ -81,36 +85,39 @@ class EntityTypeController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case EntityType.UkLimitedCompany =>
-              logger.info("UPE- Initialising GRS journey with entity type chosen as UK Limited Company")
-              for {
-                updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
-                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-                createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+        {
+          case value @ EntityType.UkLimitedCompany =>
+            logger.info("UPE- Initialising GRS journey with entity type chosen as UK Limited Company")
+            for {
+              updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
+              updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
+              _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+              createJourneyRes <- incorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(UserType.Upe, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
-            case EntityType.LimitedLiabilityPartnership =>
-              logger.info("UPE- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
-              for {
-                updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
-                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
-                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-                createJourneyRes <-
-                  partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
-              } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
+          case value @ EntityType.LimitedLiabilityPartnership =>
+            logger.info("UPE- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
+            for {
+              updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
+              updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
+              _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+              createJourneyRes <-
+                partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
+            } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
 
-            case EntityType.Other =>
-              logger.info("UPE- Redirecting to the no ID journey as entity type not listed chosen")
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, false))
-                updatedAnswer1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswer1.id, Json.toJson(updatedAnswer1.data))
-              } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode))
-          }
+          case value @ EntityType.Other =>
+            logger.info("UPE- Redirecting to the no ID journey as entity type not listed chosen")
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, false))
+              updatedAnswer1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
+              _              <- userAnswersConnectors.save(updatedAnswer1.id, Json.toJson(updatedAnswer1.data))
+            } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode))
+        }
       )
+      .recover { case exception =>
+        logger.error("[Registration] Failed to process UPE entity type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

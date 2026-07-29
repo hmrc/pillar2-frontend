@@ -17,6 +17,8 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import models.UnexpectedResponse
 import org.apache.pekko.Done
 import org.scalacheck.Gen
@@ -61,6 +63,17 @@ class RepaymentConnectorSpec extends SpecBase with WireMockServerHandler {
     "must return a failed result for any non 201 response received from ETMP" in {
       stubResponse("/report-pillar2-top-up-taxes/repayment", errorCodes.sample.value, "")
       val result = connector.repayment(validRepaymentPayloadUkBank)
+      result.failed.futureValue mustBe UnexpectedResponse
+    }
+
+    "return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        post(urlEqualTo("/report-pillar2-top-up-taxes/repayment"))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+
+      val result = connector.repayment(validRepaymentPayloadUkBank)
+
       result.failed.futureValue mustBe UnexpectedResponse
     }
 

@@ -78,6 +78,10 @@ class WaitingRoomController @Inject() (
             logger.error(s"Submission Lookup Error: Failure to fetch current state of submission $submission due to $error")
             Redirect(submission.errorPage(Left(error)))
         }
+        .recover { case exception =>
+          logger.error(s"Failed to fetch current state of submission $submission", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   private val pageLoadAction: LongRunningSubmission => ActionBuilder[UserIdRequest, AnyContent] = {

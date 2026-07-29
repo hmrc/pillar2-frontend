@@ -22,6 +22,7 @@ import forms.UkOrAbroadBankAccountFormProvider
 import models.{Mode, UkOrAbroadBankAccount}
 import navigation.RepaymentNavigator
 import pages.{AgentClientOrganisationNamePage, UkOrAbroadBankAccountPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -45,7 +46,8 @@ class UkOrAbroadBankAccountController @Inject() (
   view:                                   UkOrAbroadBankAccountView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
@@ -87,5 +89,9 @@ class UkOrAbroadBankAccountController @Inject() (
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Repayments] Error with saving location type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

@@ -17,7 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.InternalIssueError
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, delete, get, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
+import models.{InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -45,11 +47,33 @@ class UserAnswersConnectorSpec extends SpecBase with WireMockServerHandler {
       result.futureValue mustBe testData
     }
 
+    "save should return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        post(urlEqualTo(s"$apiUrl/user-cache/registration-subscription/id"))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+
+      val result = connector.save("id", testData)
+
+      result.failed.futureValue mustBe UnexpectedResponse
+    }
+
     "get should be successful" in {
 
       stubGet(s"$apiUrl/user-cache/registration-subscription/id", OK, testData.toString())
       val result = connector.get("id")
       result.futureValue mustBe Some(testData)
+    }
+
+    "get should return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        get(urlEqualTo(s"$apiUrl/user-cache/registration-subscription/id"))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+
+      val result = connector.get("id")
+
+      result.failed.futureValue mustBe UnexpectedResponse
     }
     "getUserAnswers" should {
       "return none if no record is found" in {
@@ -61,6 +85,17 @@ class UserAnswersConnectorSpec extends SpecBase with WireMockServerHandler {
         stubGet(s"$apiUrl/user-cache/registration-subscription/id", errorCodes.sample.value, testData.toString())
         val result = connector.getUserAnswer("id")
         result.failed.futureValue mustBe models.InternalIssueError
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          get(urlEqualTo(s"$apiUrl/user-cache/registration-subscription/id"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.getUserAnswer("id")
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 
@@ -74,6 +109,17 @@ class UserAnswersConnectorSpec extends SpecBase with WireMockServerHandler {
         stubDelete(s"$apiUrl/user-cache/registration-subscription/id", errorCodes.sample.value, "")
         val result = connector.remove("id")
         result.failed.futureValue mustEqual InternalIssueError
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          delete(urlEqualTo(s"$apiUrl/user-cache/registration-subscription/id"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.remove("id")
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 

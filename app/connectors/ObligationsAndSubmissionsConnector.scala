@@ -17,8 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.RetryableGatewayError
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.{RetryableGatewayError, UnexpectedResponse}
 import play.api.Logging
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -44,6 +44,10 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
       .get(url"$url")
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve obligations and submissions data from the backend")
+        Future.failed(UnexpectedResponse)
+      }
       .flatMap { response =>
         response.status match {
           case OK =>

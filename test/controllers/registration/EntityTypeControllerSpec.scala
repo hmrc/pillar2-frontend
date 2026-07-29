@@ -253,5 +253,28 @@ class EntityTypeControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      Json.toJson(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeEntityTypePage, EntityType.Other)
+      )
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", EntityType.Other.toString))
+        when(mockUserAnswersConnectors.save(any(), any())(using any()))
+          .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
   }
 }

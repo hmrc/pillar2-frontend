@@ -24,6 +24,7 @@ import forms.NewAccountingPeriodFormProvider
 import models.subscription.{AccountingPeriod, AccountingPeriodDisplay, ChosenAccountingPeriod}
 import models.{Mode, UserAnswers}
 import pages.{NewAccountingPeriodPage, SubAccountingPeriodPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class NewAccountingPeriodController @Inject() (
   view:                                   NewAccountingPeriodView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def form(chosenAccountingPeriod: ChosenAccountingPeriod): Form[AccountingPeriod] =
     formProvider(chosenAccountingPeriod)
@@ -91,7 +93,7 @@ class NewAccountingPeriodController @Inject() (
       val accountingPeriods:        Option[Seq[AccountingPeriodDisplay]] = request.subscriptionLocalData.accountingPeriods
       val selectedAccountingPeriod: Option[AccountingPeriod]             = request.subscriptionLocalData.get(SubAccountingPeriodPage)
 
-      (accountingPeriods, selectedAccountingPeriod) match {
+      val result = (accountingPeriods, selectedAccountingPeriod) match {
         case (Some(periods), Some(selectedPeriod)) =>
           val chosenAccountingPeriod: ChosenAccountingPeriod = deriveNewAccountingPeriodDateBoundaries(periods, selectedPeriod)
 
@@ -124,6 +126,10 @@ class NewAccountingPeriodController @Inject() (
             )
 
         case _ => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+      result.recover { case exception =>
+        logger.error("Failed to save new accounting period", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }
 

@@ -23,6 +23,7 @@ import forms.UpeContactEmailFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeContactEmailPage, UpeContactNamePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.*
@@ -43,7 +44,8 @@ class UpeContactEmailController @Inject() (
   view:                      UpeContactEmailView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -77,5 +79,9 @@ class UpeContactEmailController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Registration] Unable to update UPE contact email", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

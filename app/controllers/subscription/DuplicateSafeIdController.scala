@@ -23,6 +23,7 @@ import forms.DuplicateSafeIdFormProvider
 import models.NormalMode
 import navigation.NominatedFilingMemberNavigator
 import pages.DuplicateSafeIdPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -45,7 +46,8 @@ class DuplicateSafeIdController @Inject() (
   view:                      DuplicateSafeIdView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -70,5 +72,9 @@ class DuplicateSafeIdController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(DuplicateSafeIdPage, NormalMode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Subscription] Could not update SafeId", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }
