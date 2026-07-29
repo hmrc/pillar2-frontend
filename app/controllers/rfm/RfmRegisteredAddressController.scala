@@ -23,6 +23,7 @@ import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
 import pages.*
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -47,7 +48,8 @@ class RfmRegisteredAddressController @Inject() (
   view:                             RfmRegisteredAddressView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[NonUKAddress] = formProvider()
 
@@ -101,6 +103,10 @@ class RfmRegisteredAddressController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM registered address", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
 }

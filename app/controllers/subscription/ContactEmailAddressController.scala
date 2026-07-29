@@ -23,6 +23,7 @@ import forms.ContactEmailAddressFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.*
@@ -43,7 +44,8 @@ class ContactEmailAddressController @Inject() (
   view:                      ContactEmailAddressView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
     given Request[AnyContent] = request
@@ -81,6 +83,10 @@ class ContactEmailAddressController @Inject() (
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update primary contact email", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

@@ -148,6 +148,16 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
+      "must redirect to journey recovery when an unexpected error occurs" in {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        running(applicationOverride) {
+          val result = route(applicationOverride, postRequest()).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+        }
+      }
+
       "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .build()

@@ -23,6 +23,7 @@ import forms.RfmSecondaryContactNameFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmSecondaryContactNamePage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class RfmSecondaryContactNameController @Inject() (
   view:                             RfmSecondaryContactNameView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -68,6 +70,10 @@ class RfmSecondaryContactNameController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(RfmSecondaryContactNamePage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Replace Filing Member] Failed to update RFM secondary contact name", exception)
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
   }
 
 }

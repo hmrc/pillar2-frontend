@@ -24,6 +24,7 @@ import models.Mode
 import models.subscription.AccountingPeriod
 import navigation.SubscriptionNavigator
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class GroupAccountingPeriodController @Inject() (
   view:                      GroupAccountingPeriodView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def form: Form[AccountingPeriod] = formProvider()
 
@@ -77,6 +79,10 @@ class GroupAccountingPeriodController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(SubAccountingPeriodPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update group accounting period", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   private def remapFormErrors[A](form: Form[A]): Form[A] =

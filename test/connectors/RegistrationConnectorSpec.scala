@@ -17,6 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
+import models.UnexpectedResponse
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
@@ -64,6 +67,17 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.registerUltimateParent("id")
         result.failed.futureValue mustBe models.InternalIssueError
       }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(s"$apiUrl/upe/registration/id"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.registerUltimateParent("id")
+
+        result.failed.futureValue mustBe UnexpectedResponse
+      }
     }
     "registerFilingMember" should {
       "return safeId for a filing member when successful" in {
@@ -80,6 +94,17 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.registerFilingMember("id")
         result.failed.futureValue mustBe models.InternalIssueError
 
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(s"$apiUrl/fm/registration/id"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.registerFilingMember("id")
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
     "registerNewFilingMember" should {
@@ -98,6 +123,17 @@ class RegistrationConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.registerNewFilingMember("id")
         result.failed.futureValue mustBe models.InternalIssueError
 
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(s"$apiUrl/rfm/registration/id"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.registerNewFilingMember("id")
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 

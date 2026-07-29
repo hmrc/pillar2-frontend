@@ -23,6 +23,7 @@ import forms.NfmNameRegistrationFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -46,7 +47,8 @@ class NfmNameRegistrationController @Inject() (
   view:                      NfmNameRegistrationView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -72,6 +74,10 @@ class NfmNameRegistrationController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(FmNameRegistrationPage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Nominate Filing Member] Unable to update FM name", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

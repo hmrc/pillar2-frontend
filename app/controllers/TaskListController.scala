@@ -55,29 +55,35 @@ class TaskListController @Inject() (
 
     val pillar2ReferenceFromReadSubscription = request.userAnswers.get(PlrReferencePage).isDefined
 
-    sessionRepository.get(request.userId).flatMap { optionalUA =>
-      optionalUA.map(UserAnswers => UserAnswers.get(PlrReferencePage).isDefined) match {
+    sessionRepository
+      .get(request.userId)
+      .flatMap { optionalUA =>
+        optionalUA.map(UserAnswers => UserAnswers.get(PlrReferencePage).isDefined) match {
 
-        case Some(true)                                => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad()))
-        case _ if pillar2ReferenceFromReadSubscription =>
-          userAnswersConnectors.remove(request.userId).map { _ =>
-            logger.info("Remove existing amend data from local database if exist")
-            Redirect(routes.TaskListController.onPageLoad)
-          }
-        case _ =>
-          Future.successful(
-            Ok(
-              view(
-                groupSections(request.userAnswers),
-                contactSection(request.userAnswers),
-                reviewSection(request.userAnswers),
-                countOfCompletedSections
+          case Some(true)                                => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad()))
+          case _ if pillar2ReferenceFromReadSubscription =>
+            userAnswersConnectors.remove(request.userId).map { _ =>
+              logger.info("Remove existing amend data from local database if exist")
+              Redirect(routes.TaskListController.onPageLoad)
+            }
+          case _ =>
+            Future.successful(
+              Ok(
+                view(
+                  groupSections(request.userAnswers),
+                  contactSection(request.userAnswers),
+                  reviewSection(request.userAnswers),
+                  countOfCompletedSections
+                )
               )
             )
-          )
-      }
+        }
 
-    }
+      }
+      .recover { case exception =>
+        logger.error("Failed to load task list", exception)
+        Redirect(routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   private[controllers] def groupSections(userAnswers: UserAnswers): Seq[SectionViewModel] =

@@ -120,5 +120,22 @@ class NfmContactNameControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode).url
       }
     }
+
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
   }
 }

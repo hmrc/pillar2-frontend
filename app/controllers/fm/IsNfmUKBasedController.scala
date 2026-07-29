@@ -23,10 +23,12 @@ import forms.IsNFMUKBasedFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
+import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -46,7 +48,8 @@ class IsNfmUKBasedController @Inject() (
   view:                      IsNFMUKBasedView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[Boolean] = formProvider()
 
@@ -69,28 +72,31 @@ class IsNfmUKBasedController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
-          value match {
-            case true =>
-              for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
-                updatedAnswers1 <- Future.fromTry(
-                                     request.userAnswers
-                                       .get(GrsFilingMemberStatusPage)
-                                       .map(updatedAnswers.set(GrsFilingMemberStatusPage, _))
-                                       .getOrElse(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
-                                   )
-                _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-              } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers1))
+        {
+          case value @ true =>
+            for {
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
+              updatedAnswers1 <- Future.fromTry(
+                                   request.userAnswers
+                                     .get(GrsFilingMemberStatusPage)
+                                     .map(updatedAnswers.set(GrsFilingMemberStatusPage, _))
+                                     .getOrElse(updatedAnswers.set(GrsFilingMemberStatusPage, RowStatus.InProgress))
+                                 )
+              _ <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+            } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers1))
 
-            case false =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers))
-          }
+          case value @ false =>
+            for {
+              updatedAnswers <-
+                Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
+              _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+            } yield Redirect(navigator.nextPage(FmRegisteredInUKPage, mode, updatedAnswers))
+        }
       )
+      .recover { case exception =>
+        logger.error("[Nominate Filing Member] Unable to update FM entity type", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

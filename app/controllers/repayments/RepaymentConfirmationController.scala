@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import models.UserAnswers
 import pages.*
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.SubscriptionService
@@ -38,7 +39,8 @@ class RepaymentConfirmationController @Inject() (
   requireSessionData:                     SessionDataRequiredAction
 )(using appConfig: FrontendAppConfig, executionContext: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData).async { request =>
@@ -56,6 +58,9 @@ class RepaymentConfirmationController @Inject() (
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }).getOrElse(
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      )
+      ).recover { case exception =>
+        logger.error("Failed to load repayment confirmation", exception)
+        Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError())
+      }
     }
 }

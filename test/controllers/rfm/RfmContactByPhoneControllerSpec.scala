@@ -122,6 +122,29 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+
+      val ua = emptyUserAnswers
+        .set(RfmPrimaryContactNamePage, "sad")
+        .success
+        .value
+      val application = applicationBuilder(Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "sad")

@@ -129,6 +129,31 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+        val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")

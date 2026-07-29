@@ -98,6 +98,26 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to journey recovery when an unexpected error occurs" in {
+      val application = applicationBuilder(None)
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.set(any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "bankName"          -> "BankName",
+              "nameOnBankAccount" -> "Name",
+              "bic"               -> "HBUKGB4B",
+              "iban"              -> "GB29NWBK60161331926819"
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {

@@ -22,6 +22,7 @@ import forms.RepaymentsContactByPhoneFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
 import pages.{AgentClientOrganisationNamePage, RepaymentsContactByPhonePage, RepaymentsContactNamePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.*
@@ -44,7 +45,8 @@ class RepaymentsContactByPhoneController @Inject() (
   view:                                   RepaymentsContactByPhoneView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData andThen journeyGuard) { request =>
@@ -101,5 +103,9 @@ class RepaymentsContactByPhoneController @Inject() (
             )
         }
         .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad)))
+        .recover { case exception =>
+          logger.error("[Repayments] Error with saving contact phone number", exception)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 }

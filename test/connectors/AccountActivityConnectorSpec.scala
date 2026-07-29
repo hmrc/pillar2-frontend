@@ -17,6 +17,8 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import models.*
 import models.accountactivity.*
 import play.api.Application
@@ -150,6 +152,17 @@ class AccountActivityConnectorSpec extends SpecBase with WireMockServerHandler {
 
     "return UnexpectedResponse when an error is returned" in {
       stubGet(accountActivityUrl, expectedStatus = 500, "", Map("X-Pillar2-Id" -> testPillar2Id))
+
+      val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
+
+      value.failed.futureValue mustBe UnexpectedResponse
+    }
+
+    "return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        get(urlEqualTo(accountActivityUrl))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
 
       val value = connector.retrieveAccountActivity(testPillar2Id, fromDate, toDate)
 

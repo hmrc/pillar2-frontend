@@ -18,6 +18,7 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import models.*
 import models.subscription.*
 import org.apache.pekko.Done
@@ -173,6 +174,17 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
         val result = connector.getSubscriptionCache(testId).futureValue
         result mustBe None
+      }
+
+      "return UnexpectedResponse when the request fails" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readCachedSubscriptionPath/$testId"))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.getSubscriptionCache(testId)
+
+        result.failed.futureValue mustBe UnexpectedResponse
       }
     }
 

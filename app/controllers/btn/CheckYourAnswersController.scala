@@ -58,71 +58,84 @@ class CheckYourAnswersController @Inject() (
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { request =>
       given Request[AnyContent] = request
-      sessionRepository.get(request.userId).map {
-        case Some(userAnswers) =>
-          userAnswers.get(EntitiesInsideOutsideUKPage) match {
-            case Some(true) =>
-              val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
 
-              maybeAccountingPeriodDetails
-                .map { accountingPeriodDetails =>
-                  logger.info("Using AccountingPeriod from User Answers.")
-                  AccountingPeriod(
-                    startDate = accountingPeriodDetails.startDate,
-                    endDate = accountingPeriodDetails.endDate,
-                    dueDate = Some(accountingPeriodDetails.dueDate)
-                  )
-                }
-                .orElse {
-                  logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
-                  request.subscriptionLocalData.subAccountingPeriod
-                }
-                .fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) { accountingPeriod =>
-                  val summaryList = SummaryListViewModel(
-                    rows = Seq(
-                      SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
-                      BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
-                    ).flatten
-                  ).withCssClass("govuk-!-margin-bottom-9")
+      sessionRepository
+        .get(request.userId)
+        .map {
+          case Some(userAnswers) =>
+            userAnswers.get(EntitiesInsideOutsideUKPage) match {
+              case Some(true) =>
+                val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
 
-                  Ok(view(summaryList, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName))
-                }
-            case _ =>
-              Redirect(controllers.routes.IndexController.onPageLoad)
-          }
-        case None =>
-          logger.error("user answers not found")
+                maybeAccountingPeriodDetails
+                  .map { accountingPeriodDetails =>
+                    logger.info("Using AccountingPeriod from User Answers.")
+                    AccountingPeriod(
+                      startDate = accountingPeriodDetails.startDate,
+                      endDate = accountingPeriodDetails.endDate,
+                      dueDate = Some(accountingPeriodDetails.dueDate)
+                    )
+                  }
+                  .orElse {
+                    logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
+                    request.subscriptionLocalData.subAccountingPeriod
+                  }
+                  .fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) { accountingPeriod =>
+                    val summaryList = SummaryListViewModel(
+                      rows = Seq(
+                        SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
+                        BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
+                      ).flatten
+                    ).withCssClass("govuk-!-margin-bottom-9")
+
+                    Ok(view(summaryList, request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName))
+                  }
+              case _ =>
+                Redirect(controllers.routes.IndexController.onPageLoad)
+            }
+          case None =>
+            logger.error("user answers not found")
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
+        .recover { case exception =>
+          logger.error("[Below Threshold Notification] Error loading BTN CYA page")
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+        }
     }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     given Request[AnyContent] = request
-    sessionRepository.get(request.userId).flatMap {
-      case Some(userAnswers) =>
-        userAnswers.get(BTNChooseAccountingPeriodPage) match {
-          case Some(chosenPeriod) =>
-            val accountingPeriod = AccountingPeriod(chosenPeriod.startDate, chosenPeriod.endDate)
-            val btnPayload       = BTNRequest(
-              accountingPeriodFrom = chosenPeriod.startDate,
-              accountingPeriodTo = chosenPeriod.endDate
-            )
-            btnSubmissionService
-              .startSubmission(
-                userId = request.userId,
-                userAnswers = userAnswers,
-                pillar2Id = request.subscriptionLocalData.plrReference,
-                accountingPeriod = accountingPeriod,
-                btnPayload = btnPayload
+    sessionRepository
+      .get(request.userId)
+      .flatMap {
+        case Some(userAnswers) =>
+          userAnswers.get(BTNChooseAccountingPeriodPage) match {
+            case Some(chosenPeriod) =>
+              val accountingPeriod = AccountingPeriod(chosenPeriod.startDate, chosenPeriod.endDate)
+              val btnPayload       = BTNRequest(
+                accountingPeriodFrom = chosenPeriod.startDate,
+                accountingPeriodTo = chosenPeriod.endDate
               )
-              .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
-          case None =>
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        }
-      case None =>
-        logger.error("user answers not found")
-        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
+              btnSubmissionService
+                .startSubmission(
+                  userId = request.userId,
+                  userAnswers = userAnswers,
+                  pillar2Id = request.subscriptionLocalData.plrReference,
+                  accountingPeriod = accountingPeriod,
+                  btnPayload = btnPayload
+                )
+                .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
+            case None =>
+              Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          }
+        case None =>
+          logger.error("user answers not found")
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+      .recover { case exception =>
+        logger.error("[Below Threshold Notification] Error submitting BTN details")
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
   def cannotReturnKnockback: Action[AnyContent] = identify { request =>

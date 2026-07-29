@@ -17,7 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models.RetryableGatewayError
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
+import models.{RetryableGatewayError, UnexpectedResponse}
 import play.api.Application
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -85,6 +87,17 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
+    }
+
+    "return UnexpectedResponse when the request fails" in {
+      server.stubFor(
+        get(urlEqualTo(url))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
+
+      val result = connector.getData(pillar2Id, fromDate, toDate)
+
+      result.failed.futureValue mustBe UnexpectedResponse
     }
   }
 }

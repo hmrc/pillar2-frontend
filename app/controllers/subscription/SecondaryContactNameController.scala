@@ -23,6 +23,7 @@ import forms.SecondaryContactNameFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -45,7 +46,8 @@ class SecondaryContactNameController @Inject() (
   view:                      SecondaryContactNameView
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   val form: Form[String] = formProvider()
 
@@ -75,6 +77,10 @@ class SecondaryContactNameController @Inject() (
             _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
           } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, mode, updatedAnswers))
       )
+      .recover { case exception =>
+        logger.error("[Subscription] Failed to update secondary contact name", exception)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 
 }

@@ -56,18 +56,26 @@ class BankAccountDetailsController @Inject() (
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData andThen journeyGuard).async { request =>
       given Request[AnyContent] = request
-      val preparedForm          = request.userAnswers.get(BankAccountDetailsPage) match {
-        case None              => form
-        case Some(userAnswers) => form.fill(userAnswers)
-      }
-
-      for {
-        updatedUserAnswer  <- Future.fromTry(request.userAnswers.remove(BarsAccountNamePartialPage))
-        updatedUserAnswer1 <- Future.fromTry(updatedUserAnswer.remove(RepaymentAccountNameConfirmationPage))
-        _                  <- sessionRepository.set(updatedUserAnswer1)
+      val preparedForm          = request.userAnswers
+        .get(BankAccountDetailsPage)
+        .map(form.fill)
+        .getOrElse(form)
+      (for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.remove(BarsAccountNamePartialPage))
+        cleanedAnswers <- Future.fromTry(updatedAnswers.remove(RepaymentAccountNameConfirmationPage))
+        _              <- sessionRepository.set(cleanedAnswers)
       } yield Ok(
-        view(preparedForm, mode, request.request.isAgent, request.request.clientPillar2Id, request.userAnswers.get(AgentClientOrganisationNamePage))
-      )
+        view(
+          preparedForm,
+          mode,
+          request.request.isAgent,
+          request.request.clientPillar2Id,
+          request.userAnswers.get(AgentClientOrganisationNamePage)
+        )
+      )).recover { case exception =>
+        logger.error("Failed to load bank account details", exception)
+        Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError())
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -105,5 +113,9 @@ class BankAccountDetailsController @Inject() (
                   )
             } yield result
         )
+        .recover { case exception =>
+          logger.error("Failed to verify bank account details", exception)
+          Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadBankDetailsError())
+        }
     }
 }

@@ -21,7 +21,7 @@ import helpers.ViewInstances
 import models.grs.EntityType.LimitedLiabilityPartnership
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
-import models.{NormalMode, UserType}
+import models.{NormalMode, UnexpectedResponse, UserType}
 import org.mockito.ArgumentMatchers.{any, eq as Meq}
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers.*
@@ -83,11 +83,40 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUt
       verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
+    "must return UnexpectedResponse when createPartnershipJourney fails" in {
+      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest =
+        IncorporatedEntityCreateRegistrationRequest(
+          continueUrl =
+            s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Fm.value.toLowerCase}",
+          businessVerificationCheck = false,
+          optServiceName = Some(serviceName.en.optServiceName),
+          deskProServiceId = "pillar2-frontend",
+          signOutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state",
+          accessibilityUrl = "/accessibility-statement/pillar2",
+          labels = serviceName
+        )
+
+      when(executePost[GrsCreateRegistrationResponse](Json.toJson(expectedIncorporatedEntityCreateRegistrationRequest)))
+        .thenReturn(Future.failed(new RuntimeException("request failed")))
+
+      val result = connector.createPartnershipJourney(UserType.Fm, LimitedLiabilityPartnership, NormalMode)
+
+      result.failed.futureValue shouldBe UnexpectedResponse
+    }
+
     "getJourneyData should be successful" in {
       when(executeGet[PartnershipEntityRegistrationData]).thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
       val result = connector.getJourneyData("1234")
       whenReady(result)(response => response shouldBe validRegisterWithIdResponseForLLP)
+    }
+
+    "getJourneyData should return UnexpectedResponse when the request fails" in {
+      when(executeGet[PartnershipEntityRegistrationData]).thenReturn(Future.failed(new RuntimeException("request failed")))
+
+      val result = connector.getJourneyData("1234")
+
+      result.failed.futureValue shouldBe UnexpectedResponse
     }
   }
 }

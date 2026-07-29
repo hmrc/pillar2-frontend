@@ -135,6 +135,16 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
+      "must redirect to journey recovery when an unexpected error occurs" in {
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+        running(applicationOverride) {
+          val result = route(applicationOverride, postRequest()).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
       "in a form with errors, include/not include UK in country list based on previous answers" should {
         "include UK if NfmUkBasedPage is true" in {
 

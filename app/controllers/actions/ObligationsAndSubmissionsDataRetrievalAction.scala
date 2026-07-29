@@ -54,7 +54,7 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
         )
       }
       .recover { case _: Exception =>
-        logger.warn(s"obligations and submissions data not found")
+        logger.error(s"obligations and submissions data not found")
         if JourneyCheck.isBTNJourney(request.path) then {
           Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         } else {
