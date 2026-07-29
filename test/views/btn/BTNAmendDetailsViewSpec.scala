@@ -59,8 +59,18 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        organisationViewUkOnly.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
-        organisationViewUkAndOther.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        val serviceNameUkOnly: Elements = organisationViewUkOnly.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceNameUkOnly.size() mustBe 1
+        serviceNameUkOnly.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceNameUkOnly.attr("href") mustBe routes.HomepageController.onPageLoad().url
+
+        val serviceNameUkAndOther: Elements =
+          organisationViewUkAndOther.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceNameUkAndOther.size() mustBe 1
+        serviceNameUkAndOther.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceNameUkAndOther.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have paragraph content and link" in {
@@ -122,8 +132,18 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        agentViewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
-        agentViewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        val serviceNameUkOnly: Elements = agentViewUkOnly().select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceNameUkOnly.size() mustBe 1
+        serviceNameUkOnly.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceNameUkOnly.attr("href") mustBe routes.HomepageController.onPageLoad().url
+
+        val serviceNameUkAndOther: Elements =
+          agentViewUkAndOther().select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceNameUkAndOther.size() mustBe 1
+        serviceNameUkAndOther.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceNameUkAndOther.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have paragraph content and link" in {

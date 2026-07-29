@@ -45,36 +45,27 @@ trait ViewInstances extends StubMessageControllerComponents {
 
   val accessibilityConfiguration = new AccessibilityStatementConfig(configuration)
 
-  lazy val tudorCrownConfig: TudorCrownConfig = TudorCrownConfig(configuration)
-
-  lazy val rebrandConfig: RebrandConfig = RebrandConfig(configuration)
-
   lazy val govukLogo = new GovukLogo()
 
-  val govukHeader = new GovukHeader(tudorCrownConfig, rebrandConfig, govukLogo)
+  val govukHeader = new GovukHeader(govukLogo)
 
   val govukTemplate =
-    new GovukTemplate(govukHeader, new GovukFooter(rebrandConfig, govukLogo), new GovukSkipLink, new FixedWidthPageLayout, rebrandConfig)
-
-  val serviceNavigationConfig = new ServiceNavigationConfig(configuration)
+    new GovukTemplate(govukHeader, new GovukFooter(govukLogo), new GovukSkipLink, new FixedWidthPageLayout)
 
   val govukServiceNavigation = new GovukServiceNavigation()
 
   val hmrcStandardHeader = new HmrcStandardHeader(
     hmrcHeader = new HmrcHeader(
-      hmrcBanner = new HmrcBanner(tudorCrownConfig),
+      hmrcBanner = new HmrcBanner(),
       hmrcUserResearchBanner = new HmrcUserResearchBanner(),
       govukPhaseBanner = new GovukPhaseBanner(govukTag = new GovukTag()),
-      tudorCrownConfig = tudorCrownConfig,
-      rebrandConfig = rebrandConfig,
       govukLogo = govukLogo,
       govukServiceNavigation = govukServiceNavigation
     ),
-    serviceNavigationConfig = serviceNavigationConfig,
     configuration = configuration
   )
   val hmrcStandardFooter = new HmrcStandardFooter(
-    new HmrcFooter(new GovukFooter(rebrandConfig, govukLogo)),
+    new HmrcFooter(new GovukFooter(govukLogo)),
     new HmrcFooterItems(new AccessibilityStatementConfig(configuration))
   )
 
@@ -129,10 +120,11 @@ trait ViewInstances extends StubMessageControllerComponents {
   val govukLayout = new GovukLayout(
     govukTemplate = govukTemplate,
     govukHeader = govukHeader,
-    govukFooter = new GovukFooter(rebrandConfig, govukLogo),
+    govukFooter = new GovukFooter(govukLogo),
     govukBackLink = govukBackLink,
     defaultMainContentLayout = new TwoThirdsMainContent,
-    fixedWidthPageLayout = new FixedWidthPageLayout
+    fixedWidthPageLayout = new FixedWidthPageLayout,
+    govukServiceNavigation = govukServiceNavigation
   )
 
   val pillar2layout = new Layout(
@@ -142,7 +134,6 @@ trait ViewInstances extends StubMessageControllerComponents {
     hmrcStandardHeader,
     hmrcStandardFooter,
     hmrcTrackingConsent,
-    new HmrcLanguageSelect(),
     hmrcTimeoutDialogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     new HmrcAccessibleAutocompleteJavascript(assetsConfig),

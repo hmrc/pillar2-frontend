@@ -114,9 +114,11 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a non-clickable banner" in {
-      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
-      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
-      serviceName.getElementsByTag("a") mustBe empty
+      val serviceName = view.select(".govuk-service-navigation__service-name > .govuk-service-navigation__text")
+
+      serviceName.size() mustBe 1
+      serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.attr("href") mustBe empty
     }
 
     "have a caption" in {

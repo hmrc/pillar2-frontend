@@ -53,8 +53,11 @@ class MneToDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        val className: String = "govuk-header__link govuk-header__service-name"
-        groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        val serviceName: Elements = groupView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceName.size() mustBe 1
+        serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have the following paragraph content and link" in {
@@ -90,8 +93,11 @@ class MneToDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        val className: String = "govuk-header__link govuk-header__service-name"
-        agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        val serviceName: Elements = agentView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceName.size() mustBe 1
+        serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have the following paragraph content and link" in {

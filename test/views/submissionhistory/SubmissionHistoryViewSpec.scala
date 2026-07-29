@@ -69,7 +69,11 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a banner with a link to the Homepage" in {
-      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      val serviceName: Elements = organisationView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+      serviceName.size() mustBe 1
+      serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph detailing submission details" in {
@@ -134,7 +138,11 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a banner with a link to the Homepage" in {
-      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      val serviceName: Elements = agentView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+      serviceName.size() mustBe 1
+      serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have correct text for agents at the top of the page" in {

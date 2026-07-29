@@ -108,9 +108,17 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have a banner with a link to the Homepage" in {
-      val className: String = "govuk-header__link govuk-header__service-name"
-      groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      val serviceNameGroup: Elements = groupView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+      serviceNameGroup.size() mustBe 1
+      serviceNameGroup.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceNameGroup.attr("href") mustBe routes.HomepageController.onPageLoad().url
+
+      val serviceNameAgent: Elements = agentView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+      serviceNameAgent.size() mustBe 1
+      serviceNameAgent.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceNameAgent.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have correct text for agents at the top of the page" in {

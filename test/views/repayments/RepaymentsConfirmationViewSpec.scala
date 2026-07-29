@@ -17,6 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -51,10 +52,11 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a banner with a link to the Homepage" in {
-      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
+      val serviceName: Elements = view.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
 
-      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+      serviceName.size() mustBe 1
+      serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a confirmation message" in {
