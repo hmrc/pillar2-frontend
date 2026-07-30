@@ -66,7 +66,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
   }
 
   def amendSubscription(userId: String, amendData: SubscriptionDataAmend)(using hc: HeaderCarrier): Future[Done] = {
-    val amendSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/amend-subscription/$userId"
+    val amendSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId"
     http
       .put(amendSubscriptionUrl)
       .withBody(Json.toJson(amendData))
@@ -93,7 +93,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
   def readSubscription(
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionDataDisplay]] = {
-    val readSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
+    val readSubscriptionUrl: URL = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
     http
       .get(readSubscriptionUrl)
       .execute[HttpResponse]
@@ -120,7 +120,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     plrReference: String
   )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionDataDisplay] = {
     val readAndCacheSubscriptionUrl: URL =
-      url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$userId/$plrReference"
+      url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$userId/$plrReference"
     http
       .get(readAndCacheSubscriptionUrl)
       .execute[HttpResponse]
