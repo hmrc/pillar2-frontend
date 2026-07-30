@@ -55,9 +55,17 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        val className: String = "govuk-header__link govuk-header__service-name"
-        organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
-        agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        val serviceName: Elements = organisationView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceName.size() mustBe 1
+        serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
+
+        val serviceNameAgent: Elements = agentView.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+        serviceNameAgent.size() mustBe 1
+        serviceNameAgent.text() mustBe "Report Pillar 2 Top-up Taxes"
+        serviceNameAgent.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have the following paragraph content" in {

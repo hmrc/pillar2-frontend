@@ -44,7 +44,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
     URLEncoder.encode(value, StandardCharsets.UTF_8.toString)
 
   def feedbackUrl(using request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${encode(host + request.uri)}"
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${encode(host + request.uri)}&useServiceNavigation"
 
   def supportUrl(using request: RequestHeader): String =
     s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier&referrerUrl=${encode(request.uri)}"
@@ -77,7 +77,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
     s"/accessibility-statement$accessibilityStatementServicePath"
 
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
-  val exitSurveyUrl:             String = s"$exitSurveyBaseUrl/feedback/pillar2-frontend"
+  val exitSurveyUrl:             String = s"$exitSurveyBaseUrl/feedback/pillar2-frontend?useServiceNavigation"
 
   val timeout:   Int = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")

@@ -55,9 +55,11 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     }
 
     "have the correct banner link" in {
-      val link: Elements = view.getElementsByClass("govuk-header__link").last().getElementsByTag("a")
-      link.attr("href") mustBe routes.HomepageController.onPageLoad().url
-      link.text mustBe "Report Pillar 2 Top-up Taxes"
+      val serviceName: Elements = view.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+      serviceName.size() mustBe 1
+      serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     val viewScenarios: Seq[ViewScenario] =

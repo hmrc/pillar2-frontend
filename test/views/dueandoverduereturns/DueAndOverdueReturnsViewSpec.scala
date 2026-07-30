@@ -44,8 +44,11 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     h1Elements.size() mustBe 1
     h1Elements.text() mustBe pageTitle
 
-    val className: String = "govuk-header__link govuk-header__service-name"
-    view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+    val serviceName: Elements = view.select(".govuk-service-navigation__service-name > .govuk-service-navigation__link")
+
+    serviceName.size() mustBe 1
+    serviceName.text() mustBe "Report Pillar 2 Top-up Taxes"
+    serviceName.attr("href") mustBe routes.HomepageController.onPageLoad().url
 
     val headings: Elements = view.getElementsByTag("h2")
 
