@@ -49,10 +49,9 @@ class ErrorTemplateSpec extends ViewSpecBase {
     "have a paragraph with a link" in {
       val paragraph: Element = view.getElementsByClass("govuk-body").get(1)
 
-      paragraph.text mustBe "You must return to your Pillar 2 Top-up Taxes registration and complete the required tasks."
-      paragraph.getElementsByTag("a").text() mustBe "return to your Pillar 2 Top-up Taxes registration"
-      paragraph.getElementsByTag("a").attr("href") mustBe
-        controllers.routes.TaskListController.onPageLoad.url
+      paragraph.text mustBe "If the web address is correct or you selected a link or button," +
+        " you can contact the Pillar 2 team by emailing pillar2mailbox@hmrc.gov.uk"
+      paragraph.getElementsByTag("a").text() mustBe "pillar2mailbox@hmrc.gov.uk"
     }
 
     val viewScenarios: Seq[ViewScenario] =
