@@ -36,8 +36,8 @@ trait SubscriptionDataFixtures {
 
   val readCachedSubscriptionPath: String = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
 
-  val readSubscriptionPath:  String = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
-  val amendSubscriptionPath: String = "/report-pillar2-top-up-taxes/subscription/v2/amend-subscription"
+  val readSubscriptionPath:  String = "/report-pillar2-top-up-taxes/subscription/read-subscription"
+  val amendSubscriptionPath: String = "/report-pillar2-top-up-taxes/subscription/amend-subscription"
 
   val testFormBundleNumber: String = "123456789012"
 
