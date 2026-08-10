@@ -90,8 +90,9 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
         val hints: Elements = view.getElementsByClass("govuk-hint")
 
         hints.get(0).text mustBe "This must be a business account."
-        hints.get(1).text mustBe "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
-        hints.get(2).text mustBe "You can ask your bank or check your bank statement."
+        hints.get(1).text mustBe "Must be a business account."
+        hints.get(2).text mustBe "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
+        hints.get(3).text mustBe "You can ask your bank or check your bank statement."
       }
 
       "have a continue button" in {
@@ -127,19 +128,19 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Enter the name of the bank"
-      errorsList.get(1).text() mustBe "Enter the name on the account"
-      errorsList.get(2).text() mustBe "Enter the BIC or SWIFT code"
-      errorsList.get(3).text() mustBe "Enter the IBAN"
+      errorsList.size() mustBe 3
+      errorsList.get(0).text() mustBe "You must enter a bank name"
+      errorsList.get(1).text() mustBe "You must enter the name on account"
+      errorsList.get(2).text() mustBe "You must enter a BIC or SWIFT, or an IBAN number"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
-      fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
-      fieldErrors.get(2).text() mustBe "Error: Enter the BIC or SWIFT code"
-      fieldErrors.get(3).text() mustBe "Error: Enter the IBAN"
+      fieldErrors.get(0).text() mustBe "Error: You must enter a bank name"
+      fieldErrors.get(1).text() mustBe "Error: You must enter the name on account"
+      fieldErrors.get(2).text() mustBe "Error: You must enter a BIC or SWIFT, or an IBAN number"
+      fieldErrors.get(3).text() mustBe "Error: You must enter a BIC or SWIFT, or an IBAN number"
     }
   }
 
@@ -152,7 +153,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
             "bankName"          -> longInput,
             "nameOnBankAccount" -> longInput,
             "bic"               -> longInput,
-            "iban"              -> "GB82WEST12345698765432"
+            "iban"              -> longInput
           )
         ),
         NormalMode,
@@ -171,17 +172,52 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Name of the bank must be 40 characters or less"
-      errorsList.get(1).text() mustBe "Name on the account must be 60 characters or less"
-      errorsList.get(2).text() mustBe "BIC or SWIFT code must be between 8 and 11 characters long"
+      errorsList.get(0).text() mustBe "Name of the bank is too long. It must be 40 characters or less"
+      errorsList.get(1).text() mustBe "Name on the account is too long. It must be 60 characters or less"
+      errorsList.get(2).text() mustBe "BIC or SWIFT code is too long. It must be between 8 and 11 characters long"
+      errorsList.get(3).text() mustBe "IBAN is too long. It can only be up to 34 characters"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Name of the bank must be 40 characters or less"
-      fieldErrors.get(1).text() mustBe "Error: Name on the account must be 60 characters or less"
-      fieldErrors.get(2).text() mustBe "Error: BIC or SWIFT code must be between 8 and 11 characters long"
+      fieldErrors.get(0).text() mustBe "Error: Name of the bank is too long. It must be 40 characters or less"
+      fieldErrors.get(1).text() mustBe "Error: Name on the account is too long. It must be 60 characters or less"
+      fieldErrors.get(2).text() mustBe "Error: BIC or SWIFT code is too long. It must be between 8 and 11 characters long"
+      fieldErrors.get(3).text() mustBe "Error: IBAN is too long. It can only be up to 34 characters"
+    }
+  }
+
+  "form is submitted with values below minimum length" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "bankName"          -> "Bank Name",
+            "nameOnBankAccount" -> "Account Name",
+            "bic"               -> "ABCDEF1",
+            "iban"              -> "GB82WEST12345"
+          )
+        ),
+        NormalMode,
+        isAgent = false,
+        None,
+        None
+      )(request, appConfig, messages).toString()
+    )
+
+    "show too short validation error summary" in {
+      val errorsList: Elements = errorView.getElementsByClass("govuk-error-summary").first().getElementsByTag("li")
+
+      errorsList.get(0).text() mustBe "BIC or SWIFT code is too short. It must be between 8 and 11 characters long"
+      errorsList.get(1).text() mustBe "IBAN is too short. It must be between 14 and 34 characters long"
+    }
+
+    "show field-specific too short errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: BIC or SWIFT code is too short. It must be between 8 and 11 characters long"
+      fieldErrors.get(1).text() mustBe "Error: IBAN is too short. It must be between 14 and 34 characters long"
     }
   }
 

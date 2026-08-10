@@ -99,7 +99,8 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "bic"
     val requiredKey = "repayments.nonUKBank.error.bic.required"
-    val lengthKey   = "repayments.nonUKBank.error.bic.length"
+    val tooShortKey = "repayments.nonUKBank.error.bic.tooShort"
+    val tooLongKey  = "repayments.nonUKBank.error.bic.tooLong"
     val regex       = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
     val maxLength   = 11
 
@@ -113,9 +114,21 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      lengthError = FormError(fieldName, tooLongKey, Seq(maxLength)),
       generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
+
+    "fail to bind when BIC/SWIFT code is too short" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "ABCDEF1",
+          "iban"              -> ""
+        )
+      )
+      result.errors must contain(FormError(fieldName, tooShortKey, Seq(8)))
+    }
 
     "bind successfully when IBAN is provided" in {
       val result = form.bind(
@@ -158,7 +171,8 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName   = "iban"
     val requiredKey = "repayments.nonUKBank.error.iban.required"
-    val lengthKey   = "repayments.nonUKBank.error.iban.length"
+    val tooShortKey = "repayments.nonUKBank.error.iban.tooShort"
+    val tooLongKey  = "repayments.nonUKBank.error.iban.tooLong"
     val regex       = Validation.IBANRegex
     val maxLength   = 34
 
@@ -172,9 +186,21 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      lengthError = FormError(fieldName, tooLongKey, Seq(maxLength)),
       generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
+
+    "fail to bind when IBAN is too short" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "",
+          "iban"              -> "GB82WEST12345"
+        )
+      )
+      result.errors must contain(FormError(fieldName, tooShortKey, Seq(14)))
+    }
 
     "bind successfully when BIC is provided" in {
       val result = form.bind(

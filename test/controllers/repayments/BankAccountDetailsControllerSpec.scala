@@ -142,7 +142,26 @@ class BankAccountDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Enter the name of the bank")
+        contentAsString(result) must include("You must enter a bank name")
+      }
+    }
+
+    "must return Bad Request and show specific error messages when sort code and account number are too short" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "bankName"          -> "Natwest",
+              "accountHolderName" -> "Epic Adventure Inc",
+              "sortCode"          -> "12345",
+              "accountNumber"     -> "1234567"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Sort code entered is too short. It must be 6 digits")
+        contentAsString(result) must include("Account number entered is too short. It must be 8 digits")
       }
     }
 

@@ -21,6 +21,7 @@ object Constants {
   final val UKCountryCode:        String = "GB"
   final val MinLength6:           Int    = 6
   final val MinLength8:           Int    = 8
+  final val MinLength14:          Int    = 14
   final val MaxLength11:          Int    = 11
   final val MaxLength24:          Int    = 24
   final val MaxLength34:          Int    = 34
