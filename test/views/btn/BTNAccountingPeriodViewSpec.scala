@@ -150,12 +150,6 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
       }
-
-      "have a cancel link" in {
-        val link = organisationView().select("div.govuk-button-group a.govuk-link").first()
-        link.text mustBe messages("btn.accountingPeriod.cancel.link")
-        link.attr("href") mustBe routes.HomepageController.onPageLoad().url
-      }
     }
 
     "it's an agent" should {
@@ -245,12 +239,6 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         val continueButton: Element = agentView().getElementsByClass("govuk-button").first()
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
-      }
-
-      "have a cancel link" in {
-        val link = agentView().select("div.govuk-button-group a.govuk-link").first()
-        link.text mustBe messages("btn.accountingPeriod.cancel.link")
-        link.attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
     }
 

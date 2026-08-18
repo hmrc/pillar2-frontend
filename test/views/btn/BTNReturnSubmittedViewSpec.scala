@@ -103,9 +103,11 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       }
 
       "have a Return to Homepage link" in {
-        val link: Element = organisationView.select("div.govuk-button-group a.govuk-link").first()
-        link.text mustBe messages("btn.returnSubmitted.cancel.link")
+        val link: Element = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+        link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
     }
@@ -149,10 +151,13 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         continueButton.attr("type") mustBe "submit"
       }
 
-      "have a cancel link" in {
-        val link: Element = agentView.select("div.govuk-button-group a.govuk-link").first()
-        link.text mustBe messages("btn.returnSubmitted.cancel.link")
+      "have a Return to Homepage link" in {
+        val link: Element = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+
+        link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
     }
 

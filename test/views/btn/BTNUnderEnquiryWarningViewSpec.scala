@@ -59,9 +59,9 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
       organisationView.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
-    "have a cancel link" in {
-      val link = organisationView.select("div.govuk-button-group a.govuk-link").first()
-      link.text mustBe messages("btn.underEnquiry.cancel.link")
+    "have a return to homepage link" in {
+      val link = organisationView.select("a:contains(Return to home page)")
+      link.size() mustBe 1
       link.attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
