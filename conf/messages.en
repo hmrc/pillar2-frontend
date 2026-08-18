@@ -1779,6 +1779,7 @@ btn.accountingPeriod.checkYourAnswersLabel = Group’s accounting period
 btn.accountingPeriod.change.hidden = group’s accounting period
 btn.accountingPeriod.checkYourAnswersPrefix.startDate = Start date:
 btn.accountingPeriod.checkYourAnswersPrefix.endDate = End date:
+btn.accountingPeriod.cancel.link = Cancel and return to homepage
 
 btn.returnSubmitted.title = You’ve submitted a UK Tax Return for the accounting period {0} - {1}
 btn.returnSubmitted.agent.title = The group has submitted a UK Tax Return for the accounting period {0} - {1}
@@ -1791,6 +1792,7 @@ btn.returnSubmitted.agent.p1 = By continuing, the group’s UK Tax Return will b
 btn.returnSubmitted.insetText = If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification.
 btn.returnSubmitted.agent.insetText = If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification.
 btn.returnSubmitted.link = Return to homepage
+btn.returnSubmitted.cancel.link = Cancel and return to homepage
 
 btn.alreadyInPlace.title = The group has already submitted a Below-Threshold Notification for this accounting period
 btn.alreadyInPlace.heading = The group has already submitted a Below-Threshold Notification for this accounting period
@@ -1964,3 +1966,4 @@ btn.underEnquiryWarning.p1 = You cannot add a Below-Threshold Notification to an
 btn.underEnquiryWarning.p2 = If you continue, the Below-Threshold Notification will still be processed but will not apply to any accounting periods under enquiry.
 btn.underEnquiryWarning.continue = Continue
 btn.underEnquiryWarning.returnToHomePageText.link = Return to home page
+btn.underEnquiry.cancel.link = Cancel and return to homepage
