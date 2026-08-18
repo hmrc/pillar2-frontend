@@ -151,7 +151,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
       "have a cancel link" in {
         val link: Element = agentView.select("div.govuk-button-group a.govuk-link").first()
-        link.text mustBe messages("amendAccountingPeriodCYA.cancel")
+        link.text mustBe messages("btn.returnSubmitted.cancel.link")
         link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
       }
     }
