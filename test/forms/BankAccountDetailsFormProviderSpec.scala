@@ -94,32 +94,39 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
   }
 
   ".sortCode" - {
-    val fieldName     = "sortCode"
-    val requiredKey   = "repayments.bankAccountDetails.sortCodeError"
-    val sortCodeRegex = """^[0-9]{6}$"""
-    val maxLength     = 6
+    val fieldName   = "sortCode"
+    val requiredKey = "repayments.bankAccountDetails.sortCodeError"
+    val tooShortKey = "repayments.bankAccountDetails.sortCodeTooShortError"
+    val tooLongKey  = "repayments.bankAccountDetails.sortCodeTooLongError"
+    val regex       = """^[0-9]{6}$"""
+    val length      = 6
 
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyRegexConformingStringWithMaxLength(sortCodeRegex, maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(regex, length)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, requiredKey, Seq(maxLength)),
-      generator = Some(longStringsConformingToRegex(sortCodeRegex, maxLength))
+      maxLength = length,
+      lengthError = FormError(fieldName, tooLongKey, Seq(length)),
+      generator = Some(longStringsConformingToRegex(regex, length))
     )
 
     behave like fieldWithRegex(
       form,
       fieldName,
-      regex = sortCodeRegex,
+      regex = regex,
       regexViolationGen = invalidSortCodes,
       regexError = FormError(fieldName, requiredKey)
     )
+
+    "must not bind values shorter than 6 digits" in {
+      val result = form.bind(Map(fieldName -> "12345")).apply(fieldName)
+      result.errors must contain only FormError(fieldName, tooShortKey, Seq(length))
+    }
 
     behave like mandatoryField(
       form,
@@ -132,6 +139,8 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName          = "accountNumber"
     val requiredKey        = "repayments.bankAccountDetails.accountNumberError"
+    val tooShortKey        = "repayments.bankAccountDetails.accountNumberTooShortError"
+    val tooLongKey         = "repayments.bankAccountDetails.accountNumberTooLongError"
     val accountNumberRegex = """^[0-9]{8}$"""
     val maxLength          = 8
 
@@ -145,8 +154,18 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, requiredKey, Seq(maxLength))
+      lengthError = FormError(fieldName, tooLongKey, Seq(maxLength))
     )
+
+    "must not bind values shorter than 8 digits" in {
+      val result = form.bind(Map(fieldName -> "1234567")).apply(fieldName)
+      result.errors must contain only FormError(fieldName, tooShortKey, Seq(maxLength))
+    }
+
+    "must not bind an 8 character value that contains non-digits" in {
+      val result = form.bind(Map(fieldName -> "1234567A")).apply(fieldName)
+      result.errors must contain only FormError(fieldName, requiredKey)
+    }
 
     behave like mandatoryField(
       form,

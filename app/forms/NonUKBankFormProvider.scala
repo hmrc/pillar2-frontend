@@ -42,15 +42,16 @@ class NonUKBankFormProvider @Inject() extends Mappings {
       "bic" -> bic("repayments.nonUKBank.error.bic.required")
         .verifying(
           firstError(
-            minLength(Constants.MinLength8, "repayments.nonUKBank.error.bic.length"),
-            maxLength(Constants.MaxLength11, "repayments.nonUKBank.error.bic.length"),
+            minLength(Constants.MinLength8, "repayments.nonUKBank.error.bic.tooShort"),
+            maxLength(Constants.MaxLength11, "repayments.nonUKBank.error.bic.tooLong"),
             regexp(Validation.BICSwiftRegex, "repayments.nonUKBank.error.bic.format")
           )
         ),
       "iban" -> iban("repayments.nonUKBank.error.iban.required")
         .verifying(
           firstError(
-            maxLength(Constants.MaxLength34, "repayments.nonUKBank.error.iban.length"),
+            minLength(Constants.MinLength14, "repayments.nonUKBank.error.iban.tooShort"),
+            maxLength(Constants.MaxLength34, "repayments.nonUKBank.error.iban.tooLong"),
             regexp(Validation.IBANRegex, "repayments.nonUKBank.error.iban.format")
           )
         )

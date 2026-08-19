@@ -126,19 +126,19 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Enter the name of the bank"
-      errorsList.get(1).text() mustBe "Enter the name on the account"
-      errorsList.get(2).text() mustBe "Enter a sort code, for example 309430"
-      errorsList.get(3).text() mustBe "Enter an account number, for example 00733445"
+      errorsList.get(0).text() mustBe "You must enter a bank name"
+      errorsList.get(1).text() mustBe "You must enter the name on account"
+      errorsList.get(2).text() mustBe "You must enter a sort code, for example 309430"
+      errorsList.get(3).text() mustBe "You must enter an account number, for example 00733445"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
-      fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
-      fieldErrors.get(2).text() mustBe "Error: Enter a sort code, for example 309430"
-      fieldErrors.get(3).text() mustBe "Error: Enter an account number, for example 00733445"
+      fieldErrors.get(0).text() mustBe "Error: You must enter a bank name"
+      fieldErrors.get(1).text() mustBe "Error: You must enter the name on account"
+      fieldErrors.get(2).text() mustBe "Error: You must enter a sort code, for example 309430"
+      fieldErrors.get(3).text() mustBe "Error: You must enter an account number, for example 00733445"
     }
   }
 
@@ -170,19 +170,52 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "The name of the bank must be 40 characters or less"
-      errorsList.get(1).text() mustBe "The name on the account must be 60 characters or less"
-      errorsList.get(2).text() mustBe "Enter a sort code, for example 309430"
-      errorsList.get(3).text() mustBe "Enter an account number, for example 00733445"
+      errorsList.get(0).text() mustBe "Name of the bank is too long. It must be 40 characters or less"
+      errorsList.get(1).text() mustBe "Name on the account is too long. It must be 60 characters or less"
+      errorsList.get(2).text() mustBe "Sort code entered is too long. It must be 6 digits"
+      errorsList.get(3).text() mustBe "Account number entered is too long. It must be 8 digits"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: The name of the bank must be 40 characters or less"
-      fieldErrors.get(1).text() mustBe "Error: The name on the account must be 60 characters or less"
-      fieldErrors.get(2).text() mustBe "Error: Enter a sort code, for example 309430"
-      fieldErrors.get(3).text() mustBe "Error: Enter an account number, for example 00733445"
+      fieldErrors.get(0).text() mustBe "Error: Name of the bank is too long. It must be 40 characters or less"
+      fieldErrors.get(1).text() mustBe "Error: Name on the account is too long. It must be 60 characters or less"
+      fieldErrors.get(2).text() mustBe "Error: Sort code entered is too long. It must be 6 digits"
+      fieldErrors.get(3).text() mustBe "Error: Account number entered is too long. It must be 8 digits"
+    }
+  }
+
+  "when form is submitted with values below minimum length" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "bankName"          -> "Bank Name",
+            "accountHolderName" -> "Account Name",
+            "sortCode"          -> "12345",
+            "accountNumber"     -> "1234567"
+          )
+        ),
+        NormalMode,
+        isAgent = false,
+        None,
+        None
+      )(request, appConfig, messages).toString()
+    )
+
+    "show too short validation error summary" in {
+      val errorsList: Elements = errorView.getElementsByClass("govuk-error-summary").first().getElementsByTag("li")
+
+      errorsList.get(0).text() mustBe "Sort code entered is too short. It must be 6 digits"
+      errorsList.get(1).text() mustBe "Account number entered is too short. It must be 8 digits"
+    }
+
+    "show field-specific too short errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Sort code entered is too short. It must be 6 digits"
+      fieldErrors.get(1).text() mustBe "Error: Account number entered is too short. It must be 8 digits"
     }
   }
 
