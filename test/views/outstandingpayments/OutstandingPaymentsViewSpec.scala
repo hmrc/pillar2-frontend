@@ -113,7 +113,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display outstanding payment breakdown paragraphs" in {
       paragraphs.get(1).text() mustBe "The amount includes all liabilities due. This may include more than one accounting period." +
-        " It also includes any penalties. It does not include any liabilities that are stoodover. It also does not include and late payment interest that has accrued."
+        " It also includes any penalties. It does not include any liabilities that are stoodover. It also does not include any late payment interest that has accrued."
       paragraphs.get(2).text() mustBe "Any payments made to your account before submitting your tax return have been deducted from your amount due."
     }
 
@@ -248,7 +248,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display transaction history section" in {
       h2Elements.get(3).text() mustBe "Transaction history"
-      paragraphs.get(14).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+      paragraphs.get(14).text() mustBe "Find details on payments and repayments. It may take up to 5 working days for transactions to appear."
 
       val viewTransactionHistoryLink = links.get(5)
 
@@ -310,10 +310,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         agentViewParagraphs
           .get(2)
           .text() mustBe "Any payments made to your clients account before submitting a tax return have been deducted from the amount due."
-        agentViewParagraphs.get(3).text() mustBe "You can pay online or make a manual payment."
-        agentViewParagraphs.get(4).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-        agentViewParagraphs.get(4).select("strong").text() mustBe "XMPLR0012345678"
-        agentViewParagraphs.get(5).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+        agentViewParagraphs.get(8).text() mustBe "You can pay online or make a manual payment."
+        agentViewParagraphs.get(9).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+        agentViewParagraphs.get(9).select("strong").text() mustBe "XMPLR0012345678"
+        agentViewParagraphs.get(10).text() mustBe "You’ll need to use this reference if you want to make a manual " +
           "payment for this group."
         agentViewParagraphs.get(16).text() mustBe "Find out when HMRC may charge the group penalties and interest."
       }

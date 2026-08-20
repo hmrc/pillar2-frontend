@@ -20,130 +20,165 @@
 @import views.html.templates.Layout
 
 @this(
-        layout: Layout,
-        govukBackLink: GovukBackLink,
-        govukTable: GovukTable,
-        govukButton: GovukButton,
-        govukWarningText: GovukWarningText,
-        h1: heading,
-        h2: HeadingH2,
-        paragraphBody: paragraphBody,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        details: GovukDetails
+layout: Layout,
+govukBackLink: GovukBackLink,
+govukTable: GovukTable,
+govukButton: GovukButton,
+govukWarningText: GovukWarningText,
+h1: heading,
+h2: HeadingH2,
+paragraphBody: paragraphBody,
+paragraphMessageWithLink: ParagraphMessageWithLink,
+details: GovukDetails
 )
 @(tableContent: Html, orgName: String, plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean, accruedInterest: BigDecimal = 0)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
 @layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
-    @if(isAgent) {
-        <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @orgName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
-    }
+@if(isAgent) {
+<h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span>
+    @orgName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
+}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            @h1(messages("payments.outstanding.title"))
-            <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @h1(messages("payments.outstanding.title"))
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-font-size-24">
             @messages("payments.outstanding.amountDue", formatAmount(amountDue))
-            </p>
-            @paragraphBody(messages("payments.outstanding.activity.p1"))
-            @paragraphBody(userTypeDependentText(
-                messages("payments.outstanding.activity.p2"),
-                messages("payments.outstanding.activity.agent.p2")
-            ))
-            @if(hasOverdueReturnPayment) {
-                @govukWarningText(WarningText(content = Text(userTypeDependentText(
-                    messages("payments.outstanding.warningText"),
-                    messages("payments.outstanding.agent.warningText")
-                ))))
-            }
-            @h2(messages("payments.outstanding.howToPay.heading"), size = "m")
-            @paragraphBody(messages("payments.outstanding.howToPay.p1"))
-            <p class="govuk-body">@messages("payments.outstanding.howToPay.p2") <strong>@plrReference</strong></p>
-            @paragraphBody(
-                userTypeDependentText(
-                    messages("payments.outstanding.howToPay.p3"),
-                    messages("payments.outstanding.howToPay.agent.p3")
-                )
-            )
-            @paragraphMessageWithLink(
-                linkMessage = messages("payments.outstanding.howToPay.linkText"),
-                linkUrl = appConfig.howToPayPillar2TaxesUrl,
-                target = "_blank"
-            )
+        </p>
+        @paragraphBody(messages("payments.outstanding.activity.p1"))
+        @paragraphBody(userTypeDependentText(
+        messages("payments.outstanding.activity.p2"),
+        messages("payments.outstanding.activity.agent.p2")
+        ))
+        @if(hasOverdueReturnPayment) {
+        @govukWarningText(WarningText(content = Text(userTypeDependentText(
+        messages("payments.outstanding.warningText"),
+        messages("payments.outstanding.agent.warningText")
+        ))))
+        }
+        @if(!isAgent){
+        @h2(messages("payments.outstanding.howToPay.heading"), size = "m")
+        @paragraphBody(messages("payments.outstanding.howToPay.p1"))
+        <p class="govuk-body">@messages("payments.outstanding.howToPay.p2") <strong>@plrReference</strong></p>
+        @paragraphBody(
+        userTypeDependentText(
+        messages("payments.outstanding.howToPay.p3"),
+        messages("payments.outstanding.howToPay.agent.p3")
+        )
+        )
+        @paragraphMessageWithLink(
+        linkMessage = messages("payments.outstanding.howToPay.linkText"),
+        linkUrl = appConfig.howToPayPillar2TaxesUrl,
+        target = "_blank"
+        )
 
-            @govukButton(
-                ButtonViewModel(
-                    messages("payments.outstanding.pay.buttonText")
-                ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
+        @govukButton(
+        ButtonViewModel(
+        messages("payments.outstanding.pay.buttonText")
+        ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
+        }
 
-            @if(hasOverdueReturnPayment) {
-                @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText", formatAmount(accruedInterest))))
-                @paragraphBody(messages("payments.outstanding.accruedInterest.description.p1"))
-                @paragraphBody(messages("payments.outstanding.accruedInterest.description.p2"))
-            }
-        </div>
+        @if(hasOverdueReturnPayment) {
+        @govukWarningText(WarningText(content = messages("payments.outstanding.accruedInterest.warningText",
+        formatAmount(accruedInterest))))
+        @paragraphBody(messages("payments.outstanding.accruedInterest.description.p1"))
+        @paragraphBody(messages("payments.outstanding.accruedInterest.description.p2"))
+        }
     </div>
+</div>
 
-    @h2(messages("payments.outstanding.details.heading"), size = "m")
-    @paragraphBody(messages("payments.outstanding.details.p1"))
+@h2(messages("payments.outstanding.details.heading"), size = "m")
+@paragraphBody(messages("payments.outstanding.details.p1"))
 
-    @paragraphBody(messages("payments.outstanding.details.p2"))
-    @paragraphMessageWithLink(
+@paragraphBody(messages("payments.outstanding.details.p2"))
+@paragraphMessageWithLink(
+linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
+linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
+)
+
+@details(Details(
+summary = messages("payments.outstanding.abbreviation.heading"),
+content = HtmlContent(Html(
+s"""
+|
+<ul class="govuk-list">
+    |
+    <li>${messages("payments.outstanding.abbreviation.uktr")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.dtt")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.mtt")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.iir")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.utpr")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.orngir")}</li>
+    |
+    <li>${messages("payments.outstanding.abbreviation.gaar")}</li>
+    |
+</ul>
+""".stripMargin
+))
+))
+
+@if(amountDue <= 0) {
+@paragraphBody(messages("payments.outstanding.details.nothingDue"), classes = "govuk-body govuk-!-margin-bottom-8 govuk-!-margin-top-7")
+} else {
+@tableContent
+}
+
+@if(isAgent) {
+@h2(messages("payments.outstanding.howToPay.heading"), size = "m")
+@paragraphBody(messages("payments.outstanding.howToPay.p1"))
+<p class="govuk-body">@messages("payments.outstanding.howToPay.p2") <strong>@plrReference</strong></p>
+@paragraphBody(
+userTypeDependentText(
+messages("payments.outstanding.howToPay.p3"),
+messages("payments.outstanding.howToPay.agent.p3")
+)
+)
+@paragraphMessageWithLink(
+linkMessage = messages("payments.outstanding.howToPay.linkText"),
+linkUrl = appConfig.howToPayPillar2TaxesUrl,
+target = "_blank"
+)
+
+@govukButton(
+ButtonViewModel(
+messages("payments.outstanding.pay.buttonText")
+).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url))
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @h2(messages("payments.stoodoverCharges.title"), size = "m")
+        @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
+        @paragraphMessageWithLink(
         linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
         linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
-    )
+        )
 
-    @details(Details(
-        summary = messages("payments.outstanding.abbreviation.heading"),
-        content = HtmlContent(Html(
-            s"""
-            |<ul class="govuk-list">
-            |  <li>${messages("payments.outstanding.abbreviation.uktr")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.dtt")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.mtt")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.iir")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.utpr")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.orngir")}</li>
-            |  <li>${messages("payments.outstanding.abbreviation.gaar")}</li>
-            |</ul>
-            """.stripMargin
-        ))
-    ))
+        @h2(messages("transactionHistory.title"), size = "m")
+        @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
+        @paragraphMessageWithLink(
+        linkMessage = messages("homepage.payments.transactionHistory.linkText"),
+        linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+        )
 
-    @if(amountDue <= 0) {
-        @paragraphBody(messages("payments.outstanding.details.nothingDue"), classes = "govuk-body govuk-!-margin-bottom-8 govuk-!-margin-top-7")
-    } else {
-        @tableContent
-    }
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            @h2(messages("payments.stoodoverCharges.title"), size = "m")
-            @paragraphBody(messages("payments.outstanding.stoodoverCharges.p1"))
-            @paragraphMessageWithLink(
-                linkMessage = messages("payments.outstanding.stoodoverCharges.linkText"),
-                linkUrl = payments.routes.StoodoverChargesController.onPageLoad.url
-            )
-
-            @h2(messages("transactionHistory.title"), size = "m")
-            @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
-            @paragraphMessageWithLink(
-                linkMessage = messages("homepage.payments.transactionHistory.linkText"),
-                linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
-            )
-
-            @h2(messages("payments.outstanding.penaltiesAndCharges.heading"), size = "m")
-            @paragraphBody(
-                userTypeDependentText(
-                    messages("payments.outstanding.activity.penaltiesAndCharges.p1"),
-                    messages("payments.outstanding.activity.penaltiesAndCharges.agent.p1")
-                )
-            )
-            @paragraphMessageWithLink(
-                linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
-                linkUrl = appConfig.penaltiesInformationUrl,
-                target = "_blank"
-            )
-        </div>
+        @h2(messages("payments.outstanding.penaltiesAndCharges.heading"), size = "m")
+        @paragraphBody(
+        userTypeDependentText(
+        messages("payments.outstanding.activity.penaltiesAndCharges.p1"),
+        messages("payments.outstanding.activity.penaltiesAndCharges.agent.p1")
+        )
+        )
+        @paragraphMessageWithLink(
+        linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
+        linkUrl = appConfig.penaltiesInformationUrl,
+        target = "_blank"
+        )
     </div>
+</div>
 }
