@@ -176,7 +176,7 @@ class StoodoverChargesViewSpec extends ViewSpecBase {
 
   "display transaction history section" in {
     h2Elements.get(2).text() mustBe "Transaction history"
-    paragraphs.get(4).text() mustBe "Find details on payments and refunds. It may take up to 5 working days for transactions to appear."
+    paragraphs.get(4).text() mustBe "Find details on payments and repayments. It may take up to 5 working days for transactions to appear."
 
     val viewTransactionHistoryLink = links.get(3)
 

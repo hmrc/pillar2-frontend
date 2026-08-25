@@ -40,7 +40,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     head = Some(
       Seq(
         HeadCell(Text("Date")),
-        HeadCell(Text("Transaction description")),
+        HeadCell(Text("Description")),
         HeadCell(Text("You paid HMRC")),
         HeadCell(Text("HMRC paid you"))
       )
@@ -189,7 +189,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
       tableHead.size() mustBe 1
       tableHeadColumns.get(0).text mustBe "Date"
-      tableHeadColumns.get(1).text mustBe "Transaction description"
+      tableHeadColumns.get(1).text mustBe "Description"
       tableHeadColumns.get(2).text mustBe "You paid HMRC"
       tableHeadColumns.get(3).text mustBe "HMRC paid you"
 

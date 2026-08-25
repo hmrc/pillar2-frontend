@@ -87,9 +87,9 @@ trait ViewInstances extends StubMessageControllerComponents {
   val govukCheckboxes          = new GovukCheckboxes(new GovukFieldset, new GovukHint, new GovukLabel, new GovukFormGroup, govukHintAndErrorMessage)
   val govukLabel               = new GovukLabel()
   val govukDetails             = new GovukDetails
-  val govukPanel               = new GovukPanel
-  val govukTable               = new GovukTable
   val govukButton              = new GovukButton
+  val govukPanel               = new GovukPanel(govukButton)
+  val govukTable               = new GovukTable
   val govukFieldSet            = new GovukFieldset
   val govukErrorSummary        = new GovukErrorSummary
   val govukErrorMessage        = new GovukErrorMessage
