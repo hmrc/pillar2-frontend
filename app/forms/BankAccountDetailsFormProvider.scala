@@ -44,7 +44,8 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
         sortCode("repayments.bankAccountDetails.sortCodeError")
           .verifying(
             firstError(
-              equalLength(Constants.MinLength6, "repayments.bankAccountDetails.sortCodeError"),
+              minLength(Constants.MinLength6, "repayments.bankAccountDetails.sortCodeTooShortError"),
+              maxLength(Constants.MinLength6, "repayments.bankAccountDetails.sortCodeTooLongError"),
               regexp(Validation.SortCodeRegex, "repayments.bankAccountDetails.sortCodeError")
             )
           ),
@@ -52,7 +53,8 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
         text("repayments.bankAccountDetails.accountNumberError")
           .verifying(
             firstError(
-              equalLength(Constants.MinLength8, "repayments.bankAccountDetails.accountNumberError"),
+              minLength(Constants.MinLength8, "repayments.bankAccountDetails.accountNumberTooShortError"),
+              maxLength(Constants.MinLength8, "repayments.bankAccountDetails.accountNumberTooLongError"),
               regexp(Validation.AccountNumberRegex, "repayments.bankAccountDetails.accountNumberError")
             )
           )

@@ -151,7 +151,25 @@ class NonUKBankControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("Enter a valid BIC or SWIFT code like HBUKGB4B")
-        contentAsString(result) must include("IBAN must be up to 34 characters")
+        contentAsString(result) must include("IBAN is too long. It can only be up to 34 characters")
+      }
+    }
+
+    "must return Bad Request and show specific error message when IBAN is too short" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "bankName"          -> "HSBC",
+              "nameOnBankAccount" -> "HMRC Shipley",
+              "bic"               -> "",
+              "iban"              -> "GB82WEST12345"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("IBAN is too short. It must be between 14 and 34 characters long")
       }
     }
 

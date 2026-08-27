@@ -16,12 +16,14 @@
 
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 @import views.html.components.gds._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
+    govukFormGroup: uk.gov.hmrc.govukfrontend.views.html.helpers.GovukFormGroup,
     govukInput: GovukInput,
     govukButton: GovukButton,
     heading: HeadingWithHint,
@@ -35,7 +37,17 @@
     @formHelper(action = controllers.repayments.routes.NonUKBankController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(
+                form,
+                errorMessageOverrides = Map(
+                    "repayments.nonUKBank.error.bankName.required" -> "repayments.nonUKBank.error.bankName.summary.required",
+                    "repayments.nonUKBank.error.nameOnBankAccount.required" -> "repayments.nonUKBank.error.nameOnBankAccount.summary.required"
+                ),
+                deduplicateMessageKeys = Set(
+                    "repayments.nonUKBank.error.bic.required",
+                    "repayments.nonUKBank.error.iban.required"
+                )
+            ))
         }
 
         @if(isAgent && plrReference.isDefined && organisationName.isDefined) {
@@ -58,25 +70,50 @@
                 label = LabelViewModel(messages("repayments.nonUKBank.nameOnBankAccount"))
             )
             .withWidth(Full)
+            .withHint(Hint(content = Text(messages("repayments.nonUKBank.nameOnBankAccount.hint"))))
         )
 
-        @govukInput(
-            InputViewModel(
-                field = form("bic"),
-                label = LabelViewModel(messages("repayments.nonUKBank.bic"))
-            )
-            .withWidth(OneThird)
-            .withHint(Hint(content = Text(messages("repayments.nonUKBank.bic.hint"))))
-        )
+        @defining(form("bic").hasErrors && form("iban").hasErrors) { hasCombinedBicIbanError =>
+            @if(hasCombinedBicIbanError) {
+                @govukFormGroup(FormGroup.empty, hasErrorMessage = true) {
+                    @govukInput(
+                        InputViewModel(
+                            field = form("bic"),
+                            label = LabelViewModel(messages("repayments.nonUKBank.bic"))
+                        )
+                        .withWidth(OneThird)
+                        .withHint(Hint(content = Text(messages("repayments.nonUKBank.bic.hint"))))
+                    )
 
-        @govukInput(
-            InputViewModel(
-                field = form("iban"),
-                label = LabelViewModel(messages("repayments.nonUKBank.iban"))
-            )
-            .withWidth(Full)
-            .withHint(Hint(content = Text(messages("repayments.nonUKBank.iban.hint"))))
-        )
+                    @govukInput(
+                        InputViewModel(
+                            field = form("iban"),
+                            label = LabelViewModel(messages("repayments.nonUKBank.iban"))
+                        )
+                        .withWidth(Full)
+                        .withHint(Hint(content = Text(messages("repayments.nonUKBank.iban.hint"))))
+                    )
+                }
+            } else {
+                @govukInput(
+                    InputViewModel(
+                        field = form("bic"),
+                        label = LabelViewModel(messages("repayments.nonUKBank.bic"))
+                    )
+                    .withWidth(OneThird)
+                    .withHint(Hint(content = Text(messages("repayments.nonUKBank.bic.hint"))))
+                )
+
+                @govukInput(
+                    InputViewModel(
+                        field = form("iban"),
+                        label = LabelViewModel(messages("repayments.nonUKBank.iban"))
+                    )
+                    .withWidth(Full)
+                    .withHint(Hint(content = Text(messages("repayments.nonUKBank.iban.hint"))))
+                )
+            }
+        }
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))
