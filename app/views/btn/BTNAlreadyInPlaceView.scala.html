@@ -26,7 +26,7 @@
 )
 
 @(plrReference: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-    @layout(pageTitle = titleNoForm(messages("btn.alreadyInPlace.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+    @layout(pageTitle = titleNoForm(messages(if(isAgent) "btn.alreadyInPlace.agent.title" else "btn.alreadyInPlace.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
         @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent && organisationName.isDefined) {
             <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.group")}:</span> @organisationName <span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
@@ -34,12 +34,12 @@
             <h2 class="govuk-caption-m hmrc-caption-m govuk-!-margin-bottom-0"><span class="govuk-!-font-weight-bold">@{messages("homepage.id")}:</span> @plrReference</h2>
         }
 
-            @heading(messages("btn.alreadyInPlace.heading"), classes = "govuk-heading-l")
+            @heading(messages(if(isAgent) "btn.alreadyInPlace.agent.heading" else "btn.alreadyInPlace.heading"), classes = "govuk-heading-l")
 
             @p(messages("btn.alreadyInPlace.p1"))
 
             @paragraphMessageWithLink(
-              linkMessage = messages("btn.alreadyInPlace.link"),
+              linkMessage = messages(if(isAgent) "btn.alreadyInPlace.agent.link" else "btn.alreadyInPlace.group.link"),
               linkUrl = controllers.routes.HomepageController.onPageLoad().url
             )
   }

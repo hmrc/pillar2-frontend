@@ -34,7 +34,7 @@ object BTNAccountingPeriodService {
   object Outcome {
     case object BtnAlreadySubmitted extends Outcome
     case object UktrReturnAlreadySubmitted extends Outcome
-    final case class ShowAccountingPeriod(summaryList: SummaryList, hasMultipleAccountingPeriods: Boolean, currentAP: Boolean) extends Outcome
+    final case class ShowAccountingPeriod(summaryList: SummaryList, currentAP: Boolean) extends Outcome
   }
 }
 
@@ -75,7 +75,6 @@ class BTNAccountingPeriodService @Inject() () {
 
       Outcome.ShowAccountingPeriod(
         summaryList = summaryList(selectedPeriod),
-        hasMultipleAccountingPeriods = availablePeriod.size > 1,
         currentAP = currentAP
       )
     }
@@ -84,12 +83,20 @@ class BTNAccountingPeriodService @Inject() () {
     SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel(
-          key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(period.startDate.toDateFormat)
+          key = "btn.accountingPeriod.startAccountDate",
+          value = ValueViewModel(period.startDate.toDateFormat),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(models.NormalMode).url)
+              .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
+          )
         ),
         SummaryListRowViewModel(
-          key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(period.endDate.toDateFormat)
+          key = "btn.accountingPeriod.endAccountDate",
+          value = ValueViewModel(period.endDate.toDateFormat),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(models.NormalMode).url)
+              .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
+          )
         )
       )
     )

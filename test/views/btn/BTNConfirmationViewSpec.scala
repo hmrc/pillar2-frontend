@@ -92,8 +92,10 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
     "have an H2 heading" in {
       val h2Elements: Elements = groupView().getElementsByTag("h2")
-      h2Elements.get(0).text() mustBe "What happens next"
+      h2Elements.get(0).text() mustBe "Accounting period"
       h2Elements.get(0).hasClass("govuk-heading-m") mustBe true
+      h2Elements.get(1).text() mustBe "What happens next"
+      h2Elements.get(1).hasClass("govuk-heading-m") mustBe true
     }
 
     "have no back link" in {
@@ -106,7 +108,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       paragraphs.get(0).text() mustBe
         s"You have submitted a Below-Threshold Notification on $submissionDateTime."
       paragraphs.get(1).text() mustBe
-        s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
+        "Effective from the start of the accounting period you selected:"
       paragraphs.get(2).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
         " and future accounting periods."
       paragraphs.get(3).text() mustBe
@@ -115,6 +117,20 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+    }
+
+    "have a summary list containing the accounting period dates without Change actions for group and agent views" in {
+      val summaryListKeys:  Elements = groupView().getElementsByClass("govuk-summary-list__key")
+      val summaryListItems: Elements = groupView().getElementsByClass("govuk-summary-list__value")
+
+      summaryListKeys.get(0).text() mustBe "Start date"
+      summaryListItems.get(0).text() mustBe accountingPeriodStartDate
+
+      summaryListKeys.get(1).text() mustBe "End date"
+      summaryListItems.get(1).text() mustBe accountingPeriodEndDate
+
+      groupView().select(".govuk-summary-list__actions").size() mustBe 0
+      agentView().select(".govuk-summary-list__actions").size() mustBe 0
     }
 
     "have paragraph content (containing company name) and a link when in an agent flow" in {
@@ -135,7 +151,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
       paragraphs.get(1).text() mustBe
         s"This is for group: $companyName Pillar 2 ID: $plrRef"
       paragraphs.get(4).text() mustBe
-        s"Effective from the start of the accounting period you selected: $accountingPeriodStartDate - $accountingPeriodEndDate"
+        "Effective from the start of the accounting period you selected:"
       paragraphs.get(5).text() mustBe "HMRC has removed the group’s obligation to submit a UK Tax Return for the current accounting period," +
         " and future accounting periods."
       paragraphs.get(6).text() mustBe

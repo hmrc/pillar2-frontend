@@ -38,34 +38,61 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   lazy val plrReference:    String                  = "XMPLR0123456789"
   lazy val startDate:       String                  = "7 January 2024"
   lazy val endDate:         String                  = "7 January 2025"
-  lazy val pageTitle:       String                  = "Confirm account period for Below-Threshold Notification"
+  lazy val pageTitle:       String                  = "Confirm accounting period for Below-Threshold Notification"
   lazy val bannerClassName: String                  = "govuk-header__link govuk-header__service-name"
 
-  lazy val list: SummaryList = SummaryListViewModel(
-    rows = Seq(
-      SummaryListRowViewModel("btn.accountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape(startDate)))),
-      SummaryListRowViewModel(
-        "btn.accountingPeriod.endAccountDate",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape(endDate).toString))
+  lazy val list: SummaryList =
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(
+          "btn.accountingPeriod.startAccountDate",
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(startDate))),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
+              .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
+          )
+        ),
+        SummaryListRowViewModel(
+          "btn.accountingPeriod.endAccountDate",
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(endDate).toString)),
+          actions = Seq(
+            ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
+              .withVisuallyHiddenText(messages("btn.accountingPeriod.change.hidden"))
+          )
+        )
       )
     )
-  )
 
-  def organisationView(hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
+  def organisationView(currentAP: Boolean = true): Document =
     Jsoup.parse(
-      page(list, NormalMode, plrReference, isAgent = false, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages)
+      page(list, NormalMode, plrReference, isAgent = false, Some("orgName"), currentAP)(
+        request,
+        appConfig,
+        messages
+      )
         .toString()
     )
 
-  def agentView(hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
+  def agentView(currentAP: Boolean = true): Document =
     Jsoup.parse(
-      page(list, NormalMode, plrReference, isAgent = true, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages)
+      page(list, NormalMode, plrReference, isAgent = true, Some("orgName"), currentAP)(
+        request,
+        appConfig,
+        messages
+      )
         .toString()
     )
 
-  def agentNoOrgView(hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
+  def agentNoOrgView(currentAP: Boolean = true): Document =
     Jsoup.parse(
-      page(list, NormalMode, plrReference, isAgent = true, organisationName = None, hasMultipleAccountingPeriods, currentAP)(
+      page(
+        list,
+        NormalMode,
+        plrReference,
+        isAgent = true,
+        organisationName = None,
+        currentAP
+      )(
         request,
         appConfig,
         messages
@@ -105,21 +132,20 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
         summaryListElements.size() mustBe 1
 
-        summaryListKeys.get(0).text() mustBe "Start date of accounting period"
+        summaryListKeys.get(0).text() mustBe "Start date"
         summaryListItems.get(0).text() mustBe startDate
 
-        summaryListKeys.get(1).text() mustBe "End date of accounting period"
+        summaryListKeys.get(1).text() mustBe "End date"
         summaryListItems.get(1).text() mustBe endDate
       }
 
-      "have a link for selecting a different accounting period when they have multiple accounting periods" in {
-        val link: Element =
-          organisationView(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a").first()
+      "have Change links in the summary list when viewing the accounting period" in {
+        val links: Elements =
+          organisationView().select(".govuk-summary-list__actions a")
 
-        link.text mustBe "Select different accounting period"
-        link.attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
-        link.attr("target") mustBe "_self"
-        link.attr("rel") mustNot be("noopener noreferrer")
+        links.size() mustBe 2
+        links.eachText().toArray.toSeq       must contain only "Change group’s accounting period"
+        links.eachAttr("href").toArray.toSeq must contain only controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
       }
 
       "have a paragraph with link if it's the current accounting period" in {
@@ -135,12 +161,13 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "not have a paragraph with link if it's a previous accounting period" in {
-        val paragraphs: Elements = organisationView(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
-        val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
+        val view = organisationView(currentAP = false)
 
-        paragraphs.text mustNot include("If the accounting period dates are wrong, update your group’s accounting period dates before continuing.")
-        link.text mustNot include("update your group’s accounting period dates")
-        link.attr("href") mustNot include(
+        view.getElementsByClass("govuk-body").text mustNot include(
+          "If the accounting period dates are wrong, update your group’s accounting period dates before continuing."
+        )
+        view.select("a").text mustNot include("update your group’s accounting period dates")
+        view.select("a[href]").eachAttr("href").toArray.toSeq mustNot contain(
           controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         )
       }
@@ -201,21 +228,20 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
         summaryListElements.size() mustBe 1
 
-        summaryListKeys.get(0).text() mustBe "Start date of accounting period"
+        summaryListKeys.get(0).text() mustBe "Start date"
         summaryListItems.get(0).text() mustBe startDate
 
-        summaryListKeys.get(1).text() mustBe "End date of accounting period"
+        summaryListKeys.get(1).text() mustBe "End date"
         summaryListItems.get(1).text() mustBe endDate
       }
 
-      "have a link for selecting a different accounting period when they have multiple accounting periods" in {
-        val link: Element =
-          agentView(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a").first()
-        link.text mustBe "Select different accounting period"
-        link.attr("href") mustBe
-          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
-        link.attr("target") mustBe "_self"
-        link.attr("rel") mustNot be("noopener noreferrer")
+      "have Change links in the summary list when an agent views the accounting period" in {
+        val links: Elements =
+          agentView().select(".govuk-summary-list__actions a")
+
+        links.size() mustBe 2
+        links.eachText().toArray.toSeq       must contain only "Change group’s accounting period"
+        links.eachAttr("href").toArray.toSeq must contain only controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
       }
 
       "have a paragraph with link if it's the current accounting period" in {
@@ -231,12 +257,13 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "not have a paragraph with link if it's a previous accounting period" in {
-        val paragraphs: Elements = agentView(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
-        val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
+        val view = agentView(currentAP = false)
 
-        paragraphs.text mustNot include("If the accounting period dates are wrong, update the group’s accounting period dates before continuing.")
-        link.text mustNot include("update the group’s accounting period dates")
-        link.attr("href") mustNot include(
+        view.getElementsByClass("govuk-body").text mustNot include(
+          "If the accounting period dates are wrong, update the group’s accounting period dates before continuing."
+        )
+        view.select("a").text mustNot include("update the group’s accounting period dates")
+        view.select("a[href]").eachAttr("href").toArray.toSeq mustNot contain(
           controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         )
       }
@@ -257,12 +284,12 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
     val viewScenarios: Seq[ViewScenario] =
       Seq(
         ViewScenario("view", organisationView()),
-        ViewScenario("hasMultipleAccountingPeriodsView", organisationView(hasMultipleAccountingPeriods = true)),
-        ViewScenario("previousAccountingPeriodView", organisationView(hasMultipleAccountingPeriods = true, currentAP = false)),
+        ViewScenario("currentAccountingPeriodView", organisationView()),
+        ViewScenario("previousAccountingPeriodView", organisationView(currentAP = false)),
         ViewScenario("agentView", agentView()),
         ViewScenario("agentNoOrgView", agentNoOrgView()),
-        ViewScenario("hasMultipleAccountingPeriodsAgentView", agentView(hasMultipleAccountingPeriods = true)),
-        ViewScenario("previousAccountingPeriodAgentView", agentView(hasMultipleAccountingPeriods = true, currentAP = false))
+        ViewScenario("currentAccountingPeriodAgentView", agentView()),
+        ViewScenario("previousAccountingPeriodAgentView", agentView(currentAP = false))
       )
 
     behaveLikeAccessiblePage(viewScenarios)

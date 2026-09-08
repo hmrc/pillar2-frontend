@@ -77,18 +77,27 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
   "BTNAccountingPeriodController" should {
     "return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
-      def list(startDate: LocalDate, endDate: LocalDate): SummaryList = SummaryListViewModel(
-        rows = Seq(
-          SummaryListRowViewModel(
-            "btn.accountingPeriod.startAccountDate",
-            ValueViewModel(startDate.toDateFormat)
-          ),
-          SummaryListRowViewModel(
-            "btn.accountingPeriod.endAccountDate",
-            ValueViewModel(endDate.toDateFormat)
+      def list(startDate: LocalDate, endDate: LocalDate): SummaryList =
+        SummaryListViewModel(
+          rows = Seq(
+            SummaryListRowViewModel(
+              "btn.accountingPeriod.startAccountDate",
+              ValueViewModel(startDate.toDateFormat),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
+                  .withVisuallyHiddenText(messages(application)("btn.accountingPeriod.change.hidden"))
+              )
+            ),
+            SummaryListRowViewModel(
+              "btn.accountingPeriod.endAccountDate",
+              ValueViewModel(endDate.toDateFormat),
+              actions = Seq(
+                ActionItemViewModel("site.change", controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
+                  .withVisuallyHiddenText(messages(application)("btn.accountingPeriod.change.hidden"))
+              )
+            )
           )
         )
-      )
       "one single accounting period present" in {
         when(mockSubscriptionConnector.getSubscriptionCache(any)(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
@@ -110,7 +119,6 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
             plrReference,
             isAgent = false,
             Some("orgName"),
-            hasMultipleAccountingPeriods = false,
             currentAP = true
           )(
             request,
@@ -140,7 +148,6 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
             plrReference,
             isAgent = false,
             Some("orgName"),
-            hasMultipleAccountingPeriods = true,
             currentAP = false
           )(
             request,

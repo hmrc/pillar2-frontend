@@ -28,7 +28,7 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
 
   lazy val page:         BTNAlreadyInPlaceView = inject[BTNAlreadyInPlaceView]
   lazy val plrReference: String                = "XMPLR0123456789"
-  lazy val pageTitle:    String                = "The group has already submitted a Below-Threshold Notification for this accounting period"
+  lazy val pageTitle:    String                = "Your group has already submitted a Below-Threshold Notification for this accounting period"
 
   lazy val organisationView: Document = Jsoup.parse(page(plrReference, isAgent = false, Some("orgName"))(request, appConfig, messages).toString())
   lazy val agentView:        Document = Jsoup.parse(page(plrReference, isAgent = true, Some("orgName"))(request, appConfig, messages).toString())
@@ -43,6 +43,13 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
+    }
+
+    "have agent-specific title and H1 heading in an agent view" in {
+      val expectedTitle = "Your client has already submitted a Below-Threshold Notification for this accounting period"
+
+      agentView.title() mustBe s"$expectedTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentView.getElementsByTag("h1").text() mustBe expectedTitle
     }
 
     "have a banner with a link to the Homepage" in {
@@ -60,7 +67,15 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
     "have a Return to Homepage link" in {
       val returnLink: Element = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
-      returnLink.text mustBe "Return to homepage"
+      returnLink.text mustBe "Back to group’s homepage"
+      returnLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
+      returnLink.attr("target") mustBe "_self"
+    }
+
+    "have an agent homepage link in an agent view" in {
+      val returnLink: Element = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+
+      returnLink.text mustBe "Back to agent’s homepage"
       returnLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
       returnLink.attr("target") mustBe "_self"
     }
