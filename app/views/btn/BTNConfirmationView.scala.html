@@ -29,6 +29,7 @@
         printLink: printLink,
         govukButton: GovukButton,
         govukPanel: GovukPanel,
+        govukSummaryList: GovukSummaryList,
         govukInsetText: GovukInsetText,
         formHelper: FormWithCSRF
 )
@@ -66,9 +67,23 @@
     }
 
     <p class="govuk-body">
-        @messages("btn.confirmation.p2")<br>
-        @messages("btn.confirmation.p2.dates", accountingPeriodStartDate.toDateFormat, accountingPeriodEndDate.toDateFormat)
+        @messages("btn.confirmation.p2")
     </p>
+
+    @h2(messages("btn.confirmation.accountingPeriod"), size = "m")
+
+    @govukSummaryList(SummaryList(
+        rows = Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("btn.accountingPeriod.startAccountDate"))),
+                value = Value(content = Text(accountingPeriodStartDate.toDateFormat))
+            ),
+            SummaryListRow(
+                key = Key(content = Text(messages("btn.accountingPeriod.endAccountDate"))),
+                value = Value(content = Text(accountingPeriodEndDate.toDateFormat))
+            )
+        )
+    ))
 
     @if(showUnderEnquiryWarning) {
         @govukInsetText(InsetText(content = Text(messages("btn.confirmation.underEnquiry.insetText"))))

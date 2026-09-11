@@ -31,7 +31,7 @@
         formHelper: FormWithCSRF
 )
 
-@(list: SummaryList, mode: Mode, plrReference: String, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode, plrReference: String, isAgent: Boolean, organisationName: Option[String], currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.accountingPeriod.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -51,13 +51,6 @@
         }
 
         @govukSummaryList(list)
-
-        @if(hasMultipleAccountingPeriods) {
-          @paragraphMessageWithLink(
-            linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"),
-            linkUrl = controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
-          )
-        }
 
         @if(currentAP) {
             @if(isAgent) {

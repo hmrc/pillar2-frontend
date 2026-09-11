@@ -112,7 +112,7 @@ class BTNAccountingPeriodController @Inject() (
               viewReturnSubmitted(request.subscriptionLocalData.plrReference, request.isAgent, request.subscriptionLocalData.organisationName, period)
             )
           )
-        case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, hasMultipleAccountingPeriods, currentAP) =>
+        case BTNAccountingPeriodService.Outcome.ShowAccountingPeriod(summaryList, currentAP) =>
           Future.successful(
             Ok(
               accountingPeriodView(
@@ -121,7 +121,6 @@ class BTNAccountingPeriodController @Inject() (
                 request.subscriptionLocalData.plrReference,
                 request.isAgent,
                 request.subscriptionLocalData.organisationName,
-                hasMultipleAccountingPeriods,
                 currentAP
               )
             )
