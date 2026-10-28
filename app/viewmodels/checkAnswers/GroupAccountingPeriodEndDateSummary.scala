@@ -34,7 +34,7 @@ object GroupAccountingPeriodEndDateSummary {
 
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(startDate).withCssClass("govuk-!-display-none-print")
+        value = ValueViewModel(startDate)
       )
     }
 
