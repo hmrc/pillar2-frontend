@@ -47,6 +47,7 @@
                 field = form("phoneNumber"),
                 label = LabelViewModel(messages("capturePhoneDetails.heading", UserName)).asPageHeadingLabel(Large)
             )
+            .withInputType("tel")
             .withWidth(TwoThirds)
             .withHint(Hint(content = HtmlContent(messages("capturePhoneDetails.hint"))))
         )
